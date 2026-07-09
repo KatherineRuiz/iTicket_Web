@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iTicket</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/index.css">
+</head>
+
+<body>
+    <header>
+        <nav class="menu-lateral" id="menuLateral">
+            <div class="menu-lateral-header text-white">
+
+                <button class="btn text-white p-0 fs-3 d-flex align-items-center justify-content-center" id="btnMenu"
+                    type="button" style="width: 40px; height: 40px;">
+                    <i class="bi bi-list"></i>
+                </button>
+
+                <img src="img/logo.png" alt="logo" class="menu-lateral-logo">
+
+            </div>
+
+            <div class="d-none d-md-flex justify-content-center">
+                <hr class="linea-divisora border border-light border-1 opacity-100">
+            </div>
+
+            <div class="menu-lateral-cuerpo d-flex flex-column flex-grow-1 justify-content-between">
+                <div>
+                    <ul class="nav flex-column gap-2 mt-3 p-0">
+                        <li class="menu-opcion activo">
+                            <a href="#" class="nav-link">
+                                <div class="icono-menu">
+                                    <img src="img/inicio.svg" alt="Icono de Inicio">
+                                </div>
+                                <span class="menu-texto">Inicio</span>
+                            </a>
+                        </li>
+                        <li class="menu-opcion" id="ticketsMenu">
+                            <a href="#" class="nav-link" id="btnTickets">
+                                <div class="icono-menu">
+                                    <img src="img/tickets.svg" alt="Icono de Tickets">
+                                </div>
+                                <span class="menu-texto">Tickets</span>
+                            </a>
+                        </li>
+                        <li class="menu-opcion">
+                            <a href="#" class="nav-link">
+                                <div class="icono-menu">
+                                    <img src="img/chatBot.svg" alt="Icono de Chatbot" class="d-flex">
+                                </div>
+                                <span class="menu-texto">ChatBot</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div>
+                    <ul class="nav flex-column gap-2 mt-3 p-0">
+                        <li class="menu-opcion">
+                            <a href="#" class="nav-link">
+                                <div class="icono-menu">
+                                    <img src="img/notificaciones.png" alt="" class="d-flex">
+                                </div>
+                                <span class="menu-texto">Notificaciones</span>
+                            </a>
+                        </li>
+                        <li class="menu-opcion">
+                            <a href="#" class="nav-link">
+                                <div class="icono-menu">
+                                    <img src="img/configuracion.png" alt="" class="d-flex">
+                                </div>
+                                <span class="menu-texto">Configuración</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="menu-lateral-overlay" id="overlay"></div>
+
+    <main class="main px-md-4 pt-3">
+        <!--Parte superior-->
+        <section class="superior rounded-5 ps-4 d-none d-md-flex">
+            <h6 class="mb-0">Dashboard</h6>
+            <div class="position-relative">
+                <div class="perfil p-2 rounded-5 gap-lg-4 gap-md-2" id="perfilBienvenida">
+                    <h6 class="perfil-nombre text-white mb-0 ps-2" id="nombrePerfil">Josué Guinea</h6>
+                    <img src="img/user.png" alt="Icono de perfil" id="fotoPerfil">
+                </div>
+            </div>
+        </section>
+
+        <div class="contenido-principal container-fluid">
+            <div class="row g-4 m-0 p-0">
+
+                <div class="col-lg-5 col-md-6 col-sm-12 ps-3">
+                    <!--Bienvenida-->
+                    <section class="row ps-2 pe-3">
+                        <div class="bienvenida d-flex justify-content-evenly align-items-center text-center p-3 shadow">
+                            <img class="w-50" src="img/crearTicket.png" alt="Imagen de crear Ticket">
+                            <div>
+                                <h3 class="fw-bold">¡Bienvenido!</h3>
+                                <h6 class="mb-3">¿Quieres crear un nuevo ticket?</h6>
+                                <button class="btn-oscuro border-0 px-4 py-2 fw-bold rounded-pill">Crear</button>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!--Grafico del tiempo de resolucion promedio-->
+                    <section class="row mt-4 px-2">
+                        <div class="d-flex flex-column align-items-center text-center bg-white rounded-5 p-4 shadow">
+                            <h4>Prioridad de tus tickets</h4>
+                            <div class="grafico py-3">
+                                <canvas id="graficoTickets"></canvas>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <div class="col-lg-4 col-md-6 d-flex flex-column">
+                    <!--Grafico del calificaciones porcentuales de los tickets evaluados-->
+                    <section class="row px-2">
+                        <div class="d-flex flex-column align-items-center text-center bg-white rounded-5 p-4 shadow">
+                            <h4>Tus evaluaciones</h4>
+                            <div class="grafico">
+                                <canvas id="graficoEvaluacion"></canvas>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="row mt-5 px-2 justify-content-center">
+                        <h4 class="text-center">Tiempo de respuesta</h4>
+                        <div class="resumen-tickets shadow mt-2">
+                                <h6 class="pt-2">Horas <br> promedio</h6>
+                                <div>
+                                    <h2 class="fw-bold pt-2" id="tiempoPromedio">21</h2>
+                                </div>
+                                <img src="img/tiempo.png" alt="Tickets Abiertos" class="w-25">
+                            </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </main>
+
+
+    <!--Bootstrap-->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!--Libreria para los graficos-->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!--Links del script-->
+    <script src="js/components/menu.js"></script>
+    <script src="js/controllers/dashboardUsuario.js"></script>
+
+</body>
+
+</html>

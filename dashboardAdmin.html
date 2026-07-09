@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iTicket</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/index.css">
+</head>
+
+<body>
+    <header>
+        <nav class="menu-lateral" id="menuLateral">
+            <div class="menu-lateral-header text-white">
+
+                <button class="btn text-white p-0 fs-3 d-flex align-items-center justify-content-center" id="btnMenu"
+                    type="button" style="width: 40px; height: 40px;">
+                    <i class="bi bi-list"></i>
+                </button>
+
+                <img src="img/logo.png" alt="logo" class="menu-lateral-logo">
+
+            </div>
+
+            <div class="d-none d-md-flex justify-content-center">
+                <hr class="linea-divisora border border-light-subtle opacity-50">
+            </div>
+
+            <div class="menu-lateral-cuerpo d-flex flex-column flex-grow-1 justify-content-between">
+                <div>
+                    <ul class="nav flex-column gap-2 p-0">
+                        <li class="menu-opcion activo">
+                            <a href="dashboardTecnicos.html" class="nav-link">
+                                <div class="icono-menu">
+                                    <img src="img/inicio.svg" alt="Icono de Inicio">
+                                </div>
+                                <span class="menu-texto">Inicio</span>
+                            </a>
+                        </li>
+                        <li class="menu-opcion" id="ticketsMenu">
+                            <a class="nav-link" id="btnTickets">
+                                <div class="icono-menu">
+                                    <img src="img/tickets.svg" alt="Incono de Tickets">
+                                </div>
+                                <span class="menu-texto">Tickets</span>
+                                <i class="bi bi-chevron-down icono-flecha"></i>
+                            </a>
+                            <ul class="submenu">
+                                <li><a href="#"><span class="menu-texto">Mis Tickets</span></a></li>
+                                <li><a href="#"><span class="menu-texto">Gestionar Tickets</span></a></li>
+                            </ul>
+                        </li>
+                        <li class="menu-opcion" id="equiposMenu">
+                            <a class="nav-link" id="btnEquipos">
+                                <div class="icono-menu">
+                                    <img src="img/equipos.svg" alt="Icono de Equipos">
+                                </div>
+                                <span class="menu-texto">Equipos</span>
+                                <i class="bi bi-chevron-down icono-flecha"></i>
+                            </a>
+                            <ul class="submenu">
+                                <li><a href="#" class="menu-texto">Equipo y Mobiliario</a></li>
+                                <li><a href="#" class="menu-texto">Ubicaciones</a></li>
+                            </ul>
+                        </li>
+                        <li class="menu-opcion">
+                            <a href="#" class="nav-link">
+                                <div class="icono-menu">
+                                    <img src="img/usuarios.svg" alt="Icono de Usuarios" class="d-flex">
+                                </div>
+                                <span class="menu-texto">Usuarios</span>
+                            </a>
+                        </li>
+                        <li class="menu-opcion">
+                            <a href="#" class="nav-link">
+                                <div class="icono-menu">
+                                    <img src="img/estadisticas.svg" alt="Icono de Estadísticas" class="d-flex">
+                                </div>
+                                <span class="menu-texto">Estadísticas</span>
+                            </a>
+                        </li>
+                        <li class="menu-opcion">
+                            <a href="#" class="nav-link">
+                                <div class="icono-menu">
+                                    <img src="img/evaluaciones.svg" alt="Icono de Evaluaciones" class="d-flex">
+                                </div>
+                                <span class="menu-texto">Evaluaciones</span>
+                            </a>
+                        </li>
+                        <li class="menu-opcion">
+                            <a href="chatBot.html" class="nav-link">
+                                <div class="icono-menu">
+                                    <img src="img/chatBot.svg" alt="Icono de Chatbot" class="d-flex">
+                                </div>
+                                <span class="menu-texto">ChatBot</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div>
+                    <ul class="nav flex-column gap-2 mt-3 p-0">
+                        <li class="menu-opcion">
+                            <a href="#" class="nav-link">
+                                <div class="icono-menu">
+                                    <img src="img/notificaciones.svg" alt="" class="d-flex">
+                                </div>
+                                <span class="menu-texto">Notificaciones</span>
+                            </a>
+                        </li>
+                        <li class="menu-opcion">
+                            <a href="#" class="nav-link">
+                                <div class="icono-menu">
+                                    <img src="img/configuracion.svg" alt="" class="d-flex">
+                                </div>
+                                <span class="menu-texto">Configuración</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="menu-lateral-overlay" id="overlay"></div>
+
+    <main class="main px-md-4 pt-3">
+
+        <!--Parte superior-->
+        <section class="superior rounded-5 ps-4 d-none d-md-flex">
+            <h6 class="mb-0">Dashboard</h6>
+            <div class="position-relative">
+                <div class="perfil p-2 rounded-5 gap-lg-4 gap-md-2" id="perfilBienvenida">
+                    <h6 class="perfil-nombre text-white mb-0 ps-2" id="nombrePerfil">Josué Guinea</h6>
+                    <img src="img/user.png" alt="Icono de perfil" id="fotoPerfil">
+                </div>
+            </div>
+        </section>
+
+        <div class="contenido-principal container-fluid">
+
+            <div class="row g-4 m-0 p-0 align-items-center">
+                <!--Bienvenida-->
+                <section class="col-lg-5 col-md-6 col-sm-12">
+                    <div class="bienvenida d-flex justify-content-evenly align-items-center text-center p-3 shadow">
+                        <img class="w-50" src="img/crearTicket.png" alt="Imagen de crear Ticket">
+                        <div>
+                            <h3 class="fw-bold">¡Bienvenido!</h3>
+                            <h6 class="mb-3">¿Quieres crear un nuevo ticket?</h6>
+                            <button class="btn-oscuro border-0 px-4 py-2 fw-bold rounded-pill">Crear</button>
+                        </div>
+                    </div>
+                </section>
+
+                <!--Resumen de tickets abiertos y cerrados-->
+                <section class="col-lg-7 col-md-6 col-sm-12 m-0 px-3 px-lg-5 justify-content-center">
+                    <div class="row g-3 d-flex align-items-center justify-content-center mt-2">
+                        <div class="col-md-12 col-sm-12">
+                            <h2 class="text-center">Durante este mes:</h2>
+                        </div>
+                        <div class="col-md-6 col-sm-12">
+                            <div class="resumen-tickets shadow-sm">
+                                <h6 class="pt-2">Tickets <br> abiertos</h6>
+                                <div>
+                                    <h2 class="fw-bold pt-2" id="numTicketsAbiertos">36</h2>
+                                </div>
+                                <img src="img/ticketsAbiertos.png" alt="Tickets Abiertos" class="w-25">
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-sm-12">
+                            <div class="resumen-tickets shadow-sm">
+                                <h6 class="pt-2">Tickets <br> cerrados</h6>
+                                <div>
+                                    <h2 class="fw-bold pt-2" id="numTicketsCerrados">29</h2>
+                                </div>
+                                <img src="img/ticketsCerrados.png" alt="Tickets Cerrados" class="w-25">
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <div class="row ps-3 pb-3 mt-1 g-4 align-items-stretch">
+                <div class="col-md-5 col-sm-12">
+                    <div class="row">
+                        <!--Sección de los mejores técnicos-->
+                        <section class="col-md-12">
+                            <div class="tecnicos shadow">
+                                <div>
+                                    <h5 class="text-white fw-bold">Nuestros mejores <br> técnicos</h5>
+                                    <img src="img/subraya.png" alt="Subbraya" class="w-50">
+                                </div>
+
+                                <!--Carrusel de "Mejores técnicos"-->
+                                <div id="carruselTecnicos" class="carousel slide flex-grow-1 w-75 px-5 px-md-3 px-lg-5"
+                                    data-bs-interval="false">
+                                    <div class="carousel-inner">
+
+                                        <div class="carousel-item active">
+                                            <div class="d-flex justify-content-center py-3">
+                                                <div class="tecnico-targeta">
+                                                    <div class="num-posicion">1</div>
+                                                    <div class="avatar-box"><i class="bi bi-person-circle" id="perfilTecnico1"></i></div>
+                                                    <h5 class="tecnico-nombre" id="txtNombreTecnico1">Emerson González</h5>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="carousel-item">
+                                            <div class="d-flex justify-content-center py-3">
+                                                <div class="tecnico-targeta">
+                                                    <div class="num-posicion">2</div>
+                                                    <div class="avatar-box"><i class="bi bi-person-circle" id="perfilTecnico2"></i></div>
+                                                    <h5 class="tecnico-nombre" id="txtNombreTecnico2">Ricardo Paz</h5>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="carousel-item">
+                                            <div class="d-flex justify-content-center py-3">
+                                                <div class="tecnico-targeta">
+                                                    <div class="num-posicion">3</div>
+                                                    <div class="avatar-box"><i class="bi bi-person-circle" id="perfilTecnico3"></i></div>
+                                                    <h5 class="tecnico-nombre" id="txtNombreTecnico3">Josué Guinea</h5>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                    <button class="carousel-control-prev" type="button"
+                                        data-bs-target="#carruselTecnicos" data-bs-slide="prev" style="width: 40px;">
+                                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                        <span class="visually-hidden">Anterior</span>
+                                    </button>
+
+                                    <button class="carousel-control-next" type="button"
+                                        data-bs-target="#carruselTecnicos" data-bs-slide="next" style="width: 40px;">
+                                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                        <span class="visually-hidden">Siguiente</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                    <div class="row mt-4">
+                        <!--Grafico del tiempo de resolucion promedio-->
+                        <section class="col-md-12">
+                            <div class="d-flex flex-column align-items-center text-center bg-white rounded-5 p-4 shadow">
+                                <h4>Tiempo de resolución</h4>
+                                <div style="position: relative; width: 100%; height: 300px;">
+                                    <canvas id="graficoResolucion"></canvas>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+
+                <!--Sección de "Mi resumen"-->
+                <section class="col-md-7 d-flex justify-content-center px-4">
+                    <div class="mi-resumen flex-column h-100 w-100 shadow">
+                        <div class="cabecera">
+                            <img src="img/mi-resumen.png" alt="Resumen">
+                            <h3 class="pt-1">Mi resumen</h3>
+                        </div>
+                        <!--Botones de la sección de "Mi resumen"-->
+                        <div class="p-3">
+                            <div class="row g-3 justify-content-center" id="botones-resumen">
+                                <div class="col-md-4 col-sm-12">
+                                    <button type="button"
+                                        class="btn btn-resumen d-flex align-items-center justify-content-between px-3 px-md-1 px-lg-3 py-2 rounded-4 activo"
+                                        data-opcion="pendientes">
+                                        <span class="opcion-texto text-start">Pendientes</span>
+                                        <span class="opcion-numero" id="num-pendientes">7</span>
+                                    </button>
+                                </div>
+
+                                <div class="col-md-4 col-sm-12">
+                                    <button type="button"
+                                        class="btn btn-resumen d-flex align-items-center justify-content-between px-3 py-2 rounded-4"
+                                        data-opcion="vencidos">
+                                        <span class="opcion-texto text-start">Vencidos</span>
+                                        <span class="opcion-numero" id="num-vencidas">2</span>
+                                    </button>
+                                </div>
+
+                                <div class="col-md-4 col-sm-12">
+                                    <button type="button"
+                                        class="btn btn-resumen d-flex align-items-center justify-content-between px-3 py-2 rounded-4"
+                                        data-opcion="hoy">
+                                        <span class="opcion-texto text-start">Vencen hoy</span>
+                                        <span class="opcion-numero" id="num-hoy">5</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <!--Sección de Tickets-->
+                        <div class="contenedor-tickets-scroll p-3 mx-3">
+                            <!-- Ticket 1 -->
+                            <div
+                                class="ticket-item border-start-critical p-3 mb-3 rounded-3 shadow-sm d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h6 class="fw-bold mb-1"><i class="bi bi-ticket-perforated text-danger me-2"></i>Computadora no
+                                        enciende</h6>
+                                    <small class="text-muted d-block">#274261</small>
+                                    <small class="text-muted d-block mt-1"><b>Estado:</b> Pendiente</small>
+                                    <small class="text-muted d-block"><b>Vence:</b> 10/5/2026 12:30</small>
+                                    <small class="text-muted d-block mt-1"><b>Descripción:</b> Es la computadora del
+                                        docente, se encuentra conectada...</small>
+                                </div>
+                                <span class="badge bg-danger-light text-danger rounded-pill px-3 py-2">Crítica</span>
+                            </div>
+
+                            <!-- Ticket 2 -->
+                            <div
+                                class="ticket-item border-start-high p-3 mb-3 rounded-3 shadow-sm d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h6 class="fw-bold mb-1"><i
+                                            class="bi bi-ticket-perforated text-warning me-2"></i>Extintor
+                                        descargado
+                                    </h6>
+                                    <small class="text-muted d-block">#274261</small>
+                                    <small class="text-muted d-block mt-1"><b>Estado:</b> Pendiente</small>
+                                    <small class="text-muted d-block"><b>Vence:</b> 10/5/2026 12:30</small>
+                                    <small class="text-muted d-block mt-1"><b>Descripción:</b> El extintor fue usado y
+                                        se
+                                        vació todo...</small>
+                                </div>
+                                <span class="badge bg-warning-light text-warning rounded-pill px-3 py-2">Alta</span>
+                            </div>
+
+                            <!-- Ticket 3 -->
+                            <div
+                                class="ticket-item border-start-medium p-3 mb-3 rounded-3 shadow-sm d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h6 class="fw-bold mb-1"><i
+                                            class="bi bi-ticket-perforated text-warning me-2"></i>Impresora
+                                        del
+                                        librero fallando</h6>
+                                    <small class="text-muted d-block">#274261</small>
+                                    <small class="text-muted d-block mt-1"><b>Estado:</b> Pendiente</small>
+                                    <small class="text-muted d-block"><b>Vence:</b> 10/5/2026 12:30</small>
+                                    <small class="text-muted d-block mt-1"><b>Descripción:</b> La impresora no imprime
+                                        correctamente...</small>
+                                </div>
+                                <span
+                                    class="badge bg-warning-light-2 text-warning rounded-pill px-3 py-2">Media</span>
+                            </div>
+
+                            <!-- Ticket 4 -->
+                            <div
+                                class="ticket-item border-start-low p-3 mb-3 rounded-3 shadow-sm d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h6 class="fw-bold mb-1"><i
+                                            class="bi bi-ticket-perforated text-success me-2"></i>Lampara de
+                                        pasillo quemada</h6>
+                                    <small class="text-muted d-block">#274261</small>
+                                    <small class="text-muted d-block mt-1"><b>Estado:</b> Pendiente</small>
+                                    <small class="text-muted d-block"><b>Vence:</b> 10/5/2026 12:30</small>
+                                    <small class="text-muted d-block mt-1"><b>Descripción:</b> La lampara del pasillo se
+                                        fundió...</small>
+                                </div>
+                                <span class="badge bg-success-light text-success rounded-pill px-3 py-2">Baja</span>
+                            </div>
+
+                            <!-- Ticket 5 -->
+                            <div
+                                class="ticket-item border-start-critical p-3 mb-3 rounded-3 shadow-sm d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h6 class="fw-bold mb-1"><i class="bi bi-ticket-perforated text-danger me-2"></i>Computadora no
+                                        enciende</h6>
+                                    <small class="text-muted d-block">#274261</small>
+                                    <small class="text-muted d-block mt-1"><b>Estado:</b> Pendiente</small>
+                                    <small class="text-muted d-block"><b>Vence:</b> 10/5/2026 12:30</small>
+                                    <small class="text-muted d-block mt-1"><b>Descripción:</b> Es la computadora del
+                                        docente, se encuentra conectada...</small>
+                                </div>
+                                <span class="badge bg-danger-light text-danger rounded-pill px-3 py-2">Crítica</span>
+                            </div>
+
+                            <!-- Ticket 6 -->
+                            <div
+                                class="ticket-item border-start-high p-3 mb-3 rounded-3 shadow-sm d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h6 class="fw-bold mb-1"><i
+                                            class="bi bi-ticket-perforated text-warning me-2"></i>Extintor
+                                        descargado
+                                    </h6>
+                                    <small class="text-muted d-block">#274261</small>
+                                    <small class="text-muted d-block mt-1"><b>Estado:</b> Pendiente</small>
+                                    <small class="text-muted d-block"><b>Vence:</b> 10/5/2026 12:30</small>
+                                    <small class="text-muted d-block mt-1"><b>Descripción:</b> El extintor fue usado y
+                                        se
+                                        vació todo...</small>
+                                </div>
+                                <span class="badge bg-warning-light text-warning rounded-pill px-3 py-2">Alta</span>
+                            </div>
+
+                            <!-- Ticket 7 -->
+                            <div
+                                class="ticket-item border-start-medium p-3 mb-3 rounded-3 shadow-sm d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h6 class="fw-bold mb-1"><i
+                                            class="bi bi-ticket-perforated text-warning me-2"></i>Impresora
+                                        del
+                                        librero fallando</h6>
+                                    <small class="text-muted d-block">#274261</small>
+                                    <small class="text-muted d-block mt-1"><b>Estado:</b> Pendiente</small>
+                                    <small class="text-muted d-block"><b>Vence:</b> 10/5/2026 12:30</small>
+                                    <small class="text-muted d-block mt-1"><b>Descripción:</b> La impresora no imprime
+                                        correctamente...</small>
+                                </div>
+                                <span
+                                    class="badge bg-warning-light-2 text-warning rounded-pill px-3 py-2">Media</span>
+                            </div>
+
+                            <!-- Ticket 8 -->
+                            <div
+                                class="ticket-item border-start-low p-3 mb-0 rounded-3 shadow-sm d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h6 class="fw-bold mb-1"><i
+                                            class="bi bi-ticket-perforated text-success me-2"></i>Lampara de
+                                        pasillo quemada</h6>
+                                    <small class="text-muted d-block">#274261</small>
+                                    <small class="text-muted d-block mt-1"><b>Estado:</b> Pendiente</small>
+                                    <small class="text-muted d-block"><b>Vence:</b> 10/5/2026 12:30</small>
+                                    <small class="text-muted d-block mt-1"><b>Descripción:</b> La lampara del pasillo se
+                                        fundió...</small>
+                                </div>
+                                <span class="badge bg-success-light text-success rounded-pill px-3 py-2">Baja</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <div class="row mt-3 px-4">
+                <!--Sección de alertas de insatisfacción-->
+                <section class="col">
+                    <div class="mi-resumen pb-1 flex-column shadow">
+                        <div class="cabecera">
+                            <h4 class="pt-1">Alertas de insatisfacción</h4>
+                        </div>
+                        <div class="px-md-5 px-2 py-3">
+                            <div class="table-responsive tabla-alertas">
+                                <table class="table table-bordered table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Código</th>
+                                            <th>Usuario</th>
+                                            <th>Técnico</th>
+                                            <th>Comentario</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>#26859489</td>
+                                            <td>Ricardo Paz</td>
+                                            <td>roberto_hernandez@ricaldone.edu.sv</td>
+                                            <td>El problema persiste, no se le dio solución.</td>
+                                        </tr>
+                                        <tr>
+                                            <td>#26859490</td>
+                                            <td>Emerson Gonzales</td>
+                                            <td>alejandro_ayala@ricaldone.edu.sv</td>
+                                            <td>Se tardo demasiado en atenderme teniendo en cuenta la gravedad del
+                                                problema.</td>
+                                        </tr>
+                                        <tr>
+                                            <td>#26859491</td>
+                                            <td>Josué Guinea</td>
+                                            <td>douglas_arauz@ricaldone.edu.sv</td>
+                                            <td>Hubo poco interés de su parte y no dio una buena solución.</td>
+                                        </tr>
+                                        <tr>
+                                            <td>#26859492</td>
+                                            <td>Wilfredo. R</td>
+                                            <td>gerardo_flores@ricaldone.edu.sv</td>
+                                            <td>No resolvió el problema.</td>
+                                        </tr>
+                                        <tr>
+                                            <td>#26782738</td>
+                                            <td>Mirna Espinoza</td>
+                                            <td>oscar_flores@ricaldone.edu.sv</td>
+                                            <td>No completó el trabajo y todavía no funciona correctamente.</td>
+                                        </tr>
+                                        <tr>
+                                            <td>#26859489</td>
+                                            <td>Ricardo Paz</td>
+                                            <td>roberto_hernandez@ricaldone.edu.sv</td>
+                                            <td>El problema persiste, no se le dio solución.</td>
+                                        </tr>
+                                        <tr>
+                                            <td>#26859489</td>
+                                            <td>Ricardo Paz</td>
+                                            <td>roberto_hernandez@ricaldone.edu.sv</td>
+                                            <td>El problema persiste, no se le dio solución.</td>
+                                        </tr>
+                                        <tr>
+                                            <td>#26859490</td>
+                                            <td>Emerson Gonzales</td>
+                                            <td>alejandro_ayala@ricaldone.edu.sv</td>
+                                            <td>Se tardo demasiado en atenderme teniendo en cuenta la gravedad del
+                                                problema.</td>
+                                        </tr>
+                                        <tr>
+                                            <td>#26859491</td>
+                                            <td>Josué Guinea</td>
+                                            <td>douglas_arauz@ricaldone.edu.sv</td>
+                                            <td>Hubo poco interés de su parte y no dio una buena solución.</td>
+                                        </tr>
+                                        <tr>
+                                            <td>#26859489</td>
+                                            <td>Ricardo Paz</td>
+                                            <td>roberto_hernandez@ricaldone.edu.sv</td>
+                                            <td>El problema persiste, no se le dio solución.</td>
+                                        </tr>
+                                        <tr>
+                                            <td>#26859489</td>
+                                            <td>Ricardo Paz</td>
+                                            <td>roberto_hernandez@ricaldone.edu.sv</td>
+                                            <td>El problema persiste, no se le dio solución.</td>
+                                        </tr>
+                                        <tr>
+                                            <td>#26859490</td>
+                                            <td>Emerson Gonzales</td>
+                                            <td>alejandro_ayala@ricaldone.edu.sv</td>
+                                            <td>Se tardo demasiado en atenderme teniendo en cuenta la gravedad del
+                                                problema.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+        </div>
+
+
+        </div>
+
+    </main>
+
+    <!--Bootstrap-->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!--Libreria para los graficos-->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!--Links del script-->
+    <script src="js/components/menu.js"></script>
+    <script src="js/controllers/dashboardAdmin.js"></script>
+
+</body>
+
+</html>
