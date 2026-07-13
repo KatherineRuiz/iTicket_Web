@@ -1,0 +1,328 @@
+:root {
+    --fondo-oscuro: #121F48;
+    --acento-celeste: #539ECD;
+    --aprobaciones-celeste: #BDDCE8;
+    --panel-fondo: #F4F4F4;
+    --modal-fondo: #EAF7FF;
+}
+
+body {
+   background-color: #ffffff;
+    margin: 0;
+    padding: 0;
+}
+
+.contenedor-scroll-vertical-indicadores {
+    width: 75%;
+    max-height: 380px;         
+    overflow-y: auto;          
+    overflow-x: hidden;        
+    padding-top: 25px ; 
+    padding-bottom: 15px ;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+
+.tarjeta-indicador-vertical {
+    background-color: #ffffff;
+    border: 1.5px solid #f1f5f9 ; 
+    border-radius: 28px ; 
+    padding: 35px 15px 20px 15px ;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.02) ;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.icono-tarjeta-flotante {
+    position: absolute;
+    top: -24px;              
+    left: 50%;
+    transform: translateX(-50%);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;     
+    height: 35px;
+    background-color: var(--acento-celeste); 
+    border-radius: 14px ;       
+    box-shadow: 0 6px 12px rgba(84, 156, 211, 0.25);
+    z-index: 10;
+}
+
+
+.icono-tarjeta-flotante img {
+    width: 34px;
+    height: 34px;
+    object-fit: contain;
+    filter: brightness(0) invert(1); 
+}
+
+
+.text-navy-titulo {
+    color: #1e3a8a; 
+    font-size: 0.88rem;
+    margin-top: 5px;
+}
+
+.text-navy-numero {
+    color: #0f172a;
+    font-size: 2.4rem;
+    font-weight: 700;
+}
+
+/* Panel Derecho: Aprobaciones */
+    .item-ticket-aprobacion {
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.item-ticket-aprobacion:hover {
+    transform: translateY(-3px); /* Eleva el ticket sutilmente hacia arriba */
+    box-shadow: 0 6px 15px rgba(3, 4, 94, 0.12); /* Añade una sombra suave con tono navy */
+}
+
+
+.tarjeta-aprobaciones-pendientes {
+    background-color: #ffffff; 
+    border-bottom: 3px solid darkgray; 
+    border-radius: 35px;
+    margin-left: -85px;
+}
+
+.encabezado-aprobaciones {
+    background-color: var(--aprobaciones-celeste) ; 
+    color: var(--fondo-oscuro) ;            
+    border: 3px solid var(--aprobaciones-celeste);  
+    border-bottom: none ;        
+    border-top-left-radius: 32px ;  
+    border-top-right-radius: 32px ;
+}
+
+.borde-lateral-azul{
+    border-left: 5px solid var(--acento-celeste);
+}
+
+/* scroll interno */
+.scroll-interno-aprobaciones {
+    max-height: 280px;
+}
+
+
+.item-ticket-aprobacion {
+    border-left: 4px solid var(--acento-celeste); 
+    border-right: 2px solid var(--acento-celeste);
+    border-radius: 16px;         
+}
+
+.text-info-custom {
+    color: #60a5fa !important;
+}
+
+.text-muted-custom {
+    color: #8b96a5 !important;
+}
+
+.text-mini {
+    font-size: 0.78rem !important;
+}
+
+/* Personalización fina de la barra de desplazamiento */
+.scroll-interno-aprobaciones::-webkit-scrollbar {
+    width: 5px;
+}
+.scroll-interno-aprobaciones::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+}
+
+/* Módulo de Tabla */
+.contenedor-tabla-modulo {
+    border-radius: 28px !important;
+}
+
+.tabla-tickets {
+    background-color: var(--acento-celeste);
+    border-radius: 20px 20px 0 0;
+}
+.truncate-celda { max-width: 100px; }
+.truncate-celda-lg { max-width: 150px; }
+
+.tabla-tickets-gestion th {
+    font-size: 0.85rem;
+    font-weight: 700;
+    padding: 14px;
+}
+.tabla-tickets-gestion td {
+    padding: 16px 12px;
+    font-size: 0.85rem;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.contenedor-scroll-vertical-indicadores::-webkit-scrollbar {
+    width: 0px;
+}
+.contenedor-scroll-v-indicadores::-webkit-scrollbar-thumb,
+.scroll-interno-aprobaciones::-webkit-scrollbar-thumb {
+    background-color: #cbd5e1;
+    border-radius: 20px;
+}
+.input-buscar-container {
+    width: 280px; /
+}
+.icono-buscar-custom {
+    width: 18px;                 
+    height: 18px;
+    object-fit: contain;
+    margin-right: 14px;          
+    pointer-events: none;       
+}
+.panel-fondo{
+    background-color: var(--panel-fondo);
+}
+
+/* Modal de aprobaciones */
+.container-modal-aprobacion-custom {
+    max-width: 1020px !important;
+    width: 100% !important;
+}
+.contenedor-modal-borde {
+    border: none !important;
+    background-color: #f7fbfe !important;
+}
+.encabezado-Modal{
+    background-color: var(--acento-celeste  );
+}
+
+/* Tipografías y textos superiores */
+.text-navy {
+    color: #03045E !important;
+    font-size: 1.1rem;
+}
+.img-usuario-modal {
+    max-width: 20px;
+    height: auto;
+}
+.text-muted-id {
+    color: #a0aec0;
+    font-size: 0.85rem;
+    padding-left: 32px;
+}
+.meta-ticket-texto {
+    color: #4a5568 !important;
+    font-size: 0.95rem;
+    line-height: 1.45;
+}
+
+/* Mazo de evidencias del lado derecho */
+.contenedor-evidencias-vertical {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex-shrink: 0 !important;
+    /* Ajustamos el ancho del bloque completo para darle espacio a la nueva imagen */
+    width: 200px !important; 
+}
+.tarjeta-foto-evidencia {
+    width: 190px !important;       /* Tamaño más grande y visible */
+    height: 130px !important;      /* Proporción limpia */
+    border-radius: 12px !important; /* Bordes redondeados más suaves para el tamaño */
+    overflow: hidden !important;
+    border: 2px solid #cbd5e1 !important; /* Borde fino sutil */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important; /* Sombra suave */
+}
+.tarjeta-foto-evidencia img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important; /* Mantiene la proporción sin deformarse */
+}
+.posicion-contador {
+    position: relative;
+}
+.mascara-contador {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+    color: #ffffff;
+    font-weight: bold;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Alineación de la sección inferior */
+.seccion-controles-y-botones {
+    width: 100%;
+    gap: 24px;
+}
+.formulario-modal-flujo {
+    flex: 1;
+}
+
+/* Fila de controles: etiqueta a la izquierda, input a la derecha */
+.fila-control-modal {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+.label-modal-maqueta {
+    width: 190px;
+    color: #1a202c;
+    font-size: 1.15rem;
+    font-weight: 500;
+    flex-shrink: 0;
+}
+
+/* Envolturas para selectores e inputs en cápsula */
+.select-wrapper-capsula, .input-wrapper-calendario {
+    position: relative;
+    flex: 1;
+    max-width: 400px;
+}
+
+/* Selectores y cajas ovaladas */
+.selector-modal-ovalado, .input-modal-ovalado {
+    width: 100% !important;
+    height: 50px !important;
+    border: none !important;
+    background-color: #e6f4ff !important;
+    border-radius: 50px !important;
+    padding-left: 20px !important;
+    font-size: 0.95rem !important;
+    color: #4a5568 !important;
+}
+
+/* Ícono de calendario en fecha */
+.icono-calendario-posicionado {
+    position: absolute;
+    right: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #a0aec0;
+    pointer-events: none;
+    font-size: 1rem;
+}
+
+/* Bloque de botones laterales grandes */
+.grupo-botones-verticales-maqueta {
+    display: flex;
+    flex-direction: column;
+    width: 160px;
+    flex-shrink: 0;
+}
+.boton-accion-pildora {
+    width: 100% !important;
+    height: 48px !important;
+    border-radius: 50px !important;
+    font-size: 1rem !important;
+    font-weight: bold !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+.icono-boton-ticket {
+    width: 50px;
+    height: auto;
+}

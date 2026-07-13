@@ -1,0 +1,238 @@
+:root {
+  --fondo-oscuro: #121f48;
+  --accent-celeste: #539ecd;
+  --modal-fondo: #eaf7ff;
+  --panel-fondo: #f4f4f4;
+  --borde-critica: #ff8484;
+}
+.contenedor-lista-tickets
+body {
+  background-color: #ffffff;
+  margin: 0;
+  padding: 0;
+}
+/* Contenido de Mis Tickets */
+/* Botón Principal (Crear Ticket) */
+.btn-personalizado-primario {
+  background-color: var(--accent-celeste);
+  border: none;
+  transition: all 0.3s ease;
+}
+
+.btn-personalizado-primario:hover {
+  background-color: var(--accent-celeste);
+  transform: translateY(-2px);
+}
+
+/* Scroll horizontal */
+.contenedor-scroll-horizontal {
+  width: 100%;
+  overflow-x: auto; /* Habilita el scroll horizontal */
+  overflow-y: hidden;
+  padding-top: 25px !important;
+  padding-bottom: 15px !important;
+  -webkit-overflow-scrolling: touch; /* Scroll suave en iOS */
+}
+
+/* Oculta la barra de desplazamiento visualmente para mantener estética */
+/* .contenedor-scroll-horizontal::-webkit-scrollbar {
+    display: none;
+} */
+
+.fila-indicadores {
+  display: flex;
+  flex-wrap: nowrap; /* Evita que las tarjetas salten de línea */
+  gap: 1.5rem; /* Separación uniforme */
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+/* Tarjetas de Indicadores estables */
+.tarjeta-indicator,
+.tarjeta-indicador {
+  flex: 0 0 240px; /* Tamaño base fijo para cada tarjeta en el scroll */
+  background-color: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+  border: 1px solid #f0f0f0;
+  position: relative;
+  padding-top: 35px !important;
+  height: 130px !important;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* Soporte adaptativo para pantallas gigantes */
+@media (min-width: 1200px) {
+  .fila-indicadores {
+    display: flex;
+    flex-wrap: nowrap; /* obliga a que se mantenga en una sola línea */
+    justify-content: flex-start;
+  }
+  .tarjeta-indicador {
+    flex: 0 0 240px;
+  }
+}
+
+/* Iconos sobre las tarjetas flotantes */
+.icono-tarjeta {
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 35px;
+  background-color: var(--accent-celeste);
+  color: #ffffff;
+  border-radius: 12px;
+  font-size: 1.2rem;
+  box-shadow: 0 4px 8px rgba(83, 158, 205, 0.4);
+  z-index: 2;
+}
+
+.icono-tarjeta img {
+  width: 42px;
+  height: 42px;
+  object-fit: contain;
+  padding: 4px;
+}
+
+/* Estilos de Contenedores de la Lista */
+.tarjeta-azul-encabezado,
+.fondo-encabezado {
+  background-color: var(--accent-celeste);
+  position: relative;
+  z-index: 2;
+  border-radius: 20px 20px 0 0;
+}
+
+.contenedor-lista-tickets {
+  margin-top: -30px;
+  max-height: 520px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  z-index: 1;
+  position: relative;
+  padding: 15px !important;
+}
+
+.contenedor-lista-tickets::-webkit-scrollbar {
+  width: 6px; /* Barra delgada */
+}
+
+.contenedor-lista-tickets::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 10px;
+}
+
+.contenedor-lista-tickets::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Elementos de la lista de Tickets */
+.elemento-ticket {
+  background-color: #ffffff;
+  border: 1px solid #eef2f5;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.elemento-ticket:hover {
+  transform: scale(1.01);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Colores de Borde Lateral (Prioridades) */
+.borde-lateral-critica {
+  border-left: 6px solid var(--borde-critica) !important;
+}
+
+.borde-lateral-alta {
+  border-left: 6px solid #ffbc66 !important;
+}
+
+.borde-lateral-media {
+  border-left: 6px solid #ffe173 !important;
+}
+
+.borde-lateral-baja {
+  border-left: 6px solid #b2f5b2 !important;
+}
+
+/* Fondos Suaves de Prioridades */
+.fondo-peligro-suave {
+  background-color: #ffcccc;
+}
+
+.fondo-advertencia-suave {
+  background-color: #ffdeb3;
+}
+
+.fondo-advertencia-suave-2 {
+  background-color: #ffefb3;
+}
+
+.texto-advertencia-oscuro {
+  color: #d49a00;
+}
+
+.fondo-exito-suave {
+  background-color: #d6fbd6;
+}
+
+/* Caja de Evaluaciones Lateral */
+.alerta-evaluacion {
+  background: linear-gradient(180deg, #f8fbff, #eaf3fa);
+  border: 1px solid #d4e8f7;
+}
+/* --- Calificación por estrellas --- */
+.estrellas-rating {
+  gap: 5px;
+}
+
+/* Oculta los circulos de selleción de estrellas */
+.estrellas-rating input {
+  display: none;
+}
+
+/* Vista de las estrellas no seleccionadas */
+.estrellas-rating label {
+  font-size: 2.2rem;
+  color: #e2e8f0; /* Gris suave */
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+/* Vista de estrellas seleccionadas y las que esten antes */
+.estrellas-rating input:checked ~ label {
+  color: #ffca28; /* Amarillo brillante */
+}
+
+/* se iluminan las estrellas al pasar el mouse*/
+.estrellas-rating label:hover,
+.estrellas-rating label:hover ~ label,
+.estrellas-rating input:checked ~ label:hover,
+.estrellas-rating input:checked ~ label:hover ~ label {
+  color: #ffb300;
+}
+
+/* En la parte de comentario, solo debe verse la linea inferior*/
+.input-comentario {
+  border: none !important;
+  border-bottom: 2px solid #cbd5e1 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  font-size: 1.1rem;
+}
+
+.input-comentario:focus {
+  border-bottom-color: #3b82f6 !important;
+}
+.modal-content {
+  background-color: var(--modal-fondo);
+}

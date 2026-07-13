@@ -1,0 +1,45 @@
+:root {
+    --bg-dark: #121F48;
+    --accent-celeste: #539ECD;
+    --borde-critica: #ff8484;
+}
+
+body {
+    background-color: #ffffff;
+    margin: 0;
+    padding: 0;
+}
+.encabezado-tickets-asignados{
+    background-color: var(--accent-celeste);
+    z-index: 2;
+    position: relative;
+    border-radius: 20px 20px 0 0 ;
+}
+
+.input-buscar{
+    width: 297px;
+}
+
+
+.lista-tickets-asignados {
+    position: relative;
+    cursor: pointer;
+}
+.lista-tickets-asignados:hover{
+    transform: scale(1.01);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+}
+
+.lista-tickets-asignados .badge.fondo-critica {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    height: auto;
+    width: auto;
+    background-color: var(--borde-critica);
+    display: inline-block;
+}
+
+.borde-critica{
+    border-left: 4px solid var(--borde-critica);
+}
