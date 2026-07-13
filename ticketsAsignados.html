@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tickets Asignados</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/dashboard.css" />
+    <link rel="stylesheet" href="css/ticketsAsignados.css" />
+  </head>
+  <body>
+    <!-- Navbar vertical -->
+    <header>
+      <nav class="menu-lateral" id="menuLateral">
+        <div class="menu-lateral-header text-white">
+          <button
+            class="btn text-white p-0 fs-3 d-flex align-items-center justify-content-center"
+            id="btnMenu"
+            type="button"
+            style="width: 40px; height: 40px"
+          >
+            <i class="bi bi-list"></i>
+          </button>
+
+          <img src="img/logo.png" alt="logo" class="menu-lateral-logo" />
+        </div>
+
+        <div class="d-none d-md-flex justify-content-center">
+          <hr class="linea-divisora border border-light-subtle opacity-50" />
+        </div>
+
+        <div
+          class="menu-lateral-cuerpo d-flex flex-column flex-grow-1 justify-content-between"
+        >
+          <div>
+            <ul class="nav flex-column gap-2 p-0">
+              <li class="menu-opcion">
+                <a href="dashboardAdmin.html" class="nav-link">
+                  <div class="icono-menu">
+                    <img src="img/inicio.svg" alt="Icono de Inicio" />
+                  </div>
+                  <span class="menu-texto">Inicio</span>
+                </a>
+              </li>
+              <li class="menu-opcion activo" id="ticketsMenu">
+                <a class="nav-link" id="btnTickets">
+                  <div class="icono-menu">
+                    <img src="img/tickets.svg" alt="Incono de Tickets" />
+                  </div>
+                  <span class="menu-texto">Tickets</span>
+                  <i class="bi bi-chevron-down icono-flecha"></i>
+                </a>
+                <ul class="submenu">
+                  <li>
+                    <a href="misTickets.html"
+                      ><span class="menu-texto">Mis Tickets</span></a
+                    >
+                  </li>
+                  <li>
+                    <a href="gestionTickets.html"
+                      ><span class="menu-texto">Gestionar Tickets</span></a
+                    >
+                  </li>
+                  <li>
+                    <a href="#"
+                      ><span class="menu-texto">Tickets Asignados</span></a
+                    >
+                  </li>
+                </ul>
+              </li>
+              <li class="menu-opcion" id="equiposMenu">
+                <a class="nav-link" id="btnEquipos">
+                  <div class="icono-menu">
+                    <img src="img/equipos.svg" alt="Icono de Equipos" />
+                  </div>
+                  <span class="menu-texto">Equipos</span>
+                  <i class="bi bi-chevron-down icono-flecha"></i>
+                </a>
+                <ul class="submenu">
+                  <li>
+                    <a href="#" class="menu-texto">Equipo y Mobiliario</a>
+                  </li>
+                  <li><a href="#" class="menu-texto">Ubicaciones</a></li>
+                </ul>
+              </li>
+              <li class="menu-opcion">
+                <a href="#" class="nav-link">
+                  <div class="icono-menu">
+                    <img
+                      src="img/usuarios.svg"
+                      alt="Icono de Usuarios"
+                      class="d-flex"
+                    />
+                  </div>
+                  <span class="menu-texto">Usuarios</span>
+                </a>
+              </li>
+              <li class="menu-opcion">
+                <a href="#" class="nav-link">
+                  <div class="icono-menu">
+                    <img
+                      src="img/estadisticas.svg"
+                      alt="Icono de Estadísticas"
+                      class="d-flex"
+                    />
+                  </div>
+                  <span class="menu-texto">Estadísticas</span>
+                </a>
+              </li>
+              <li class="menu-opcion">
+                <a href="#" class="nav-link">
+                  <div class="icono-menu">
+                    <img
+                      src="img/evaluaciones.svg"
+                      alt="Icono de Evaluaciones"
+                      class="d-flex"
+                    />
+                  </div>
+                  <span class="menu-texto">Evaluaciones</span>
+                </a>
+              </li>
+              <li class="menu-opcion">
+                <a href="chatBot.html" class="nav-link">
+                  <div class="icono-menu">
+                    <img
+                      src="img/chatBot.svg"
+                      alt="Icono de Chatbot"
+                      class="d-flex"
+                    />
+                  </div>
+                  <span class="menu-texto">ChatBot</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <ul class="nav flex-column gap-2 mt-3 p-0">
+              <li class="menu-opcion">
+                <a href="#" class="nav-link">
+                  <div class="icono-menu">
+                    <img src="img/notificaciones.svg" alt="" class="d-flex" />
+                  </div>
+                  <span class="menu-texto">Notificaciones</span>
+                </a>
+              </li>
+              <li class="menu-opcion">
+                <a href="#" class="nav-link">
+                  <div class="icono-menu">
+                    <img src="img/configuracion.svg" alt="" class="d-flex" />
+                  </div>
+                  <span class="menu-texto">Configuración</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </header>
+    <div class="menu-lateral-overlay" id="overlay"></div>
+
+    <main class="main px-md-4 pt-3">
+      <!--Parte superior-->
+      <section class="superior rounded-5 ps-4 d-none d-md-flex">
+        <a
+          href="dashboardAdmin.html"
+          class="mb-0 text-dark fw-bold"
+          style="text-decoration: none"
+          >Volver</a
+        >
+        <div class="position-relative">
+          <div
+            class="perfil p-2 rounded-5 gap-lg-2 gap-md-2"
+            id="perfilBienvenida"
+          >
+            <h6 class="perfil-nombre text-white mb-0 ps-1" id="nombrePerfil">
+              Tickets Asignados
+            </h6>
+            <img src="img/user.png" alt="Icono de perfil" id="fotoPerfil" />
+          </div>
+        </div>
+      </section>
+
+      <!-- Contenido de Tickets Asignados -->
+      <div class="contenido-principal ps-4 pe-4 rounded-5">
+        <div style="max-width: 1000px">
+          <div
+            class="encabezado-tickets-asignados text-white p-4 mb-3 d-flex justify-content-between align-items-center"
+          >
+            <h4 class="fw-bold fs-2 mb-2 ps-5">Tickets asignados</h4>
+            <div>
+              <div class="position-relative input-buscar">
+                <input
+                  id="nombreTicketAsignado"
+                  type="text"
+                  class="form-control rounded-pill mb-2"
+                  style="width: 300px"
+                  placeholder="Ingresa el código o título de tu ticket"
+                />
+                <button
+                  id="buscarTicketNombre"
+                  class="text-muted rounded-pill position-absolute end-0 top-50 translate-middle-y border-0 bg-white pe-2"
+                >
+                  <i class="bi bi-search"></i>
+                </button>
+              </div>
+
+              <div class="input-group gap-2">
+                <select
+                  id="prioridadTicketAsignado"
+                  class="form-control rounded-pill text-muted"
+                >
+                  <option>Prioridad</option>
+                  <option value="1">Baja</option>
+                  <option value="2">Media</option>
+                  <option value="3">Alta</option>
+                  <option value="4">Crítica</option>
+                </select>
+                <input
+                  type="date"
+                  id="fechaTicketAsignado"
+                  class="form-control rounded-pill text-muted"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="lista-tickets-asignados bg-white borde-critica rounded-3 p-3 d-flex justify-content-between">
+            <div class="ms-2 ps-3 elemento-ticket-asignado">
+              <h6 class="fw-bold mb-1 fs-5">
+                <i class="bi bi-ticket-perforated text-danger  me-2"></i>Computadora no
+                enciende
+              </h6>
+              <small class="text-muted d-block">#274261</small>
+              <small class="text-muted d-block mt-1"
+                ><b>Usuario:</b> Josué Guinea</small
+              >
+              <small class="text-muted d-block"
+                ><b>Vence:</b> 10/5/2026 12:30</small
+              >
+              <small class="text-muted d-block mt-1"
+                ><b>Descripción:</b> Es la computadora del docente, se encuentra
+                conectada...</small
+              >
+            </div>
+            <span class="badge rounded-pill text-danger fondo-critica px-3 py-2"
+              >Crítica</span
+            >
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- JS de Bootstrap -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Mi JS Personalizado -->
+    <script src="js/components/menu.js"></script>
+    <script src="js/controllers/ticketsAsignados.js"></script>
+  </body>
+</html>

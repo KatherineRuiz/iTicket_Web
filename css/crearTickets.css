@@ -1,0 +1,70 @@
+:root {
+    --bg-dark: #121F48;
+    --accent-celeste: #539ECD;
+    --sidebar-width-full: 260px;
+    --sidebar-width-collapsed: 85px;
+}
+
+body {
+    background-color: #ffffff;
+    margin: 0;
+    padding: 0;
+}
+
+/* Creacion de Tikcets */
+/* Cartas de seleccion de categorias */
+.card-categoria {
+    display: flex !important;
+    flex-direction: column !important;   
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    background-color: #ffffff !important;
+    border: 2px solid #b2d4eb !important; 
+    border-radius: 20px !important;
+    cursor: pointer;
+    flex: 1 1 0px !important;
+    min-width: 240px;
+    min-height: 160px !important;
+    padding: 1.5rem !important;
+    transition: all 0.25s ease-in-out;
+}
+
+.card-categoria:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Muestra que tarjeta es seleccionada */
+.card-categoria.active-card {
+    background-color: #EEF6FC !important; 
+    border-color: #539ECD !important;
+}
+
+/* Es para que las imágenes dentro de las tarjetas no se desborden */
+.card-categoria img {
+    height: 75px !important;
+    width: auto !important;
+    object-fit: contain !important;
+    margin-bottom: 12px !important;
+    display: inline-block !important;
+}
+
+.card-categoria span {
+    font-size: 1.1rem !important; /* Aumenta un poco el tamaño del texto de las tarjetas*/
+}
+
+.campo-dinamico {
+    display: none !important; 
+}
+
+.campo-dinamico.mostrar {
+    display: block !important;
+}
+
+.text-navy {
+    color: #1e3a5f !important;
+}
+.bg-blue-light {
+    background-color: #f8fbfd !important;
+}

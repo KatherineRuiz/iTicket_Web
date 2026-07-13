@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Tickets</title>
+    <link rel="shortcut icon" href="/img/logo.png" type="image/x-icon">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/gestionTickets.css">
+
+
+</head>
+
+<body>
+    <!-- Navbar vertical -->
+<header>
+        <nav class="menu-lateral" id="menuLateral">
+            <div class="menu-lateral-header text-white">
+
+                <button class="btn text-white p-0 fs-3 d-flex align-items-center justify-content-center" id="btnMenu"
+                    type="button" style="width: 40px; height: 40px;">
+                    <i class="bi bi-list"></i>
+                </button>
+
+                <img src="img/logo.png" alt="logo" class="menu-lateral-logo">
+
+            </div>
+
+            <div class="d-none d-md-flex justify-content-center">
+                <hr class="linea-divisora border border-light-subtle opacity-50">
+            </div>
+
+            <div class="menu-lateral-cuerpo d-flex flex-column flex-grow-1 justify-content-between">
+                <div>
+                    <ul class="nav flex-column gap-2 p-0">
+                        <li class="menu-opcion">
+                            <a href="dashboardTecnicos.html" class="nav-link">
+                                <div class="icono-menu">
+                                    <img src="img/inicio.svg" alt="Icono de Inicio">
+                                </div>
+                                <span class="menu-texto">Inicio</span>
+                            </a>
+                        </li>
+                        <li class="menu-opcion activo" id="ticketsMenu">
+                            <a class="nav-link" id="btnTickets">
+                                <div class="icono-menu">
+                                    <img src="img/tickets.svg" alt="Incono de Tickets">
+                                </div>
+                                <span class="menu-texto">Tickets</span>
+                                <i class="bi bi-chevron-down icono-flecha"></i>
+                            </a>
+                            <ul class="submenu">
+                                <li><a href="misTickets.html"><span class="menu-texto">Mis Tickets</span></a></li>
+                                <li><a href="gestionTickets.html"><span class="menu-texto">Gestionar Tickets</span></a></li>
+                                <li><a href="ticketsAsignados.html"><span class="menu-texto">Tickets Asignados</span></a></li>
+                            </ul>
+                        </li>
+                        <li class="menu-opcion" id="equiposMenu">
+                            <a class="nav-link" id="btnEquipos">
+                                <div class="icono-menu">
+                                    <img src="img/equipos.svg" alt="Icono de Equipos">
+                                </div>
+                                <span class="menu-texto">Equipos</span>
+                                <i class="bi bi-chevron-down icono-flecha"></i>
+                            </a>
+                            <ul class="submenu">
+                                <li><a href="#" class="menu-texto">Equipo y Mobiliario</a></li>
+                                <li><a href="#" class="menu-texto">Ubicaciones</a></li>
+                            </ul>
+                        </li>
+                        <li class="menu-opcion">
+                            <a href="#" class="nav-link">
+                                <div class="icono-menu">
+                                    <img src="img/usuarios.svg" alt="Icono de Usuarios" class="d-flex">
+                                </div>
+                                <span class="menu-texto">Usuarios</span>
+                            </a>
+                        </li>
+                        <li class="menu-opcion">
+                            <a href="#" class="nav-link">
+                                <div class="icono-menu">
+                                    <img src="img/estadisticas.svg" alt="Icono de Estadísticas" class="d-flex">
+                                </div>
+                                <span class="menu-texto">Estadísticas</span>
+                            </a>
+                        </li>
+                        <li class="menu-opcion">
+                            <a href="#" class="nav-link">
+                                <div class="icono-menu">
+                                    <img src="img/evaluaciones.svg" alt="Icono de Evaluaciones" class="d-flex">
+                                </div>
+                                <span class="menu-texto">Evaluaciones</span>
+                            </a>
+                        </li>
+                        <li class="menu-opcion">
+                            <a href="chatBot.html" class="nav-link">
+                                <div class="icono-menu">
+                                    <img src="img/chatBot.svg" alt="Icono de Chatbot" class="d-flex">
+                                </div>
+                                <span class="menu-texto">ChatBot</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div>
+                    <ul class="nav flex-column gap-2 mt-3 p-0">
+                        <li class="menu-opcion">
+                            <a href="#" class="nav-link">
+                                <div class="icono-menu">
+                                    <img src="img/notificaciones.svg" alt="" class="d-flex">
+                                </div>
+                                <span class="menu-texto">Notificaciones</span>
+                            </a>
+                        </li>
+                        <li class="menu-opcion">
+                            <a href="#" class="nav-link">
+                                <div class="icono-menu">
+                                    <img src="img/configuracion.svg" alt="" class="d-flex">
+                                </div>
+                                <span class="menu-texto">Configuración</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="menu-lateral-overlay" id="overlay"></div>
+
+    <!-- Contenido de Gestion de Tickets -->
+    <main class="main px-md-4 pt-3">
+
+        <section class="superior rounded-5 ps-4 d-none d-md-flex">
+            <a href="dashboardAdmin.html" class="mb-0 text-dark fw-bold" style="text-decoration: none;">Volver</a>
+            <div class="position-relative">
+                <div class="perfil p-2 rounded-5 gap-lg-2 gap-md-3" id="perfilBienvenida">
+                    <h6 class="perfil-nombre text-white mb-0 ps-1" id="nombrePerfil">Gestión de Tickets</h6>
+                    <img src="img/user.png" alt="Icono de perfil" id="fotoPerfil">
+                </div>
+            </div>
+        </section>
+
+        <div class="container-fluid mt-4 px-0" id="view-dashboard-gestion">
+
+            <div class="row g-3 mb-4 align-items-stretch">
+
+                <div class="col-lg-7 col-12">
+                    <div class="contenedor-scroll-vertical-indicadores">
+                        <div class="row g-4 row-cols-2">
+                            <div class="col">
+                                <div
+                                    class="tarjeta-indicador-vertical text-center position-relative shadow-sm bg-white">
+                                    <span class="icono-tarjeta-flotante">
+                                        <img src="/img/TicketsResueltos.png" alt="TicketsResueltos">
+                                    </span>
+                                    <p class="text-navy-titulo small fw-bold mb-1">Tickets resueltos</p>
+                                    <h2 class="fw-bold text-navy-numero m-0">6</h2>
+                                </div>
+                            </div>
+
+                            <div class="col">
+                                <div
+                                    class="tarjeta-indicador-vertical text-center position-relative shadow-sm bg-white">
+                                    <span class="icono-tarjeta-flotante">
+                                        <img src="/img/TicketsAsignados.png" alt="TicketsAsignados">
+                                    </span>
+                                    <p class="text-navy-titulo small fw-bold mb-1">Tickets asignados</p>
+                                    <h2 class="fw-bold text-navy-numero m-0">15</h2>
+                                </div>
+                            </div>
+
+                            <div class="col">
+                                <div
+                                    class="tarjeta-indicador-vertical text-center position-relative shadow-sm bg-white">
+                                    <span class="icono-tarjeta-flotante">
+                                        <img src="/img/Tickets en progreso.png" alt="TicketsProgreso">
+                                    </span>
+                                    <p class="text-navy-titulo small fw-bold mb-1">Tickets en progreso</p>
+                                    <h2 class="fw-bold text-navy-numero m-0">8</h2>
+                                </div>
+                            </div>
+
+                            <div class="col">
+                                <div
+                                    class="tarjeta-indicador-vertical text-center position-relative shadow-sm bg-white">
+                                    <span class="icono-tarjeta-flotante">
+                                        <img src="/img/Tickets en espera.png" alt="TicketsEspera">
+                                    </span>
+                                    <p class="text-navy-titulo small fw-bold mb-1">Tickets en espera</p>
+                                    <h2 class="fw-bold text-navy-numero m-0">1</h2>
+                                </div>
+                            </div>
+
+                            <div class="col">
+                                <div
+                                    class="tarjeta-indicador-vertical text-center position-relative shadow-sm bg-white">
+                                    <span class="icono-tarjeta-flotante">
+                                        <img src="img/TicketsAbiertosScroll.png" alt="TicketsAbiertos">
+                                    </span>
+                                    <p class="text-navy-titulo small fw-bold mb-1">Tickets abiertos</p>
+                                    <h2 class="fw-bold text-navy-numero m-0">15</h2>
+                                </div>
+                            </div>
+
+                            <div class="col">
+                                <div
+                                    class="tarjeta-indicador-vertical text-center position-relative shadow-sm bg-white">
+                                    <span class="icono-tarjeta-flotante">
+                                        <img src="/img/TicketsCerradosIcon.png" alt="ticketsCerrados">
+                                    </span>
+                                    <p class="text-navy-titulo small fw-bold mb-1">Tickets cerrados</p>
+                                    <h2 class="fw-bold text-navy-numero m-0">5</h2>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Apartado de aprobaciones pendientes -->
+                <div class="col-lg-5 col-12">
+                    <div class="tarjeta-aprobaciones-pendientes shadow h-100 d-flex flex-column overflow-hidden">
+
+                        <div
+                            class="encabezado-aprobaciones py-3 px-4 d-flex align-items-center justify-content-around gap-3">
+                            <img src="/img/aprobacionesPendientes.png" alt="aprobaciones" class="img-fluid"
+                                style="height: 30px;">
+                            <h5 class="fw-bold m-0 fs-4">Aprobaciones pendientes</h5>
+                        </div>
+
+                        <div class="cuerpo-aprobaciones p-4 pt-3 flex-grow-1 d-flex flex-column overflow-hidden">
+                            <div class="scroll-interno-aprobaciones flex-grow-1 overflow-auto pe-1">
+
+                                <div class="item-ticket-aprobacion bg-white p-3 mb-3 shadow-inner position-relative cursor-pointer"
+                                    data-bs-toggle="modal" data-bs-target="#modalAprobaciones">
+                                    <h6 class="fw-bold mb-1 text-dark small d-flex align-items-center gap-2">
+                                        <img src="/img/iconoTicketAprobaciones.png" alt="ticketsito" class="img-fluid"
+                                            style="height: 18px;">
+                                        Computadora no enciende
+                                    </h6>
+                                    <span class="text-muted-custom d-block text-mini">#274261</span>
+                                    <span class="text-muted-custom d-block text-mini mt-2"><b>Estado:</b> Nuevo</span>
+                                    <p class="text-muted-custom text-mini mb-0 mt-1 text-truncate pe-2">
+                                        <b>Descripción:</b> Es la computadora del docente, se encuentra conectada,
+                                        pero...
+                                    </p>
+                                </div>
+
+                                <div class="item-ticket-aprobacion bg-white p-3 mb-3 shadow-inner position-relative cursor-pointer"
+                                    data-bs-toggle="modal" data-bs-target="#modalAprobaciones">
+                                    <h6 class="fw-bold mb-1 text-dark small d-flex align-items-center gap-2">
+                                        <img src="/img/iconoTicketAprobaciones.png" alt="ticketsito" class="img-fluid"
+                                            style="height: 18px;">
+                                        Computadora no enciende
+                                    </h6>
+                                    <span class="text-muted-custom d-block text-mini">#274261</span>
+                                    <span class="text-muted-custom d-block text-mini mt-2"><b>Estado:</b> Nuevo</span>
+                                    <p class="text-muted-custom text-mini mb-0 mt-1 text-truncate pe-2">
+                                        <b>Descripción:</b> Es la computadora del docente, se encuentra conectada,
+                                        pero...
+                                    </p>
+                                </div>
+                                <div class="item-ticket-aprobacion bg-white p-3 mb-3 shadow-inner position-relative cursor-pointer"
+                                    data-bs-toggle="modal" data-bs-target="#modalAprobaciones">
+                                    <h6 class="fw-bold mb-1 text-dark small d-flex align-items-center gap-2">
+                                        <img src="/img/iconoTicketAprobaciones.png" alt="ticketsito" class="img-fluid"
+                                            style="height: 18px;">
+                                        Computadora no enciende
+                                    </h6>
+                                    <span class="text-muted-custom d-block text-mini">#274261</span>
+                                    <span class="text-muted-custom d-block text-mini mt-2"><b>Estado:</b> Nuevo</span>
+                                    <p class="text-muted-custom text-mini mb-0 mt-1 text-truncate pe-2">
+                                        <b>Descripción:</b> Es la computadora del docente, se encuentra conectada,
+                                        pero...
+                                    </p>
+                                </div>
+                                <div class="item-ticket-aprobacion bg-white p-3 mb-3 shadow-inner position-relative cursor-pointer"
+                                    data-bs-toggle="modal" data-bs-target="#modalAprobaciones">
+                                    <h6 class="fw-bold mb-1 text-dark small d-flex align-items-center gap-2">
+                                        <img src="/img/iconoTicketAprobaciones.png" alt="ticketsito" class="img-fluid"
+                                            style="height: 18px;">
+                                        Computadora no enciende
+                                    </h6>
+                                    <span class="text-muted-custom d-block text-mini">#274261</span>
+                                    <span class="text-muted-custom d-block text-mini mt-2"><b>Estado:</b> Nuevo</span>
+                                    <p class="text-muted-custom text-mini mb-0 mt-1 text-truncate pe-2">
+                                        <b>Descripción:</b> Es la computadora del docente, se encuentra conectada,
+                                        pero...
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Tabla "Todos los Tickets" -->
+            <div class="row">
+                <div class="col-12 rounded-4 panel-fondo">
+                    <div class="bg-white rounded-4 mt-3 contenedor-tabla-modulo"">
+
+                        <div
+                            class="tabla-tickets p-4 text-white d-flex flex-wrap align-items-center justify-content-around gap-3 mb-4">
+                            <h4 class="fw-bold m-0 px-2 fs-4">Todos los Tickets</h4>
+
+                            <div class="position-relative input-buscar-container">
+                                <input type="text" class="form-control form-control-sm rounded-pill py-2"
+                                    placeholder="Ingresa el código o título de tu ticket">
+
+                                <button id="buscarTicketNombre" class="text-muted rounded-pill position-absolute end-0 top-50 translate-middle-y border-0 bg-white pe-3"><i class="bi bi-search"></i></button>
+                            </div>
+                            <select class="form-select form-select-sm rounded-pill text-muted px-3 py-2"
+                                style="width: 120px;">
+                                <option>Prioridad</option>
+                                <option value="1">Crítica</option>
+                                <option value="2">Alta</option>
+                                <option value="3">Media</option>
+                                <option value="4">Baja</option>
+                            </select>
+                            <input type="date" class="form-control form-select-sm rounded-pill text-muted px-3 py-2"
+                                style="width: 140px;">
+                        </div>
+                            <div class="table-responsive m-2">
+                        <table class="table table-hover align-middle tabla-tickets-gestion text-center"
+                            style="border: 4px; border-color: darkgray;">
+                            <thead>
+                                <tr>
+                                    <th>Código</th>
+                                    <th>Asunto</th>
+                                    <th>Descripción</th>
+                                    <th>Creador</th>
+                                    <th>Creación</th>
+                                    <th>Vencimiento</th>
+                                    <th>Técnico</th>
+                                    <th>Prioridad</th>
+                                    <th>Multimedia</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="text-muted">#26859489</td>
+                                    <td class="text-muted text-dark text-truncate truncate-celda">Pupitre...</td>
+                                    <td class="text-muted text-truncate truncate-celda-lg">Se rompió...</td>
+                                    <td class="text-muted">ricardo_paz...</td>
+                                    <td class="text-muted">13/05/26</td>
+                                    <td class="text-muted">25/05/26</td>
+                                    <td class="text-muted">roberto_ar...</td>
+                                    <td><span class="badge-prioridad bg-success-light text-success">Baja</span></td>
+                                    <td><a href="vistaTicket.html"
+                                            class="text-info text-decoration-none small fw-semibold">Ver...</a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="text-muted">#26859490</td>
+                                    <td class="text-muted text-dark text-truncate truncate-celda">Pantalla...</td>
+                                    <td class="text-muted text-truncate truncate-celda-lg">No proyecta...</td>
+                                    <td class="text-muted">josue_guine...</td>
+                                    <td class="text-muted">13/05/26</td>
+                                    <td class="text-muted">25/05/26</td>
+                                    <td class="text-muted">carlos_ig...</td>
+                                    <td><span class="badge-prioridad bg-orange-light"
+                                            style="color: orangered;">Alta</span></td>
+                                    <td><a href="vistaTicket.html"
+                                            class="text-info text-decoration-none small fw-semibold">Ver...</a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="text-muted">#26859490</td>
+                                    <td class="text-muted text-dark text-truncate truncate-celda">Pantalla...</td>
+                                    <td class="text-muted text-truncate truncate-celda-lg">No proyecta...</td>
+                                    <td class="text-muted">josue_guine...</td>
+                                    <td class="text-muted">13/05/26</td>
+                                    <td class="text-muted">25/05/26</td>
+                                    <td class="text-muted">carlos_ig...</td>
+                                    <td><span class="badge-prioridad bg-orange-light"
+                                            style="color: orangered;">Alta</span></td>
+                                    <td><a href="vistaTicket.html"
+                                            class="text-info text-decoration-none small fw-semibold">Ver...</a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="text-muted">#26859490</td>
+                                    <td class="text-muted text-dark text-truncate truncate-celda">Pantalla...</td>
+                                    <td class="text-muted text-truncate truncate-celda-lg">No proyecta...</td>
+                                    <td class="text-muted">josue_guine...</td>
+                                    <td class="text-muted">13/05/26</td>
+                                    <td class="text-muted">25/05/26</td>
+                                    <td class="text-muted">carlos_ig...</td>
+                                    <td><span class="badge-prioridad bg-orange-light text-danger">Crítica</span></td>
+                                    <td><a href="vistaTicket.html"
+                                            class="text-info text-decoration-none small fw-semibold">Ver...</a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="text-muted">#26859490</td>
+                                    <td class="text-muted text-dark text-truncate truncate-celda">Pantalla...</td>
+                                    <td class="text-muted text-truncate truncate-celda-lg">No proyecta...</td>
+                                    <td class="text-muted">josue_guine...</td>
+                                    <td class="text-muted">13/05/26</td>
+                                    <td class="text-muted">25/05/26</td>
+                                    <td class="text-muted">carlos_ig...</td>
+                                    <td><span class="badge-prioridad bg-orange-light text-success">Baja</span></td>
+                                    <td><a href="vistaTicket.html"
+                                            class="text-info text-decoration-none small fw-semibold">Ver...</a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="text-muted">#26859490</td>
+                                    <td class="text-muted text-dark text-truncate truncate-celda">Pantalla...</td>
+                                    <td class="text-muted text-truncate truncate-celda-lg">No proyecta...</td>
+                                    <td class="text-muted">josue_guine...</td>
+                                    <td class="text-muted">13/05/26</td>
+                                    <td class="text-muted">25/05/26</td>
+                                    <td class="text-muted">carlos_ig...</td>
+                                    <td><span class="badge-prioridad bg-orange-light text-success">Baja</span></td>
+                                    <td><a href="vistaTicket.html"
+                                            class="text-info text-decoration-none small fw-semibold">Ver...</a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="text-muted">#26859490</td>
+                                    <td class="text-muted text-dark text-truncate truncate-celda">Pantalla...</td>
+                                    <td class="text-muted text-truncate truncate-celda-lg">No proyecta...</td>
+                                    <td class="text-muted">josue_guine...</td>
+                                    <td class="text-muted">13/05/26</td>
+                                    <td class="text-muted">25/05/26</td>
+                                    <td class="text-muted">carlos_ig...</td>
+                                    <td><span class="badge-prioridad bg-orange-light text-warning">Media</span></td>
+                                    <td><a href="vistaTicket.html"
+                                            class="text-info text-decoration-none small fw-semibold">Ver...</a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        </div>
+    </main>
+
+    <div class="modal fade" tabindex="-1" id="modalAprobaciones" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered container-modal-aprobacion-custom">
+            <div class="modal-content contenedor-modal-borde rounded-5 overflow-hidden">
+
+                <div class="modal-header encabezado-Modal text-center border-0 mb-3 position-relative">
+                    <h5 class="modal-title text-white fw-bold w-100 fs-2">Aprobación de Tickets</h5>
+                    <button type="button" class="btn-close btn-close-white position-absolute end-0 me-3"
+                        data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body px-4 pb-4 pt-1">
+
+                    <div
+                        class="descripcion-ticket borde-lateral-azul p-3 mb-4 rounded-4 shadow-sm bg-white d-flex justify-content-between align-items-start">
+                        <div class="bloque-informacion-izquierda">
+                            <h6 class="creador-ticket text-navy mb-2">
+                                <b>De:</b> <img src="/img/user-modal.png" alt="usuario"
+                                    class="img-fluid ms-2 me-2 img-usuario-modal">josue_guinea@ricaldone.edu.sv
+                            </h6>
+                            <p class="meta-ticket-texto mb-1"><b>Asunto:</b> Computadora no enciende</p>
+                            <p class="meta-ticket-texto mb-1"><b>Estado:</b> Nuevo</p>
+                            <p class="meta-ticket-texto mb-1"><b>Fecha de creación:</b> 15/08/26 14:45:05</p>
+                            <p class="meta-ticket-texto mb-2"><b>Descripción:</b> Es la computadora del docente, se
+                                encuentra conectada, pero luego de entrar del receso, estaba apagada y no volvió a
+                                encender.</p>
+                            <p class="meta-ticket-texto mb-1"><b>Equipo:</b> #2678982</p>
+                            <p class="meta-ticket-texto mb-0"><b>Ubicación:</b> Laboratorio 2</p>
+                        </div>
+
+                        <div class="contenedor-evidencias-vertical ms-3">
+                            <div class="tarjeta-foto-evidencia mb-2">
+                                <img src="/img/EjemploEvidenciaAprobaciones.png" alt="Evidencia 1">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="seccion-controles-y-botones d-flex justify-content-between align-items-start">
+
+                        <form id="formAprobaciones" class="formulario-modal-flujo">
+
+                            <div class="fila-control-modal mb-3">
+                                <label class="label-modal-maqueta">Prioridad:</label>
+                                <div class="select-wrapper-capsula">
+                                    <select name="prioridad_Aprobaciones" id="prioridadAprobaciones"
+                                        class="form-select selector-modal-ovalado">
+                                        <option>Selecciona la prioridad</option>
+                                        <option value="1">Baja</option>
+                                        <option value="2">Media</option>
+                                        <option value="3">Alta</option>
+                                        <option value="4">Crítica</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="fila-control-modal mb-3">
+                                <label class="label-modal-maqueta">Asignar técnico:</label>
+                                <div class="select-wrapper-capsula">
+                                    <select name="tecnico-Aprobaciones" id="tecnicoAprobaciones"
+                                        class="form-select selector-modal-ovalado ">
+                                        <option>Selecciona un técnico</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="fila-control-modal">
+                                <label class="label-modal-maqueta">Fecha de vencimiento:</label>
+                                <div class="input-wrapper-calendario">
+                                    <input type="datetime-local" class="form-control input-modal-ovalado ">
+                                </div>
+                            </div>
+
+                        </form>
+
+                        <div class="grupo-botones-verticales-maqueta">
+                            <button type="button" class="btn btn-danger boton-accion-pildora mb-3">
+                                <img src="/img/TicketsCerradosIcon.png" alt="eliminar"
+                                    class="img-fluid pe-3 icono-boton-ticket"> Eliminar
+                            </button>
+                            <button type="button" class="btn btn-primary boton-accion-pildora">
+                                <img src="/img/TicketsAsignados.png" alt="aprobar"
+                                    class="img-fluid pe-3 icono-boton-ticket"> Aprobar
+                            </button>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JS de Bootstrap -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Mi JS personalizado -->
+    <script src="js/components/menu.js"></script>
+</body>
+
+</html>
