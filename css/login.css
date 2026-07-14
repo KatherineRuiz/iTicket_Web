@@ -1,0 +1,213 @@
+/* ==================== 1. GENERALES Y ANIMACIONES ==================== */
+body {
+    background-image: url('../img/login/Background.png');
+    background-size: cover;
+    background-position: center;
+    animation: entradaSuave 0.5s ease-in-out;
+}
+
+@keyframes entradaSuave {
+    from {
+        opacity: 0;
+        transform: translateY(16px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.salida-pagina {
+    animation: salidaSuave 0.4s ease-in-out forwards;
+}
+
+@keyframes salidaSuave {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    to {
+        opacity: 0;
+        transform: translateY(-16px);
+    }
+}
+
+/* ==================== 2. CONTENEDORES Y TARJETAS ==================== */
+.contenedor-formulario-compacto {
+    width: 100%;
+    max-width: 380px;
+    z-index: 2;
+}
+
+.tarjeta-login {
+    background-color: #121F48;
+    /* Totalmente azul oscuro por defecto (Móviles) */
+    position: relative;
+    overflow: hidden;
+    border: 0 !important;
+    border-radius: 2rem;
+    min-height: 600px;
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.6);
+}
+
+.tarjeta-validacion {
+    background-color: #FCFDFF;
+    position: relative;
+    overflow: hidden;
+    border-radius: 2rem;
+    min-height: 600px;
+    box-shadow: 0 0 40px rgba(255, 255, 255, 0.25);
+}
+
+.curva-divisoria {
+    display: none;
+    /* Oculto por defecto en pantallas pequeñas */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.capa-contenido {
+    position: relative;
+    z-index: 1;
+}
+
+/* ==================== 3. COMPONENTES DE TEXTO ==================== */
+.texto-bienvenida {
+    color: #ffffff;
+    background-color: rgba(18, 31, 72, 0.7);
+    display: inline-block;
+    padding: 0.1rem 0.8rem;
+    border-radius: 2rem;
+}
+
+.texto-fondo {
+    color: #90BFDB;
+    background-color: rgba(18, 31, 72, 0.7);
+    display: inline-block;
+    padding: 0.1rem 0.8rem;
+    border-radius: 2rem;
+}
+
+.texto-fondo-especial {
+    color: #ffffff;
+    background-color: #90a8db55;
+    display: inline-block;
+    padding: 0.5rem 1.0rem;
+    border-radius: 2rem;
+    border: 1px solid #539ECD;
+}
+
+.texto-fondo-especial-codigo-validacion {
+    color: #ffffff;
+    background-color: #90a8dba8;
+    display: inline-block;
+    padding: 0.5rem 1.0rem;
+    border-radius: 2rem;
+    border: 1px solid #539ECD;
+}
+
+.caja-titulo-validacion {
+    display: inline-block;
+    padding: 1rem;
+    color: #ffffff;
+    width: 100%;
+}
+
+.reenviar-enlace {
+    text-decoration: none;
+    font-weight: bold;
+    color: #43A1FF;
+}
+
+/* ==================== 4. FORMULARIOS E IMÁGENES ==================== */
+.logo-sesion {
+    width: 70px;
+    height: auto;
+}
+
+.img-fluid {
+    transition: opacity 0.5s ease-in-out;
+    opacity: 1;
+}
+
+.img-desvanecer {
+    opacity: 0;
+}
+
+.img-ilustracion-recuperar {
+    max-width: 90%;
+}
+
+.form-control.rounded-pill {
+    padding: 0.75rem 1.25rem;
+    border: none;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.form-control.rounded-pill:focus {
+    box-shadow: 0 0 0 3px rgba(67, 161, 255, 0.4);
+    border-color: #43A1FF;
+}
+
+.contenedor-codigo {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    margin: 20px 0;
+    width: 100%;
+}
+
+.digito-codigo {
+    width: 38px;
+    height: 50px;
+    text-align: center;
+    font-size: 1.3rem;
+    border: 2px solid #90BFDB;
+    border-radius: 12px;
+    background-color: #f0f7f9;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.digito-codigo:focus {
+    outline: none;
+    border-color: #43A1FF;
+    box-shadow: 0 0 0 3px rgba(67, 161, 255, 0.3);
+}
+
+/* ==================== 5. BOTONES ==================== */
+.btn-azul {
+    background-color: #43A1FF;
+    border: none;
+    font-weight: 600;
+    letter-spacing: 1px;
+    transition: all 0.2s;
+    color: #fff;
+}
+
+.btn-azul:hover {
+    background-color: #1a7fe0;
+    transform: translateY(-2px);
+    color: #fff;
+}
+
+/* ==================== 6. MEDIA QUERIES (PC) ==================== */
+@media (min-width: 768px) {
+    .tarjeta-login {
+        background-color: rgba(18, 31, 72, 0.7);
+        /* Fondo traslúcido en PC */
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+        /* Sin sombra en PC */
+    }
+
+    .curva-divisoria {
+        display: block;
+        /* Muestra solo en PC */
+    }
+}
