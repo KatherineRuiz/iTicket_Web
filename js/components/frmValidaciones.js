@@ -11,22 +11,23 @@ function esContrasenaValida(contrasena) {
 }
 // Ojito para mostrar/ocultar contraseña
 document.addEventListener("DOMContentLoaded", function () {
-    const botonesOjo = document.querySelectorAll(".btn-toggle-ojo");
+    document.querySelectorAll(".btn-toggle-ojo").forEach(function (boton) {
+        boton.setAttribute("type", "button");
 
-    botonesOjo.forEach(function (boton) {
-        boton.addEventListener("click", function () {
-            const contenedor = boton.closest(".position-relative");
-            const input = contenedor ? contenedor.querySelector("input") : null;
-            const icono = boton.querySelector("i");
+        const input = boton.closest(".position-relative")?.querySelector("input");
+        const icono = boton.querySelector("i");
+        if (!input || !icono) return;
 
-            if (input && icono) {
-                const tipoActual = input.getAttribute("type");
-                const nuevoTipo = tipoActual === "password" ? "text" : "password";
-                input.setAttribute("type", nuevoTipo);
+        const cambiar = (mostrar) => {
+            input.type = mostrar ? "text" : "password";
+            icono.classList.toggle("bi-eye", !mostrar);
+            icono.classList.toggle("bi-eye-slash", mostrar);
+        };
 
-                icono.classList.toggle("bi-eye");
-                icono.classList.toggle("bi-eye-slash");
-            }
-        });
+        boton.addEventListener("mousedown", () => cambiar(true));
+        boton.addEventListener("touchstart", () => cambiar(true));
+        ["mouseup", "mouseleave", "touchend"].forEach(evento =>
+            boton.addEventListener(evento, () => cambiar(false))
+        );
     });
 });
