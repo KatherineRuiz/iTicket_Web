@@ -1,0 +1,161 @@
+.tarjeta-resumen-evaluacion {
+    background-color: #ffffff;
+    border: 1.5px solid #f1f5f9;
+    border-radius: 28px;
+    padding: 35px 15px 20px 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.icono-resumen-evaluacion {
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 35px;
+    background-color: var(--accent-celeste);
+    border-radius: 14px;
+    box-shadow: 0 6px 12px rgba(84, 156, 211, 0.25);
+    z-index: 10;
+}
+
+.icono-resumen-evaluacion img {
+    width: 22px;
+    height: 22px;
+    object-fit: contain;
+    filter: brightness(0) invert(1);
+}
+
+/* Variantes de color para los íconos de resumen */
+.icono-estrella-resumen  { background-color: #f5c518; box-shadow: 0 6px 12px rgba(245, 197, 24, 0.3); }
+.icono-positiva-resumen  { background-color: #28a745; box-shadow: 0 6px 12px rgba(40, 167, 69, 0.3); }
+.icono-negativa-resumen  { background-color: #dc3545; box-shadow: 0 6px 12px rgba(220, 53, 69, 0.3); }
+
+.label-resumen-evaluacion {
+    color: #1e3a8a;
+    font-size: 0.82rem;
+    font-weight: 600;
+    margin-top: 8px;
+    margin-bottom: 4px;
+}
+
+.numero-resumen-evaluacion {
+    color: #0f172a;
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+/*  Contenedor principal de la tabla  */
+.contenedor-tabla-evaluaciones {
+    border-radius: 28px !important;
+    overflow: hidden;
+}
+
+/*  Encabezado azul de la tabla  */
+.encabezado-tabla-evaluaciones {
+    background-color: var(--accent-celeste);
+    border-radius: 20px 20px 0 0;
+}
+
+/*  Buscador  */
+.input-buscar-evaluacion {
+    width: 260px;
+}
+
+.input-buscar-evaluacion .form-control {
+    padding-right: 36px;
+}
+
+/*  Filtro de calificación y fecha  */
+.filtro-evaluacion {
+    width: 145px;
+}
+
+/*  Tabla  */
+.tabla-evaluaciones th {
+    font-size: 0.85rem;
+    font-weight: 700;
+    padding: 14px 12px;
+    background-color: #f8fafc;
+    border-bottom: 2px solid #e2e8f0;
+}
+
+.tabla-evaluaciones td {
+    padding: 14px 12px;
+    font-size: 0.85rem;
+    border-bottom: 1px solid #f1f5f9;
+    vertical-align: middle;
+}
+
+.tabla-evaluaciones tbody tr:hover td {
+    background-color: #f0f7ff;
+}
+
+/* Celdas con truncado */
+.celda-asunto    { max-width: 130px; }
+.celda-comentario { max-width: 200px; }
+
+/*  Estrellas  */
+.estrellas {
+    display: inline-flex;
+    gap: 2px;
+    font-size: 1rem;
+}
+
+.estrella-llena { color: #f5c518; }
+.estrella-vacia { color: #d1d5db; }
+
+/*  Estado vacío  */
+.estado-vacio {
+    text-align: center;
+    padding: 50px 20px;
+    color: #8b96a5;
+}
+
+.estado-vacio img {
+    width: 220px;
+}
+
+/*  Paginación  */
+.pagination .page-link {
+    color: var(--accent-celeste);
+    border-color: #e2e8f0;
+    font-size: 0.82rem;
+    border-radius: 50px !important;
+    margin: 0 2px;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: var(--accent-celeste);
+    border-color: var(--accent-celeste);
+    color: #ffffff;
+}
+
+.pagination .page-link:hover {
+    background-color: #e8f4fb;
+    color: var(--bg-oscuro);
+}
+
+/*  Responsive  */
+@media (max-width: 768px) {
+    .input-buscar-evaluacion,
+    .filtro-evaluacion {
+        width: 100%;
+    }
+
+    .encabezado-tabla-evaluaciones {
+        flex-direction: column;
+        align-items: flex-start !important;
+    }
+
+    .celda-asunto    { max-width: 90px; }
+    .celda-comentario { max-width: 110px; }
+}
