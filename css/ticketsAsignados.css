@@ -26,7 +26,7 @@ body {
     cursor: pointer;
 }
 .lista-tickets-asignados:hover{
-    transform: scale(1.01);
+    transform: translateY(-4px);
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
 }
 
@@ -41,5 +41,25 @@ body {
 }
 
 .borde-critica{
-    border-left: 4px solid var(--borde-critica);
+    border-left: 6px solid var(--borde-critica) !important;
+}
+
+.scroll-lista-ticket{
+    max-height: 550px;
+    overflow-y: auto;
+    padding-right: 10px 12px;
+    scroll-behavior: smooth;
+}
+.scroll-lista-ticket::-webkit-scrollbar{
+    width: 6px;
+}
+.scroll-lista-ticket::-webkit-scrollbar-track{
+    background: transparent;
+}
+.scroll-lista-ticket::-webkit-scrollbar-thumb{
+    background-color: #cbd5e1;
+    border-radius: 10px;
+}
+.scroll-lista-ticket::-webkit-scrollbar-thumb:hover{
+    background-color: #94a3b8;
 }
