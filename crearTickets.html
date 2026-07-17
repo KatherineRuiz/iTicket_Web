@@ -111,7 +111,7 @@
                 </a>
               </li>
               <li class="menu-opcion">
-                <a href="#" class="nav-link">
+                <a href="evaluaciones.html" class="nav-link">
                   <div class="icono-menu">
                     <img
                       src="img/evaluaciones.svg"
@@ -209,91 +209,113 @@
             >Electricidad, red y otros</span
           >
         </div>
-      </div>
-
-      <div class="bg-white rounded-5 shadow-sm p-4 p-md-5 border mb-4">
-        <div class="row g-4">
-          <div class="col-12 col-md-7">
-            <form id="form-ticket">
-              <div class="mb-3">
-                <label class="form-label fw-bold text-navy">Asunto:</label>
-                <input
-                  type="text"
-                  class="form-control rounded-5 border-primary-custom bg-blue-light"
-                  placeholder="Escribe el asunto del problema"
-                />
-              </div>
-              <div class="mb-3">
-                <label class="form-label fw-bold text-navy">Descripción:</label>
-                <textarea
-                  class="form-control rounded-4 border-primary-custom bg-blue-light"
-                  rows="4"
-                  placeholder="Describe la falla..."
-                ></textarea>
-              </div>
-
-              <div class="mb-4 campo-dinamico" id="campo-codigo">
-                <label class="form-label fw-bold text-navy"
-                  >Código del equipo/mobiliario:</label
-                >
-                <input
-                  type="text"
-                  class="form-control rounded-5 border-primary-custom bg-blue-light"
-                  placeholder="#21239986"
-                />
-              </div>
-
-              <div class="mb-4 campo-dinamico" id="campo-ubicacion">
-                <label class="form-label fw-bold text-navy">Ubicación:</label>
-                <input
-                  type="text"
-                  class="form-control rounded-5 border-primary-custom bg-blue-light"
-                  placeholder="Pasillo del lobby frente al salón 64.13"
-                />
-              </div>
-
-              <div class="mb-4">
-                <label class="form-label fw-bold text-navy"
-                  >Departamento:</label
-                >
-                <select
-                  class="form-select rounded-5 border-primary-custom bg-blue-light"
-                >
-                  <option selected>IT</option>
-                  <option value="1">CFP</option>
-                </select>
-              </div>
-
-              <button
-                type="submit"
-                class="btn btn-primary bg-primary-custom border-0 rounded-5 px-4 py-2 fw-bold shadow-sm"
-                id="crearTicketButton"
-              >
-                <i class="bi bi-plus-lg me-2"></i> Crear Ticket
-              </button>
-            </form>
-          </div>
-          <div
-            class="col-12 col-md-5 d-flex align-items-center justify-content-center"
+        <div
+          class="card-categoria text-center p-3 d-flex flex-column align-items-center justify-content-center"
+          id="btn-instalacion"
+        >
+          <img
+            src="img/instalacionSoftware.png"
+            alt="electricidad y redes"
+            class="mb-2"
+            style="height: 200px"
+          />
+          <span class="fw-bold text-primary-custom"
+            >Instalación de Software</span
           >
-            <div class="w-100 text-center">
-              <img
-                src="/img/agregar_fotos.png"
-                alt="agrega fotos"
-                class="img-fluid rounded-4 shadow-xs"
-                style="max-width: 320px"
-              />
-            </div>
-          </div>
         </div>
       </div>
 
-      <!-- JS de Bootstrap -->
+<div class="bg-white rounded-5 shadow-sm p-4 p-md-5 border mb-4">
+  <div class="row g-4">
+    <div class="col-12 col-md-7">
+      <!-- Formulario estándar -->
+      <div id="formulario-estandar">
+        <form>
+          <div class="mb-3" id="crearTicketAsunto">
+            <label class="form-label fw-bold">Asunto:</label>
+            <input type="text" class="form-control rounded-5 border-primary-custom bg-blue-light" placeholder="Escribe el asunto del problema" />
+          </div>
+          <div class="mb-3" id="crearTicketDescripcion">
+            <label class="form-label fw-bold">Descripción:</label>
+            <textarea class="form-control rounded-4 border-primary-custom bg-blue-light" rows="4" placeholder="Describe la falla..."></textarea>
+          </div>
+          <div class="mb-4 campo-dinamico" id="campo-codigo">
+            <label class="form-label fw-bold">Código del equipo/mobiliario:</label>
+            <input type="text" class="form-control rounded-5 border-primary-custom bg-blue-light" placeholder="#21239986" />
+          </div>
+          <div class="mb-4 campo-dinamico" id="campo-ubicacion">
+            <label class="form-label fw-bold">Ubicación:</label>
+            <input type="text" class="form-control rounded-5 border-primary-custom bg-blue-light" placeholder="Pasillo del lobby frente al salón 64.13" />
+          </div>
+          <div class="mb-4">
+            <label class="form-label fw-bold">Departamento:</label>
+            <select class="form-select rounded-5 border-primary-custom bg-blue-light">
+              <option selected>IT</option>
+              <option value="1">Mantenimiento</option>
+            </select>
+          </div>
+          <button type="submit" class="btn btn-primary bg-primary-custom border-0 rounded-5 px-4 py-2 fw-bold shadow-sm" id="crearTicketButton">
+            <i class="bi bi-plus-lg me-2"></i> Crear Ticket
+          </button>
+        </form>
+      </div>
+
+      <!-- Formulario software -->
+      <div id="formulario-software" class="d-none">
+        <form>
+          <div class="mb-3" id="crearTicketAsuntoSoftware">
+            <label class="form-label fw-bold">Asunto:</label>
+            <input type="text" class="form-control rounded-5 border-primary-custom bg-blue-light" placeholder="Escribe el asunto del problema" readonly />
+          </div>
+          <div class="mb-3" id="crearTicketDescripcionSoftware">
+            <label class="form-label fw-bold">Descripción:</label>
+            <textarea class="form-control rounded-4 border-primary-custom bg-blue-light" rows="4" placeholder="Describe la falla..."></textarea>
+          </div>
+          <div class="mb-3" id="ticketNombreSoftware">
+            <label class="form-label fw-bold">Nombre del software:</label>
+            <input type="text" class="form-control rounded-5 border-primary-custom bg-blue-light" placeholder="Escribe el asunto del problema" />
+          </div>
+          <div class="mb-3" id="ticketVersionPrograma">
+            <label class="form-label fw-bold">Version del programa:</label>
+            <input class="form-control rounded-4 border-primary-custom bg-blue-light" placeholder="Indica la version del programa" />
+          </div>
+          <div class="mb-4" id="crearTicketDepartamentoSoftware">
+            <label class="form-label fw-bold">Departamento:</label>
+            <select class="form-select rounded-5 border-primary-custom bg-blue-light">
+              <option selected>IT</option>
+              <option value="1">IT-CFP</option>
+            </select>
+          </div>
+          <button type="submit" class="btn btn-primary bg-primary-custom border-0 rounded-5 px-4 py-2 fw-bold shadow-sm" id="crearTicketButtonSoftware">
+            <i class="bi bi-plus-lg me-2"></i> Crear Ticket
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Recuadro de fotos: UNICO, compartido por ambas categorías -->
+    <div class="col-12 col-md-5 d-flex align-items-center justify-content-center">
+      <div class="subir-foto">
+        <div class="agregar-multimedia" id="cajaMultimedia">
+          <div id="contenidoMultimedia" class="d-flex flex-column align-items-center justify-content-center">
+            <i class="bi bi-plus-lg icono-agregar-multimedia mb-2"></i>
+            <span class="texto-agregar-multimedia text-muted fs-5">Agrega fotografías<br>del problema</span>
+          </div>
+          <div id="galeriaMultimedia" class="galeria-multimedia d-none"></div>
+        </div>
+        <input type="file" id="inputMultimedia" accept="image/*" multiple class="d-none">
+      </div>
+    </div>
+  </div>
+</div>
+    </main>
+
+    <!-- JS de Bootstrap -->
       <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
       <!-- Mi JS personalizado -->
       <script src="js/components/menu.js"></script>
       <script src="js/controllers/crearTickets.js"></script>
-    </main>
+
   </body>
 </html>
