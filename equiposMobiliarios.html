@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iTicket - Equipos y mobiliarios</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/notificaciones.css">
+    <link rel="stylesheet" href="css/equipos.css">
+    <script src="js/components/menu-cache.js"></script>
+</head>
+
+<body>
+    <!-- Todo el header  -->
+    <header id="contenedorMenuLateral"></header>
+    <div class="menu-lateral-overlay" id="overlay"></div>
+
+    <main class="main px-md-4 pt-3  ">
+
+        <section class="superior rounded-5 ps-4 d-none d-md-flex">
+            <h6 class="mb-0 bold">Equipos y mobiliarios</h6>
+            <div class="position-relative">
+                <div class="perfil p-2 rounded-5 gap-lg-4 gap-md-2" id="perfilBienvenida">
+                    <h6 class="perfil-nombre text-white mb-0 ps-2" id="nombrePerfil">Bienvenida, Katherine</h6>
+                    <div class="perfil-foto" id="fotoPerfil">
+                        <span class="foto-letra" id="fotoLetra">K</span>
+                        <img src="img/usuario.png" alt="Foto de perfil" class="foto-img" id="fotoDePerfil">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="contenido-principal container-fluid">
+            <!-- Cards de metricas -->
+
+            <div class="row g-4 mt-2 pb-4">
+
+                <!-- Equipos actuales -->
+                <div class="col-12 col-sm-6 col-md-3">
+                    <div class="tarjeta-indicador text-center">
+                        <span class="icono-tarjeta">
+                            <i class="bi bi-laptop text-white"></i>
+                        </span>
+                        <p class="text-navy small fw-bold mb-1 pt-2">Equipos actuales</p>
+                        <h2 class="fw-bold text-navy m-0">142</h2>
+                    </div>
+                </div>
+
+                <!-- Mobiliarios actuales -->
+                <div class="col-12 col-sm-6 col-md-3">
+                    <div class="tarjeta-indicador text-center">
+                        <span class="icono-tarjeta">
+                            <i class="bi bi-grid-1x2-fill text-white"></i>
+                        </span>
+                        <p class="text-navy small fw-bold mb-1 pt-2">Mobiliarios actuales</p>
+                        <h2 class="fw-bold text-navy m-0">280</h2>
+                    </div>
+                </div>
+
+                <!-- Nuevos este mes -->
+                <div class="col-12 col-sm-6 col-md-3">
+                    <div class="tarjeta-indicador text-center">
+                        <span class="icono-tarjeta">
+                            <i class="bi bi-plus-lg text-white"></i>
+                        </span>
+                        <p class="text-navy small fw-bold mb-1 pt-2">Nuevos este mes</p>
+                        <h2 class="fw-bold text-navy m-0">10</h2>
+                    </div>
+                </div>
+
+                <!-- Registros totales -->
+                <div class="col-12 col-sm-6 col-md-3">
+                    <div class="tarjeta-indicador text-center">
+                        <span class="icono-tarjeta">
+                            <i class="bi bi-box-seam text-white"></i>
+                        </span>
+                        <p class="text-navy small fw-bold mb-1 pt-2">Registros totales</p>
+                        <h2 class="fw-bold text-navy m-0">422</h2>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="row g-4">
+
+                <!-- Botones y filtro -->
+                <div class="col-12 col-lg-3">
+                    <!-- Botones de agregar -->
+                    <div class="d-grid gap-2 mb-4">
+                        <a href="#"
+                            class="btn btn-azul-redondeado py-3 rounded-4 shadow-sm text-white fs-6 d-flex align-items-center justify-content-center"
+                            data-bs-toggle="modal" data-bs-target="#modalAgregarMarca">
+                            <i class="bi bi-plus-lg me-2"></i> Gestionar marca
+                        </a>
+                        <a href="#"
+                            class="btn btn-azul-redondeado py-3 rounded-4 shadow-sm text-white fs-6 d-flex align-items-center justify-content-center"
+                            data-bs-toggle="modal" data-bs-target="#modalAgregarModelos">
+                            <i class="bi bi-plus-lg me-2"></i> Gestionar modelo
+                        </a>
+                        <a href="#"
+                            class="btn btn-azul-redondeado py-3 rounded-4 shadow-sm text-white fs-6 d-flex align-items-center justify-content-center"
+                            data-bs-toggle="modal" data-bs-target="#modalAgregarCategoria">
+                            <i class="bi bi-plus-lg me-2"></i> Gestionar categoría
+                        </a>
+                    </div>
+
+                    <!-- Panel de filtros -->
+                    <div class="panel-filtros p-4">
+                        <h6 class="titulo-filtros mb-3"><i class="bi bi-filter-left me-2"></i> Filtros</h6>
+
+                        <!-- Categorías principales -->
+                        <div class="filtro-grupo mb-4">
+                            <p class="filtro-subtitulo">Categorías principales</p>
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span>Tecnología</span>
+                                <input class="form-check-input check-azul" type="checkbox" checked>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span>Mobiliarios</span>
+                                <input class="form-check-input check-azul" type="checkbox" checked>
+                            </div>
+                        </div>
+
+                        <!-- Orden alfabético -->
+                        <div class="filtro-grupo mb-4">
+                            <p class="filtro-subtitulo">Orden alfabético</p>
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span>A - Z</span>
+                                <input class="form-check-input radio-azul" type="radio" name="orden" checked>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span>Z - A</span>
+                                <input class="form-check-input radio-azul" type="radio" name="orden">
+                            </div>
+                        </div>
+
+                        <!-- Fecha -->
+                        <div class="filtro-grupo">
+                            <p class="filtro-subtitulo">Fecha</p>
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span>Más reciente</span>
+                                <input class="form-check-input radio-azul" type="radio" name="fecha" checked>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span>Más antigua</span>
+                                <input class="form-check-input radio-azul" type="radio" name="fecha">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tabla, buscador y boton agregar -->
+                <div class="col-12 col-lg-9">
+
+                    <!-- Buscador y boton para agregar equipo -->
+                    <div class="row g-3 align-items-center mb-3">
+                        <div class="col-12 col-md-8">
+                            <div class="buscador-contenedor">
+                                <i class="bi bi-search icono-busqueda"></i>
+                                <input type="text" class="form-control buscador-input"
+                                    placeholder="Buscar equipo o mobiliario">
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-4 text-md-end pt-3">
+                            <a href="#"
+                                class="btn btn-azul-redondeado w-100 rounded-4 mb-4 shadow-sm text-white fs-6 d-flex align-items-center justify-content-center"
+                                data-bs-toggle="modal" data-bs-target="#modalAgregarArticulos">
+                                <i class="bi bi-plus-lg me-2"></i> Gestionar artículo
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Píldoras de categoría activa (basicamente es un tab) -->
+                    <div class="d-flex gap-2 mb-3">
+                        <span class="pildora-tag tag-activo"><i class="bi bi-laptop me-1"></i> Tecnología</span>
+                        <span class="pildora-tag"><i class="bi bi-box me-1"></i>Mobiliario</span>
+                    </div>
+
+                    <!-- Tabla principal -->
+                    <div class="card-tabla p-4">
+                        <div class="table-responsive">
+                            <table class="table table-borderless table-custom align-middle">
+                                <thead>
+                                    <tr>
+                                        <th scope="col"></th>
+                                        <th scope="col">Código</th>
+                                        <th scope="col">Modelo</th>
+                                        <th scope="col">Categoría</th>
+                                        <th scope="col">Ubicación</th>
+                                        <th scope="col">Marca</th>
+                                        <th scope="col" class="text-center">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><input class="form-check-input check-azul" type="checkbox"></td>
+                                        <td class="fw-bold">#12548M</td>
+                                        <td>P2425H</td>
+                                        <td>
+                                            <span class="categoria-celda">
+                                                <i class="bi bi-laptop me-1 text-success"></i> Monitores
+                                            </span>
+                                        </td>
+                                        <td>Aula 63.12</td>
+                                        <td>Dell</td>
+                                        <td class="text-center">
+                                            <button class="btn btn-link text-dark p-0"><i
+                                                    class="bi bi-three-dots fs-4"></i></button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><input class="form-check-input check-azul" type="checkbox"></td>
+                                        <td class="fw-bold">#12548M</td>
+                                        <td>P2425H</td>
+                                        <td><span class="categoria-celda"><i class="bi bi-laptop me-1 text-success"></i>
+                                                Monitores</span></td>
+                                        <td>Aula 63.12</td>
+                                        <td>Dell</td>
+                                        <td class="text-center">
+                                            <button class="btn btn-link text-dark p-0"><i
+                                                    class="bi bi-three-dots fs-4"></i></button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><input class="form-check-input check-azul" type="checkbox"></td>
+                                        <td class="fw-bold">#12548M</td>
+                                        <td>P2425H</td>
+                                        <td><span class="categoria-celda"><i class="bi bi-laptop me-1 text-success"></i>
+                                                Monitores</span></td>
+                                        <td>Aula 63.12</td>
+                                        <td>Dell</td>
+                                        <td class="text-center">
+                                            <button class="btn btn-link text-dark p-0"><i
+                                                    class="bi bi-three-dots fs-4"></i></button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><input class="form-check-input check-azul" type="checkbox"></td>
+                                        <td class="fw-bold">#12548M</td>
+                                        <td>P2425H</td>
+                                        <td><span class="categoria-celda"><i class="bi bi-laptop me-1 text-success"></i>
+                                                Monitores</span></td>
+                                        <td>Aula 63.12</td>
+                                        <td>Dell</td>
+                                        <td class="text-center">
+                                            <button class="btn btn-link text-dark p-0"><i
+                                                    class="bi bi-three-dots fs-4"></i></button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><input class="form-check-input check-azul" type="checkbox"></td>
+                                        <td class="fw-bold">#12548M</td>
+                                        <td>P2425H</td>
+                                        <td><span class="categoria-celda"><i class="bi bi-laptop me-1 text-success"></i>
+                                                Monitores</span></td>
+                                        <td>Aula 63.12</td>
+                                        <td>Dell</td>
+                                        <td class="text-center">
+                                            <button class="btn btn-link text-dark p-0"><i
+                                                    class="bi bi-three-dots fs-4"></i></button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><input class="form-check-input check-azul" type="checkbox"></td>
+                                        <td class="fw-bold">#12548M</td>
+                                        <td>P2425H</td>
+                                        <td><span class="categoria-celda"><i class="bi bi-laptop me-1 text-success"></i>
+                                                Monitores</span></td>
+                                        <td>Aula 63.12</td>
+                                        <td>Dell</td>
+                                        <td class="text-center">
+                                            <button class="btn btn-link text-dark p-0"><i
+                                                    class="bi bi-three-dots fs-4"></i></button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><input class="form-check-input check-azul" type="checkbox"></td>
+                                        <td class="fw-bold">#12548M</td>
+                                        <td>P2425H</td>
+                                        <td><span class="categoria-celda"><i class="bi bi-laptop me-1 text-success"></i>
+                                                Monitores</span></td>
+                                        <td>Aula 63.12</td>
+                                        <td>Dell</td>
+                                        <td class="text-center">
+                                            <button class="btn btn-link text-dark p-0"><i
+                                                    class="bi bi-three-dots fs-4"></i></button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><input class="form-check-input check-azul" type="checkbox"></td>
+                                        <td class="fw-bold">#12548M</td>
+                                        <td>P2425H</td>
+                                        <td><span class="categoria-celda"><i class="bi bi-laptop me-1 text-success"></i>
+                                                Monitores</span></td>
+                                        <td>Aula 63.12</td>
+                                        <td>Dell</td>
+                                        <td class="text-center">
+                                            <button class="btn btn-link text-dark p-0"><i
+                                                    class="bi bi-three-dots fs-4"></i></button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><input class="form-check-input check-azul" type="checkbox"></td>
+                                        <td class="fw-bold">#12548M</td>
+                                        <td>P2425H</td>
+                                        <td><span class="categoria-celda"><i class="bi bi-laptop me-1 text-success"></i>
+                                                Monitores</span></td>
+                                        <td>Aula 63.12</td>
+                                        <td>Dell</td>
+                                        <td class="text-center">
+                                            <button class="btn btn-link text-dark p-0"><i
+                                                    class="bi bi-three-dots fs-4"></i></button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><input class="form-check-input check-azul" type="checkbox"></td>
+                                        <td class="fw-bold">#12548M</td>
+                                        <td>P2425H</td>
+                                        <td><span class="categoria-celda"><i class="bi bi-laptop me-1 text-success"></i>
+                                                Monitores</span></td>
+                                        <td>Aula 63.12</td>
+                                        <td>Dell</td>
+                                        <td class="text-center">
+                                            <button class="btn btn-link text-dark p-0"><i
+                                                    class="bi bi-three-dots fs-4"></i></button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Paginación del 1 al 10 hasta la pagina 150 -->
+                        <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top">
+                            <span class="text-muted small">Mostrando 10 de 142</span>
+                            <nav aria-label="Paginacion">
+                                <ul class="pagination pagination-sm mb-0 align-items-center gap-1">
+                                    <li class="page-item disabled"><span
+                                            class="page-link border-0 bg-transparent text-muted">1</span></li>
+                                    <li class="page-item"><a class="page-link border-0 bg-transparent text-dark"
+                                            href="#">2</a></li>
+                                    <li class="page-item"><a class="page-link border-0 bg-transparent text-dark"
+                                            href="#">3</a></li>
+                                    <li class="page-item"><a class="page-link border-0 bg-transparent text-dark"
+                                            href="#">4</a></li>
+                                    <li class="page-item"><span class="mx-1 text-muted">...</span></li>
+                                    <li class="page-item"><a class="page-link border-0 bg-transparent text-dark"
+                                            href="#">15</a></li>
+                                    <li class="page-item"><a class="page-link border-0 bg-transparent text-dark"
+                                            href="#"><i class="bi bi-chevron-right"></i></a></li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 1. MODAL GESTIONAR CATEGORÍAS -->
+    <div class="modal fade" id="modalAgregarCategoria" tabindex="-1" aria-labelledby="modalAgregarCategoriaLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content border-0 rounded-4 shadow">
+
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="fw-bold mb-0 w-100 titulo-seccion p-3 d-flex align-items-center justify-content-between">
+                        <span class="text-center flex-grow-1 ms-4">Gestionar categorías</span>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                    </h5>
+                </div>
+
+                <div class="modal-body p-4">
+                    <div class="row g-4">
+
+                        <!-- Formulario -->
+                        <div class="col-12 col-lg-5">
+                            <div class="p-3 bg-light rounded-4 h-100 d-flex flex-column justify-content-between">
+                                <form action="#" class="h-100 d-flex flex-column justify-content-between">
+                                    <div class="mb-3">
+                                        <h6 class="fw-bold text-navy mb-3 text-center">Agregar categoría</h6>
+
+                                        <label for="nombreCategoria" class="form-label small fw-bold text-navy">
+                                            Nombre de la categoría
+                                        </label>
+                                        <input type="text" class="form-control rounded-3" id="nombreCategoria"
+                                            placeholder="Ej: Teclados">
+                                    </div>
+
+                                    <div class="pt-2 mt-auto">
+                                        <button type="submit"
+                                            class="btn btn-azul-redondeado w-100 py-2 rounded-3 fw-bold text-white shadow-sm d-flex align-items-center justify-content-center">
+                                            <i class="bi bi-check-circle me-2"></i> Guardar categoría
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!-- Tabla -->
+                        <div class="col-12 col-lg-7">
+                            <div class="p-3 bg-white border rounded-4 h-100">
+                                <h6 class="fw-bold text-navy mb-3 text-center">Categorías existentes</h6>
+
+                                <div class="card-tabla p-4">
+                                    <div class="table-responsive">
+                                        <table class="table table-borderless table-custom align-middle">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col" class="text-center">Código</th>
+                                                    <th scope="col" class="text-center">Nombre de la categoría</th>
+                                                    <th scope="col" class="text-center">Acciones</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td class="text-center fw-bold">44</td>
+                                                    <td class="text-center">Teclados</td>
+                                                    <td class="text-center">
+                                                        <button class="btn btn-link text-dark p-0">
+                                                            <i class="bi bi-three-dots fs-4"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-center fw-bold">45</td>
+                                                    <td class="text-center">Sillas</td>
+                                                    <td class="text-center">
+                                                        <button class="btn btn-link text-dark p-0">
+                                                            <i class="bi bi-three-dots fs-4"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-center fw-bold">47</td>
+                                                    <td class="text-center">Mesas</td>
+                                                    <td class="text-center">
+                                                        <button class="btn btn-link text-dark p-0">
+                                                            <i class="bi bi-three-dots fs-4"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-center fw-bold">48</td>
+                                                    <td class="text-center">Pupitres</td>
+                                                    <td class="text-center">
+                                                        <button class="btn btn-link text-dark p-0">
+                                                            <i class="bi bi-three-dots fs-4"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-center fw-bold">49</td>
+                                                    <td class="text-center">Teclados</td>
+                                                    <td class="text-center">
+                                                        <button class="btn btn-link text-dark p-0">
+                                                            <i class="bi bi-three-dots fs-4"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-center fw-bold">50</td>
+                                                    <td class="text-center">Computadoras</td>
+                                                    <td class="text-center">
+                                                        <button class="btn btn-link text-dark p-0">
+                                                            <i class="bi bi-three-dots fs-4"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. MODAL GESTIONAR MODELOS -->
+    <div class="modal fade" id="modalAgregarModelos" tabindex="-1" aria-labelledby="modalAgregarModelosLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content border-0 rounded-4 shadow">
+
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="fw-bold mb-0 w-100 titulo-seccion p-3 d-flex align-items-center justify-content-between">
+                        <span class="text-center flex-grow-1 ms-4">Gestionar modelos</span>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                    </h5>
+                </div>
+
+                <div class="modal-body p-4">
+                    <div class="row g-4">
+
+                        <!-- Formulario -->
+                        <div class="col-12 col-lg-5">
+                            <div class="p-3 bg-light rounded-4 h-100 d-flex flex-column justify-content-between">
+                                <form action="#" class="h-100 d-flex flex-column justify-content-between">
+                                    <div>
+                                        <h6 class="fw-bold text-navy mb-3 text-center">Agregar modelo</h6>
+
+                                        <div class="mb-3">
+                                            <label for="nombreModelo"
+                                                class="form-label small fw-bold text-navy">Modelo</label>
+                                            <input type="text" class="form-control rounded-3" id="nombreModelo"
+                                                placeholder="Ej: Inspiron 15">
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label for="selectEquipo"
+                                                class="form-label small fw-bold text-navy">Marca</label>
+                                            <div class="input-group">
+
+                                                <select class="form-select rounded-end-3 py-2 fs-6 shadow-sm"
+                                                    id="selectEquipo">
+                                                    <option selected disabled>Selecciona la marca...</option>
+                                                    <option value="1">Apple</option>
+                                                    <option value="2">Dell</option>
+                                                    <option value="3">HP</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="pt-2 mt-auto">
+                                        <button type="submit"
+                                            class="btn btn-azul-redondeado w-100 py-2 rounded-3 fw-bold text-white shadow-sm d-flex align-items-center justify-content-center">
+                                            <i class="bi bi-check-circle me-2"></i> Guardar modelo
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!-- Tabla -->
+                        <div class="col-12 col-lg-7">
+                            <div class="p-3 bg-white border rounded-4 h-100">
+                                <h6 class="fw-bold text-navy mb-3 text-center">Modelos existentes</h6>
+
+                                <div class="card-tabla p-4">
+                                    <div class="table-responsive">
+                                        <table class="table table-borderless table-custom align-middle">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col" class="text-center">Código</th>
+                                                    <th scope="col" class="text-center">Modelo</th>
+                                                    <th scope="col" class="text-center">Marca</th>
+                                                    <th scope="col" class="text-center">Acciones</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td class="text-center fw-bold">44</td>
+                                                    <td class="text-center">JASMMCO</td>
+                                                    <td class="text-center">Apple</td>
+                                                    <td class="text-center">
+                                                        <button class="btn btn-link text-dark p-0">
+                                                            <i class="bi bi-three-dots fs-4"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-center fw-bold">45</td>
+                                                    <td class="text-center">JASMMCO</td>
+                                                    <td class="text-center">Dell</td>
+                                                    <td class="text-center">
+                                                        <button class="btn btn-link text-dark p-0">
+                                                            <i class="bi bi-three-dots fs-4"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-center fw-bold">47</td>
+                                                    <td class="text-center">JASMMCO</td>
+                                                    <td class="text-center">Ikea</td>
+                                                    <td class="text-center">
+                                                        <button class="btn btn-link text-dark p-0">
+                                                            <i class="bi bi-three-dots fs-4"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-center fw-bold">48</td>
+                                                    <td class="text-center">JASMMCO</td>
+                                                    <td class="text-center">Dell</td>
+                                                    <td class="text-center">
+                                                        <button class="btn btn-link text-dark p-0">
+                                                            <i class="bi bi-three-dots fs-4"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-center fw-bold">49</td>
+                                                    <td class="text-center">JASMMCO</td>
+                                                    <td class="text-center">Dell</td>
+                                                    <td class="text-center">
+                                                        <button class="btn btn-link text-dark p-0">
+                                                            <i class="bi bi-three-dots fs-4"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-center fw-bold">50</td>
+                                                    <td class="text-center">JASMMCO</td>
+                                                    <td class="text-center">Apple</td>
+                                                    <td class="text-center">
+                                                        <button class="btn btn-link text-dark p-0">
+                                                            <i class="bi bi-three-dots fs-4"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. MODAL GESTIONAR MARCAS -->
+    <div class="modal fade" id="modalAgregarMarca" tabindex="-1" aria-labelledby="modalAgregarMarcaLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content border-0 rounded-4 shadow">
+
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="fw-bold mb-0 w-100 titulo-seccion p-3 d-flex align-items-center justify-content-between">
+                        <span class="text-center flex-grow-1 ms-4">Gestionar marca</span>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                    </h5>
+                </div>
+
+                <div class="modal-body p-4">
+                    <div class="row g-4">
+
+                        <!-- Formulario -->
+                        <div class="col-12 col-lg-5">
+                            <div class="p-3 bg-light rounded-4 h-100 d-flex flex-column justify-content-between">
+                                <form action="#" class="h-100 d-flex flex-column justify-content-between">
+                                    <div class="mb-3">
+                                        <h6 class="fw-bold text-navy mb-3 text-center">Agregar marca</h6>
+
+                                        <label for="nombreMarca" class="form-label small fw-bold text-navy">
+                                            Nombre de la marca
+                                        </label>
+                                        <input type="text" class="form-control rounded-3" id="nombreMarca"
+                                            placeholder="Ej: Dell">
+                                    </div>
+
+                                    <div class="pt-2 mt-auto">
+                                        <button type="submit"
+                                            class="btn btn-azul-redondeado w-100 py-2 rounded-3 fw-bold text-white shadow-sm d-flex align-items-center justify-content-center">
+                                            <i class="bi bi-check-circle me-2"></i> Guardar marca
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!-- Tabla -->
+                        <div class="col-12 col-lg-7">
+                            <div class="p-3 bg-white border rounded-4 h-100">
+                                <h6 class="fw-bold text-navy mb-3 text-center">Marcas existentes</h6>
+
+                                <div class="card-tabla p-4">
+                                    <div class="table-responsive">
+                                        <table class="table table-borderless table-custom align-middle">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col" class="text-center">Código</th>
+                                                    <th scope="col" class="text-center">Nombre de la marca</th>
+                                                    <th scope="col" class="text-center">Acciones</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td class="text-center fw-bold">44</td>
+                                                    <td class="text-center">Dell</td>
+                                                    <td class="text-center">
+                                                        <button class="btn btn-link text-dark p-0">
+                                                            <i class="bi bi-three-dots fs-4"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-center fw-bold">45</td>
+                                                    <td class="text-center">Ikea</td>
+                                                    <td class="text-center">
+                                                        <button class="btn btn-link text-dark p-0">
+                                                            <i class="bi bi-three-dots fs-4"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-center fw-bold">47</td>
+                                                    <td class="text-center">HP</td>
+                                                    <td class="text-center">
+                                                        <button class="btn btn-link text-dark p-0">
+                                                            <i class="bi bi-three-dots fs-4"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-center fw-bold">48</td>
+                                                    <td class="text-center">Apple</td>
+                                                    <td class="text-center">
+                                                        <button class="btn btn-link text-dark p-0">
+                                                            <i class="bi bi-three-dots fs-4"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalAgregarArticulos" tabindex="-1" aria-labelledby="modalAgregarModelosLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content border-0 rounded-4 shadow">
+
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="fw-bold mb-0 w-100 titulo-seccion p-3 d-flex align-items-center justify-content-between">
+                        <span class="text-center flex-grow-1 ms-4">Gestionar articulos</span>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                    </h5>
+                </div>
+
+                <div class="modal-body p-4 ">
+                    <div>
+
+                        <!-- Formulario -->
+                        <div>
+                            <div class="p-3 bg-light rounded-4 h-100 d-flex flex-column justify-content-between">
+                                <form action="#" class="h-100 d-flex flex-column justify-content-between">
+                                    <div>
+                                        <h6 class="fw-bold text-navy mb-3 text-center">Agregar artículo</h6>
+
+                                        <div class="mb-3">
+                                            <label for="nombreModelo"
+                                                class="form-label small fw-bold text-navy">Modelo</label>
+                                            <input type="text" class="form-control rounded-3" id="nombreModelo"
+                                                placeholder="Ej: Inspiron 15">
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label for="selectEquipo"
+                                                class="form-label small fw-bold text-navy">Categoría</label>
+                                            <div class="input-group">
+                                                <select class="form-select rounded-end-3 py-2 fs-6 shadow-sm"
+                                                    id="selectEquipo">
+                                                    <option selected disabled>Selecciona la categoría...</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label for="selectEquipo"
+                                                class="form-label small fw-bold text-navy">Ubicación</label>
+                                            <div class="input-group">
+                                                <select class="form-select rounded-end-3 py-2 fs-6 shadow-sm"
+                                                    id="selectEquipo">
+                                                    <option selected disabled>Selecciona la ubicación...</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label for="selectEquipo"
+                                                class="form-label small fw-bold text-navy">Marca</label>
+                                            <div class="input-group">
+                                                <select class="form-select rounded-end-3 py-2 fs-6 shadow-sm"
+                                                    id="selectEquipo">
+                                                    <option selected disabled>Selecciona la marca...</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="pt-2 mt-auto">
+                                        <button type="submit"
+                                            class="btn btn-azul-redondeado w-100 py-2 rounded-3 fw-bold text-white shadow-sm d-flex align-items-center justify-content-center">
+                                            <i class="bi bi-check-circle me-2"></i> Guardar artículo
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Todo esto es lo de notificaciones y siempre ira al final -->
+    <div class="notificaciones-overlay" id="notificacionesOverlay">
+        <div class="panel-notificaciones" id="panelNotificaciones">
+            <div class="p-4">
+                <!-- Título -->
+                <h6 class="titulo-notificaciones mb-0">Notificaciones</h3>
+            </div>
+
+            <div class="notificaciones-body px-4 pb-4">
+
+                <!-- Todo esto es las notificaciones de hoy -->
+                <div class="notificaciones-seccion mb-4">
+                    <h6 class="text-muted fw-bold mb-3 small">Hoy</h6>
+                    <div class="lista-notificaciones">
+
+                        <!-- Los divs de notificaciones empiezan desde aqui -->
+                        <div class="notificacion-item no-leida">
+                            <div class="avatar-notificacion">JG</div>
+                            <div class="contenido-notificacion">
+                                <div class="d-flex justify-content-between align-items-baseline">
+                                    <span class="notificacion-titulo">Nuevo ticket</span>
+                                    <span class="notificacion-tiempo">Hace 1 hora</span>
+                                </div>
+                                <p class="notificacion-texto">¡Josue Guinea ha creado un nuevo ticket!
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="notificacion-item no-leida">
+                            <div class="avatar-notificacion">JG</div>
+                            <div class="contenido-notificacion">
+                                <div class="d-flex justify-content-between align-items-baseline">
+                                    <span class="notificacion-titulo">Nuevo ticket</span>
+                                    <span class="notificacion-tiempo">Hace 1 hora</span>
+                                </div>
+                                <p class="notificacion-texto">¡Josue Guinea ha creado un nuevo ticket!
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="notificacion-item no-leida">
+                            <div class="avatar-notificacion">JG</div>
+                            <div class="contenido-notificacion">
+                                <div class="d-flex justify-content-between align-items-baseline">
+                                    <span class="notificacion-titulo">Nuevo ticket</span>
+                                    <span class="notificacion-tiempo">Hace 1 hora</span>
+                                </div>
+                                <p class="notificacion-texto">¡Josue Guinea ha creado un nuevo ticket!
+                                </p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Aqui se muestran las de ayer -->
+                <div class="notificaciones-seccion">
+                    <h6 class="text-muted fw-bold mb-3 small">Ayer</h6>
+                    <div class="lista-notificaciones">
+
+                        <div class="notificacion-item">
+                            <div class="avatar-notificacion">JG</div>
+                            <div class="contenido-notificacion">
+                                <div class="d-flex justify-content-between align-items-baseline">
+                                    <span class="notificacion-titulo-visto">Nuevo ticket</span>
+                                    <span class="notificacion-tiempo">Hace 1 día</span>
+                                </div>
+                                <p class="notificacion-texto">¡Josue Guinea ha creado un nuevo ticket!
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="notificacion-item">
+                            <div class="avatar-notificacion">JG</div>
+                            <div class="contenido-notificacion">
+                                <div class="d-flex justify-content-between align-items-baseline">
+                                    <span class="notificacion-titulo-visto">Nuevo ticket</span>
+                                    <span class="notificacion-tiempo">Hace 1 día</span>
+                                </div>
+                                <p class="notificacion-texto">¡Josue Guinea ha creado un nuevo ticket!
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="notificacion-item">
+                            <div class="avatar-notificacion">JG</div>
+                            <div class="contenido-notificacion">
+                                <div class="d-flex justify-content-between align-items-baseline">
+                                    <span class="notificacion-titulo-visto">Nuevo ticket</span>
+                                    <span class="notificacion-tiempo">Hace 1 día</span>
+                                </div>
+                                <p class="notificacion-texto">¡Josue Guinea ha creado un nuevo ticket!
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="notificacion-item">
+                            <div class="avatar-notificacion">JG</div>
+                            <div class="contenido-notificacion">
+                                <div class="d-flex justify-content-between align-items-baseline">
+                                    <span class="notificacion-titulo-visto">Nuevo ticket</span>
+                                    <span class="notificacion-tiempo">Hace 1 día</span>
+                                </div>
+                                <p class="notificacion-texto">¡Josue Guinea ha creado un nuevo ticket!
+                                </p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Todo esto es lo de notificaciones y siempre ira al final -->
+        <div class="notificaciones-overlay" id="notificacionesOverlay">
+            <div class="panel-notificaciones" id="panelNotificaciones">
+                <div class="p-4">
+                    <!-- Título -->
+                    <h6 class="titulo-notificaciones mb-0">Notificaciones</h3>
+                </div>
+
+                <div class="notificaciones-body px-4 pb-4">
+
+                    <!-- Todo esto es las notificaciones de hoy -->
+                    <div class="notificaciones-seccion mb-4">
+                        <h6 class="text-muted fw-bold mb-3 small">Hoy</h6>
+                        <div class="lista-notificaciones">
+
+                            <!-- Los divs de notificaciones empiezan desde aqui -->
+                            <div class="notificacion-item no-leida">
+                                <div class="avatar-notificacion">JG</div>
+                                <div class="contenido-notificacion">
+                                    <div class="d-flex justify-content-between align-items-baseline">
+                                        <span class="notificacion-titulo">Nuevo ticket</span>
+                                        <span class="notificacion-tiempo">Hace 1 hora</span>
+                                    </div>
+                                    <p class="notificacion-texto">¡Josue Guinea ha creado un nuevo
+                                        ticket!</p>
+                                </div>
+                            </div>
+
+                            <div class="notificacion-item no-leida">
+                                <div class="avatar-notificacion">JG</div>
+                                <div class="contenido-notificacion">
+                                    <div class="d-flex justify-content-between align-items-baseline">
+                                        <span class="notificacion-titulo">Nuevo ticket</span>
+                                        <span class="notificacion-tiempo">Hace 1 hora</span>
+                                    </div>
+                                    <p class="notificacion-texto">¡Josue Guinea ha creado un nuevo
+                                        ticket!</p>
+                                </div>
+                            </div>
+
+                            <div class="notificacion-item no-leida">
+                                <div class="avatar-notificacion">JG</div>
+                                <div class="contenido-notificacion">
+                                    <div class="d-flex justify-content-between align-items-baseline">
+                                        <span class="notificacion-titulo">Nuevo ticket</span>
+                                        <span class="notificacion-tiempo">Hace 1 hora</span>
+                                    </div>
+                                    <p class="notificacion-texto">¡Josue Guinea ha creado un nuevo
+                                        ticket!</p>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- Aqui se muestran las de ayer -->
+                    <div class="notificaciones-seccion">
+                        <h6 class="text-muted fw-bold mb-3 small">Ayer</h6>
+                        <div class="lista-notificaciones">
+
+                            <div class="notificacion-item">
+                                <div class="avatar-notificacion">JG</div>
+                                <div class="contenido-notificacion">
+                                    <div class="d-flex justify-content-between align-items-baseline">
+                                        <span class="notificacion-titulo-visto">Nuevo ticket</span>
+                                        <span class="notificacion-tiempo">Hace 1 día</span>
+                                    </div>
+                                    <p class="notificacion-texto">¡Josue Guinea ha creado un nuevo
+                                        ticket!</p>
+                                </div>
+                            </div>
+
+                            <div class="notificacion-item">
+                                <div class="avatar-notificacion">JG</div>
+                                <div class="contenido-notificacion">
+                                    <div class="d-flex justify-content-between align-items-baseline">
+                                        <span class="notificacion-titulo-visto">Nuevo ticket</span>
+                                        <span class="notificacion-tiempo">Hace 1 día</span>
+                                    </div>
+                                    <p class="notificacion-texto">¡Josue Guinea ha creado un nuevo
+                                        ticket!</p>
+                                </div>
+                            </div>
+
+                            <div class="notificacion-item">
+                                <div class="avatar-notificacion">JG</div>
+                                <div class="contenido-notificacion">
+                                    <div class="d-flex justify-content-between align-items-baseline">
+                                        <span class="notificacion-titulo-visto">Nuevo ticket</span>
+                                        <span class="notificacion-tiempo">Hace 1 día</span>
+                                    </div>
+                                    <p class="notificacion-texto">¡Josue Guinea ha creado un nuevo
+                                        ticket!</p>
+                                </div>
+                            </div>
+
+                            <div class="notificacion-item">
+                                <div class="avatar-notificacion">JG</div>
+                                <div class="contenido-notificacion">
+                                    <div class="d-flex justify-content-between align-items-baseline">
+                                        <span class="notificacion-titulo-visto">Nuevo ticket</span>
+                                        <span class="notificacion-tiempo">Hace 1 día</span>
+                                    </div>
+                                    <p class="notificacion-texto">¡Josue Guinea ha creado un nuevo
+                                        ticket!</p>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+            <script src="js/components/menu.js"></script>
+            <script src="js/controllers/equiposMobiliarios.js"></script>
+            <script src="js/controllers/notificaciones.js"></script>
+
+</body>
+
+</html>

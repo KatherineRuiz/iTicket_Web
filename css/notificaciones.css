@@ -1,0 +1,180 @@
+/* Fondo oscuro (este inhabilita la interfaz que esta atras y la oscurece un poco */
+.notificaciones-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(10, 18, 38, 0.45); 
+    backdrop-filter: blur(3px); /* Esto hace que se vea difuminado todo lo que no es la parte de notificación */
+    z-index: 1500;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+}
+
+.notificaciones-overlay.activo {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* El panel lateral */
+.panel-notificaciones {
+    position: fixed;
+    top: 0;
+    right: -525px; /* Para que al principio este completamente escondido */
+    width: 525px;
+    height: 100vh;
+    background-color: #f3f8fe;
+    box-shadow: -10px 0 35px rgba(0, 0, 0, 0.12);
+    z-index: 1510; 
+    overflow-y: auto;
+    
+    /* Esta es la animación de cuando se abre el panel */
+    transition: right 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Estado activo */
+.panel-notificaciones.activo {
+    right: 0;
+}
+
+.titulo-notificaciones {
+    color: #1a202c;
+    font-weight: 700;
+    font-size: 24px;
+}
+
+.notificaciones-body {
+    max-width: 450px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+}
+
+/* Tarjetas de notificación */
+.notificacion-item {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    box-shadow: 0 6px 18px rgba(18, 31, 72, 0.07);
+    margin-bottom: 12px;
+    border-left: 4px solid #cbd5e0; 
+    
+    /* Animación de salida de las notificaciones */
+    opacity: 0;
+    transform: translateY(35px);
+    transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
+}
+
+.notificacion-item.no-leida {
+    border-left-color: #1e2d5a; 
+}
+
+/* Punto indicador de que no se ha leido aún */
+.notificacion-item.no-leida::after {
+    content: '';
+    width: 8px;
+    height: 8px;
+    background-color: #4092ff;
+    border-radius: 50%;
+    align-self: center;
+    flex-shrink: 0;
+}
+
+.avatar-notificacion {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background-color: #e2e8f0;
+    color: #a0aec0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 14px;
+    flex-shrink: 0;
+}
+
+.contenido-notificacion {
+    flex-grow: 1;
+    min-width: 0; /* Evita que textos largos rompan el flex */
+}
+
+.notificacion-titulo {
+    font-weight: 700;
+    font-size: 14px;
+    color: #1a202c;
+}
+
+.notificacion-titulo-visto{
+    font-weight: 700;
+    font-size: 14px;
+    color: #4b5260;
+}
+
+.notificacion-tiempo {
+    font-size: 11px;
+    color: #a0aec0;
+}
+
+.notificacion-texto {
+    font-size: 12.5px;
+    color: #4a5568;
+    margin: 4px 0 0 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; /* Pone puntos suspensivos si es demasiado largo */
+}
+
+.panel-notificaciones.activo .notificacion-item {
+    opacity: 1;
+    transform: translateY(0); /* Sube suavemente a su posición original */
+    transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease, background-color 0.3s ease;
+}
+
+.panel-notificaciones.activo .notificacion-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 24px rgba(18, 31, 72, 0.12);
+    cursor: pointer;
+    background-color: #fcfdfe;
+}
+
+/* Escalonamiento controlado: Retardos sutiles acumulativos para cada notificación */
+.panel-notificaciones.activo .notificacion-item:nth-child(1) { transition-delay: 0.25s; }
+.panel-notificaciones.activo .notificacion-item:nth-child(2) { transition-delay: 0.33s; }
+.panel-notificaciones.activo .notificacion-item:nth-child(3) { transition-delay: 0.41s; }
+.panel-notificaciones.activo .notificacion-item:nth-child(4) { transition-delay: 0.49s; }
+.panel-notificaciones.activo .notificacion-item:nth-child(5) { transition-delay: 0.57s; }
+
+/* --- Adaptación Responsiva para Celulares --- */
+@media (max-width: 576px) {
+    .panel-notificaciones {
+        width: 100%;            /* Ocupa todo el ancho en móviles */
+        right: -100%;           /* Oculta completamente hacia la derecha */
+    }
+
+    .notificaciones-body {
+        max-width: 100%;
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+    }
+
+    .notificacion-item {
+        padding: 12px;
+        gap: 10px;
+    }
+
+    .avatar-notificacion {
+        width: 38px;
+        height: 38px;
+        font-size: 13px;
+    }
+
+    .notificacion-texto {
+        font-size: 11.5px;
+    }
+}

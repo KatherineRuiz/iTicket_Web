@@ -9,14 +9,15 @@ body {
     margin: 0;
     padding: 0;
 }
-.encabezado-tickets-asignados{
+
+.encabezado-tickets-asignados {
     background-color: var(--accent-celeste);
     z-index: 2;
     position: relative;
-    border-radius: 20px 20px 0 0 ;
+    border-radius: 20px 20px 0 0;
 }
 
-.input-buscar{
+.input-buscar {
     width: 297px;
 }
 
@@ -25,9 +26,12 @@ body {
     position: relative;
     cursor: pointer;
 }
-.lista-tickets-asignados:hover{
+
+.lista-tickets-asignados:hover {
     transform: translateY(-4px);
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+    transition: transform 0.4s ease;
+
 }
 
 .lista-tickets-asignados .badge.fondo-critica {
@@ -40,26 +44,30 @@ body {
     display: inline-block;
 }
 
-.borde-critica{
+.borde-critica {
     border-left: 6px solid var(--borde-critica) !important;
 }
 
-.scroll-lista-ticket{
+.scroll-lista-ticket {
     max-height: 550px;
     overflow-y: auto;
     padding-right: 10px 12px;
     scroll-behavior: smooth;
 }
-.scroll-lista-ticket::-webkit-scrollbar{
+
+.scroll-lista-ticket::-webkit-scrollbar {
     width: 6px;
 }
-.scroll-lista-ticket::-webkit-scrollbar-track{
+
+.scroll-lista-ticket::-webkit-scrollbar-track {
     background: transparent;
 }
-.scroll-lista-ticket::-webkit-scrollbar-thumb{
+
+.scroll-lista-ticket::-webkit-scrollbar-thumb {
     background-color: #cbd5e1;
     border-radius: 10px;
 }
-.scroll-lista-ticket::-webkit-scrollbar-thumb:hover{
+
+.scroll-lista-ticket::-webkit-scrollbar-thumb:hover {
     background-color: #94a3b8;
 }

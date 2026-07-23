@@ -1,12 +1,22 @@
 
 const graficoResolucion = document.getElementById('graficoResolucion');
 const botonesResumen = document.querySelectorAll('.btn-resumen');
+const btnCrear = document.getElementById('btnCrear');
 
+
+// Aqui se crea ese evento click que envia de la interfaz del Dashboard a Mis tickets, como ya se habia diseñado el button mejor solo agregar el link con el eventListener
+btnCrear.addEventListener('click', function () {
+    window.location.href = 'misTickets.html';
+})
+
+// Con esto se espera que dos funciones asincronicas se cumplan simultaneamente 
 Promise.all([
+    // Estas dos
     new Promise(resolve => window.addEventListener('load', resolve)),
     document.fonts.ready
 ]).then(function () {
 
+    // Esto es conocido como Double-rAF, básicamente sirve para que al primer refresco de pantalla se calcule el espacio que se ocupara y al segundo se ocupe ese espacio
     requestAnimationFrame(() => {
         requestAnimationFrame(() => {
             crearGraficos();
@@ -15,6 +25,7 @@ Promise.all([
 
 });
 
+// Crea los gráficos de Chart js con los datos que elegimos mostrar
 function crearGraficos() {
 
     if (graficoResolucion) {
@@ -52,9 +63,11 @@ function crearGraficos() {
     }
 }
 
+
 botonesResumen.forEach(boton => {
-        boton.addEventListener('click', function () {
-            botonesResumen.forEach(b => b.classList.remove('activo'));
-            this.classList.add('activo');
-        });
+    boton.addEventListener('click', function (e) {
+        console.log('Botón clickeado:', e.currentTarget); // ¿Sale en la consola F12?
+        botonesResumen.forEach(b => b.classList.remove('activo'));
+        this.classList.add('activo');
     });
+});

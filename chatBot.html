@@ -1,283 +1,206 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>iTicket</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="css/common.css" />
-    <link rel="stylesheet" href="css/chatBot.css" />
-  </head>
 
-  <body>
-    <header>
-      <nav class="menu-lateral" id="menuLateral">
-        <div class="menu-lateral-header text-white">
-          <button
-            class="btn text-white p-0 fs-3 d-flex align-items-center justify-content-center"
-            id="btnMenu"
-            type="button"
-            style="width: 40px; height: 40px"
-          >
-            <i class="bi bi-list"></i>
-          </button>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>iTicket</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet" />
+  <link rel="stylesheet" href="css/common.css" />
+  <link rel="stylesheet" href="css/notificaciones.css">
+  <link rel="stylesheet" href="css/chatBot.css" />
+  <script src="js/components/menu-cache.js"></script>
+</head>
 
-          <img src="img/logo.png" alt="logo" class="menu-lateral-logo" />
-        </div>
+<body>
+  <!-- Todo el header  -->
+  <header id="contenedorMenuLateral"></header>
+  <div class="menu-lateral-overlay" id="overlay"></div>
 
-        <div class="d-none d-md-flex justify-content-center">
-          <hr class="linea-divisora border border-light-subtle opacity-50" />
-        </div>
-
-        <div
-          class="menu-lateral-cuerpo d-flex flex-column flex-grow-1 justify-content-between"
-        >
+  <main class="main px-md-4 py-3">
+    <section class="chat container px-0 d-flex flex-column justify-content-between">
+      <div class="encabezado d-flex justify-content-between align-items-center fs-5 text-secondary px-4 pt-2 shadow-sm">
+        <div class="d-flex gap-2">
+          <svg width="38" height="42" viewBox="0 0 52 46" fill="none" xmlns="http://www.w3.org/2000/svg"
+            class="d-flex chatbot-svg">
+            <path
+              d="M26 10.844V2H16.4M33.2 21.899V26.321M2 24.11H6.8M45.2 24.11H50M18.8 21.899V26.321M45.2 32.954C45.2 34.1268 44.6943 35.2516 43.7941 36.0809C42.8939 36.9101 41.673 37.376 40.4 37.376H18.3872C17.1143 37.3763 15.8936 37.8423 14.9936 38.6717L9.7088 43.5403C9.47049 43.7598 9.16689 43.9093 8.83637 43.9698C8.50586 44.0304 8.16328 43.9993 7.85194 43.8805C7.5406 43.7617 7.27449 43.5605 7.08725 43.3024C6.9 43.0443 6.80004 42.7408 6.8 42.4304V15.266C6.8 14.0932 7.30571 12.9685 8.20589 12.1392C9.10606 11.3099 10.327 10.844 11.6 10.844H40.4C41.673 10.844 42.8939 11.3099 43.7941 12.1392C44.6943 12.9685 45.2 14.0932 45.2 15.266V32.954Z"
+              stroke="#6c757d" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
           <div>
-            <ul class="nav flex-column gap-2 p-0">
-              <li class="menu-opcion">
-                <a href="dashboardAdmin.html" class="nav-link">
-                  <div class="icono-menu">
-                    <img src="img/inicio.svg" alt="Icono de Inicio" />
-                  </div>
-                  <span class="menu-texto">Inicio</span>
-                </a>
-              </li>
-              <li class="menu-opcion" id="ticketsMenu">
-                <a class="nav-link" id="btnTickets">
-                  <div class="icono-menu">
-                    <img src="img/tickets.svg" alt="Incono de Tickets" />
-                  </div>
-                  <span class="menu-texto">Tickets</span>
-                  <i class="bi bi-chevron-down icono-flecha"></i>
-                </a>
-                <ul class="submenu">
-                  <li>
-                    <a href="misTickets.html"
-                      ><span class="menu-texto">Mis Tickets</span></a
-                    >
-                  </li>
-                  <li>
-                    <a href="gestionTickets.html"
-                      ><span class="menu-texto">Gestionar Tickets</span></a
-                    >
-                  </li>
-                  <li>
-                    <a href="ticketsAsignados.html"
-                      ><span class="menu-texto">Gestionar Tickets</span></a
-                    >
-                  </li>
-                </ul>
-              </li>
-              <li class="menu-opcion" id="equiposMenu">
-                <a class="nav-link" id="btnEquipos">
-                  <div class="icono-menu">
-                    <img src="img/equipos.svg" alt="Icono de Equipos" />
-                  </div>
-                  <span class="menu-texto">Equipos</span>
-                  <i class="bi bi-chevron-down icono-flecha"></i>
-                </a>
-                <ul class="submenu">
-                  <li>
-                    <a href="#" class="menu-texto">Equipo y Mobiliario</a>
-                  </li>
-                  <li><a href="#" class="menu-texto">Ubicaciones</a></li>
-                </ul>
-              </li>
-              <li class="menu-opcion">
-                <a href="#" class="nav-link">
-                  <div class="icono-menu">
-                    <img
-                      src="img/usuarios.svg"
-                      alt="Icono de Usuarios"
-                      class="d-flex"
-                    />
-                  </div>
-                  <span class="menu-texto">Usuarios</span>
-                </a>
-              </li>
-              <li class="menu-opcion">
-                <a href="#" class="nav-link">
-                  <div class="icono-menu">
-                    <img
-                      src="img/estadisticas.svg"
-                      alt="Icono de Estadísticas"
-                      class="d-flex"
-                    />
-                  </div>
-                  <span class="menu-texto">Estadísticas</span>
-                </a>
-              </li>
-              <li class="menu-opcion">
-                <a href="evaluaciones.html" class="nav-link">
-                  <div class="icono-menu">
-                    <img
-                      src="img/evaluaciones.svg"
-                      alt="Icono de Evaluaciones"
-                      class="d-flex"
-                    />
-                  </div>
-                  <span class="menu-texto">Evaluaciones</span>
-                </a>
-              </li>
-              <li class="menu-opcion activo">
-                <a href="chatBot.html" class="nav-link">
-                  <div class="icono-menu">
-                    <img
-                      src="img/chatBot.svg"
-                      alt="Icono de Chatbot"
-                      class="d-flex"
-                    />
-                  </div>
-                  <span class="menu-texto">ChatBot</span>
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          <div>
-            <ul class="nav flex-column gap-2 mt-3 p-0">
-              <li class="menu-opcion">
-                <a href="#" class="nav-link">
-                  <div class="icono-menu">
-                    <img src="img/notificaciones.svg" alt="" class="d-flex" />
-                  </div>
-                  <span class="menu-texto">Notificaciones</span>
-                </a>
-              </li>
-              <li class="menu-opcion">
-                <a href="#" class="nav-link">
-                  <div class="icono-menu">
-                    <img src="img/configuracion.svg" alt="" class="d-flex" />
-                  </div>
-                  <span class="menu-texto">Configuración</span>
-                </a>
-              </li>
-            </ul>
+            <p class="fw-bold mb-0">Botick</p>
+            <p class="subtitulo mb-1">Asistente virtual</p>
           </div>
         </div>
-      </nav>
-    </header>
-    <div class="menu-lateral-overlay" id="overlay"></div>
-
-    <main class="main px-md-4 py-3">
-      <section
-        class="chat container px-0 d-flex flex-column justify-content-between"
-      >
-        <div
-          class="encabezado d-flex justify-content-between align-items-center fs-5 text-secondary px-4 pt-2 shadow-sm"
-        >
-          <div class="d-flex gap-2">
-            <svg
-              width="38"
-              height="42"
-              viewBox="0 0 52 46"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              class="d-flex chatbot-svg"
-            >
+        <button type="button" class="rounded-5 btn btn-link" data-bs-container="body" data-bs-toggle="popover"
+          data-bs-placement="bottom"
+          data-bs-content="Pregunta sobre tus tickets, información de interés de las solicitudes y cómo solucionar problemas sencillos">
+          <i class="bi bi-question-circle-fill text-secondary"></i>
+        </button>
+      </div>
+      <div class="cuerpo-chat" id="cuerpoChat">
+        <!--Mensaje del bot-->
+        <div class="d-flex align-items-end gap-3">
+          <div class="perfil-bot p-2 rounded-pill">
+            <svg width="22" height="25" viewBox="0 0 52 46" fill="none" xmlns="http://www.w3.org/2000/svg"
+              class="d-flex chatbot-svg">
               <path
                 d="M26 10.844V2H16.4M33.2 21.899V26.321M2 24.11H6.8M45.2 24.11H50M18.8 21.899V26.321M45.2 32.954C45.2 34.1268 44.6943 35.2516 43.7941 36.0809C42.8939 36.9101 41.673 37.376 40.4 37.376H18.3872C17.1143 37.3763 15.8936 37.8423 14.9936 38.6717L9.7088 43.5403C9.47049 43.7598 9.16689 43.9093 8.83637 43.9698C8.50586 44.0304 8.16328 43.9993 7.85194 43.8805C7.5406 43.7617 7.27449 43.5605 7.08725 43.3024C6.9 43.0443 6.80004 42.7408 6.8 42.4304V15.266C6.8 14.0932 7.30571 12.9685 8.20589 12.1392C9.10606 11.3099 10.327 10.844 11.6 10.844H40.4C41.673 10.844 42.8939 11.3099 43.7941 12.1392C44.6943 12.9685 45.2 14.0932 45.2 15.266V32.954Z"
-                stroke="#6c757d"
-                stroke-width="4"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
+                stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
             </svg>
-            <div>
-              <p class="fw-bold mb-0">Botick</p>
-              <p class="subtitulo mb-1">Asistente virtual</p>
+          </div>
+          <div class="mensaje bot animar-mensaje shadow-sm">
+            <p id="txtChatInicio">
+              ¡Hola! Bienvenido al sistema de soporte. Veo que tenemos
+              <strong>36 tickets abiertos</strong>. ¿Quieres consultar algo?
+            </p>
+            <p>Sugerencias:</p>
+            <div class="sugerencias">
+              <button id="btnSugerencia1">
+                Ver resumen de los tickets activos
+              </button>
+              <button id="btnSugerencia2">
+                Ver los tickets con calificaciones bajas en el mes
+              </button>
+              <button id="btnSugerencia3">
+                Ver las ubicaciones con mayor cantidad de tickets este mes
+              </button>
             </div>
           </div>
-          <button
-            type="button"
-            class="rounded-5 btn btn-link"
-            data-bs-container="body"
-            data-bs-toggle="popover"
-            data-bs-placement="bottom"
-            data-bs-content="Pregunta sobre tus tickets, información de interés de las solicitudes y cómo solucionar problemas sencillos"
-          >
-            <i class="bi bi-question-circle-fill text-secondary"></i>
+        </div>
+      </div>
+      <div class="px-5 pb-3 w-75 mx-auto">
+        <div class="chat-input-wrapper input-group bg-white rounded-pill shadow-sm p-2 align-items-center">
+          <span class="input-group-text bg-transparent border-0 ps-3">
+            <i class="bi bi-mic text-muted"></i>
+          </span>
+          <textarea class="form-control border-0 bg-transparent mx-1" placeholder="Escribe tu consulta aquí..."
+            aria-label="Escribe tu consulta..." rows="1" id="txtChat"></textarea>
+          <button class="btn d-flex align-items-center gap-2 pe-3 text-white btn-oscuro rounded-5" type="button"
+            id="btnEnviar">
+            <i class="bi bi-send-fill"></i>
+            Enviar
           </button>
         </div>
-        <div class="cuerpo-chat" id="cuerpoChat">
-          <!--Mensaje del bot-->
-          <div class="d-flex align-items-end gap-3">
-            <div class="perfil-bot p-2 rounded-pill">
-              <svg
-                width="22"
-                height="25"
-                viewBox="0 0 52 46"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                class="d-flex chatbot-svg"
-              >
-                <path
-                  d="M26 10.844V2H16.4M33.2 21.899V26.321M2 24.11H6.8M45.2 24.11H50M18.8 21.899V26.321M45.2 32.954C45.2 34.1268 44.6943 35.2516 43.7941 36.0809C42.8939 36.9101 41.673 37.376 40.4 37.376H18.3872C17.1143 37.3763 15.8936 37.8423 14.9936 38.6717L9.7088 43.5403C9.47049 43.7598 9.16689 43.9093 8.83637 43.9698C8.50586 44.0304 8.16328 43.9993 7.85194 43.8805C7.5406 43.7617 7.27449 43.5605 7.08725 43.3024C6.9 43.0443 6.80004 42.7408 6.8 42.4304V15.266C6.8 14.0932 7.30571 12.9685 8.20589 12.1392C9.10606 11.3099 10.327 10.844 11.6 10.844H40.4C41.673 10.844 42.8939 11.3099 43.7941 12.1392C44.6943 12.9685 45.2 14.0932 45.2 15.266V32.954Z"
-                  stroke="white"
-                  stroke-width="4"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-              </svg>
-            </div>
-            <div class="mensaje bot animar-mensaje shadow-sm">
-              <p id="txtChatInicio">
-                ¡Hola! Bienvenido al sistema de soporte. Veo que tenemos
-                <strong>36 tickets abiertos</strong>. ¿Quieres consultar algo?
-              </p>
-              <p>Sugerencias:</p>
-              <div class="sugerencias">
-                <button id="btnSugerencia1">
-                  Ver resumen de los tickets activos
-                </button>
-                <button id="btnSugerencia2">
-                  Ver los tickets con calificaciones bajas en el mes
-                </button>
-                <button id="btnSugerencia3">
-                  Ver las ubicaciones con mayor cantidad de tickets este mes
-                </button>
+      </div>
+    </section>
+  </main>
+
+  <!-- Todo esto es lo de notificaciones y siempre ira al final -->
+  <div class="notificaciones-overlay" id="notificacionesOverlay">
+    <div class="panel-notificaciones" id="panelNotificaciones">
+      <div class="p-4">
+        <!-- Título -->
+        <h6 class="titulo-notificaciones mb-0">Notificaciones</h3>
+      </div>
+
+      <div class="notificaciones-body px-4 pb-4">
+
+        <!-- Todo esto es las notificaciones de hoy -->
+        <div class="notificaciones-seccion mb-4">
+          <h6 class="text-muted fw-bold mb-3 small">Hoy</h6>
+          <div class="lista-notificaciones">
+
+            <!-- Los divs de notificaciones empiezan desde aqui -->
+            <div class="notificacion-item no-leida">
+              <div class="avatar-notificacion">JG</div>
+              <div class="contenido-notificacion">
+                <div class="d-flex justify-content-between align-items-baseline">
+                  <span class="notificacion-titulo">Nuevo ticket</span>
+                  <span class="notificacion-tiempo">Hace 1 hora</span>
+                </div>
+                <p class="notificacion-texto">¡Josue Guinea ha creado un nuevo ticket!</p>
               </div>
             </div>
+
+            <div class="notificacion-item no-leida">
+              <div class="avatar-notificacion">JG</div>
+              <div class="contenido-notificacion">
+                <div class="d-flex justify-content-between align-items-baseline">
+                  <span class="notificacion-titulo">Nuevo ticket</span>
+                  <span class="notificacion-tiempo">Hace 1 hora</span>
+                </div>
+                <p class="notificacion-texto">¡Josue Guinea ha creado un nuevo ticket!</p>
+              </div>
+            </div>
+
+            <div class="notificacion-item no-leida">
+              <div class="avatar-notificacion">JG</div>
+              <div class="contenido-notificacion">
+                <div class="d-flex justify-content-between align-items-baseline">
+                  <span class="notificacion-titulo">Nuevo ticket</span>
+                  <span class="notificacion-tiempo">Hace 1 hora</span>
+                </div>
+                <p class="notificacion-texto">¡Josue Guinea ha creado un nuevo ticket!</p>
+              </div>
+            </div>
+
           </div>
         </div>
-        <div class="px-5 pb-3 w-75 mx-auto">
-          <div
-            class="chat-input-wrapper input-group bg-white rounded-pill shadow-sm p-2 align-items-center"
-          >
-            <span class="input-group-text bg-transparent border-0 ps-3">
-              <i class="bi bi-mic text-muted"></i>
-            </span>
-            <textarea
-              class="form-control border-0 bg-transparent mx-1"
-              placeholder="Escribe tu consulta aquí..."
-              aria-label="Escribe tu consulta..."
-              rows="1"
-              id="txtChat"
-            ></textarea>
-            <button
-              class="btn d-flex align-items-center gap-2 pe-3 text-white btn-oscuro rounded-5"
-              type="button"
-              id="btnEnviar"
-            >
-              <i class="bi bi-send-fill"></i>
-              Enviar
-            </button>
+
+        <!-- Aqui se muestran las de ayer -->
+        <div class="notificaciones-seccion">
+          <h6 class="text-muted fw-bold mb-3 small">Ayer</h6>
+          <div class="lista-notificaciones">
+
+            <div class="notificacion-item">
+              <div class="avatar-notificacion">JG</div>
+              <div class="contenido-notificacion">
+                <div class="d-flex justify-content-between align-items-baseline">
+                  <span class="notificacion-titulo-visto">Nuevo ticket</span>
+                  <span class="notificacion-tiempo">Hace 1 día</span>
+                </div>
+                <p class="notificacion-texto">¡Josue Guinea ha creado un nuevo ticket!</p>
+              </div>
+            </div>
+
+            <div class="notificacion-item">
+              <div class="avatar-notificacion">JG</div>
+              <div class="contenido-notificacion">
+                <div class="d-flex justify-content-between align-items-baseline">
+                  <span class="notificacion-titulo-visto">Nuevo ticket</span>
+                  <span class="notificacion-tiempo">Hace 1 día</span>
+                </div>
+                <p class="notificacion-texto">¡Josue Guinea ha creado un nuevo ticket!</p>
+              </div>
+            </div>
+
+            <div class="notificacion-item">
+              <div class="avatar-notificacion">JG</div>
+              <div class="contenido-notificacion">
+                <div class="d-flex justify-content-between align-items-baseline">
+                  <span class="notificacion-titulo-visto">Nuevo ticket</span>
+                  <span class="notificacion-tiempo">Hace 1 día</span>
+                </div>
+                <p class="notificacion-texto">¡Josue Guinea ha creado un nuevo ticket!</p>
+              </div>
+            </div>
+
+            <div class="notificacion-item">
+              <div class="avatar-notificacion">JG</div>
+              <div class="contenido-notificacion">
+                <div class="d-flex justify-content-between align-items-baseline">
+                  <span class="notificacion-titulo-visto">Nuevo ticket</span>
+                  <span class="notificacion-tiempo">Hace 1 día</span>
+                </div>
+                <p class="notificacion-texto">¡Josue Guinea ha creado un nuevo ticket!</p>
+              </div>
+            </div>
+
           </div>
         </div>
-      </section>
-    </main>
+
+      </div>
+    </div>
 
     <!--Bootstrap-->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!--Links del script-->
     <script src="js/components/menu.js"></script>
     <script src="js/controllers/chatBot.js"></script>
-  </body>
+    <script src="js/controllers/notificaciones.js"></script>
+
+</body>
+
 </html>

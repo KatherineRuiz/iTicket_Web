@@ -49,7 +49,7 @@ body {
     border: 0 !important;
     border-radius: 2rem;
     min-height: 600px;
-    box-shadow: 0 0 30px rgba(255, 255, 255, 0.6);
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.105);
 }
 
 .tarjeta-validacion {
@@ -132,6 +132,7 @@ body {
     height: auto;
 }
 
+
 .img-fluid {
     transition: opacity 0.5s ease-in-out;
     opacity: 1;
@@ -143,6 +144,16 @@ body {
 
 .img-ilustracion-recuperar {
     max-width: 90%;
+}
+
+.img-ilustracion-formulario {
+    transform: translateY(25px) !important;
+    max-height: 80% ;
+    max-width: 85%;
+    width: auto;
+    height: auto;
+    display: block;
+    margin: 5 ;
 }
 
 .form-control.rounded-pill {
@@ -180,7 +191,6 @@ body {
     border-color: #43A1FF;
     box-shadow: 0 0 0 3px rgba(67, 161, 255, 0.3);
 }
-
 /* ==================== 5. BOTONES ==================== */
 .btn-azul {
     background-color: #43A1FF;
@@ -211,3 +221,8 @@ body {
         /* Muestra solo en PC */
     }
 }
+    .logo-mobile{
+    width: 45px;
+    height: auto;
+    margin: 5;
+    }

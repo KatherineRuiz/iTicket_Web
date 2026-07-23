@@ -1,0 +1,50 @@
+.grafico {
+    position: relative;
+    width: 100%;
+    height: 300px;
+}
+
+.contenedor-proyectos {
+    max-height: 94vh;
+    overflow-y: auto;
+}
+
+.tarjeta-proyecto {
+    border-left: 4px solid #d3d7da;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 0.5rem 1rem rgba(83, 158, 205, 0.35) !important;
+}
+
+.tarjeta-proyecto:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 0.5rem 1rem rgba(92, 175, 226, 0.35) !important;
+}
+
+.tarjeta-proyecto .tarjeta-titulo {
+    color: #539ECD;
+    font-size: 1rem;
+}
+
+.tarjeta-proyecto p {
+    font-size: 12px;
+}
+
+/*Personalización estética de la barra de scroll */
+.contenedor-proyectos::-webkit-scrollbar {
+    width: 6px;
+}
+
+.contenedor-proyectos::-webkit-scrollbar-track {
+    background: #F1F5F9;
+    border-radius: 10px;
+}
+
+.contenedor-proyectos::-webkit-scrollbar-thumb {
+    background: #CBD5E1;
+    border-radius: 10px;
+}
+
+.contenedor-proyectos::-webkit-scrollbar-thumb:hover {
+    background: #94A3B8;
+}
+

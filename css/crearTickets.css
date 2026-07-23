@@ -1,70 +1,102 @@
 :root {
-    --bg-dark: #121F48;
-    --accent-celeste: #539ECD;
-    --sidebar-width-full: 260px;
-    --sidebar-width-collapsed: 85px;
+  --bg-dark: #121F48;
+  --accent-celeste: #539ECD;
+  --sidebar-width-full: 260px;
+  --sidebar-width-collapsed: 85px;
+  --blue-primary: #4393f6;
+  --blue-hover: #2b7ee2;
+  --blue-light: #4aa3ff;
 }
 
 body {
-    background-color: #ffffff;
-    margin: 0;
-    padding: 0;
+  background-color: #ffffff;
+  margin: 0;
+  padding: 0;
+}
+
+.volver-button {
+  text-decoration: none;
+}
+
+.btn-azul-redondeado,
+.btn-personalizado-primario {
+  background-color: var(--blue-primary) !important;
+  color: white !important;
+  border: none;
+  border-radius: 15px !important;
+  padding: 12px 24px !important;
+  font-weight: 600;
+  font-size: 15px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(67, 147, 246, 0.2);
+  transition: all 0.3s ease;
+}
+
+.btn-azul-redondeado:hover,
+.btn-personalizado-primario:hover {
+  background-color: var(--blue-hover) !important;
+  transform: translateY(-1px);
 }
 
 /* Creacion de Tikcets */
 /* Cartas de seleccion de categorias */
 .card-categoria {
-    display: flex;
-    flex-direction: column;   
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    background-color: #ffffff;
-    border: 2px solid #b2d4eb; 
-    border-radius: 20px;
-    cursor: pointer;
-    flex: 1 1 0px;
-    min-width: 240px;
-    min-height: 160px;
-    padding: 1.5rem;
-    transition: all 0.25s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background-color: #ffffff;
+  border: 2px solid #b2d4eb;
+  border-radius: 20px;
+  cursor: pointer;
+  flex: 1 1 0px;
+  /* Ancho base flexible */
+  width: 100%;
+  min-height: 280px;
+  /* Muestra una proporción casi 1:1 (cuadrada) */
+  padding: 2.5rem 1.5rem;
+  /* Espaciado interno limpio */
+
+  transition: all 0.25s ease-in-out;
 }
 
 .card-categoria:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08) !important;
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08) !important;
 }
 
 /* Muestra que tarjeta es seleccionada */
 .card-categoria.active-card {
-    background-color: #EEF6FC !important; 
-    border-color: var(--accent-celeste);
+  background-color: #EEF6FC !important;
+  border-color: var(--accent-celeste);
 }
 
 /* Es para que las imágenes dentro de las tarjetas no se desborden */
 .card-categoria img {
-    height: 75px !important;
-    width: auto;
-    object-fit: contain;
-    margin-bottom: 12px;
-    display: inline-block;
+  height: 75px !important;
+  width: auto;
+  object-fit: contain;
+  margin-bottom: 12px;
+  display: inline-block;
 }
 
 .card-categoria span {
-    font-size: 1.1rem; /* Aumenta un poco el tamaño del texto de las tarjetas*/
-    color: var(--accent-celeste);
+  font-size: 1.1rem;
+  /* Aumenta un poco el tamaño del texto de las tarjetas*/
+  color: var(--accent-celeste);
 }
 
 .campo-dinamico {
-    display: none !important; 
+  display: none !important;
 }
 
 .campo-dinamico.mostrar {
-    display: block !important;
+  display: block !important;
 }
 
 .bg-blue-light {
-    background-color: #f8fbfd;
+  background-color: #f8fbfd;
 }
 
 .agregar-multimedia {
@@ -77,9 +109,17 @@ body {
   width: 350px;
   padding: 12px;
   box-sizing: border-box;
-  display: flex;          
-  align-items: center;    
+  display: flex;
+  align-items: center;
   justify-content: center;
+  padding: 80px;
+}
+
+.icono-agregar-multimedia {
+  font-size: 2.5rem;
+  line-height: 1;
+  color: #9aa1ac;
+  padding: 10px;
 }
 
 .agregar-multimedia:hover {
@@ -89,10 +129,8 @@ body {
 
 /* Estilo para el signo */
 .texto-agregar-multimedia {
-  font-size: 0.95rem;
-  font-weight: 500;
-  line-height: 1.3;
   color: #a0a6b0 !important;
+  text-align: center;
 }
 
 /* Grilla de miniaturas cuando ya hay fotos */

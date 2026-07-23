@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iTicket</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/notificaciones.css">
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/usuarios.css">
+    <script src="js/components/menu-cache.js"></script>
+</head>
+
+<body>
+    <!-- Todo el header  -->
+    <header id="contenedorMenuLateral"></header>
+    <div class="menu-lateral-overlay" id="overlay"></div>
+
+    <main class="main px-md-4 pt-3">
+
+        <section class="superior rounded-5 ps-4 d-none d-md-flex">
+            <h6 class="mb-0 bold">Usuarios</h6>
+            <div class="position-relative">
+                <div class="perfil p-2 rounded-5 gap-lg-4 gap-md-2" id="perfilBienvenida">
+                    <h6 class="perfil-nombre text-white mb-0 ps-2" id="nombrePerfil">Bienvenida, Katherine</h6>
+                    <div class="perfil-foto" id="fotoPerfil">
+                        <span class="foto-letra" id="fotoLetra">K</span>
+                        <img src="img/usuario.png" alt="Foto de perfil" class="foto-img" id="fotoDePerfil">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="contenido-principal container-fluid mt-2 pb-5">
+
+            <div class="p-4">
+                <div class="row g-4 align-items-stretch">
+
+                    <div class="col-12">
+                        <h5 class="fw-bold mb-0 titulo-seccion text-center p-3">Gestionar usuarios</h5>
+                    </div>
+
+                    <!-- Formulario Usuarios -->
+                    <div class="col-12 col-lg-5">
+                        <div class="p-3 bg-light rounded-4 h-100">
+                            <form action="#" class="h-100 d-flex flex-column justify-content-between">
+                                <div class="py-2">
+                                    <h6 class="fw-bold text-navy mb-3 text-center">Agregar usuario</h6>
+
+                                    <div class="mb-3">
+                                        <label for="nombreUsuario"
+                                            class="form-label small fw-bold text-navy">Nombre</label>
+                                        <input type="text" class="form-control rounded-3">
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="selectRol" class="form-label small fw-bold text-navy">Rol</label>
+                                        <div class="input-group">
+                                            <select class="form-select rounded-3 py-2 fs-6 shadow-sm" id="selectRol">
+                                                <option selected disabled>Selecciona el rol...</option>
+                                                <option value="1">Administrador</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="correoUsuario" class="form-label small fw-bold text-navy">Correo
+                                            electrónico</label>
+                                        <input type="email" class="form-control rounded-3" id="correoUsuario">
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="passwordUsuario"
+                                            class="form-label small fw-bold text-navy">Contraseña</label>
+                                        <input class="form-control rounded-3">
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="selectAreaUsuario"
+                                            class="form-label small fw-bold text-navy">Área</label>
+                                        <div class="input-group">
+                                            <select class="form-select rounded-3 py-2 fs-6 shadow-sm"
+                                                id="selectAreaUsuario">
+                                                <option selected disabled>Selecciona el área...</option>
+                                                <option value="1">CFP</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="pt-2 mt-auto">
+                                    <button type="submit"
+                                        class="btn btn-azul-redondeado w-100 py-2 rounded-3 fw-bold text-white shadow-sm d-flex align-items-center justify-content-center">
+                                        <i class="bi bi-check-circle me-2"></i> Guardar usuario
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Tabla Usuarios -->
+                    <div class="col-12 col-lg-7">
+                        <div class="p-3 bg-white border rounded-4 h-100 d-flex flex-column">
+                            <h6 class="fw-bold text-navy mb-3 text-center pt-2">Usuarios existentes</h6>
+
+                            <div class="card-tabla p-3 flex-grow-1">
+                                <div class="table-responsive">
+                                    <table class="table table-borderless table-custom align-middle mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col" class="text-center">Usuario</th>
+                                                <th scope="col" class="text-center">Rol</th>
+                                                <th scope="col" class="text-center">Área</th>
+                                                <th scope="col" class="text-center">Correo</th>
+                                                <th scope="col" class="text-center">Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td class="text-center fw-bold">Rosemberg Astúl</td>
+                                                <td class="text-center">Administrador</td>
+                                                <td class="text-center">CFP</td>
+                                                <td class="text-center">rosemberg@ricaldone.edu.sv</td>
+                                                <td class="text-center">
+                                                    <button class="btn btn-link text-dark p-0">
+                                                        <i class="bi bi-three-dots fs-4"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-center fw-bold">Rosemberg Astúl</td>
+                                                <td class="text-center">Administrador</td>
+                                                <td class="text-center">CFP</td>
+                                                <td class="text-center">rosemberg@ricaldone.edu.sv</td>
+                                                <td class="text-center">
+                                                    <button class="btn btn-link text-dark p-0">
+                                                        <i class="bi bi-three-dots fs-4"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-center fw-bold">Rosemberg Astúl</td>
+                                                <td class="text-center">Administrador</td>
+                                                <td class="text-center">CFP</td>
+                                                <td class="text-center">rosemberg@ricaldone.edu.sv</td>
+                                                <td class="text-center">
+                                                    <button class="btn btn-link text-dark p-0">
+                                                        <i class="bi bi-three-dots fs-4"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="p-4">
+                <div class="row g-4 align-items-stretch">
+
+                    <div class="col-12">
+                        <h5 class="fw-bold mb-0 titulo-seccion text-center p-3">Gestionar áreas</h5>
+                    </div>
+
+                    <div class="col-12 col-lg-5">
+                        <div class="p-3 bg-light rounded-4 h-100">
+                            <form action="#" class="h-100 d-flex flex-column justify-content-between">
+                                <div class="py-2">
+                                    <h6 class="fw-bold text-navy mb-3 text-center">Agregar área</h6>
+
+                                    <div class="mb-3">
+                                        <label for="nombreArea" class="form-label small fw-bold text-navy">Nombre del
+                                            área</label>
+                                        <input type="text" class="form-control rounded-3" id="nombreArea"
+                                            placeholder="Ej: CFP">
+                                    </div>
+                                </div>
+
+                                <div class="pt-2 mt-auto">
+                                    <button type="submit"
+                                        class="btn btn-azul-redondeado w-100 py-2 rounded-3 fw-bold text-white shadow-sm d-flex align-items-center justify-content-center">
+                                        <i class="bi bi-check-circle me-2"></i> Guardar área
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Tabla Áreas -->
+                    <div class="col-12 col-lg-7">
+                        <div class="p-3 bg-white border rounded-4 h-100 d-flex flex-column">
+                            <h6 class="fw-bold text-navy mb-3 text-center pt-2">Áreas existentes</h6>
+
+                            <div class="card-tabla p-3 flex-grow-1">
+                                <div class="table-responsive">
+                                    <table class="table table-borderless table-custom align-middle mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col" class="text-center">Área</th>
+                                                <th scope="col" class="text-center">Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td class="text-center fw-bold">CFP</td>
+                                                <td class="text-center">
+                                                    <button class="btn btn-link text-dark p-0">
+                                                        <i class="bi bi-three-dots fs-4"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-center fw-bold">IT</td>
+                                                <td class="text-center">
+                                                    <button class="btn btn-link text-dark p-0">
+                                                        <i class="bi bi-three-dots fs-4"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Todo esto es lo de notificaciones y siempre ira al final -->
+    <div class="notificaciones-overlay" id="notificacionesOverlay">
+        <div class="panel-notificaciones" id="panelNotificaciones">
+            <div class="p-4">
+                <!-- Título -->
+                <h6 class="titulo-notificaciones mb-0">Notificaciones</h3>
+            </div>
+
+            <div class="notificaciones-body px-4 pb-4">
+
+                <!-- Todo esto es las notificaciones de hoy -->
+                <div class="notificaciones-seccion mb-4">
+                    <h6 class="text-muted fw-bold mb-3 small">Hoy</h6>
+                    <div class="lista-notificaciones">
+
+                        <!-- Los divs de notificaciones empiezan desde aqui -->
+                        <div class="notificacion-item no-leida">
+                            <div class="avatar-notificacion">JG</div>
+                            <div class="contenido-notificacion">
+                                <div class="d-flex justify-content-between align-items-baseline">
+                                    <span class="notificacion-titulo">Nuevo ticket</span>
+                                    <span class="notificacion-tiempo">Hace 1 hora</span>
+                                </div>
+                                <p class="notificacion-texto">¡Josue Guinea ha creado un nuevo ticket!</p>
+                            </div>
+                        </div>
+
+                        <div class="notificacion-item no-leida">
+                            <div class="avatar-notificacion">JG</div>
+                            <div class="contenido-notificacion">
+                                <div class="d-flex justify-content-between align-items-baseline">
+                                    <span class="notificacion-titulo">Nuevo ticket</span>
+                                    <span class="notificacion-tiempo">Hace 1 hora</span>
+                                </div>
+                                <p class="notificacion-texto">¡Josue Guinea ha creado un nuevo ticket!</p>
+                            </div>
+                        </div>
+
+                        <div class="notificacion-item no-leida">
+                            <div class="avatar-notificacion">JG</div>
+                            <div class="contenido-notificacion">
+                                <div class="d-flex justify-content-between align-items-baseline">
+                                    <span class="notificacion-titulo">Nuevo ticket</span>
+                                    <span class="notificacion-tiempo">Hace 1 hora</span>
+                                </div>
+                                <p class="notificacion-texto">¡Josue Guinea ha creado un nuevo ticket!</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Aqui se muestran las de ayer -->
+                <div class="notificaciones-seccion">
+                    <h6 class="text-muted fw-bold mb-3 small">Ayer</h6>
+                    <div class="lista-notificaciones">
+
+                        <div class="notificacion-item">
+                            <div class="avatar-notificacion">JG</div>
+                            <div class="contenido-notificacion">
+                                <div class="d-flex justify-content-between align-items-baseline">
+                                    <span class="notificacion-titulo-visto">Nuevo ticket</span>
+                                    <span class="notificacion-tiempo">Hace 1 día</span>
+                                </div>
+                                <p class="notificacion-texto">¡Josue Guinea ha creado un nuevo ticket!</p>
+                            </div>
+                        </div>
+
+                        <div class="notificacion-item">
+                            <div class="avatar-notificacion">JG</div>
+                            <div class="contenido-notificacion">
+                                <div class="d-flex justify-content-between align-items-baseline">
+                                    <span class="notificacion-titulo-visto">Nuevo ticket</span>
+                                    <span class="notificacion-tiempo">Hace 1 día</span>
+                                </div>
+                                <p class="notificacion-texto">¡Josue Guinea ha creado un nuevo ticket!</p>
+                            </div>
+                        </div>
+
+                        <div class="notificacion-item">
+                            <div class="avatar-notificacion">JG</div>
+                            <div class="contenido-notificacion">
+                                <div class="d-flex justify-content-between align-items-baseline">
+                                    <span class="notificacion-titulo-visto">Nuevo ticket</span>
+                                    <span class="notificacion-tiempo">Hace 1 día</span>
+                                </div>
+                                <p class="notificacion-texto">¡Josue Guinea ha creado un nuevo ticket!</p>
+                            </div>
+                        </div>
+
+                        <div class="notificacion-item">
+                            <div class="avatar-notificacion">JG</div>
+                            <div class="contenido-notificacion">
+                                <div class="d-flex justify-content-between align-items-baseline">
+                                    <span class="notificacion-titulo-visto">Nuevo ticket</span>
+                                    <span class="notificacion-tiempo">Hace 1 día</span>
+                                </div>
+                                <p class="notificacion-texto">¡Josue Guinea ha creado un nuevo ticket!</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/controllers/notificaciones.js"></script>
+    <script src="js/components/menu.js"></script>
+    <script src="js/controllers/usuarios.js"></script>
+
+</body>
+
+</html>

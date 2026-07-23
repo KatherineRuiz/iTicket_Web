@@ -6,11 +6,8 @@
 }
 
 .contenido-principal {
-    background-color: #F4F4F4;
-    margin-top: 15px;
-    padding: 15px;
+    padding: 1px;
     padding-inline: 20px;
-    border-radius: 30px;
     position: relative;
     overflow: visible;
 }
@@ -20,6 +17,7 @@
     color: #ffffff;
     border-radius: 30px;
     overflow: visible !important;
+    text-align: left;
 }
 
 .bienvenida img {
@@ -120,7 +118,7 @@
     background-color: #ffffff;
     border-radius: 40px;
     display: flex;
-    padding-bottom: 30px;
+    padding-top: 15px;
 }
 
 .cabecera {
@@ -130,7 +128,8 @@
     align-items: center;
     border-top-left-radius: 40px;
     border-top-right-radius: 40px;
-    padding: 10px;
+    padding: 20px;
+    color: white;
 }
 
 .cabecera img {
@@ -249,83 +248,8 @@
     background-color: #d6fbd6;
 }
 
-/*Para las tablas*/
-.table td {
-    word-break: break-word;
-    min-width: 120px;
-}
-
-.tabla-alertas {
-    max-height: 350px;
-    overflow-y: auto;
-    overflow-x: auto;
-    position: relative;
-    z-index: 5;
-}
-
-.tabla-alertas table thead th {
-    position: sticky;
-    top: 0;
-    background-color: #f8f9fa;
-    z-index: 10;
-    box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.15);
-}
-
-/*Para persobalizar las barras de scroll*/
-.tabla-alertas::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
-}
-
-.tabla-alertas::-webkit-scrollbar-track {
-    background: #F1F5F9;
-    border-radius: 10px;
-}
-
-.tabla-alertas::-webkit-scrollbar-thumb {
-    background: #CBD5E1;
-    border-radius: 10px;
-}
-
-.tabla-alertas::-webkit-scrollbar-thumb:hover {
-    background: #94A3B8;
-}
-
 .grafico {
     position: relative;
     width: 100%;
     height: 300px;
-}
-
-/*Para pantallas grandes*/
-@media (min-width: 1215px) {
-    
-    .bienvenida img {
-        height: auto;
-        position: relative;
-        margin-bottom: -45px;
-        margin-top: -45px;
-        top: -6px;
-        flex-shrink: 0;
-    }
-}
-
-/*Para pantallas pequeñas*/
-@media (max-width: 1214.98px) {
-
-    .foto-perfil {
-        width: 34px;
-        border-radius: 50%;
-        overflow: hidden;
-    }
-
-    .foto-perfil img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
-
-    .superior {
-        display: none !important;
-    }
-}
+}   

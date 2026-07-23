@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iTicket - Estadísticas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Vanilla Calendar Pro-->
+    <link href="https://cdn.jsdelivr.net/npm/vanilla-calendar-pro/build/vanilla-calendar.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/vanilla-calendar-pro/build/themes/light.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/vanilla-calendar-pro/build/vanilla-calendar.min.js" defer></script>
+
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/tickets.css">
+    <link rel="stylesheet" href="css/notificaciones.css">
+    <link rel="stylesheet" href="css/estadisticas.css">
+    <script src="js/components/menu-cache.js"></script>
+</head>
+
+<body>
+    <header id="contenedorMenuLateral"></header>
+    <div class="menu-lateral-overlay" id="overlay"></div>
+
+    <main class="main expandido px-md-4 pt-3">
+
+        <section class="superior rounded-5 ps-4 d-none d-md-flex">
+            <h6 class="mb-0 bold">Estadisticas</h6>
+            <div class="position-relative">
+                <div class="perfil p-2 rounded-5 gap-lg-4 gap-md-2" id="perfilBienvenida">
+                    <h6 class="perfil-nombre text-white mb-0 ps-2" id="nombrePerfil">Bienvenida, Katherine</h6>
+                    <div class="perfil-foto" id="fotoPerfil">
+                        <span class="foto-letra" id="fotoLetra">K</span>
+                        <img src="img/usuario.png" alt="Foto de perfil" class="foto-img" id="fotoDePerfil">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="contenido-principal container-fluid mt-2 pb-5">
+
+            <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+
+                <div class="contenedor-filtro-fecha position-relative">
+                    <button type="button" id="btnFiltroFecha"
+                        class="btn btn-light bg-white rounded-pill px-4 py-2 border shadow-sm d-flex align-items-center gap-2">
+                        <i class="bi bi-calendar3 text-primary"></i>
+                        <span id="textoFiltroFecha" class="text-secondary fw-semibold">Filtrar por período</span>
+                    </button>
+                    <div id="calendarioPrincipal"
+                        class="position-absolute d-none shadow-premium rounded-4 bg-white mt-2"
+                        style="z-index: 1050; min-width: 320px;"></div>
+                </div>
+                <!-- boton de pdf -->
+                <button class="btn btn-azul-redondeado">
+                    Exportar PDF
+                </button>
+            </div>
+
+            <!-- Fila de KPIs -->
+            <div class="row g-4 mb-4">
+                <!-- CSAT General -->
+                <div class="col-md-4">
+                    <div class="card border-0 shadow-premium rounded-4 ticket-item h-100">
+                        <div class="card-body py-4 d-flex flex-column justify-content-center align-items-center">
+                            <span class="text-uppercase fw-bold text-dark-blue small"
+                                style="letter-spacing: 0.5px;">CSAT GENERAL</span>
+                            <h2
+                                class="fw-bold text-dark-blue d-flex align-items-center justify-content-center gap-1 my-1 fs-1">
+                                4.8 <span class="fs-5 fw-semibold text-muted">/ 5.0 <span class="kpi-trend-arrow"><img
+                                            src="img/flechitaArriba.png" alt="tendencia"></span></span>
+                            </h2>
+                            <div class="fs-5 mt-1">
+                                <i class="bi bi-star-fill text-warning"></i>
+                                <i class="bi bi-star-fill text-warning"></i>
+                                <i class="bi bi-star-fill text-warning"></i>
+                                <i class="bi bi-star-fill text-warning"></i>
+                                <i class="bi bi-star text-muted opacity-75"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Total Tickets -->
+                <div class="col-md-4">
+                    <div class="card border-0 shadow-premium rounded-4 ticket-item h-100">
+                        <div class="card-body py-4 d-flex flex-column justify-content-center align-items-center">
+                            <span class="text-uppercase fw-bold text-dark-blue small"
+                                style="letter-spacing: 0.5px;">TOTAL TICKETS</span>
+                            <h2 class="fw-bold text-dark-blue my-1" style="font-size: 2.8rem;">65</h2>
+                        </div>
+                    </div>
+                </div>
+                <!-- Tiempo Medio de Resolución -->
+                <div class="col-md-4">
+                    <div class="card border-0 shadow-premium rounded-4 ticket-item h-100">
+                        <div class="card-body py-4 d-flex flex-column justify-content-center align-items-center">
+                            <span class="text-uppercase fw-bold text-dark-blue small"
+                                style="letter-spacing: 0.5px;">TIEMPO MEDIO DE RESOLUCIÓN</span>
+                            <h2 class="fw-bold text-dark-blue my-1" style="font-size: 2.5rem;">01h 30m</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contenedores de Gráficas -->
+            <div class="row g-4 mt-2">
+                <!-- Grafica de barras-Horizobtales -->
+                <div class="col-lg-8 col-md-7 d-flex flex-column">
+                    <h5 class="fw-bold mb-3 titulo-seccion text-center p-3">Estadisticas de evaluación</h5>
+                    <div class="card-grafica-contenedor p-4 flex-grow-1 d-flex flex-column justify-content-center">
+                        <div class="contenedor-canvas w-100">
+                            <canvas id="grafica_satisfaccion"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Grafica de Pie -->
+                <div class="col-lg-4 col-md-5 d-flex flex-column gap-4 justify-content-between">
+                    <div>
+                        <h5 class="fw-bold mb-3 titulo-seccion text-center p-3">Total de estrellas</h5>
+                        <div class="card-grafica-contenedor p-4">
+                            <div class="contenedor-canvas w-100 canvas-alto-220">
+                                <canvas id="grafica_estrellas"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Grafica de Dona -->
+                    <div>
+                        <h5 class="fw-bold mb-3 titulo-seccion text-center p-3">Tickets por prioridad</h5>
+                        <div class="card-grafica-contenedor p-4">
+                            <div class="contenedor-canvas w-100 canvas-alto-220">
+                                <canvas id="grafica_prioridades"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Grafica de Lineas-multiples -->
+                <div class="col-12 mt-4">
+                    <h5 class="fw-bold mb-3 titulo-seccion text-center p-3">Tickets creados, vencidos y resueltos por
+                        mes</h5>
+                    <div class="card-grafica-contenedor p-4">
+                        <div class="contenedor-canvas w-100 canvas-alto-220">
+                            <canvas id="grafica_historico"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Grafica de Barras-Verticales -->
+                <div class="col-12 mt-4">
+                    <h5 class="fw-bold mb-3 titulo-seccion text-center p-3">Alertas de insatisfacción</h5>
+                    <!-- Tabla principal -->
+                    <div class="card-tabla p-4 text-center">
+                        <div class="table-responsive">
+                            <table class="table table-borderless table-custom align-middle">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Código</th>
+                                        <th scope="col">Usuario</th>
+                                        <th scope="col">Técnico</th>
+                                        <th scope="col">Comentarios</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="fw-bold">2548</td>
+                                        <td>josue_guinea@gmail.com</td>
+                                        <td>ricardo_depaz@gmail.com</td>
+                                        <td>Se tardo mucho en atenderme </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold">2548</td>
+                                        <td>josue_guinea@gmail.com</td>
+                                        <td>ricardo_depaz@gmail.com</td>
+                                        <td>Se tardo mucho en atenderme </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold">2548</td>
+                                        <td>josue_guinea@gmail.com</td>
+                                        <td>ricardo_depaz@gmail.com</td>
+                                        <td>Se tardo mucho en atenderme </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold">2548</td>
+                                        <td>josue_guinea@gmail.com</td>
+                                        <td>ricardo_depaz@gmail.com</td>
+                                        <td>Se tardo mucho en atenderme </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Paginación del 1 al 10 hasta la pagina 150 -->
+                        <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top">
+                            <span class="text-muted small">Mostrando 4 de 142</span>
+                            <nav aria-label="Paginacion">
+                                <ul class="pagination pagination-sm mb-0 align-items-center gap-1">
+                                    <li class="page-item disabled"><span
+                                            class="page-link border-0 bg-transparent text-muted">1</span></li>
+                                    <li class="page-item"><a class="page-link border-0 bg-transparent text-dark"
+                                            href="#">2</a></li>
+                                    <li class="page-item"><a class="page-link border-0 bg-transparent text-dark"
+                                            href="#">3</a></li>
+                                    <li class="page-item"><a class="page-link border-0 bg-transparent text-dark"
+                                            href="#">4</a></li>
+                                    <li class="page-item"><span class="mx-1 text-muted">...</span></li>
+                                    <li class="page-item"><a class="page-link border-0 bg-transparent text-dark"
+                                            href="#">15</a></li>
+                                    <li class="page-item"><a class="page-link border-0 bg-transparent text-dark"
+                                            href="#"><i class="bi bi-chevron-right"></i></a></li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Grafica de Barras-Verticales -->
+            <div class="col-12 mt-4">
+                <h5 class="fw-bold mb-3 titulo-seccion text-center p-3">Equipos más reportados</h5>
+                <!-- Sección del Buscador y Filtros -->
+                <div class="row g-3 align-items-center mb-4">
+                    <div class="col-12 col-md-6 col-lg-7">
+                        <div class="buscador-contenedor">
+                            <i class="bi bi-search icono-busqueda"></i>
+                            <input type="text" class="form-control buscador-input"
+                                placeholder="Busca por equipo">
+                        </div>
+                    </div>
+
+                    <!-- Filtro de Prioridad -->
+                    <div class="col-6 col-md-3 col-lg-3">
+                        <select class="form-select select-ticket-filtro">
+                            <option selected disabled>Categoría</option>
+                        </select>
+                    </div>
+
+                    <!-- Filtro de Fecha -->
+                    <div class="col-6 col-md-3 col-lg-2">
+                        <input type="date" class="form-control select-ticket-filtro">
+                    </div>
+                </div>
+
+                <!-- Tabla principal -->
+                <div class="card-tabla p-4 text-center">
+                    <div class="table-responsive">
+                        <table class="table table-borderless table-custom align-middle">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Código del equipo</th>
+                                    <th scope="col">Ubicación</th>
+                                    <th scope="col">Marca</th>
+                                    <th scope="col">Categoría</th>
+                                    <th scope="col">Número de tickets</th>
+                                    <th scope="col">Porcentaje de satisfaccion</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="fw-bold">EQ-1042</td>
+                                    <td>Salon Don Bosco</td>
+                                    <td>ricardo_depaz@gmail.com</td>
+                                    <td>Se tardo mucho en atenderme </td>
+                                    <td>25</td>
+                                    <td class="py-3">
+                                        <span
+                                            class="badge rounded-pill px-3 py-1 fw-bold bg-success-light text-success">92%
+                                            (Excelente)</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">EQ-1042</td>
+                                    <td>Salon Don Bosco</td>
+                                    <td>ricardo_depaz@gmail.com</td>
+                                    <td>Se tardo mucho en atenderme </td>
+                                    <td>25</td>
+                                    <td class="py-3">
+                                        <span
+                                            class="badge rounded-pill px-3 py-1 fw-bold bg-success-light text-success">92%
+                                            (Excelente)</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">EQ-1042</td>
+                                    <td>Salon Don Bosco</td>
+                                    <td>ricardo_depaz@gmail.com</td>
+                                    <td>Se tardo mucho en atenderme </td>
+                                    <td>25</td>
+                                    <td class="py-3">
+                                        <span
+                                            class="badge rounded-pill px-3 py-1 fw-bold bg-success-light text-success">92%
+                                            (Excelente)</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">EQ-1042</td>
+                                    <td>Salon Don Bosco</td>
+                                    <td>ricardo_depaz@gmail.com</td>
+                                    <td>Se tardo mucho en atenderme </td>
+                                    <td>25</td>
+                                    <td class="py-3">
+                                        <span
+                                            class="badge rounded-pill px-3 py-1 fw-bold bg-success-light text-success">92%
+                                            (Excelente)</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Paginación del 1 al 10 hasta la pagina 150 -->
+                    <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top">
+                        <span class="text-muted small">Mostrando 4 de 142</span>
+                        <nav aria-label="Paginacion">
+                            <ul class="pagination pagination-sm mb-0 align-items-center gap-1">
+                                <li class="page-item disabled"><span
+                                        class="page-link border-0 bg-transparent text-muted">1</span></li>
+                                <li class="page-item"><a class="page-link border-0 bg-transparent text-dark"
+                                        href="#">2</a></li>
+                                <li class="page-item"><a class="page-link border-0 bg-transparent text-dark"
+                                        href="#">3</a></li>
+                                <li class="page-item"><a class="page-link border-0 bg-transparent text-dark"
+                                        href="#">4</a></li>
+                                <li class="page-item"><span class="mx-1 text-muted">...</span></li>
+                                <li class="page-item"><a class="page-link border-0 bg-transparent text-dark"
+                                        href="#">15</a></li>
+                                <li class="page-item"><a class="page-link border-0 bg-transparent text-dark" href="#"><i
+                                            class="bi bi-chevron-right"></i></a></li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </main>
+
+    <!-- Todo esto es lo de notificaciones y siempre ira al final -->
+    <div class="notificaciones-overlay" id="notificacionesOverlay">
+        <div class="panel-notificaciones" id="panelNotificaciones">
+            <div class="p-4">
+                <!-- Título -->
+                <h6 class="titulo-notificaciones mb-0">Notificaciones</h3>
+            </div>
+
+            <div class="notificaciones-body px-4 pb-4">
+
+                <!-- Todo esto es las notificaciones de hoy -->
+                <div class="notificaciones-seccion mb-4">
+                    <h6 class="text-muted fw-bold mb-3 small">Hoy</h6>
+                    <div class="lista-notificaciones">
+
+                        <!-- Los divs de notificaciones empiezan desde aqui -->
+                        <div class="notificacion-item no-leida">
+                            <div class="avatar-notificacion">JG</div>
+                            <div class="contenido-notificacion">
+                                <div class="d-flex justify-content-between align-items-baseline">
+                                    <span class="notificacion-titulo">Nuevo ticket</span>
+                                    <span class="notificacion-tiempo">Hace 1 hora</span>
+                                </div>
+                                <p class="notificacion-texto">¡Josue Guinea ha creado un nuevo ticket!</p>
+                            </div>
+                        </div>
+
+                        <div class="notificacion-item no-leida">
+                            <div class="avatar-notificacion">JG</div>
+                            <div class="contenido-notificacion">
+                                <div class="d-flex justify-content-between align-items-baseline">
+                                    <span class="notificacion-titulo">Nuevo ticket</span>
+                                    <span class="notificacion-tiempo">Hace 1 hora</span>
+                                </div>
+                                <p class="notificacion-texto">¡Josue Guinea ha creado un nuevo ticket!</p>
+                            </div>
+                        </div>
+
+                        <div class="notificacion-item no-leida">
+                            <div class="avatar-notificacion">JG</div>
+                            <div class="contenido-notificacion">
+                                <div class="d-flex justify-content-between align-items-baseline">
+                                    <span class="notificacion-titulo">Nuevo ticket</span>
+                                    <span class="notificacion-tiempo">Hace 1 hora</span>
+                                </div>
+                                <p class="notificacion-texto">¡Josue Guinea ha creado un nuevo ticket!</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Aqui se muestran las de ayer -->
+                <div class="notificaciones-seccion">
+                    <h6 class="text-muted fw-bold mb-3 small">Ayer</h6>
+                    <div class="lista-notificaciones">
+
+                        <div class="notificacion-item">
+                            <div class="avatar-notificacion">JG</div>
+                            <div class="contenido-notificacion">
+                                <div class="d-flex justify-content-between align-items-baseline">
+                                    <span class="notificacion-titulo-visto">Nuevo ticket</span>
+                                    <span class="notificacion-tiempo">Hace 1 día</span>
+                                </div>
+                                <p class="notificacion-texto">¡Josue Guinea ha creado un nuevo ticket!</p>
+                            </div>
+                        </div>
+
+                        <div class="notificacion-item">
+                            <div class="avatar-notificacion">JG</div>
+                            <div class="contenido-notificacion">
+                                <div class="d-flex justify-content-between align-items-baseline">
+                                    <span class="notificacion-titulo-visto">Nuevo ticket</span>
+                                    <span class="notificacion-tiempo">Hace 1 día</span>
+                                </div>
+                                <p class="notificacion-texto">¡Josue Guinea ha creado un nuevo ticket!</p>
+                            </div>
+                        </div>
+
+                        <div class="notificacion-item">
+                            <div class="avatar-notificacion">JG</div>
+                            <div class="contenido-notificacion">
+                                <div class="d-flex justify-content-between align-items-baseline">
+                                    <span class="notificacion-titulo-visto">Nuevo ticket</span>
+                                    <span class="notificacion-tiempo">Hace 1 día</span>
+                                </div>
+                                <p class="notificacion-texto">¡Josue Guinea ha creado un nuevo ticket!</p>
+                            </div>
+                        </div>
+
+                        <div class="notificacion-item">
+                            <div class="avatar-notificacion">JG</div>
+                            <div class="contenido-notificacion">
+                                <div class="d-flex justify-content-between align-items-baseline">
+                                    <span class="notificacion-titulo-visto">Nuevo ticket</span>
+                                    <span class="notificacion-tiempo">Hace 1 día</span>
+                                </div>
+                                <p class="notificacion-texto">¡Josue Guinea ha creado un nuevo ticket!</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="js/components/menu.js"></script>
+        <script src="js/controllers/estadisticas.js"></script>
+        <script src="js/controllers/notificaciones.js"></script>
+
+</body>
+
+</html>

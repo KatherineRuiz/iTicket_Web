@@ -6,58 +6,55 @@
     --modal-fondo: #EAF7FF;
 }
 
-
 .contenedor-scroll-vertical-indicadores {
-    width: 75%;
-    max-height: 380px;         
-    overflow-y: auto;          
-    overflow-x: hidden;        
-    padding-top: 25px ; 
-    padding-bottom: 15px ;
+    width: 100%;
+    max-height: 400px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-top: 25px;
+    padding-bottom: 15px;
     padding-left: 5px;
     padding-right: 5px;
 }
 
-
 .tarjeta-indicador-vertical {
     background-color: #ffffff;
-    border: 1.5px solid #f1f5f9 ; 
-    border-radius: 28px ; 
-    padding: 35px 15px 20px 15px ;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.02) ;
+    border: 1.5px solid #f1f5f9;
+    border-radius: 28px;
+    padding: 35px 15px 20px 15px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.02);
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
 }
 
-.icono-tarjeta-flotante {
+.icono-tarjeta {
     position: absolute;
-    top: -24px;              
+    top: -22px;
     left: 50%;
     transform: translateX(-50%);
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 48px;     
-    height: 35px;
-    background-color: var(--acento-celeste); 
-    border-radius: 14px ;       
-    box-shadow: 0 6px 12px rgba(84, 156, 211, 0.25);
-    z-index: 10;
+    width: 50px;
+    height: 50px;
+    background-color: var(--blue-primary);
+    color: #ffffff;
+    border-radius: 50%;
+    font-size: 18px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    z-index: 2;
 }
 
-
-.icono-tarjeta-flotante img {
-    width: 34px;
-    height: 34px;
+.icono-tarjeta img {
+    width: 33px;
+    height: 44px;
     object-fit: contain;
-    filter: brightness(0) invert(1); 
 }
-
 
 .text-navy-titulo {
-    color: #1e3a8a; 
+    color: #1e3a8a;
     font-size: 0.88rem;
     margin-top: 5px;
 }
@@ -69,34 +66,34 @@
 }
 
 /* Panel Derecho: Aprobaciones */
-    .item-ticket-aprobacion {
+.item-ticket-aprobacion {
     cursor: pointer;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .item-ticket-aprobacion:hover {
-    transform: translateY(-3px); /* Eleva el ticket sutilmente hacia arriba */
-    box-shadow: 0 6px 15px rgba(3, 4, 94, 0.12); /* Añade una sombra suave con tono navy */
+    transform: translateY(-3px);
+    /* Eleva el ticket sutilmente hacia arriba */
+    box-shadow: 0 6px 15px rgba(3, 4, 94, 0.12);
+    /* Añade una sombra suave con tono navy */
 }
 
-
 .tarjeta-aprobaciones-pendientes {
-    background-color: #ffffff; 
-    border-bottom: 3px solid darkgray; 
+    background-color: #ffffff;
+    border-bottom: 3px solid darkgray;
     border-radius: 35px;
-    margin-left: -85px;
 }
 
 .encabezado-aprobaciones {
-    background-color: var(--aprobaciones-celeste) ; 
-    color: var(--fondo-oscuro) ;            
-    border: 3px solid var(--aprobaciones-celeste);  
-    border-bottom: none ;        
-    border-top-left-radius: 32px ;  
-    border-top-right-radius: 32px ;
+    background-color: var(--aprobaciones-celeste);
+    color: var(--fondo-oscuro);
+    border: 3px solid var(--aprobaciones-celeste);
+    border-bottom: none;
+    border-top-left-radius: 32px;
+    border-top-right-radius: 32px;
 }
 
-.borde-lateral-azul{
+.borde-lateral-azul {
     border-left: 5px solid var(--acento-celeste);
 }
 
@@ -107,9 +104,9 @@
 
 
 .item-ticket-aprobacion {
-    border-left: 4px solid var(--acento-celeste); 
+    border-left: 4px solid var(--acento-celeste);
     border-right: 2px solid var(--acento-celeste);
-    border-radius: 16px;         
+    border-radius: 16px;
 }
 
 .text-info-custom {
@@ -124,10 +121,16 @@
     font-size: 0.78rem !important;
 }
 
+.main .row {
+    margin-left: 0px;
+    margin-right: 10px;
+}
+
 /* Personalización fina de la barra de desplazamiento */
 .scroll-interno-aprobaciones::-webkit-scrollbar {
     width: 5px;
 }
+
 .scroll-interno-aprobaciones::-webkit-scrollbar-thumb {
     border-radius: 10px;
 }
@@ -141,53 +144,44 @@
     background-color: var(--acento-celeste);
     border-radius: 20px 20px 0 0;
 }
-.truncate-celda { max-width: 100px; }
-.truncate-celda-lg { max-width: 150px; }
 
-.tabla-tickets-gestion th {
-    font-size: 0.85rem;
-    font-weight: 700;
-    padding: 14px;
+.truncate-celda {
+    max-width: 100px;
 }
-.tabla-tickets-gestion td {
-    padding: 16px 12px;
-    font-size: 0.85rem;
-    border-bottom: 1px solid #f1f5f9;
+
+.truncate-celda-lg {
+    max-width: 150px;
 }
 
 .contenedor-scroll-vertical-indicadores::-webkit-scrollbar {
     width: 0px;
 }
+
 .contenedor-scroll-v-indicadores::-webkit-scrollbar-thumb,
 .scroll-interno-aprobaciones::-webkit-scrollbar-thumb {
     background-color: #cbd5e1;
     border-radius: 20px;
 }
-.input-buscar-container {
-    width: 280px; /
-}
-.icono-buscar-custom {
-    width: 18px;                 
-    height: 18px;
-    object-fit: contain;
-    margin-right: 14px;          
-    pointer-events: none;       
-}
-.panel-fondo{
+
+.panel-fondo {
     background-color: var(--panel-fondo);
 }
 
 /* Modal de aprobaciones */
 .container-modal-aprobacion-custom {
-    max-width: 1020px !important;
-    width: 100% !important;
+    max-width: 850px !important;
+    width: 95% !important;
+    margin: 1.75rem auto;
 }
+
 .contenedor-modal-borde {
-    border: none !important;
+border: none !important;
     background-color: #f7fbfe !important;
+    overflow: hidden !important;
 }
-.encabezado-Modal{
-    background-color: var(--acento-celeste  );
+
+.encabezado-Modal {
+    background-color: var(--acento-celeste);
 }
 
 /* Tipografías y textos superiores */
@@ -195,15 +189,18 @@
     color: #03045E !important;
     font-size: 1.1rem;
 }
+
 .img-usuario-modal {
     max-width: 20px;
     height: auto;
 }
+
 .text-muted-id {
     color: #a0aec0;
     font-size: 0.85rem;
     padding-left: 32px;
 }
+
 .meta-ticket-texto {
     color: #4a5568 !important;
     font-size: 0.95rem;
@@ -212,32 +209,40 @@
 
 /* Mazo de evidencias del lado derecho */
 .contenedor-evidencias-vertical {
+    width: 200px !important;
+    height: 200px !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
     flex-shrink: 0 !important;
-    /* Ajustamos el ancho del bloque completo para darle espacio a la nueva imagen */
-    width: 200px !important; 
 }
+
 .tarjeta-foto-evidencia {
-    width: 190px !important;       /* Tamaño más grande y visible */
-    height: 130px !important;      /* Proporción limpia */
-    border-radius: 12px !important; /* Bordes redondeados más suaves para el tamaño */
-    overflow: hidden !important;
-    border: 2px solid #cbd5e1 !important; /* Borde fino sutil */
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important; /* Sombra suave */
+    width: 100% !important;
+    height: 100% !important;
+    border-radius: 12px !important;
+    border: 1px solid #cbd5e1 !important;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08) !important;
+    position: relative;
+    overflow: hidden;
 }
+
 .tarjeta-foto-evidencia img {
     width: 100% !important;
     height: 100% !important;
-    object-fit: cover !important; /* Mantiene la proporción sin deformarse */
+    object-fit: cover !important;
 }
+
 .posicion-contador {
     position: relative;
 }
+
 .mascara-contador {
     position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     background-color: rgba(0, 0, 0, 0.4);
     color: #ffffff;
     font-weight: bold;
@@ -252,6 +257,7 @@
     width: 100%;
     gap: 24px;
 }
+
 .formulario-modal-flujo {
     flex: 1;
 }
@@ -262,31 +268,37 @@
     align-items: center;
     width: 100%;
 }
+
 .label-modal-maqueta {
-    width: 190px;
+    min-width: 170px;
+    width: auto;
     color: #1a202c;
-    font-size: 1.15rem;
-    font-weight: 500;
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-bottom: 0;
     flex-shrink: 0;
 }
 
 /* Envolturas para selectores e inputs en cápsula */
-.select-wrapper-capsula, .input-wrapper-calendario {
+.select-wrapper-capsula,
+.input-wrapper-calendario {
     position: relative;
     flex: 1;
     max-width: 400px;
 }
 
 /* Selectores y cajas ovaladas */
-.selector-modal-ovalado, .input-modal-ovalado {
+.selector-modal-ovalado,
+.input-modal-ovalado {
     width: 100% !important;
-    height: 50px !important;
-    border: none !important;
+    height: 44px !important;
+    border: 1px solid #dbeafe !important;
     background-color: #e6f4ff !important;
     border-radius: 50px !important;
-    padding-left: 20px !important;
-    font-size: 0.95rem !important;
-    color: #4a5568 !important;
+    padding: 0 16px !important;
+    font-size: 0.9rem !important;
+    color: #334155 !important;
+    box-shadow: none !important;
 }
 
 /* Ícono de calendario en fecha */
@@ -302,22 +314,44 @@
 
 /* Bloque de botones laterales grandes */
 .grupo-botones-verticales-maqueta {
-    display: flex;
-    flex-direction: column;
-    width: 160px;
+    min-width: 150px;
     flex-shrink: 0;
 }
+
 .boton-accion-pildora {
-    width: 100% !important;
-    height: 48px !important;
+    height: 44px !important;
     border-radius: 50px !important;
-    font-size: 1rem !important;
-    font-weight: bold !important;
-    display: flex !important;
+    font-size: 0.95rem !important;
+    font-weight: 600 !important;
+    display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
+    padding: 0 20px !important;
+    border: none !important;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05) !important;
+    transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+.boton-accion-pildora:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.12) !important;
 }
 .icono-boton-ticket {
     width: 50px;
     height: auto;
 }
+
+/* Ajustes para mantener consistencia con Mis Tickets */
+.tarjeta-indicador-vertical {
+    min-width: 140px;
+}
+
+/* Transición suave para las filas de la tabla */
+.tabla-tickets-gestion tbody tr {
+    transition: background-color 0.2s ease;
+}
+
+.tabla-tickets-gestion tbody tr:hover {
+    background-color: #f8fafc;
+}
+

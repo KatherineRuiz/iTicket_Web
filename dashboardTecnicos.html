@@ -9,92 +9,11 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" href="css/common.css">
     <link rel="stylesheet" href="css/dashboard.css">
+    <script src="js/components/menu-cache.js"></script>
 </head>
 
 <body>
-    <header>
-        <nav class="menu-lateral" id="menuLateral">
-            <div class="menu-lateral-header text-white">
-
-                <button class="btn text-white p-0 fs-3 d-flex align-items-center justify-content-center" id="btnMenu"
-                    type="button" style="width: 40px; height: 40px;">
-                    <i class="bi bi-list"></i>
-                </button>
-
-                <img src="img/logo.png" alt="logo" class="menu-lateral-logo">
-
-            </div>
-
-            <div class="d-none d-md-flex justify-content-center">
-                <hr class="linea-divisora border border-light border-1 opacity-100">
-            </div>
-
-            <div class="menu-lateral-cuerpo d-flex flex-column flex-grow-1 justify-content-between">
-                <div>
-                    <ul class="nav flex-column gap-2 mt-3 p-0">
-                        <li class="menu-opcion activo">
-                            <a href="dashboardUsuarios.html" class="nav-link">
-                                <div class="icono-menu">
-                                    <img src="img/inicio.svg" alt="Icono de Inicio">
-                                </div>
-                                <span class="menu-texto">Inicio</span>
-                            </a>
-                        </li>
-                        <li class="menu-opcion" id="ticketsMenu">
-                            <a class="nav-link" id="btnTickets">
-                                <div class="icono-menu">
-                                    <img src="img/tickets.svg" alt="Incono de Tickets">
-                                </div>
-                                <span class="menu-texto">Tickets</span>
-                                <i class="bi bi-chevron-down icono-flecha"></i>
-                            </a>
-                            <ul class="submenu">
-                                <li><a href="#">Mis Tickets</a></li>
-                                <li><a href="#">Tickets Asignados</a></li>
-                            </ul>
-                        </li>
-                        <li class="menu-opcion">
-                            <a href="#" class="nav-link">
-                                <div class="icono-menu">
-                                    <img src="img/evaluaciones.svg" alt="Icono de Evaluaciones" class="d-flex">
-                                </div>
-                                <span class="menu-texto">Evaluaciones</span>
-                            </a>
-                        </li>
-                        <li class="menu-opcion">
-                            <a href="#" class="nav-link">
-                                <div class="icono-menu">
-                                    <img src="img/chatBot.svg" alt="Icono de Chatbot" class="d-flex">
-                                </div>
-                                <span class="menu-texto">ChatBot</span>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-
-                <div>
-                    <ul class="nav flex-column gap-2 mt-3 p-0">
-                        <li class="menu-opcion">
-                            <a href="#" class="nav-link">
-                                <div class="icono-menu">
-                                    <img src="img/notificaciones.svg" alt="" class="d-flex">
-                                </div>
-                                <span class="menu-texto">Notificaciones</span>
-                            </a>
-                        </li>
-                        <li class="menu-opcion">
-                            <a href="#" class="nav-link">
-                                <div class="icono-menu">
-                                    <img src="img/configuracion.svg" alt="" class="d-flex">
-                                </div>
-                                <span class="menu-texto">Configuración</span>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-    </header>
+    <header id="contenedorMenuLateral"></header>
     <div class="menu-lateral-overlay" id="overlay"></div>
 
     <main class="main px-md-4 pt-3">

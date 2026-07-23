@@ -17,6 +17,11 @@ body {
     text-decoration: none;
 }
 
+.img-usuario{
+    width: 20px;
+    height: 20px;
+}
+
 .boton-editar-ticket {
     background-color: var(--acento-celeste) !important;
     font-size: 17px !important;
@@ -33,19 +38,24 @@ body {
     flex-shrink: 0 !important;
 }
 
+.tarjeta-foto-evidencia {
+    width: 100%;
+    max-width: 250px;
+    height: 180px;
+}
+
+.caja-subida-evidencia {
+    border: 2px dashed #cccccc !important;
+    width: 100%;
+    max-width: 300px;
+    min-height: 180px;
+}
+
 .borde-rojo {
     border-left: 4px solid var(--borde-info-editar);
-    border-right: 2px solid darkgray;
-    border-top: 1px solid darkgray;
-    border-bottom: 1px solid darkgray;
-}
-
-.reporte-tecnico {
-    color: var(--fondo-oscuro);
-}
-
-.encabezado-tabla-reporte {
-    border: 2px solid darkgray;
+    border-right: 1px solid #dee2e6;
+    border-top: 1px solid #dee2e6;
+    border-bottom: 1px solid #dee2e6;
 }
 
 .titulo-reporte {
@@ -56,60 +66,72 @@ body {
 /* Contenedor para aplicar el borde redondeado y la sombra a la tabla */
 .tabla-reporte {
     background-color: #ffffff;
-    overflow: hidden;
     border: 1px solid #e0e0e0;
 }
 
-.tabla-personalizada {
-    margin-bottom: 0; /* Elimina el margen por defecto */
-    vertical-align: middle;
-}
-
-.tabla-personalizada th {
-    background-color: var(--acento-celeste) !important;
-    color: white !important;
-    font-weight: 500;
-    font-size: 20px;
-    padding: 15px !important;
-    border-bottom: none;
-}
-
-.tabla-personalizada td {
-    padding: 25px 20px !important;
-    font-size: 0.95rem;
-    color: black;
-    line-height: 1.4;
-    border-bottom: none; /* Elimina la línea horizontal inferior */
-}
-
-.tabla-personalizada td:not(:last-child) {
-    border-right: 2px solid #dee2e6;
-}
-.encabezado-reporte{
-    background-color: var(--acento-celeste) !important;
-}
+.tabla-personalizada,
 .tabla-personalizada-bitacora {
     margin-bottom: 0;
     vertical-align: middle;
 }
 
-.tabla-personalizada-bitacora th{
+.tabla-personalizada th,
+.tabla-personalizada-bitacora th {
     background-color: var(--acento-celeste) !important;
     color: white !important;
     font-weight: 500;
-    font-size: 20px;
+    font-size: 1.1rem;
     padding: 15px !important;
+    border-bottom: none;
 }
-.tabla-personalizada-bitacora td{
-    padding: 25px 20px !important;
+
+.tabla-personalizada td,
+.tabla-personalizada-bitacora td {
+    padding: 18px 15px !important;
     font-size: 0.95rem;
     color: black;
     line-height: 1.4;
-    border-bottom: 2px solid var(--separacion-tablas) !important;
 }
+
+.tabla-personalizada td {
+    border-bottom: none;
+}
+
+.tabla-personalizada td:not(:last-child),
 .tabla-personalizada-bitacora td:not(:last-child) {
-    border-right: 2px solid var(--separacion-tablas);
+    border-right: 1px solid #dee2e6;
 }
-#btnGuardarEdicion{
-    background-color: var(--acento-celeste);
+
+.tabla-personalizada-bitacora td {
+    border-bottom: 1px solid var(--separacion-tablas) !important;
+}
+
+.descripcion-editarTicket {
+    position: relative !important; 
+    border-left: 4px solid var(--borde-info-editar);
+    border-right: 1px solid #dee2e6;
+    border-top: 1px solid #dee2e6;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.badge-prioridad-absoluta {
+    position: absolute;
+    top: 1.25rem;
+    right: 1.25rem;
+    z-index: 10;
+}
+
+/* Ajustes responsivos para tablets y móviles */
+@media (max-width: 576px) {
+    .tabla-personalizada th,
+    .tabla-personalizada-bitacora th {
+        font-size: 0.95rem;
+        padding: 10px !important;
+    }
+    
+    .tabla-personalizada td,
+    .tabla-personalizada-bitacora td {
+        padding: 12px 10px !important;
+        font-size: 0.85rem;
+    }
 }

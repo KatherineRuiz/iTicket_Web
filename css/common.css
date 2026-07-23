@@ -1,18 +1,22 @@
+/* Menú con mejoras */
+/* Esta solo es una tipografía de google fonts (Inter con todas sus variables) */
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
 :root {
     --bg-oscuro: #121F48;
     --accent-celeste: #539ECD;
     --menu-width-full: 240px;
     --menu-width-colapsado: 75px;
+    --blue-primary: #4393f6;
+    --card-bg: #fff;
+    --blue-hover: #2b7ee2;
 }
 
-/*Estilo de Body*/
 body {
-    background-color: #F4F4F4;
-    margin: 0;
-    padding: 0;
+    background-color: #efefef !important;
+    font-family: 'Inter', sans-serif !important;
 }
 
-/*Estilo del menú*/
 .menu-lateral {
     background-color: var(--bg-oscuro);
     transition: all 0.3s ease;
@@ -28,7 +32,7 @@ body {
     overflow-y: auto;
 }
 
-/*Para que no se vea la barra de scroll*/
+/* Para que no se vea la barra de scroll */
 .menu-lateral::-webkit-scrollbar {
     width: 0px;
 }
@@ -64,9 +68,8 @@ body {
     width: 100%;
 }
 
-/*Barra lateral de las opciones del menú*/
-.nav-link::before,
-.submenu a::before {
+/* Barra lateral para la opción principal únicamente */
+.nav-link::before {
     content: "";
     position: absolute;
     left: 0;
@@ -101,21 +104,22 @@ body {
     width: 25px;
 }
 
-/* Para señalar la opción activa*/
-.menu-opcion.activo .icono-menu {
+/* Para señalar la opción principal activa */
+.menu-opcion.activo>.nav-link .icono-menu {
     background-color: var(--accent-celeste);
     padding-inline: 20px;
     margin-left: 17px;
 }
 
-.menu-opcion.activo .icono-menu img {
+.menu-opcion.activo>.nav-link .icono-menu img {
     width: 20px;
 }
 
-.menu-opcion.activo .menu-texto {
+.menu-opcion.activo>.nav-link .menu-texto {
     color: var(--accent-celeste);
     font-weight: bold;
 }
+
 
 /* Submenús */
 .submenu {
@@ -130,25 +134,44 @@ body {
     max-height: 120px;
 }
 
+/* Estilo BASE para todos los enlaces del submenú (COLOR BLANCO) */
 .submenu a {
     position: relative;
-    color: #a2b5e4 !important;
+    color: #ffffff !important;
     text-decoration: none;
     display: block;
     padding: 6px 0;
     padding-left: 20px;
     font-size: 0.95rem;
+    font-weight: normal;
+    transition: color 0.2s, background 0.2s;
 }
 
+.submenu a .menu-texto {
+    color: inherit !important;
+    /* Hereda el blanco o el azul según el estado */
+}
+
+/* EFECTO HOVER */
 .submenu a:hover {
-    color: #ffffff !important;
+    color: var(--accent-celeste) !important;
     background-color: rgba(255, 255, 255, 0.08);
 }
 
-/*Para que la barra lateral aparezca*/
+/* OPCIÓN SELECCIONADA EN SUBMENÚ (SOLO ESTA SERÁ AZUL) */
+.submenu a.activo,
+.submenu a.activo .menu-texto {
+    color: var(--accent-celeste) !important;
+    font-weight: bold;
+}
+
+/* Elimina barra lateral del submenú */
+.submenu a::before {
+    display: none !important;
+}
+
 .nav-link:hover::before,
-.nav-link.activo::before,
-.submenu a:hover::before {
+.nav-link.activo::before {
     transform: scaleY(1);
 }
 
@@ -162,7 +185,113 @@ body {
     transform: rotate(180deg);
 }
 
-/*Para oscurecer el fondo*/
+.bold {
+    font-weight: bold;
+}
+
+.superior {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+/* Animación perfil */
+.perfil {
+    position: relative;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border-radius: 50px;
+    min-width: 50px;
+    padding: 0 !important;
+    transition: width 0.5s cubic-bezier(0.25, 1.3, 0.5, 1), padding 0.5s cubic-bezier(0.25, 1.3, 0.5, 1);
+}
+
+.perfil .perfil-foto {
+    width: 34px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    border-radius: 50%;
+    overflow: hidden;
+    position: absolute;
+    right: 8px;
+    transition: all 0.5s cubic-bezier(0.25, 1.3, 0.5, 1);
+}
+
+.perfil .foto-letra {
+    position: absolute;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    text-transform: uppercase;
+    text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.15);
+    opacity: 1;
+    transform: scale(1);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.perfil .perfil-nombre {
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    pointer-events: none;
+    flex-shrink: 0;
+    margin-right: 48px !important;
+}
+
+.perfil.abrir {
+    justify-content: space-between;
+    padding-left: 20px !important;
+    padding-right: 8px !important;
+    transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), padding 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.perfil.abrir .perfil-nombre {
+    opacity: 1;
+    transition: opacity 0.3s ease 0.25s;
+}
+
+.perfil.abrir .perfil-foto {
+    position: absolute;
+    right: 8px;
+}
+
+.perfil.abrir .foto-letra {
+    opacity: 0;
+    transform: scale(0);
+}
+
+.perfil .foto-img {
+    position: absolute;
+    width: 75%;
+    height: 75%;
+    border-radius: 50%;
+    object-fit: contain;
+    padding-right: 4px;
+    opacity: 0;
+    transform: scale(0);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.perfil.abrir .foto-img {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.contenido-principal {
+    padding-bottom: 20px !important;
+}
+
 .menu-lateral-overlay {
     position: fixed;
     top: 60px;
@@ -176,56 +305,7 @@ body {
     transition: opacity 0.4s ease;
 }
 
-/*Estilo de la parte superior*/
-.superior {
-    background-color: #F4F4F4;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-/*Estado normal antes de la animacion*/
-.perfil {
-    position: relative;
-    width: 50px;
-    height: 50px;
-    background-color: var(--bg-oscuro);
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    overflow: hidden;
-    border-radius: 50px;
-    transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-.perfil img {
-    width: 34px;
-    height: 34px;
-    border-radius: 50%;
-    object-fit: cover;
-    flex-shrink: 0;
-}
-
-.perfil .perfil-nombre {
-    white-space: nowrap;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    pointer-events: none;
-}
-
-/*Para la animación de perfil*/
-.perfil.abrir {
-    width: 200px;
-    justify-content: space-between;
-}
-
-.perfil.abrir .perfil-nombre {
-    opacity: 1;
-    transition: opacity 0.2s ease 0.2s;
-}
-
-
-/*Para pantallas grandes*/
+/* Pantallas grandes */
 @media (min-width: 1215px) {
     .menu-lateral {
         height: 100vh;
@@ -237,7 +317,6 @@ body {
         justify-content: space-between;
         padding: 0 22px;
     }
-
 
     .menu-lateral-header .menu-lateral-logo {
         order: 1;
@@ -252,7 +331,6 @@ body {
         width: var(--menu-width-colapsado);
     }
 
-    /*cultar elementos en modo colapsado */
     .menu-lateral.colapsado .menu-texto,
     .menu-lateral.colapsado .icono-flecha,
     .menu-lateral.colapsado .menu-lateral-logo {
@@ -263,9 +341,17 @@ body {
         margin-left: var(--menu-width-colapsado) !important;
     }
 
+    .bienvenida img {
+        height: auto;
+        position: relative;
+        margin-bottom: -45px;
+        margin-top: -45px;
+        top: -6px;
+        flex-shrink: 0;
+    }
 }
 
-/*Para pantallas pequeñas*/
+/* Pantallas pequeñas */
 @media (max-width: 1214.98px) {
 
     #btnMenu:focus,
@@ -288,10 +374,7 @@ body {
         overflow-y: auto;
     }
 
-    .menu-lateral .menu-lateral-logo {
-        display: none !important;
-    }
-
+    .menu-lateral .menu-lateral-logo,
     .menu-lateral hr {
         display: none !important;
     }
@@ -306,7 +389,18 @@ body {
         background-color: var(--bg-oscuro);
         position: relative;
         z-index: 1035;
-        /* Por encima de todo */
+    }
+
+    .foto-perfil {
+        width: 34px;
+        border-radius: 50%;
+        overflow: hidden;
+    }
+
+    .foto-perfil img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
     }
 
     .menu-lateral-cuerpo {
@@ -321,13 +415,10 @@ body {
         padding: 15px 0;
         box-shadow: 5px 0 15px rgba(0, 0, 0, 0.2);
         z-index: 1034;
-
-        /* Animación suave de deslizamiento */
         transform: translateX(-100%);
         transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
     }
 
-    /*Para que no se vea la barra de scroll*/
     .menu-lateral-cuerpo::-webkit-scrollbar {
         width: 0px;
     }
@@ -338,14 +429,162 @@ body {
 
     .main {
         margin-left: 0 !important;
-        padding-top: 80px !important;
-        margin-top: 40px !important;
+        padding-top: 70px !important;
+        margin-top: 0 !important;
     }
 
-    /*Para hacer un fondo oscuro*/
     .menu-lateral-overlay.activo {
         opacity: 1;
         pointer-events: auto;
     }
 
+    .superior {
+        display: flex !important;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 15px;
+        padding: 0 10px;
+    }
+
+    .superior h4 {
+        font-size: 1.1rem;
+        margin-bottom: 0;
+    }
+}
+
+.titulo-seccion {
+    background-color: var(--blue-primary);
+    border-radius: 20px;
+    color: white;
+}
+
+.buscador-contenedor {
+    position: relative;
+    width: 100%;
+}
+
+.buscador-input {
+    background-color: var(--card-bg) !important;
+    border: none !important;
+    border-radius: 12px !important;
+    padding: 12px 16px 12px 42px !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02) !important;
+    font-size: 14px;
+    color: var(--text-dark);
+}
+
+.icono-busqueda {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    font-size: 16px;
+}
+
+.select-ticket-filtro {
+    background-color: var(--card-bg) !important;
+    border: none !important;
+    border-radius: 12px !important;
+    padding: 12px 16px !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02) !important;
+    font-size: 14px;
+    color: var(--text-body);
+}
+
+/* Todo de la tabla */
+.card-tabla {
+    background: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(30, 45, 90, 0.04);
+
+}
+
+.table-custom thead th {
+    color: #2d3748;
+    font-weight: 700;
+    font-size: 13px;
+    border-bottom: 1px solid #edf2f7;
+    padding-bottom: 15px;
+}
+
+.table-custom tbody td {
+    color: #4a5568;
+    font-size: 13px;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #f7fafc;
+}
+
+.categoria-celda {
+    display: inline-flex;
+    align-items: center;
+    color: #2d3748;
+    font-weight: 600;
+}
+
+.btn-azul-redondeado,
+.btn-personalizado-primario {
+  background-color: var(--blue-primary) !important;
+  color: white !important;
+  border: none;
+  border-radius: 15px !important;
+  padding: 12px 24px !important;
+  font-weight: 600;
+  font-size: 15px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(67, 147, 246, 0.2);
+  transition: all 0.3s ease;
+}
+
+.btn-azul-redondeado:hover,
+.btn-personalizado-primario:hover {
+  background-color: var(--blue-hover) !important;
+  transform: translateY(-1px);
+}
+
+.icono-tarjeta {
+  position: absolute;
+  top: -22px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  background-color: var(--blue-primary);
+  color: #ffffff;
+  border-radius: 50%;
+  font-size: 18px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  z-index: 2;
+}
+
+.icono-tarjeta img {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+}
+
+.tarjeta-indicator,
+.tarjeta-indicador {
+  flex: 0 0 220px;
+  background-color: var(--card-bg);
+  border-radius: 20px;
+  box-shadow: 0 10px 25px rgba(30, 45, 90, 0.05);
+  border: none;
+  position: relative;
+  padding: 24px 15px 15px 15px !important;
+  height: 110px !important;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.fila-indicadores {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 1.25rem;
 }

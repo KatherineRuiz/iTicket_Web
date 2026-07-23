@@ -1,577 +1,383 @@
 <!doctype html>
 <html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>iTicket</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="css/common.css" />
-    <link rel="stylesheet" href="css/tickets.css" />
-    <link rel="shortcut icon" href="/img/logo.png" type="image/x-icon" />
-  </head>
 
-  <body>
-    <!-- Navbar vertical -->
-    <header>
-      <nav class="menu-lateral" id="menuLateral">
-        <div class="menu-lateral-header text-white">
-          <button
-            class="btn text-white p-0 fs-3 d-flex align-items-center justify-content-center"
-            id="btnMenu"
-            type="button"
-            style="width: 40px; height: 40px"
-          >
-            <i class="bi bi-list"></i>
-          </button>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>iTicket</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet" />
+  <link rel="stylesheet" href="css/common.css" />
+  <link rel="stylesheet" href="css/tickets.css" />
+  <link rel="stylesheet" href="css/notificaciones.css">
+  <link rel="shortcut icon" href="/img/logo.png" type="image/x-icon" />
+  <script src="js/components/menu-cache.js"></script>
+</head>
 
-          <img src="img/logo.png" alt="logo" class="menu-lateral-logo" />
-        </div>
+<body>
+  <!-- Todo el header  -->
+  <header id="contenedorMenuLateral"></header>
+  <div class="menu-lateral-overlay" id="overlay"></div>
 
-        <div class="d-none d-md-flex justify-content-center">
-          <hr class="linea-divisora border border-light-subtle opacity-50" />
-        </div>
+  <!-- Contenido de Mis Tickets -->
+  <main class="main px-md-4 pt-3">
 
-        <div
-          class="menu-lateral-cuerpo d-flex flex-column flex-grow-1 justify-content-between"
-        >
-          <div>
-            <ul class="nav flex-column gap-2 p-0">
-              <li class="menu-opcion">
-                <a href="dashboardAdmin.html" class="nav-link">
-                  <div class="icono-menu">
-                    <img src="img/inicio.svg" alt="Icono de Inicio" />
-                  </div>
-                  <span class="menu-texto">Inicio</span>
-                </a>
-              </li>
-              <li class="menu-opcion activo" id="ticketsMenu">
-                <a class="nav-link" id="btnTickets">
-                  <div class="icono-menu">
-                    <img src="img/tickets.svg" alt="Incono de Tickets" />
-                  </div>
-                  <span class="menu-texto">Tickets</span>
-                  <i class="bi bi-chevron-down icono-flecha"></i>
-                </a>
-                <ul class="submenu">
-                  <li>
-                    <a href="misTickets.html"
-                      ><span class="menu-texto">Mis Tickets</span></a
-                    >
-                  </li>
-                  <li>
-                    <a href="gestionTickets.html"
-                      ><span class="menu-texto">Gestionar Tickets</span></a
-                    >
-                  </li>
-                  <li>
-                    <a href="ticketsAsignados.html"
-                      ><span class="menu-texto">Tickets Asignados</span></a
-                    >
-                  </li>
-                </ul>
-              </li>
-              <li class="menu-opcion" id="equiposMenu">
-                <a class="nav-link" id="btnEquipos">
-                  <div class="icono-menu">
-                    <img src="img/equipos.svg" alt="Icono de Equipos" />
-                  </div>
-                  <span class="menu-texto">Equipos</span>
-                  <i class="bi bi-chevron-down icono-flecha"></i>
-                </a>
-                <ul class="submenu">
-                  <li>
-                    <a href="#" class="menu-texto">Equipo y Mobiliario</a>
-                  </li>
-                  <li><a href="#" class="menu-texto">Ubicaciones</a></li>
-                </ul>
-              </li>
-              <li class="menu-opcion">
-                <a href="#" class="nav-link">
-                  <div class="icono-menu">
-                    <img
-                      src="img/usuarios.svg"
-                      alt="Icono de Usuarios"
-                      class="d-flex"
-                    />
-                  </div>
-                  <span class="menu-texto">Usuarios</span>
-                </a>
-              </li>
-              <li class="menu-opcion">
-                <a href="#" class="nav-link">
-                  <div class="icono-menu">
-                    <img
-                      src="img/estadisticas.svg"
-                      alt="Icono de Estadísticas"
-                      class="d-flex"
-                    />
-                  </div>
-                  <span class="menu-texto">Estadísticas</span>
-                </a>
-              </li>
-              <li class="menu-opcion">
-                <a href="evaluaciones.html" class="nav-link">
-                  <div class="icono-menu">
-                    <img
-                      src="img/evaluaciones.svg"
-                      alt="Icono de Evaluaciones"
-                      class="d-flex"
-                    />
-                  </div>
-                  <span class="menu-texto">Evaluaciones</span>
-                </a>
-              </li>
-              <li class="menu-opcion">
-                <a href="chatBot.html" class="nav-link">
-                  <div class="icono-menu">
-                    <img
-                      src="img/chatBot.svg"
-                      alt="Icono de Chatbot"
-                      class="d-flex"
-                    />
-                  </div>
-                  <span class="menu-texto">ChatBot</span>
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          <div>
-            <ul class="nav flex-column gap-2 mt-3 p-0">
-              <li class="menu-opcion">
-                <a href="#" class="nav-link">
-                  <div class="icono-menu">
-                    <img src="img/notificaciones.svg" alt="" class="d-flex" />
-                  </div>
-                  <span class="menu-texto">Notificaciones</span>
-                </a>
-              </li>
-              <li class="menu-opcion">
-                <a href="#" class="nav-link">
-                  <div class="icono-menu">
-                    <img src="img/configuracion.svg" alt="" class="d-flex" />
-                  </div>
-                  <span class="menu-texto">Configuración</span>
-                </a>
-              </li>
-            </ul>
+    <section class="superior rounded-5 ps-4 d-none d-md-flex">
+      <h6 class="mb-0 bold">Mis tickets</h6>
+      <div class="position-relative">
+        <div class="perfil p-2 rounded-5 gap-lg-4 gap-md-2" id="perfilBienvenida">
+          <h6 class="perfil-nombre text-white mb-0 ps-2" id="nombrePerfil">Bienvenida, Katherine</h6>
+          <div class="perfil-foto" id="fotoPerfil">
+            <span class="foto-letra" id="fotoLetra">K</span>
+            <img src="img/usuario.png" alt="Foto de perfil" class="foto-img" id="fotoDePerfil">
           </div>
         </div>
-      </nav>
-    </header>
-    <div class="menu-lateral-overlay" id="overlay"></div>
+      </div>
+    </section>
 
-    <!-- Contenido de Mis Tickets -->
-    <main class="main px-md-4 pt-3">
-      <!-- Parte Superior -->
-      <section class="superior rounded-5 ps-4 d-none d-md-flex">
-        <a
-          href="dashboardAdmin.html"
-          class="mb-0 text-dark fw-bold"
-          style="text-decoration: none"
-          >Volver</a
-        >
+    <!-- Scroll -->
+    <div class="contenido-principal ps-4 pe-4">
+      <div class="container-fluid mt-4 px-0" id="view-dashboard">
+        <div class="contenedor-scroll-horizontal mb-4">
+          <div class="fila-indicadores pb-2">
+            <div class="tarjeta-indicador text-center p-3">
+              <span class="icono-tarjeta"><img src="img/TicketsAbiertosScroll.png" alt="TicketsAbiertos" /></span>
+              <p class="text-navy small fw-bold mb-1 pt-3">Tickets abiertos</p>
+              <h2 class="fw-bold text-navy m-0 pb-2">15</h2>
+            </div>
 
-        <div class="position-relative">
-          <div
-            class="perfil p-2 rounded-5 gap-lg-4 gap-md-2"
-            id="perfilBienvenida"
-          >
-            <h6 class="perfil-nombre text-white mb-0 ps-2" id="nombrePerfil">
-              Mis Tickets
-            </h6>
-            <img src="img/user.png" alt="Icono de perfil" id="fotoPerfil" />
-          </div>
-        </div>
-      </section>
+            <div class="tarjeta-indicador text-center p-3">
+              <span class="icono-tarjeta"><img src="img/TicketsCerradosIcon.png" alt="ticketsCerrados" /></span>
+              <p class="text-navy small fw-bold mb-1 pt-3">Tickets cerrados</p>
+              <h2 class="fw-bold text-navy m-0 pb-2">5</h2>
+            </div>
 
-      <!-- Scroll -->
-      <div class="contenido-principal ps-4 pe-4">
-        <div class="container-fluid mt-4 px-0" id="view-dashboard">
-          <div class="contenedor-scroll-horizontal mb-4">
-            <div class="fila-indicadores">
-              <div class="tarjeta-indicador text-center p-3">
-                <span class="icono-tarjeta"
-                  ><img
-                    src="img/TicketsAbiertosScroll.png"
-                    alt="TicketsAbiertos"
-                /></span>
-                <p class="text-navy small fw-bold mb-1">Tickets abiertos</p>
-                <h2 class="fw-bold text-navy m-0 pb-2">15</h2>
-              </div>
+            <div class="tarjeta-indicador text-center p-3">
+              <span class="icono-tarjeta"><img src="img/TicketsResueltos.png" alt="TicketsResueltos" /></span>
+              <p class="text-navy small fw-bold mb-1 pt-3">Tickets resueltos</p>
+              <h2 class="fw-bold text-navy m-0 pb-2">2</h2>
+            </div>
 
-              <div class="tarjeta-indicador text-center p-3">
-                <span class="icono-tarjeta"
-                  ><img
-                    src="/img/TicketsCerradosIcon.png"
-                    alt="ticketsCerrados"
-                /></span>
-                <p class="text-navy small fw-bold mb-1">Tickets cerrados</p>
-                <h2 class="fw-bold text-navy m-0 pb-2">5</h2>
-              </div>
-
-              <div class="tarjeta-indicador text-center p-3">
-                <span class="icono-tarjeta"
-                  ><img src="/img/TicketsResueltos.png" alt="TicketsResueltos"
-                /></span>
-                <p class="text-navy small fw-bold mb-1">Tickets resueltos</p>
-                <h2 class="fw-bold text-navy m-0 pb-2">2</h2>
-              </div>
-
-              <div class="tarjeta-indicador text-center p-3">
-                <span class="icono-tarjeta"
-                  ><img src="/img/TicketsAsignados.png" alt="TicketsAsignados"
-                /></span>
-                <p class="text-navy small fw-bold mb-1">Tickets asignados</p>
-                <h2 class="fw-bold text-navy m-0 pb-2">4</h2>
-              </div>
-              <div class="tarjeta-indicador text-center p-3">
-                <span class="icono-tarjeta"
-                  ><img
-                    src="/img/Tickets en progreso.png"
-                    alt="TicketsProgreso"
-                /></span>
-                <p class="text-navy small fw-bold mb-1">Tickets en progreso</p>
-                <h2 class="fw-bold text-navy m-0 pb-2">3</h2>
-              </div>
-              <div class="tarjeta-indicador text-center p-3">
-                <span class="icono-tarjeta"
-                  ><img src="/img/Tickets en espera.png" alt="TicketsEspera"
-                /></span>
-                <p class="text-navy small fw-bold mb-1">Tickets en espera</p>
-                <h2 class="fw-bold text-navy m-0 pb-2">1</h2>
-              </div>
+            <div class="tarjeta-indicador text-center p-3">
+              <span class="icono-tarjeta"><img src="img/TicketsAsignados.png" alt="TicketsAsignados" /></span>
+              <p class="text-navy small fw-bold mb-1 pt-3">Tickets asignados</p>
+              <h2 class="fw-bold text-navy m-0 pb-2">4</h2>
+            </div>
+            <div class="tarjeta-indicador text-center p-3">
+              <span class="icono-tarjeta"><img src="img/Tickets en progreso.png" alt="TicketsProgreso" /></span>
+              <p class="text-navy small fw-bold mb-1 pt-3">Tickets en progreso</p>
+              <h2 class="fw-bold text-navy m-0 pb-2">3</h2>
+            </div>
+            <div class="tarjeta-indicador text-center p-3">
+              <span class="icono-tarjeta"><img src="img/Tickets en espera.png" alt="TicketsEspera" /></span>
+              <p class="text-navy small fw-bold mb-1 pt-3">Tickets en espera</p>
+              <h2 class="fw-bold text-navy m-0 pb-2">1</h2>
             </div>
           </div>
+        </div>
 
-          <!-- Apartado todos Mis Tickets -->
-          <div class="row g-4">
-            <div class="col-lg-8">
-              <div class="tarjeta-azul-encabezado p-4 text-white mb-3">
-                <h5 class="fw-bold text-center mb-3">Todos mis tickets</h5>
-                <div class="row g-2">
-                  <div class="col-12 mb-2">
-                    <div class="input-group">
-                      <input
-                        type="text"
-                        class="form-control rounded-pill"
-                        placeholder="Ingresa el código o título de tu ticket"
-                        id="buscarTicketNombre"
-                      />
-                      <button
-                        class="input-group-text bg-white border-0 rounded-pill ms-n5 z-3 ms-2"
-                        id="buscarTicket"
-                      >
-                        <i class="bi bi-search text-muted"></i>
-                      </button>
-                    </div>
-                  </div>
-                  <div class="col-6">
-                    <select
-                      class="form-select rounded-pill text-muted"
-                      id="buscarTicketPrioridad"
-                    >
-                      <option>Prioridad</option>
-                      <option value="1">Crítica</option>
-                      <option value="2">Alta</option>
-                      <option value="3">Media</option>
-                      <option value="4">Baja</option>
-                    </select>
-                  </div>
-                  <div class="col-6">
-                    <input
-                      type="date"
-                      class="form-control rounded-pill text-muted"
-                      id="buscarTicketFecha"
-                    />
-                  </div>
+        <div class="row g-4">
+          <!-- Buscador listado de Tickets -->
+          <div class="col-lg-8">
+
+            <h5 class="fw-bold mb-3 titulo-seccion text-center p-3">Todos mis tickets</h5>
+
+            <!-- Sección del Buscador y Filtros -->
+            <div class="row g-3 align-items-center mb-4">
+              <div class="col-12 col-md-6 col-lg-7">
+                <div class="buscador-contenedor">
+                  <i class="bi bi-search icono-busqueda"></i>
+                  <input type="text" class="form-control buscador-input"
+                    placeholder="Ingresa el código o título de tu ticket">
                 </div>
               </div>
 
-              <div
-                class="bg-white p-3 pt-5 rounded-4 shadow-sm"
-              >
-                <div class="px-4">
-                  <div class="contenedor-lista-tickets">
-                    <div
-                      class="elemento-ticket borde-lateral-critica p-3 mb-3 rounded-3 shadow-sm d-flex justify-content-between align-items-start"
-                    >
-                      <div>
-                        <h6 class="fw-bold mb-1">
-                          <i class="bi bi-pc-display text-danger me-2"></i
-                          >Computadora no enciende
-                        </h6>
-                        <small class="text-muted d-block">#274261</small>
-                        <small class="text-muted d-block mt-1"
-                          ><b>Estado:</b> Resuelto</small
-                        >
-                        <small class="text-muted d-block"
-                          ><b>Vence:</b> 10/5/2026 12:30</small
-                        >
-                        <small class="text-muted d-block mt-1"
-                          ><b>Descripción:</b> Es la computadora del docente, se
-                          encuentra conectada...</small
-                        >
-                      </div>
-                      <span
-                        class="badge fondo-peligro-suave text-danger rounded-pill px-3 py-2"
-                        >Crítica</span
-                      >
-                    </div>
+              <!-- Filtro de Prioridad -->
+              <div class="col-6 col-md-3 col-lg-3">
+                <select class="form-select select-ticket-filtro">
+                  <option selected disabled>Prioridad</option>
+                  <option value="critica">Crítica</option>
+                  <option value="alta">Alta</option>
+                  <option value="media">Media</option>
+                  <option value="baja">Baja</option>
+                </select>
+              </div>
 
-                    <div
-                      class="elemento-ticket borde-lateral-alta p-3 mb-3 rounded-3 shadow-sm d-flex justify-content-between align-items-start"
-                    >
-                      <div>
-                        <h6 class="fw-bold mb-1">
-                          <i class="bi bi-fire text-warning me-2"></i>Extintor
-                          descargado
-                        </h6>
-                        <small class="text-muted d-block">#274261</small>
-                        <small class="text-muted d-block mt-1"
-                          ><b>Estado:</b> Asignado</small
-                        >
-                        <small class="text-muted d-block"
-                          ><b>Vence:</b> 10/5/2026 12:30</small
-                        >
-                        <small class="text-muted d-block mt-1"
-                          ><b>Descripción:</b> El extintor fue usado y se vació
-                          todo...</small
-                        >
-                      </div>
-                      <span
-                        class="badge fondo-advertencia-suave text-warning rounded-pill px-3 py-2"
-                        >Alta</span
-                      >
-                    </div>
-
-                    <div
-                      class="elemento-ticket borde-lateral-media p-3 mb-3 rounded-3 shadow-sm d-flex justify-content-between align-items-start"
-                    >
-                      <div>
-                        <h6 class="fw-bold mb-1">
-                          <i class="bi bi-printer text-warning me-2"></i
-                          >Impresora del librero fallando
-                        </h6>
-                        <small class="text-muted d-block">#274261</small>
-                        <small class="text-muted d-block mt-1"
-                          ><b>Estado:</b> En espera</small
-                        >
-                        <small class="text-muted d-block"
-                          ><b>Vence:</b> 10/5/2026 12:30</small
-                        >
-                        <small class="text-muted d-block mt-1"
-                          ><b>Descripción:</b> La impresora no imprime
-                          correctamente...</small
-                        >
-                      </div>
-                      <span
-                        class="badge fondo-advertencia-suave-2 texto-advertencia-oscuro rounded-pill px-3 py-2"
-                        >Media</span
-                      >
-                    </div>
-
-                    <div
-                      class="elemento-ticket borde-lateral-baja p-3 mb-0 rounded-3 shadow-sm d-flex justify-content-between align-items-start"
-                    >
-                      <div>
-                        <h6 class="fw-bold mb-1">
-                          <i class="bi bi-lightbulb text-success me-2"></i
-                          >Lampara de pasillo quemada
-                        </h6>
-                        <small class="text-muted d-block">#274261</small>
-                        <small class="text-muted d-block mt-1"
-                          ><b>Estado:</b> Resuelto</small
-                        >
-                        <small class="text-muted d-block"
-                          ><b>Vence:</b> 10/5/2026 12:30</small
-                        >
-                        <small class="text-muted d-block mt-1"
-                          ><b>Descripción:</b> La lampara del pasillo se
-                          fundió...</small
-                        >
-                      </div>
-                      <span
-                        class="badge fondo-exito-suave text-success rounded-pill px-3 py-2"
-                        >Baja</span
-                      >
-                    </div>
-                  </div>
-                </div>
+              <!-- Filtro de Fecha -->
+              <div class="col-6 col-md-3 col-lg-2">
+                <input type="date" class="form-control select-ticket-filtro">
               </div>
             </div>
 
-            <div class="col-lg-4">
-              <a
-                href="crearTickets.html"
-                class="btn btn-personalizado-primario w-100 py-3 rounded-4 mb-4 fw-bold shadow-sm text-white fs-5"
-                id="btn-go-create"
-              >
-                <i class="bi bi-plus-lg me-2 text-white"></i> Crear ticket
-              </a>
+            <!-- Lista de Tickets -->
+            <div class="contenedor-lista-tickets">
+
               <div
-                class="bg-white rounded-4 shadow-sm overflow-hidden caja-evaluacion"
-              >
-                <div class="tarjeta-azul-encabezado p-3 text-white text-center">
-                  <h5 class="m-0 fw-bold">Evaluaciones</h5>
+                class="elemento-ticket borde-lateral-critica p-3 mb-3 rounded-4 shadow-sm d-flex justify-content-between align-items-start">
+                <div>
+                  <h6 class="fw-bold mb-1 titulo-ticket">
+                    <i class="bi bi-pc-display text-danger me-2"></i>Computadora no enciende
+                  </h6>
+                  <small class="text-muted d-block">#274261</small>
+                  <small class="text-muted d-block mt-1"><b>Estado:</b> Resuelto</small>
+                  <small class="text-muted d-block"><b>Vence:</b> 10/5/2026 12:30</small>
+                  <small class="text-muted d-block mt-1"><b>Descripción:</b> Es la computadora del docente, se encuentra
+                    conectada...</small>
                 </div>
-                <div class="p-4 text-center">
-                  <div class="alerta-evaluacion p-4 rounded-4 mb-3 shadow-sm">
-                    <h5 class="fw-bold text-navy mb-3">
-                      ¡Tienes evaluaciones pendientes!
+                <span class="badge fondo-peligro-suave px-3 py-2">Crítica</span>
+              </div>
+
+              <div
+                class="elemento-ticket borde-lateral-alta p-3 mb-3 rounded-4 shadow-sm d-flex justify-content-between align-items-start">
+                <div>
+                  <h6 class="fw-bold mb-1 titulo-ticket">
+                    <i class="bi bi-fire text-warning me-2"></i>Extintor descargado
+                  </h6>
+                  <small class="text-muted d-block">#274261</small>
+                  <small class="text-muted d-block mt-1"><b>Estado:</b> Asignado</small>
+                  <small class="text-muted d-block"><b>Vence:</b> 10/5/2026 12:30</small>
+                  <small class="text-muted d-block mt-1"><b>Descripción:</b> El extintor fue usado y se vació
+                    todo...</small>
+                </div>
+                <span class="badge fondo-advertencia-suave px-3 py-2">Alta</span>
+              </div>
+
+              <div
+                class="elemento-ticket borde-lateral-media p-3 mb-3 rounded-4 shadow-sm d-flex justify-content-between align-items-start">
+                <div>
+                  <h6 class="fw-bold mb-1 titulo-ticket">
+                    <i class="bi bi-printer text-warning me-2"></i>Impresora del librero fallando
+                  </h6>
+                  <small class="text-muted d-block">#274261</small>
+                  <small class="text-muted d-block mt-1"><b>Estado:</b> En espera</small>
+                  <small class="text-muted d-block"><b>Vence:</b> 10/5/2026 12:30</small>
+                  <small class="text-muted d-block mt-1"><b>Descripción:</b> La impresora no imprime
+                    correctamente...</small>
+                </div>
+                <span class="badge fondo-advertencia-suave-2 px-3 py-2">Media</span>
+              </div>
+
+              <div
+                class="elemento-ticket borde-lateral-baja p-3 mb-0 rounded-4 shadow-sm d-flex justify-content-between align-items-start">
+                <div>
+                  <h6 class="fw-bold mb-1 titulo-ticket">
+                    <i class="bi bi-lightbulb text-success me-2"></i>Lampara de pasillo quemada
+                  </h6>
+                  <small class="text-muted d-block">#274261</small>
+                  <small class="text-muted d-block mt-1"><b>Estado:</b> Resuelto</small>
+                  <small class="text-muted d-block"><b>Vence:</b> 10/5/2026 12:30</small>
+                  <small class="text-muted d-block mt-1"><b>Descripción:</b> La lampara del pasillo se fundió...</small>
+                </div>
+                <span class="badge fondo-exito-suave px-3 py-2">Baja</span>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Botón Crear y panel de evaluaciones -->
+          <div class="col-lg-4">
+            <a href="crearTickets.html" class="btn btn-azul-redondeado w-100 py-3 rounded-4 mb-4 fw-bold shadow-sm text-white fs-5 d-flex align-items-center justify-content-center">
+              <i class="bi bi-plus-lg me-2"></i> Crear ticket
+            </a>
+
+
+            <div>
+              <h5 class="fw-bold mb-3 titulo-seccion text-center p-3">Evaluaciones</h5>
+              <div class="alerta-evaluacion">
+                <div class="p-4 text-center align-items-center">
+                  <div class="p-3 rounded-4 mb-3">
+                    <h4 class="fw-bold mb-3 titulo-seccion-evaluacion">¡Tienes evaluaciones pendientes!</h4>
+                    <h5 class="text-muted small px-2 mt-3 fw-semibold pb-3">
+                      Recuerda que no puedes crear nuevos tickets si tienes una evaluación pendiente
                     </h5>
-                    <button
-                      class="btn btn-personalizado-primario rounded-pill px-4 py-2 fw-bold text-white w-75"
-                      data-bs-toggle="modal"
-                      data-bs-target="#evaluacionModal"
-                    >
+                    <button class="btn btn-azul-redondeado px-4" data-bs-toggle="modal"
+                      data-bs-target="#evaluacionModal">
                       Evaluar
                     </button>
                   </div>
-                  <p class="text-primary-custom small px-2 mt-4 fw-semibold">
-                    Recuerda que no puedes crear nuevos tickets si tienes una
-                    evaluación pendiente
-                  </p>
-                  <img
-                    src="img/Customer Survey.png"
-                    alt="Evaluación"
-                    class="img-fluid mt-2"
-                    style="max-height: 140px"
-                  />
+                  <img src="img/Customer Survey.png" alt="Evaluación" class="img-fluid img-evaluacion" />
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </main>
+    </div>
+  </main>
 
-    <div class="modal fade" tabindex="-1" id="evaluacionModal">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content rounded-5 overflow-hidden">
+  <div class="modal fade" tabindex="-1" id="evaluacionModal">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content rounded-5 overflow-hidden">
+        <div class="modal-header border-0 p-3 pb-0">
           <div
-            class="modal-header fondo-encabezado text-center text-white border-0 mb3"
-          >
-            <h5 class="modal-title fw-bold w-100" style="font-size: 25px">
-              ¡Evalúa nuestro servicio!
-            </h5>
-            <button
-              type="button"
-              class="btn-close btn-close-white"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
-          </div>
-          <div class="modal-body p-4">
-            <p class="fw-bold text-navy mb-2">Tu Ticket</p>
-            <div
-              class="elemento-ticket borde-lateral-critica p-3 mb-0 rounded-3 shadow-sm bg-white d-flex justify-content-between align-items-start"
-            >
-              <div>
-                <h6 class="fw-bold mb-1">
-                  <i class="bi bi-pc-display text-danger me-2"></i>Computadora
-                  no enciende
-                </h6>
-                <small class="text-muted d-block">#274261</small>
-                <small class="text-muted d-block mt-1"
-                  ><b>Estado:</b> Resuelto</small
-                >
-                <small class="text-muted d-block"
-                  ><b>Vence:</b> 10/5/2026 12:30</small
-                >
-                <small class="text-muted d-block mt-1"
-                  ><b>Descripción:</b> Es la computadora del docente, se
-                  encuentra conectada...</small
-                >
-              </div>
-              <span
-                class="badge fondo-peligro-suave text-danger rounded-pill px-3 py-2"
-                >Crítica</span
-              >
-            </div>
-            <form id="form-evaluacion">
-              <div
-                class="d-flex align-items-center justify-content-between mb-4 mt-2 px-1"
-              >
-                <span class="fw-bold fs-5 text-dark">Calificación:</span>
-                <div class="estrellas-rating d-flex flex-row-reverse">
-                  <input
-                    type="radio"
-                    id="star5"
-                    name="calificacion"
-                    value="5"
-                  />
-                  <label for="star5" class="bi bi-star-fill"></label>
-
-                  <input
-                    type="radio"
-                    id="star4"
-                    name="calificacion"
-                    value="4"
-                  />
-                  <label for="star4" class="bi bi-star-fill"></label>
-
-                  <input
-                    type="radio"
-                    id="star3"
-                    name="calificacion"
-                    value="3"
-                  />
-                  <label for="star3" class="bi bi-star-fill"></label>
-
-                  <input
-                    type="radio"
-                    id="star2"
-                    name="calificacion"
-                    value="2"
-                  />
-                  <label for="star2" class="bi bi-star-fill"></label>
-
-                  <input
-                    type="radio"
-                    id="star1"
-                    name="calificacion"
-                    value="1"
-                  />
-                  <label for="star1" class="bi bi-star-fill"></label>
-                </div>
-              </div>
-              <div class="mb-4 px-1">
-                <label
-                  for="comentario-evaluacion"
-                  class="form-label fw-bold fs-5 text-dark mb-1"
-                >
-                  Dejanos un comentario: <span class="text-danger">*</span>
-                </label>
-                <input
-                  type="text"
-                  id="comentario-evaluacion"
-                  class="form-control input-comentario bg-transparent px-0 ps-3"
-                  placeholder="Escribe aquí..."
-                  required
-                />
-              </div>
-
-              <div class="text-center mt-4">
-                <button
-                  type="submit"
-                  id="btn-enviar-evaluacion"
-                  class="btn btn-primary rounded-pill px-5 py-2.5 fw-bold shadow d-inline-flex align-items-center gap-2"
-                  style="background-color: #3b82f6; border: none"
-                >
-                  <i class="bi bi-send-fill"></i> Enviar
-                </button>
-              </div>
-            </form>
+            class="titulo-seccion bg-primary text-white w-100 rounded-pill p-3 d-flex align-items-center justify-content-between position-relative">
+            <h5 class="fw-bold mb-0 flex-grow-1 text-center text-white">¡Evalua nuestro servicio!</h5>
+            <button type="button" class="btn-close btn-close-white position-absolute end-0 me-3" data-bs-dismiss="modal"
+              aria-label="Cerrar">
+            </button>
           </div>
         </div>
+        <div class="modal-body p-4 pt-2">
+          <p class="fw-bold text-navy mb-2">Tu Ticket</p>
+          <div
+            class="elemento-ticket borde-lateral-critica p-3 mb-0 rounded-3 shadow-sm bg-white d-flex justify-content-between align-items-start">
+            <div>
+              <h6 class="fw-bold mb-1">
+                <i class="bi bi-pc-display text-danger me-2"></i>Computadora
+                no enciende
+              </h6>
+              <small class="text-muted d-block">#274261</small>
+              <small class="text-muted d-block mt-1"><b>Estado:</b> Resuelto</small>
+              <small class="text-muted d-block"><b>Vence:</b> 10/5/2026 12:30</small>
+              <small class="text-muted d-block mt-1"><b>Descripción:</b> Es la computadora del docente, se
+                encuentra conectada...</small>
+            </div>
+            <span class="badge fondo-peligro-suave text-danger rounded-pill px-3 py-2">Crítica</span>
+          </div>
+          <form id="form-evaluacion">
+            <div class="d-flex align-items-center justify-content-between mb-4 mt-2 px-1">
+              <span class="fw-bold fs-5 text-dark">Calificación:</span>
+              <div class="estrellas-rating d-flex flex-row-reverse">
+                <input type="radio" id="star5" name="calificacion" value="5" />
+                <label for="star5" class="bi bi-star-fill"></label>
+
+                <input type="radio" id="star4" name="calificacion" value="4" />
+                <label for="star4" class="bi bi-star-fill"></label>
+
+                <input type="radio" id="star3" name="calificacion" value="3" />
+                <label for="star3" class="bi bi-star-fill"></label>
+
+                <input type="radio" id="star2" name="calificacion" value="2" />
+                <label for="star2" class="bi bi-star-fill"></label>
+
+                <input type="radio" id="star1" name="calificacion" value="1" />
+                <label for="star1" class="bi bi-star-fill"></label>
+              </div>
+            </div>
+            <div class="mb-4 px-1">
+              <label for="comentario-evaluacion" class="form-label fw-bold fs-5 text-dark mb-1">
+                Dejanos un comentario: <span class="text-danger">*</span>
+              </label>
+              <input type="text" id="comentario-evaluacion"
+                class="form-control input-comentario bg-transparent px-0 ps-3" placeholder="Escribe aquí..." required />
+            </div>
+
+            <div class="text-center mt-4">
+              <button type="submit" id="btn-enviar-evaluacion"
+                class="btn btn-primary rounded-pill px-5 py-2.5 fw-bold shadow d-inline-flex align-items-center gap-2">
+                <i class="bi bi-send-fill"></i> Enviar
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Todo esto es lo de notificaciones y siempre ira al final -->
+  <div class="notificaciones-overlay" id="notificacionesOverlay">
+    <div class="panel-notificaciones" id="panelNotificaciones">
+      <div class="p-4">
+        <!-- Título -->
+        <h6 class="titulo-notificaciones mb-0">Notificaciones</h6>
+      </div>
+
+      <div class="notificaciones-body px-4 pb-4">
+
+        <!-- Todo esto es las notificaciones de hoy -->
+        <div class="notificaciones-seccion mb-4">
+          <h6 class="text-muted fw-bold mb-3 small">Hoy</h6>
+          <div class="lista-notificaciones">
+
+            <!-- Los divs de notificaciones empiezan desde aqui -->
+            <div class="notificacion-item no-leida">
+              <div class="avatar-notificacion">JG</div>
+              <div class="contenido-notificacion">
+                <div class="d-flex justify-content-between align-items-baseline">
+                  <span class="notificacion-titulo">Nuevo ticket</span>
+                  <span class="notificacion-tiempo">Hace 1 hora</span>
+                </div>
+                <p class="notificacion-texto">¡Josue Guinea ha creado un nuevo ticket!</p>
+              </div>
+            </div>
+
+            <div class="notificacion-item no-leida">
+              <div class="avatar-notificacion">JG</div>
+              <div class="contenido-notificacion">
+                <div class="d-flex justify-content-between align-items-baseline">
+                  <span class="notificacion-titulo">Nuevo ticket</span>
+                  <span class="notificacion-tiempo">Hace 1 hora</span>
+                </div>
+                <p class="notificacion-texto">¡Josue Guinea ha creado un nuevo ticket!</p>
+              </div>
+            </div>
+
+            <div class="notificacion-item no-leida">
+              <div class="avatar-notificacion">JG</div>
+              <div class="contenido-notificacion">
+                <div class="d-flex justify-content-between align-items-baseline">
+                  <span class="notificacion-titulo">Nuevo ticket</span>
+                  <span class="notificacion-tiempo">Hace 1 hora</span>
+                </div>
+                <p class="notificacion-texto">¡Josue Guinea ha creado un nuevo ticket!</p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Aqui se muestran las de ayer -->
+        <div class="notificaciones-seccion">
+          <h6 class="text-muted fw-bold mb-3 small">Ayer</h6>
+          <div class="lista-notificaciones">
+
+            <div class="notificacion-item">
+              <div class="avatar-notificacion">JG</div>
+              <div class="contenido-notificacion">
+                <div class="d-flex justify-content-between align-items-baseline">
+                  <span class="notificacion-titulo-visto">Nuevo ticket</span>
+                  <span class="notificacion-tiempo">Hace 1 día</span>
+                </div>
+                <p class="notificacion-texto">¡Josue Guinea ha creado un nuevo ticket!</p>
+              </div>
+            </div>
+
+            <div class="notificacion-item">
+              <div class="avatar-notificacion">JG</div>
+              <div class="contenido-notificacion">
+                <div class="d-flex justify-content-between align-items-baseline">
+                  <span class="notificacion-titulo-visto">Nuevo ticket</span>
+                  <span class="notificacion-tiempo">Hace 1 día</span>
+                </div>
+                <p class="notificacion-texto">¡Josue Guinea ha creado un nuevo ticket!</p>
+              </div>
+            </div>
+
+            <div class="notificacion-item">
+              <div class="avatar-notificacion">JG</div>
+              <div class="contenido-notificacion">
+                <div class="d-flex justify-content-between align-items-baseline">
+                  <span class="notificacion-titulo-visto">Nuevo ticket</span>
+                  <span class="notificacion-tiempo">Hace 1 día</span>
+                </div>
+                <p class="notificacion-texto">¡Josue Guinea ha creado un nuevo ticket!</p>
+              </div>
+            </div>
+
+            <div class="notificacion-item">
+              <div class="avatar-notificacion">JG</div>
+              <div class="contenido-notificacion">
+                <div class="d-flex justify-content-between align-items-baseline">
+                  <span class="notificacion-titulo-visto">Nuevo ticket</span>
+                  <span class="notificacion-tiempo">Hace 1 día</span>
+                </div>
+                <p class="notificacion-texto">¡Josue Guinea ha creado un nuevo ticket!</p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
       </div>
     </div>
 
@@ -579,6 +385,9 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <!-- Mi JS personalizado -->
-    <script type="module" src="js/components/menu.js"></script>
-  </body>
+    <script src="js/components/menu.js"></script>
+    <script src="js/controllers/notificaciones.js"></script>
+
+</body>
+
 </html>

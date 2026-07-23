@@ -1,508 +1,298 @@
 <!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vista ticket</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="css/common.css" />
-    <link rel="stylesheet" href="css/vistaTicket.css" />
-    <link rel="shortcut icon" href="/img/logo.png" type="image/x-icon" />
-  </head>
+<html lang="es">
 
-  <body>
-    <!-- Navbar vertical -->
-    <header>
-      <nav class="menu-lateral" id="menuLateral">
-        <div class="menu-lateral-header text-white">
-          <button
-            class="btn text-white p-0 fs-3 d-flex align-items-center justify-content-center"
-            id="btnMenu"
-            type="button"
-            style="width: 40px; height: 40px"
-          >
-            <i class="bi bi-list"></i>
-          </button>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vista ticket</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet" />
+  <link rel="stylesheet" href="css/common.css" />
+  <link rel="stylesheet" href="css/vistaTicket.css" />
+  <link rel="stylesheet" href="css/notificaciones.css">
+  <link rel="shortcut icon" href="img/logo.png" type="image/x-icon" />
+  <script src="js/components/menu-cache.js"></script>
+</head>
 
-          <img src="img/logo.png" alt="logo" class="menu-lateral-logo" />
-        </div>
+<body>
+  <!-- Header / Menú Lateral -->
+  <header id="contenedorMenuLateral"></header>
+  <div class="menu-lateral-overlay" id="overlay"></div>
 
-        <div class="d-none d-md-flex justify-content-center">
-          <hr class="linea-divisora border border-light-subtle opacity-50" />
-        </div>
+  <main class="main px-2 px-md-4 pt-3">
 
-        <div
-          class="menu-lateral-cuerpo d-flex flex-column flex-grow-1 justify-content-between"
-        >
-          <div>
-            <ul class="nav flex-column gap-2 p-0">
-              <li class="menu-opcion">
-                <a href="dashboardAdmin.html" class="nav-link">
-                  <div class="icono-menu">
-                    <img src="img/inicio.svg" alt="Icono de Inicio" />
-                  </div>
-                  <span class="menu-texto">Inicio</span>
-                </a>
-              </li>
-              <li class="menu-opcion activo" id="ticketsMenu">
-                <a class="nav-link" id="btnTickets">
-                  <div class="icono-menu">
-                    <img src="img/tickets.svg" alt="Incono de Tickets" />
-                  </div>
-                  <span class="menu-texto">Tickets</span>
-                  <i class="bi bi-chevron-down icono-flecha"></i>
-                </a>
-                <ul class="submenu">
-                  <li>
-                    <a href="misTickets.html"
-                      ><span class="menu-texto">Mis Tickets</span></a
-                    >
-                  </li>
-                  <li>
-                    <a href="gestionTickets.html"
-                      ><span class="menu-texto">Gestionar Tickets</span></a
-                    >
-                  </li>
-                  <li>
-                    <a href="ticketsAsignados.html"
-                      ><span class="menu-texto">Tickets Asigandos</span></a
-                    >
-                  </li>
-                </ul>
-              </li>
-              <li class="menu-opcion" id="equiposMenu">
-                <a class="nav-link" id="btnEquipos">
-                  <div class="icono-menu">
-                    <img src="img/equipos.svg" alt="Icono de Equipos" />
-                  </div>
-                  <span class="menu-texto">Equipos</span>
-                  <i class="bi bi-chevron-down icono-flecha"></i>
-                </a>
-                <ul class="submenu">
-                  <li>
-                    <a href="#" class="menu-texto">Equipo y Mobiliario</a>
-                  </li>
-                  <li><a href="#" class="menu-texto">Ubicaciones</a></li>
-                </ul>
-              </li>
-              <li class="menu-opcion">
-                <a href="#" class="nav-link">
-                  <div class="icono-menu">
-                    <img
-                      src="img/usuarios.svg"
-                      alt="Icono de Usuarios"
-                      class="d-flex"
-                    />
-                  </div>
-                  <span class="menu-texto">Usuarios</span>
-                </a>
-              </li>
-              <li class="menu-opcion">
-                <a href="#" class="nav-link">
-                  <div class="icono-menu">
-                    <img
-                      src="img/estadisticas.svg"
-                      alt="Icono de Estadísticas"
-                      class="d-flex"
-                    />
-                  </div>
-                  <span class="menu-texto">Estadísticas</span>
-                </a>
-              </li>
-              <li class="menu-opcion">
-                <a href="evaluaciones.html" class="nav-link">
-                  <div class="icono-menu">
-                    <img
-                      src="img/evaluaciones.svg"
-                      alt="Icono de Evaluaciones"
-                      class="d-flex"
-                    />
-                  </div>
-                  <span class="menu-texto">Evaluaciones</span>
-                </a>
-              </li>
-              <li class="menu-opcion">
-                <a href="chatBot.html" class="nav-link">
-                  <div class="icono-menu">
-                    <img
-                      src="img/chatBot.svg"
-                      alt="Icono de Chatbot"
-                      class="d-flex"
-                    />
-                  </div>
-                  <span class="menu-texto">ChatBot</span>
-                </a>
-              </li>
-            </ul>
-          </div>
+    <section class="superior rounded-5 ps-4 d-none d-md-flex pt-3">
+      <a href="gestionTickets.html" class="mb-0 volver-button fw-bold text-dark"><i class="bi bi-chevron-left"></i>
+        Volver</a>
+    </section>
 
-          <div>
-            <ul class="nav flex-column gap-2 mt-3 p-0">
-              <li class="menu-opcion">
-                <a href="#" class="nav-link">
-                  <div class="icono-menu">
-                    <img src="img/notificaciones.svg" alt="" class="d-flex" />
-                  </div>
-                  <span class="menu-texto">Notificaciones</span>
-                </a>
-              </li>
-              <li class="menu-opcion">
-                <a href="#" class="nav-link">
-                  <div class="icono-menu">
-                    <img src="img/configuracion.svg" alt="" class="d-flex" />
-                  </div>
-                  <span class="menu-texto">Configuración</span>
-                </a>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </nav>
-    </header>
-    <div class="menu-lateral-overlay" id="overlay"></div>
+    <div class="container-fluid px-2 px-md-4 py-3 py-md-4">
+      <div class="row g-4 align-items-stretch">
 
-    <!-- Contenido de Vista Tickets -->
-    <main class="main px-md-4 pt-3">
-      <div class="superior rounded-5 ps-4 d-none d-md-flex">
-        <a
-          href="/gestionTickets.html"
-          class="mb-0 volver-button fw-bold text-dark"
-          ><i class="bi bi-chevron-left"></i> Volver</a
-        >
-        <div>
-          <div class="perfil p-2 rounded-5 gap-lg-4 gap-md-2">
-            <img src="/img/user.png" alt="" />
-          </div>
-        </div>
-      </div>
-      <!-- tarjeta de informacion del ticket -->
-      <div class="container-fluid px-4 py-4">
-        <div id="btnEditarTicketSuperior" class="mb-3">
-          <a
-            id="editarTicket"
-            class="btn boton-editar-ticket shadow-sm text-white rounded-4 px-4 py-2"
-            onclick="conmutarModoEdicion()"
-            ><i class="bi bi-pencil-square me-2"></i> Editar</a
-          >
-        </div>
-        <div
-          class="descripcion-editarTicket borde-rojo p-3 mb-4 mt-3 rounded-4 shadow-sm bg-white d-flex justify-content-between align-items-start"
-        >
+        <div class="col-12 col-lg-8 d-flex flex-column">
           <div
-            id="modoVistaContenido"
-            class="w-100 d-flex justify-content-between align-items-start"
-          >
-            <div class="bloque-informacion-izquierda">
-              <h6 class="creador-ticket text-navy mb-2">
-                <b>De:</b>
-                <img
-                  src="/img/user-modal.png"
-                  alt="usuario"
-                  class="img-fluid ms-2 me-2 img-usuario-modal"
-                />josue_guinea@ricaldone.edu.sv
-              </h6>
-              <p class="meta-ticket-texto mb-1">
-                <b>Asunto:</b> Computadora no enciende
-              </p>
-              <p class="meta-ticket-texto mb-1"><b>Estado:</b> Nuevo</p>
-              <p class="meta-ticket-texto mb-1">
-                <b>Fecha de creación:</b> 15/08/26 14:45:05
-              </p>
-              <p class="meta-ticket-texto mb-2">
-                <b>Descripción:</b> Es la computadora del docente, se encuentra
-                conectada, pero luego de entrar del receso, estaba apagada y no
-                volvió a encender.
-              </p>
-              <p class="meta-ticket-texto mb-1"><b>Equipo:</b> #2678982</p>
-              <p class="meta-ticket-texto mb-0">
-                <b>Ubicación:</b> Laboratorio 2
-              </p>
-            </div>
+            class="descripcion-editarTicket borde-rojo p-3 p-md-4 rounded-4 shadow-sm bg-white h-100 d-flex flex-column justify-content-between">
 
-            <div class="d-flex flex-column align-items-end ms-3">
-              <div class="mb-4">
-                <span
-                  class="badge fondo-categoria text-danger rounded-pill px-3 py-2"
-                  style="width: 100px; font-size: small"
-                  >Crítica</span
-                >
-              </div>
+            <div id="modoVistaContenido" class="w-100 d-flex flex-column gap-3">
 
-              <div class="contenedor-evidencias">
-                <div class="tarjeta-foto-evidencia mb-2">
-                  <img
-                    src="/img/Evidencias 2.png"
-                    alt="Evidencia 2"
-                    class="img-fluid align-items-center"
-                    style="height: 100%px"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <form id="modoEdicionContenido" class="w-100 d-none">
-            <div class="d-flex justify-content-between align-items-start w-100">
-              <div class="bloque-informacion-izquierda flex-grow-1 pe-2">
-                <h6 class="creador-ticket text-navy mb-3">
+              <div class="d-flex justify-content-between align-items-start gap-2">
+                <h6 class="creador-ticket text-navy mb-0 d-flex align-items-center flex-wrap">
                   <b>De:</b>
-                  <img
-                    src="/img/user-modal.png"
-                    alt="usuario"
-                    class="img-fluid ms-2 me-2 img-usuario-modal"
-                  />josue_guinea@ricaldone.edu.sv
+                  <img src="img/user-modal.png" alt="usuario" class="img-fluid mx-2 img-usuario" />
+                  <span class="text-break">josue_guinea@ricaldone.edu.sv</span>
                 </h6>
-                <div class="mb-2 row align-items-center">
-                  <label class="col-sm-3 col-form-label py-1"
-                    ><b>Asunto:</b></label
-                  >
-                  <div class="col-sm-9">
-                    <input
-                      id="asuntoEdicionticket"
-                      type="text"
-                      class="form-control bg-light border-0 rounded-4 py-1"
-                      value="Computadora no enciende"
-                      readonly
-                    />
-                  </div>
+                <span class="badge fondo-categoria text-danger rounded-pill px-3 py-2 text-center flex-shrink-0">
+                  Crítica
+                </span>
+              </div>
+
+              <div class="bloque-informacion">
+                <p class="meta-ticket-texto mb-1"><b>Asunto:</b> Computadora no enciende</p>
+                <p class="meta-ticket-texto mb-1"><b>Estado:</b> Nuevo</p>
+                <p class="meta-ticket-texto mb-1"><b>Fecha de creación:</b> 15/08/26 14:45:05</p>
+                <p class="meta-ticket-texto mb-2">
+                  <b>Descripción:</b> Es la computadora del docente, se encuentra conectada, pero luego de entrar del
+                  receso, estaba apagada y no volvió a encender.
+                </p>
+                <p class="meta-ticket-texto mb-1"><b>Equipo:</b> #2678982</p>
+                <p class="meta-ticket-texto mb-0"><b>Ubicación:</b> Laboratorio 2</p>
+              </div>
+
+              <div class="contenedor-evidencias d-flex flex-wrap gap-3 mt-2 pb-3">
+                <div class="tarjeta-foto-evidencia overflow-hidden rounded-3">
+                  <img src="img/Evidencias 2.png" alt="Evidencia 1" class="img-fluid object-fit-cover w-100 h-100" />
                 </div>
-                <div class="mb-2 row align-items-center">
-                  <label class="col-sm-3 col-form-label py-1"
-                    ><b>Fecha de creación:</b></label
-                  >
-                  <div class="col-sm-9">
-                    <input
-                      id="fechaCreacionEdicionticket"
-                      type="text"
-                      class="form-control rounded-4 py-1"
-                      value="12/3/2026 13:00"
-                    />
-                  </div>
-                </div>
-                <div class="mb-2 row align-items-center">
-                  <label class="col-sm-3 col-form-label py-1"
-                    ><b>Vencimiento:</b></label
-                  >
-                  <div class="col-sm-9">
-                    <input
-                      id="fechavencimientoEdicionticket"
-                      type="date"
-                      class="form-control border-primary rounded-4 py-1"
-                    />
-                  </div>
-                </div>
-                <div class="mb-2 row align-items-start">
-                  <label class="col-sm-3 col-form-label py-1"
-                    ><b>Descripción:</b></label
-                  >
-                  <div class="col-sm-9">
-                    <textarea
-                      id="descripcionEdicionticket"
-                      class="form-control bg-light border-0 rounded-4 py-1"
-                      rows="3"
-                      readonly
-                      style="resize: none"
-                    >
-        Buenos días, necesitaba que vinieran a revisar esta computadora que quedó en bucle el día de ayer durante una práctica.</textarea
-                    >
-                  </div>
-                </div>
-                <div class="mb-2 row align-items-center">
-                  <label class="col-sm-3 col-form-label py-1"
-                    ><b>Código del equipo:</b></label
-                  >
-                  <div class="col-sm-9">
-                    <input
-                      id="codigoEdicionticket"
-                      type="text"
-                      class="form-control bg-light border-0 rounded-4 py-1"
-                      value="#21236"
-                      readonly
-                    />
-                  </div>
-                </div>
-                <div class="mb-2 row align-items-center">
-                  <label class="col-sm-3 col-form-label py-1"
-                    ><b>Ubicación:</b></label
-                  >
-                  <div class="col-sm-9">
-                    <input
-                      id="ubicacionEdicionticket"
-                      type="text"
-                      class="form-control bg-light border-0 rounded-4 py-1"
-                      value="Laboratorio 1"
-                      readonly
-                    />
-                  </div>
-                </div>
-                <div class="mb-2 row align-items-center">
-                  <label class="col-sm-3 col-form-label py-1"
-                    ><b>Técnico:</b></label
-                  >
-                  <div class="col-sm-9">
-                    <select class="form-select border-primary rounded-4 py-1">
-                      <option selected>Selecciona un técnico</option>
-                      <option value="1">Emerson Gonzales</option>
-                      <option value="2">Ricardo de Paz</option>
-                    </select>
-                  </div>
-                </div>
-                <div class="mb-0 row align-items-center">
-                  <label class="col-sm-3 col-form-label py-1"
-                    ><b>Estado:</b></label
-                  >
-                  <div class="col-sm-9">
-                    <input
-                      type="text"
-                      class="form-control bg-light border-0 rounded-4 py-1"
-                      value="Resuelto"
-                      readonly
-                    />
-                  </div>
+                <div class="tarjeta-foto-evidencia overflow-hidden rounded-3">
+                  <img src="img/Evidencias 3.png" alt="Evidencia 3" class="img-fluid object-fit-cover w-100 h-100" />
                 </div>
               </div>
 
-              <div class="d-flex flex-column align-items-end ms-3">
-                <div class="mb-3">
-                  <span
-                    class="badge fondo-categoria text-danger rounded-pill px-3 py-2"
-                    style="width: 100px; font-size: small"
-                    >Crítica</span
-                  >
-                </div>
-                <div
-                  class="p-2 text-center rounded-3 bg-light border-secondary"
-                  style="
-                    border: 2px dashed #cccccc !important;
-                    width: 300px;
-                    height: 100%;
-                  "
-                >
-                  <div class="d-flex gap-1 justify-content-center">
-                    <img
-                      src="/img/Evidencias 2.png"
-                      style="height: 100%; object-fit: cover"
-                      class="rounded img-fluid"
-                    />
-                  </div>
-                  <small
-                    class="text-muted"
-                    style="font-size: 1.1rem; display: block; line-height: 5"
-                    >Agrega fotografías del problema</small
-                  >
-                </div>
-              </div>
             </div>
 
-            <div class="d-flex justify-content-end gap-3 w-100">
-              <button
-                id="btnGuardarEdicion"
-                class="btn shadow-sm text-white rounded-4 px-4 py-2"
-                style="border: none; width: 150px"
-              >
+            <div class="d-flex justify-content-center pt-3 mt-auto">
+              <a href="crearTickets.html"
+                class="btn btn-azul-redondeado w-50 py-2 rounded-3 fw-bold shadow-sm text-white d-flex align-items-center justify-content-center">
                 <i class="bi bi-pencil-square me-2"></i> Editar
-              </button>
-
-              <button
-                id="btnCancelarEdicion"
-                class="btn btn-secondary shadow-sm rounded-4 px-4 py-2"
-                style="border: none; width: 135px"
-              >
-                Cancelar
-              </button>
+              </a>
             </div>
-          </form>
-        </div>
-      </div>
-      <!-- Reporte Técnico -->
-      <div class="d-flex justify-content-center m-4 px-3">
-        <div class="w-100" style="max-width: 950px">
-          <h2 class="text-center titulo-reporte mb-4">Reporte Técnico</h2>
 
-          <div class="tabla-reporte rounded-4 shadow-sm">
-            <table class="table tabla-personalizada text-center">
-              <thead class="encabezado-reporte">
+          </div>
+        </div>
+
+        <div class="col-12 col-lg-4 d-flex flex-column">
+          <div
+            class="contenedor-comentarios p-3 p-md-4 rounded-4 shadow-sm bg-white border-0 h-100 d-flex flex-column justify-content-between">
+
+            <div>
+              <h6 class="fw-bold text-navy mb-3 d-flex align-items-center">
+                <i class="bi bi-chat-left-text-fill me-2 text-primary"></i> Comentarios
+              </h6>
+
+              <div class="lista-comentarios mb-3 pe-1" style="max-height: 250px; overflow-y: auto;">
+                <div class="p-2 bg-light rounded-3 mb-2">
+                  <small class="fw-bold text-navy d-block">Iniciaste un ticket Katherine</small>
+                  <small class="text-muted">Puedes darle más indicaciones al técnico por aquí</small>
+                </div>
+              </div>
+            </div>
+
+            <form action="#" method="POST" class="mt-auto pt-3">
+              <div class="mb-3">
+                <textarea class="form-control rounded-3 fs-6" rows="3" placeholder="Escribe un comentario..."
+                  required></textarea>
+              </div>
+              <button type="submit"
+                class="btn btn-azul-redondeado w-100 py-2 rounded-3 fw-bold shadow-sm text-white d-flex align-items-center justify-content-center">
+                <i class="bi bi-send-fill me-2"></i> Enviar
+              </button>
+            </form>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Reporte Técnico -->
+    <div class="col-12 pt-5">
+      <div>
+        <h5 class="fw-bold mb-3 titulo-seccion text-center p-3">Reporte técnico</h5>
+        <div class="card-tabla p-4">
+          <div class="table-responsive-md">
+            <table class="table table-borderless table-custom align-middle text-center">
+              <thead>
                 <tr>
-                  <th style="width: 33.33%">Técnico</th>
-                  <th style="width: 33.33%">Descripción del Problema</th>
-                  <th style="width: 33.33%">Solución</th>
+                  <th scope="col" class="w-25">Técnico</th>
+                  <th scope="col" class="w-50">Descripción del problema</th>
+                  <th scope="col" class="w-25">Solución</th>
                 </tr>
               </thead>
               <tbody>
+                <!-- Fila 1 -->
                 <tr>
-                  <td class="text-start">emerson_gonzales@ricaldone.edu.sv</td>
-                  <td class="text-start">
-                    La computadora entró en bucle ya que se intentó freezar
-                    mientras el sistema operativo tenía actualizaciones
-                    pendientes
-                  </td>
-                  <td class="text-start">
-                    Para arreglarla se formateó el disco duro y se tuvieron que
-                    volver a instalar todos los programas.
-                  </td>
+                  <td class="fw-bold text-break">emerson_gonzales@ricaldone.edu.sv</td>
+                  <td class="text-dark text-wrap text-break">La computadora entró en bucle ya que se intentó freezar
+                    mientras el sistema operativo tenía actualizaciones pendientes</td>
+                  <td class="text-dark text-wrap text-break">Para arreglarla se formateó el disco duro y se tuvieron
+                    que volver a instalar todos los programas.</td>
                 </tr>
               </tbody>
             </table>
           </div>
         </div>
       </div>
-      <!-- Bitácora -->
-      <div class="d-flex justify-content-center m-4 px-3">
-        <div class="w-100" style="max-width: 950px">
-          <h2 class="text-center titulo-reporte mb-4">Bitácora</h2>
 
-          <div class="tabla-reporte rounded-4 shadow-sm">
-            <table class="table tabla-personalizada-bitacora text-center">
-              <thead class="encabezado-reporte">
+      <div class="col-12 pt-3 pb-4">
+        <h5 class="fw-bold mb-3 titulo-seccion text-center p-3">Bitácora</h5>
+        <div class="card-tabla p-4">
+          <div class="table-responsive-md">
+            <table class="table table-borderless table-custom align-middle text-center">
+              <thead>
                 <tr>
-                  <th style="width: 33.33%">Usuario</th>
-                  <th style="width: 33.33%">Estado</th>
-                  <th style="width: 33.33%">Fecha</th>
+                  <th scope="col" class="w-25">Usuario</th>
+                  <th scope="col" class="w-50">Estado</th>
+                  <th scope="col" class="w-25">Fecha</th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
-                  <td class="text-center">emerson_gonzales@ricaldone.edu.sv</td>
-                  <td class="text-center">Resuelto</td>
-                  <td class="text-center">12/3/2026 14:45:05</td>
+                  <td class="fw-bold text-break">emerson_gonzales@ricaldone.edu.sv</td>
+                  <td class="text-dark text-wrap text-break">Resuelto</td>
+                  <td class="text-dark text-wrap text-break">15/02/26 14:10:67</td>
                 </tr>
                 <tr>
-                  <td class="text-center">emerson_gonzales@ricaldone.edu.sv</td>
-                  <td class="text-center">En progreso</td>
-                  <td class="text-center">12/3/2026 14:45:05</td>
+                  <td class="fw-bold text-break">emerson_gonzales@ricaldone.edu.sv</td>
+                  <td class="text-dark text-wrap text-break">En proceso</td>
+                  <td class="text-dark text-wrap text-break">15/02/26 14:10:67</td>
                 </tr>
                 <tr>
-                  <td class="text-center">emerson_gonzales@ricaldone.edu.sv</td>
-                  <td class="text-center">Asignado</td>
-                  <td class="text-center">12/3/2026 14:45:05</td>
+                  <td class="fw-bold text-break">emerson_gonzales@ricaldone.edu.sv</td>
+                  <td class="text-dark text-wrap text-break">Nuevo</td>
+                  <td class="text-dark text-wrap text-break">15/02/26 14:10:67</td>
                 </tr>
                 <tr>
-                  <td class="text-center">emerson_gonzales@ricaldone.edu.sv</td>
-                  <td class="text-center">Nuevo</td>
-                  <td class="text-center">12/3/2026 14:45:05</td>
+                  <td class="fw-bold text-break">emerson_gonzales@ricaldone.edu.sv</td>
+                  <td class="text-dark text-wrap text-break">Asignado</td>
+                  <td class="text-dark text-wrap text-break">15/02/26 14:10:67</td>
                 </tr>
               </tbody>
             </table>
           </div>
         </div>
       </div>
-    </main>
+  </main>
 
-    <!-- JS de Bootstrap -->
-    <script
-      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
-      integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
-      crossorigin="anonymous"
-    ></script>
-    <!-- Mi JS Personalizado -->
+  <!-- Todo esto es lo de notificaciones y siempre ira al final -->
+  <div class="notificaciones-overlay" id="notificacionesOverlay">
+    <div class="panel-notificaciones" id="panelNotificaciones">
+      <div class="p-4">
+        <!-- Título -->
+        <h6 class="titulo-notificaciones mb-0">Notificaciones</h3>
+      </div>
+
+      <div class="notificaciones-body px-4 pb-4">
+
+        <!-- Todo esto es las notificaciones de hoy -->
+        <div class="notificaciones-seccion mb-4">
+          <h6 class="text-muted fw-bold mb-3 small">Hoy</h6>
+          <div class="lista-notificaciones">
+
+            <!-- Los divs de notificaciones empiezan desde aqui -->
+            <div class="notificacion-item no-leida">
+              <div class="avatar-notificacion">JG</div>
+              <div class="contenido-notificacion">
+                <div class="d-flex justify-content-between align-items-baseline">
+                  <span class="notificacion-titulo">Nuevo ticket</span>
+                  <span class="notificacion-tiempo">Hace 1 hora</span>
+                </div>
+                <p class="notificacion-texto">¡Josue Guinea ha creado un nuevo ticket!</p>
+              </div>
+            </div>
+
+            <div class="notificacion-item no-leida">
+              <div class="avatar-notificacion">JG</div>
+              <div class="contenido-notificacion">
+                <div class="d-flex justify-content-between align-items-baseline">
+                  <span class="notificacion-titulo">Nuevo ticket</span>
+                  <span class="notificacion-tiempo">Hace 1 hora</span>
+                </div>
+                <p class="notificacion-texto">¡Josue Guinea ha creado un nuevo ticket!</p>
+              </div>
+            </div>
+
+            <div class="notificacion-item no-leida">
+              <div class="avatar-notificacion">JG</div>
+              <div class="contenido-notificacion">
+                <div class="d-flex justify-content-between align-items-baseline">
+                  <span class="notificacion-titulo">Nuevo ticket</span>
+                  <span class="notificacion-tiempo">Hace 1 hora</span>
+                </div>
+                <p class="notificacion-texto">¡Josue Guinea ha creado un nuevo ticket!</p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Aqui se muestran las de ayer -->
+        <div class="notificaciones-seccion">
+          <h6 class="text-muted fw-bold mb-3 small">Ayer</h6>
+          <div class="lista-notificaciones">
+
+            <div class="notificacion-item">
+              <div class="avatar-notificacion">JG</div>
+              <div class="contenido-notificacion">
+                <div class="d-flex justify-content-between align-items-baseline">
+                  <span class="notificacion-titulo-visto">Nuevo ticket</span>
+                  <span class="notificacion-tiempo">Hace 1 día</span>
+                </div>
+                <p class="notificacion-texto">¡Josue Guinea ha creado un nuevo ticket!</p>
+              </div>
+            </div>
+
+            <div class="notificacion-item">
+              <div class="avatar-notificacion">JG</div>
+              <div class="contenido-notificacion">
+                <div class="d-flex justify-content-between align-items-baseline">
+                  <span class="notificacion-titulo-visto">Nuevo ticket</span>
+                  <span class="notificacion-tiempo">Hace 1 día</span>
+                </div>
+                <p class="notificacion-texto">¡Josue Guinea ha creado un nuevo ticket!</p>
+              </div>
+            </div>
+
+            <div class="notificacion-item">
+              <div class="avatar-notificacion">JG</div>
+              <div class="contenido-notificacion">
+                <div class="d-flex justify-content-between align-items-baseline">
+                  <span class="notificacion-titulo-visto">Nuevo ticket</span>
+                  <span class="notificacion-tiempo">Hace 1 día</span>
+                </div>
+                <p class="notificacion-texto">¡Josue Guinea ha creado un nuevo ticket!</p>
+              </div>
+            </div>
+
+            <div class="notificacion-item">
+              <div class="avatar-notificacion">JG</div>
+              <div class="contenido-notificacion">
+                <div class="d-flex justify-content-between align-items-baseline">
+                  <span class="notificacion-titulo-visto">Nuevo ticket</span>
+                  <span class="notificacion-tiempo">Hace 1 día</span>
+                </div>
+                <p class="notificacion-texto">¡Josue Guinea ha creado un nuevo ticket!</p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="js/components/menu.js"></script>
     <script src="js/controllers/vistaTicket.js"></script>
-  </body>
+    <script src="js/controllers/notificaciones.js"></script>
+</body>
+
 </html>

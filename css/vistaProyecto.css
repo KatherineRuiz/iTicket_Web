@@ -1,0 +1,103 @@
+/* ===== Tarjeta principal del proyecto ===== */
+.tarjeta-proyecto {
+  border-left: 6px solid var(--accent-celeste);
+}
+
+.titulo-proyecto {
+  font-size: 1.3rem;
+}
+
+.meta-proyecto {
+  color: #333333;
+  font-size: 0.95rem;
+}
+
+.badge-estado {
+  display: inline-block;
+  background-color: #e6f4ea;
+  color: #1e7e34;
+  padding: 2px 14px;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.btn-azul-redondeado {
+  background-color: var(--accent-celeste);
+  color: #ffffff;
+  border: none;
+  border-radius: 50px;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: background-color 0.2s ease;
+}
+
+.btn-azul-redondeado:hover,
+.btn-azul-redondeado:focus {
+  background-color: #3f86b8;
+  color: #ffffff;
+}
+
+.encabezado-panel {
+  background-color: var(--accent-celeste);
+  letter-spacing: 0.5px;
+  font-size: 1.05rem;
+}
+
+.panel-contenido {
+  min-height: 230px;
+}
+
+.text-navy {
+  color: var(--accent-celeste) !important;
+}
+
+.contenedor-modal-borde {
+  border: none !important;
+  background-color: #f7fbfe !important;
+}
+
+.titulo-seccion {
+  background-color: var(--accent-celeste);
+  padding: 14px 0;
+}
+
+.lista-detalle {
+  max-height: 230px;
+  overflow-y: auto;
+  padding-right: 6px;
+}
+
+.lista-detalle li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 2px;
+  border-bottom: 1px solid #eeeeee;
+}
+
+.lista-detalle li:last-child {
+  border-bottom: none;
+}
+
+.lista-detalle .btn-eliminar-detalle {
+  display: none;
+  margin-left: auto;
+  color: #d9534f;
+  cursor: pointer;
+}
+
+.lista-detalle.modo-edicion .btn-eliminar-detalle {
+  display: inline-block;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 767px) {
+  .encabezado-panel {
+    font-size: 0.95rem;
+  }
+
+  .tarjeta-proyecto .btn-azul-redondeado {
+    width: 100%;
+  }
+}

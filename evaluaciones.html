@@ -10,430 +10,339 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" href="css/common.css">
     <link rel="stylesheet" href="css/evaluaciones.css">
+    <link rel="stylesheet" href="css/notificaciones.css">
+    <script src="js/components/menu-cache.js"></script>
 </head>
 
 <body>
-
-    <!-- Menu lateral -->
-    <header>
-        <nav class="menu-lateral" id="menuLateral">
-            <div class="menu-lateral-header text-white">
-                <button class="btn text-white p-0 fs-3 d-flex align-items-center justify-content-center" id="btnMenu"
-                    type="button" style="width: 40px; height: 40px;">
-                    <i class="bi bi-list"></i>
-                </button>
-                <img src="img/logo.png" alt="logo" class="menu-lateral-logo">
-            </div>
-
-            <div class="d-none d-md-flex justify-content-center">
-                <hr class="linea-divisora border border-light-subtle opacity-50">
-            </div>
-
-            <div class="menu-lateral-cuerpo d-flex flex-column flex-grow-1 justify-content-between">
-                <div>
-                    <ul class="nav flex-column gap-2 p-0">
-                        <li class="menu-opcion">
-                            <a href="dashboardAdmin.html" class="nav-link">
-                                <div class="icono-menu">
-                                    <img src="img/inicio.svg" alt="Icono de Inicio">
-                                </div>
-                                <span class="menu-texto">Inicio</span>
-                            </a>
-                        </li>
-                        <li class="menu-opcion" id="ticketsMenu">
-                            <a class="nav-link" id="btnTickets">
-                                <div class="icono-menu">
-                                    <img src="img/tickets.svg" alt="Icono de Tickets">
-                                </div>
-                                <span class="menu-texto">Tickets</span>
-                                <i class="bi bi-chevron-down icono-flecha"></i>
-                            </a>
-                            <ul class="submenu">
-                                <li><a href="misTickets.html"><span class="menu-texto">Mis Tickets</span></a></li>
-                                <li><a href="gestionTickets.html"><span class="menu-texto">Gestionar Tickets</span></a></li>
-                                <li><a href="ticketsAsignados.html"><span class="menu-texto">Tickets Asignados</span></a></li>
-                            </ul>
-                        </li>
-                        <li class="menu-opcion" id="equiposMenu">
-                            <a class="nav-link" id="btnEquipos">
-                                <div class="icono-menu">
-                                    <img src="img/equipos.svg" alt="Icono de Equipos">
-                                </div>
-                                <span class="menu-texto">Equipos</span>
-                                <i class="bi bi-chevron-down icono-flecha"></i>
-                            </a>
-                            <ul class="submenu">
-                                <li><a href="equiposMobiliarios.html"><span class="menu-texto">Equipo y Mobiliario</span></a></li>
-                                <li><a href="ubicaciones.html"><span class="menu-texto">Ubicaciones</span></a></li>
-                            </ul>
-                        </li>
-                        <li class="menu-opcion">
-                            <a href="usuarios.html" class="nav-link">
-                                <div class="icono-menu">
-                                    <img src="img/usuarios.svg" alt="Icono de Usuarios">
-                                </div>
-                                <span class="menu-texto">Usuarios</span>
-                            </a>
-                        </li>
-                        <li class="menu-opcion">
-                            <a href="estadisticas.html" class="nav-link">
-                                <div class="icono-menu">
-                                    <img src="img/estadisticas.svg" alt="Icono de Estadísticas">
-                                </div>
-                                <span class="menu-texto">Estadísticas</span>
-                            </a>
-                        </li>
-                        <li class="menu-opcion activo">
-                            <a href="evaluaciones.html" class="nav-link">
-                                <div class="icono-menu">
-                                    <img src="img/evaluaciones.svg" alt="Icono de Evaluaciones">
-                                </div>
-                                <span class="menu-texto">Evaluaciones</span>
-                            </a>
-                        </li>
-                        <li class="menu-opcion">
-                            <a href="chatBot.html" class="nav-link">
-                                <div class="icono-menu">
-                                    <img src="img/chatBot.svg" alt="Icono de Chatbot">
-                                </div>
-                                <span class="menu-texto">ChatBot</span>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-
-                <div>
-                    <ul class="nav flex-column gap-2 mt-3 p-0">
-                        <li class="menu-opcion">
-                            <a href="#" class="nav-link">
-                                <div class="icono-menu">
-                                    <img src="img/notificaciones.svg" alt="Icono de Notificaciones">
-                                </div>
-                                <span class="menu-texto">Notificaciones</span>
-                            </a>
-                        </li>
-                        <li class="menu-opcion">
-                            <a href="#" class="nav-link">
-                                <div class="icono-menu">
-                                    <img src="img/configuracion.svg" alt="Icono de Configuración">
-                                </div>
-                                <span class="menu-texto">Configuración</span>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-    </header>
-
+    <!-- Todo el header  -->
+    <header id="contenedorMenuLateral"></header>
     <div class="menu-lateral-overlay" id="overlay"></div>
 
 
     <!-- Contenido principañ -->
     <main class="main px-md-4 pt-3">
 
-        <!-- Barra superior (solo escritorio) -->
         <section class="superior rounded-5 ps-4 d-none d-md-flex">
-            <p class="mb-0 text-dark fw-bold">Evaluaciones de Servicio</p>
+            <h6 class="mb-0 bold">Evaluaciones</h6>
             <div class="position-relative">
-                <div class="perfil p-2 rounded-5 gap-lg-2 gap-md-3" id="perfilBienvenida">
-                    <h6 class="perfil-nombre text-white mb-0 ps-1" id="nombrePerfil">Admin</h6>
-                    <img src="img/user.png" alt="Icono de perfil" id="fotoPerfil">
+                <div class="perfil p-2 rounded-5 gap-lg-4 gap-md-2" id="perfilBienvenida">
+                    <h6 class="perfil-nombre text-white mb-0 ps-2" id="nombrePerfil">Bienvenida, Katherine</h6>
+                    <div class="perfil-foto" id="fotoPerfil">
+                        <span class="foto-letra" id="fotoLetra">K</span>
+                        <img src="img/usuario.png" alt="Foto de perfil" class="foto-img" id="fotoDePerfil">
+                    </div>
                 </div>
             </div>
         </section>
 
-        <!-- Tarjetas de resumen -->
-        <div class="row g-3 mt-2 mb-3">
-            <div class="col-6 col-md-3">
-                <div class="tarjeta-resumen-evaluacion text-center shadow-sm">
-                    <div class="icono-resumen-evaluacion">
-                        <img src="img/evaluaciones.png" alt="Total">
+        <div class="contenido-principal container-fluid">
+            <div class="row g-4 mt-2 pb-4">
+
+                <div class="col-12 col-sm-6 col-md-3">
+                    <div class="tarjeta-indicador text-center">
+                        <span class="icono-tarjeta">
+                            <i class="bi bi-star-fill text-white"></i>
+                        </span>
+                        <p class="text-navy small fw-bold mb-1 pt-2">Total evaluaciones</p>
+                        <h2 class="fw-bold text-navy m-0">142</h2>
                     </div>
-                    <p class="label-resumen-evaluacion">Total evaluaciones</p>
-                    <h3 class="numero-resumen-evaluacion">11</h3>
                 </div>
-            </div>
-            <div class="col-6 col-md-3">
-                <div class="tarjeta-resumen-evaluacion text-center shadow-sm">
-                    <div class="icono-resumen-evaluacion icono-estrella-resumen">
-                        <i class="bi bi-star-fill text-white fs-5"></i>
-                    </div>
-                    <p class="label-resumen-evaluacion">Calificación promedio</p>
-                    <h3 class="numero-resumen-evaluacion">3.2</h3>
-                </div>
-            </div>
-            <div class="col-6 col-md-3">
-                <div class="tarjeta-resumen-evaluacion text-center shadow-sm">
-                    <div class="icono-resumen-evaluacion icono-positiva-resumen">
-                        <i class="bi bi-hand-thumbs-up-fill text-white fs-5"></i>
-                    </div>
-                    <p class="label-resumen-evaluacion">Evaluaciones positivas</p>
-                    <h3 class="numero-resumen-evaluacion">6</h3>
-                </div>
-            </div>
-            <div class="col-6 col-md-3">
-                <div class="tarjeta-resumen-evaluacion text-center shadow-sm">
-                    <div class="icono-resumen-evaluacion icono-negativa-resumen">
-                        <i class="bi bi-hand-thumbs-down-fill text-white fs-5"></i>
-                    </div>
-                    <p class="label-resumen-evaluacion">Evaluaciones negativas</p>
-                    <h3 class="numero-resumen-evaluacion">5</h3>
-                </div>
-            </div>
-        </div>
 
-        <!-- Tabla de evaluaciones -->
-        <div class="bg-white rounded-4 contenedor-tabla-evaluaciones">
+                <div class="col-12 col-sm-6 col-md-3">
+                    <div class="tarjeta-indicador text-center">
+                        <span class="icono-tarjeta">
+                            <i class="bi bi-grid-1x2-fill text-white"></i>
+                        </span>
+                        <p class="text-navy small fw-bold mb-1 pt-2">Calificación promedio</p>
+                        <h2 class="fw-bold text-navy m-0">4.1</h2>
+                    </div>
+                </div>
 
-            <!-- Encabezado de la tabla -->
-            <div class="encabezado-tabla-evaluaciones p-4 text-white d-flex flex-wrap align-items-center justify-content-between gap-3">
-                <h4 class="fw-bold m-0 fs-4">Evaluaciones de Servicio</h4>
+                <div class="col-12 col-sm-6 col-md-3">
+                    <div class="tarjeta-indicador text-center">
+                        <span class="icono-tarjeta">
+                            <i class="bi bi-hand-thumbs-up-fill"></i>
+                        </span>
+                        <p class="text-navy small fw-bold mb-1 pt-2">Evaluaciones positivas</p>
+                        <h2 class="fw-bold text-navy m-0">130</h2>
+                    </div>
+                </div>
 
-                <div class="d-flex flex-wrap gap-2 align-items-center">
-                    <!-- Buscador -->
-                    <div class="position-relative input-buscar-evaluacion">
-                        <input type="text" id="inputBuscar" class="form-control form-control-sm rounded-pill py-2"
-                            placeholder="Buscar por ticket o asunto...">
-                        <button id="btnBuscar" class="text-muted rounded-pill position-absolute end-0 top-50 translate-middle-y border-0 bg-transparent pe-3">
-                            <i class="bi bi-search"></i>
-                        </button>
+                <div class="col-12 col-sm-6 col-md-3">
+                    <div class="tarjeta-indicador text-center">
+                        <span class="icono-tarjeta">
+                            <i class="bi bi-hand-thumbs-down-fill"></i> </span>
+                        <p class="text-navy small fw-bold mb-1 pt-2">Evaluaciones negativas</p>
+                        <h2 class="fw-bold text-navy m-0">12</h2>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Grafica de Barras-Verticales -->
+            <div class="col-12 mt-4 pb-4">
+                <h5 class="fw-bold mb-3 titulo-seccion text-center p-3">Evaluaciones de servicio</h5>
+                <!-- Sección del Buscador y Filtros -->
+                <div class="row g-3 align-items-center mb-4">
+                    <div class="col-12 col-md-6 col-lg-7">
+                        <div class="buscador-contenedor">
+                            <i class="bi bi-search icono-busqueda"></i>
+                            <input type="text" class="form-control buscador-input"
+                                placeholder="Busca por ticket o asunto">
+                        </div>
                     </div>
 
-                    <!-- Filtro por calificación -->
-                    <select id="filtroCalificacion" class="form-select form-select-sm rounded-pill text-muted px-3 py-2 filtro-evaluacion">
-                        <option value="">Calificación</option>
-                        <option value="5">★★★★★ (5)</option>
-                        <option value="4">★★★★☆ (4)</option>
-                        <option value="3">★★★☆☆ (3)</option>
-                        <option value="2">★★☆☆☆ (2)</option>
-                        <option value="1">★☆☆☆☆ (1)</option>
-                    </select>
+                    <!-- Filtro de Prioridad -->
+                    <div class="col-6 col-md-3 col-lg-3">
+                        <select class="form-select select-ticket-filtro">
+                            <option selected disabled>Calificación </option>
+                        </select>
+                    </div>
 
-                    <!-- Filtro por fecha -->
-                    <input type="date" id="filtroFecha" class="form-control form-control-sm rounded-pill text-muted px-3 py-2 filtro-evaluacion">
+                    <!-- Filtro de Fecha -->
+                    <div class="col-6 col-md-3 col-lg-2">
+                        <input type="date" class="form-control select-ticket-filtro">
+                    </div>
+                </div>
+
+                <!-- Tabla principal -->
+                <div class="card-tabla p-4 text-center">
+                    <div class="table-responsive">
+                        <table class="table table-borderless table-custom align-middle">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Código</th>
+                                    <th scope="col">Asunto</th>
+                                    <th scope="col">Técnico</th>
+                                    <th scope="col">Calificación</th>
+                                    <th scope="col">Comentarios</th>
+                                    <th scope="col">Fecha de evaluacion</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="text-muted fw-bold">#26859490</td>
+                                    <td class="text-truncate celda-asunto">Caída del sistema</td>
+                                    <td>María López</td>
+                                    <td data-calificacion="3">
+                                        <span class="estrellas">
+                                            <i class="bi bi-star-fill estrella-llena"></i>
+                                            <i class="bi bi-star-fill estrella-llena"></i>
+                                            <i class="bi bi-star-fill estrella-llena"></i>
+                                            <i class="bi bi-star estrella-vacia"></i>
+                                            <i class="bi bi-star estrella-vacia"></i>
+                                        </span>
+                                    </td>
+                                    <td class="text-truncate celda-comentario text-muted">Se tardó un poco pero lo
+                                        arregló
+                                    </td>
+                                    <td class="text-muted">17/05/2026</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-muted fw-bold">#26859490</td>
+                                    <td class="text-truncate celda-asunto">Caída del sistema</td>
+                                    <td>María López</td>
+                                    <td data-calificacion="3">
+                                        <span class="estrellas">
+                                            <i class="bi bi-star-fill estrella-llena"></i>
+                                            <i class="bi bi-star-fill estrella-llena"></i>
+                                            <i class="bi bi-star-fill estrella-llena"></i>
+                                            <i class="bi bi-star estrella-vacia"></i>
+                                            <i class="bi bi-star estrella-vacia"></i>
+                                        </span>
+                                    </td>
+                                    <td class="text-truncate celda-comentario text-muted">Se tardó un poco pero lo
+                                        arregló
+                                    </td>
+                                    <td class="text-muted">17/05/2026</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-muted fw-bold">#26859490</td>
+                                    <td class="text-truncate celda-asunto">Caída del sistema</td>
+                                    <td>María López</td>
+                                    <td data-calificacion="3">
+                                        <span class="estrellas">
+                                            <i class="bi bi-star-fill estrella-llena"></i>
+                                            <i class="bi bi-star-fill estrella-llena"></i>
+                                            <i class="bi bi-star-fill estrella-llena"></i>
+                                            <i class="bi bi-star estrella-vacia"></i>
+                                            <i class="bi bi-star estrella-vacia"></i>
+                                        </span>
+                                    </td>
+                                    <td class="text-truncate celda-comentario text-muted">Se tardó un poco pero lo
+                                        arregló
+                                    </td>
+                                    <td class="text-muted">17/05/2026</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-muted fw-bold">#26859490</td>
+                                    <td class="text-truncate celda-asunto">Caída del sistema</td>
+                                    <td>María López</td>
+                                    <td data-calificacion="3">
+                                        <span class="estrellas">
+                                            <i class="bi bi-star-fill estrella-llena"></i>
+                                            <i class="bi bi-star-fill estrella-llena"></i>
+                                            <i class="bi bi-star-fill estrella-llena"></i>
+                                            <i class="bi bi-star estrella-vacia"></i>
+                                            <i class="bi bi-star estrella-vacia"></i>
+                                        </span>
+                                    </td>
+                                    <td class="text-truncate celda-comentario text-muted">Se tardó un poco pero lo
+                                        arregló
+                                    </td>
+                                    <td class="text-muted">17/05/2026</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Paginación del 1 al 10 hasta la pagina 150 -->
+                    <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top">
+                        <span class="text-muted small">Mostrando 4 de 142</span>
+                        <nav aria-label="Paginacion">
+                            <ul class="pagination pagination-sm mb-0 align-items-center gap-1">
+                                <li class="page-item disabled"><span
+                                        class="page-link border-0 bg-transparent text-muted">1</span></li>
+                                <li class="page-item"><a class="page-link border-0 bg-transparent text-dark"
+                                        href="#">2</a>
+                                </li>
+                                <li class="page-item"><a class="page-link border-0 bg-transparent text-dark"
+                                        href="#">3</a>
+                                </li>
+                                <li class="page-item"><a class="page-link border-0 bg-transparent text-dark"
+                                        href="#">4</a>
+                                </li>
+                                <li class="page-item"><span class="mx-1 text-muted">...</span></li>
+                                <li class="page-item"><a class="page-link border-0 bg-transparent text-dark"
+                                        href="#">15</a>
+                                </li>
+                                <li class="page-item"><a class="page-link border-0 bg-transparent text-dark" href="#"><i
+                                            class="bi bi-chevron-right"></i></a></li>
+                            </ul>
+                        </nav>
+                    </div>
                 </div>
             </div>
-
-            <!-- Tabla -->
-            <div class="table-responsive px-3 pb-3">
-                <table class="table table-hover align-middle tabla-evaluaciones text-center" id="tablaEvaluaciones">
-                    <thead>
-                        <tr>
-                            <th>Código</th>
-                            <th>Asunto</th>
-                            <th>Técnico</th>
-                            <th>Calificación</th>
-                            <th>Comentarios</th>
-                            <th>Fecha de Evaluación</th>
-                        </tr>
-                    </thead>
-                    <tbody id="cuerpoTabla">
-                        <!-- Datos de muestra estáticos (sin API) -->
-                        <tr>
-                            <td class="text-muted">#26859489</td>
-                            <td class="text-truncate celda-asunto">Falla en proyector</td>
-                            <td>Carlos Pérez</td>
-                            <td data-calificacion="5">
-                                <span class="estrellas">
-                                    <i class="bi bi-star-fill estrella-llena"></i>
-                                    <i class="bi bi-star-fill estrella-llena"></i>
-                                    <i class="bi bi-star-fill estrella-llena"></i>
-                                    <i class="bi bi-star-fill estrella-llena"></i>
-                                    <i class="bi bi-star-fill estrella-llena"></i>
-                                </span>
-                            </td>
-                            <td class="text-truncate celda-comentario text-muted">Excelente servicio y muy amable</td>
-                            <td class="text-muted">17/05/2026</td>
-                        </tr>
-                        <tr>
-                            <td class="text-muted">#26859490</td>
-                            <td class="text-truncate celda-asunto">Caída del sistema</td>
-                            <td>María López</td>
-                            <td data-calificacion="3">
-                                <span class="estrellas">
-                                    <i class="bi bi-star-fill estrella-llena"></i>
-                                    <i class="bi bi-star-fill estrella-llena"></i>
-                                    <i class="bi bi-star-fill estrella-llena"></i>
-                                    <i class="bi bi-star estrella-vacia"></i>
-                                    <i class="bi bi-star estrella-vacia"></i>
-                                </span>
-                            </td>
-                            <td class="text-truncate celda-comentario text-muted">Se tardó un poco pero lo arregló</td>
-                            <td class="text-muted">17/05/2026</td>
-                        </tr>
-                        <tr>
-                            <td class="text-muted">#26859491</td>
-                            <td class="text-truncate celda-asunto">Vidrio roto</td>
-                            <td>José Ramos</td>
-                            <td data-calificacion="4">
-                                <span class="estrellas">
-                                    <i class="bi bi-star-fill estrella-llena"></i>
-                                    <i class="bi bi-star-fill estrella-llena"></i>
-                                    <i class="bi bi-star-fill estrella-llena"></i>
-                                    <i class="bi bi-star-fill estrella-llena"></i>
-                                    <i class="bi bi-star estrella-vacia"></i>
-                                </span>
-                            </td>
-                            <td class="text-truncate celda-comentario text-muted">Fue muy eficiente</td>
-                            <td class="text-muted">17/05/2026</td>
-                        </tr>
-                        <tr>
-                            <td class="text-muted">#26859492</td>
-                            <td class="text-truncate celda-asunto">A/C no enfría</td>
-                            <td>Ana Martínez</td>
-                            <td data-calificacion="1">
-                                <span class="estrellas">
-                                    <i class="bi bi-star-fill estrella-llena"></i>
-                                    <i class="bi bi-star estrella-vacia"></i>
-                                    <i class="bi bi-star estrella-vacia"></i>
-                                    <i class="bi bi-star estrella-vacia"></i>
-                                    <i class="bi bi-star estrella-vacia"></i>
-                                </span>
-                            </td>
-                            <td class="text-truncate celda-comentario text-muted">No resolvió el problema</td>
-                            <td class="text-muted">17/05/2026</td>
-                        </tr>
-                        <tr>
-                            <td class="text-muted">#26859489</td>
-                            <td class="text-truncate celda-asunto">Falla en proyector</td>
-                            <td>Carlos Pérez</td>
-                            <td data-calificacion="5">
-                                <span class="estrellas">
-                                    <i class="bi bi-star-fill estrella-llena"></i>
-                                    <i class="bi bi-star-fill estrella-llena"></i>
-                                    <i class="bi bi-star-fill estrella-llena"></i>
-                                    <i class="bi bi-star-fill estrella-llena"></i>
-                                    <i class="bi bi-star-fill estrella-llena"></i>
-                                </span>
-                            </td>
-                            <td class="text-truncate celda-comentario text-muted">Me gustó mucho, fue muy rápido</td>
-                            <td class="text-muted">17/05/2026</td>
-                        </tr>
-                        <tr>
-                            <td class="text-muted">#26859490</td>
-                            <td class="text-truncate celda-asunto">Caída del sistema</td>
-                            <td>María López</td>
-                            <td data-calificacion="4">
-                                <span class="estrellas">
-                                    <i class="bi bi-star-fill estrella-llena"></i>
-                                    <i class="bi bi-star-fill estrella-llena"></i>
-                                    <i class="bi bi-star-fill estrella-llena"></i>
-                                    <i class="bi bi-star-fill estrella-llena"></i>
-                                    <i class="bi bi-star estrella-vacia"></i>
-                                </span>
-                            </td>
-                            <td class="text-truncate celda-comentario text-muted">Arregló el problema pero volvió a fallar</td>
-                            <td class="text-muted">17/05/2026</td>
-                        </tr>
-                        <tr>
-                            <td class="text-muted">#26859491</td>
-                            <td class="text-truncate celda-asunto">Vidrio roto</td>
-                            <td>José Ramos</td>
-                            <td data-calificacion="5">
-                                <span class="estrellas">
-                                    <i class="bi bi-star-fill estrella-llena"></i>
-                                    <i class="bi bi-star-fill estrella-llena"></i>
-                                    <i class="bi bi-star-fill estrella-llena"></i>
-                                    <i class="bi bi-star-fill estrella-llena"></i>
-                                    <i class="bi bi-star-fill estrella-llena"></i>
-                                </span>
-                            </td>
-                            <td class="text-truncate celda-comentario text-muted">Muy buen trabajo</td>
-                            <td class="text-muted">17/05/2026</td>
-                        </tr>
-                        <tr>
-                            <td class="text-muted">#26859492</td>
-                            <td class="text-truncate celda-asunto">A/C no enfría</td>
-                            <td>Ana Martínez</td>
-                            <td data-calificacion="2">
-                                <span class="estrellas">
-                                    <i class="bi bi-star-fill estrella-llena"></i>
-                                    <i class="bi bi-star-fill estrella-llena"></i>
-                                    <i class="bi bi-star estrella-vacia"></i>
-                                    <i class="bi bi-star estrella-vacia"></i>
-                                    <i class="bi bi-star estrella-vacia"></i>
-                                </span>
-                            </td>
-                            <td class="text-truncate celda-comentario text-muted">Nunca llegaba y era altanero</td>
-                            <td class="text-muted">17/05/2026</td>
-                        </tr>
-                        <tr>
-                            <td class="text-muted">#26859490</td>
-                            <td class="text-truncate celda-asunto">Caída del sistema</td>
-                            <td>María López</td>
-                            <td data-calificacion="1">
-                                <span class="estrellas">
-                                    <i class="bi bi-star-fill estrella-llena"></i>
-                                    <i class="bi bi-star estrella-vacia"></i>
-                                    <i class="bi bi-star estrella-vacia"></i>
-                                    <i class="bi bi-star estrella-vacia"></i>
-                                    <i class="bi bi-star estrella-vacia"></i>
-                                </span>
-                            </td>
-                            <td class="text-truncate celda-comentario text-muted">Pésimo, no hizo nada</td>
-                            <td class="text-muted">17/05/2026</td>
-                        </tr>
-                        <tr>
-                            <td class="text-muted">#26859491</td>
-                            <td class="text-truncate celda-asunto">Vidrio roto</td>
-                            <td>José Ramos</td>
-                            <td data-calificacion="3">
-                                <span class="estrellas">
-                                    <i class="bi bi-star-fill estrella-llena"></i>
-                                    <i class="bi bi-star-fill estrella-llena"></i>
-                                    <i class="bi bi-star-fill estrella-llena"></i>
-                                    <i class="bi bi-star estrella-vacia"></i>
-                                    <i class="bi bi-star estrella-vacia"></i>
-                                </span>
-                            </td>
-                            <td class="text-truncate celda-comentario text-muted">Era arrogante y con muy mala actitud</td>
-                            <td class="text-muted">17/05/2026</td>
-                        </tr>
-                        <tr>
-                            <td class="text-muted">#26859492</td>
-                            <td class="text-truncate celda-asunto">A/C no enfría</td>
-                            <td>Ana Martínez</td>
-                            <td data-calificacion="2">
-                                <span class="estrellas">
-                                    <i class="bi bi-star-fill estrella-llena"></i>
-                                    <i class="bi bi-star-fill estrella-llena"></i>
-                                    <i class="bi bi-star estrella-vacia"></i>
-                                    <i class="bi bi-star estrella-vacia"></i>
-                                    <i class="bi bi-star estrella-vacia"></i>
-                                </span>
-                            </td>
-                            <td class="text-truncate celda-comentario text-muted">Buen servicio, algo lento pero bueno</td>
-                            <td class="text-muted">17/05/2026</td>
-                        </tr>
-                    </tbody>
-                </table>
-
-                <!-- Estado vacío (se muestra si no hay resultados) -->
-                <div id="estadoVacio" class="estado-vacio d-none">
-                    <img src="img/No-Data.png" alt="Sin resultados">
-                    <p class="fw-semibold text-muted mt-3 mb-0">No se encontraron resultados</p>
-                    <small class="text-muted">Intenta con otro término o limpia los filtros.</small>
-                </div>
-            </div>
-
-            <!-- Paginación -->
-            <div class="d-flex justify-content-between align-items-center px-4 pb-4 flex-wrap gap-2">
-                <small class="text-muted" id="infoRegistros">Mostrando 11 de 11 evaluaciones</small>
-                <nav>
-                    <ul class="pagination pagination-sm mb-0" id="paginacion"></ul>
-                </nav>
-            </div>
-
         </div>
     </main>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Componentes del proyecto -->
-    <script src="js/components/menu.js"></script>
-    <!-- Controlador de evaluaciones -->
-    <script src="js/controllers/evaluaciones.js"></script>
+    <!-- Todo esto es lo de notificaciones y siempre ira al final -->
+    <div class="notificaciones-overlay" id="notificacionesOverlay">
+        <div class="panel-notificaciones" id="panelNotificaciones">
+            <div class="p-4">
+                <!-- Título -->
+                <h6 class="titulo-notificaciones mb-0">Notificaciones</h3>
+            </div>
+
+            <div class="notificaciones-body px-4 pb-4">
+
+                <!-- Todo esto es las notificaciones de hoy -->
+                <div class="notificaciones-seccion mb-4">
+                    <h6 class="text-muted fw-bold mb-3 small">Hoy</h6>
+                    <div class="lista-notificaciones">
+
+                        <!-- Los divs de notificaciones empiezan desde aqui -->
+                        <div class="notificacion-item no-leida">
+                            <div class="avatar-notificacion">JG</div>
+                            <div class="contenido-notificacion">
+                                <div class="d-flex justify-content-between align-items-baseline">
+                                    <span class="notificacion-titulo">Nuevo ticket</span>
+                                    <span class="notificacion-tiempo">Hace 1 hora</span>
+                                </div>
+                                <p class="notificacion-texto">¡Josue Guinea ha creado un nuevo ticket!</p>
+                            </div>
+                        </div>
+
+                        <div class="notificacion-item no-leida">
+                            <div class="avatar-notificacion">JG</div>
+                            <div class="contenido-notificacion">
+                                <div class="d-flex justify-content-between align-items-baseline">
+                                    <span class="notificacion-titulo">Nuevo ticket</span>
+                                    <span class="notificacion-tiempo">Hace 1 hora</span>
+                                </div>
+                                <p class="notificacion-texto">¡Josue Guinea ha creado un nuevo ticket!</p>
+                            </div>
+                        </div>
+
+                        <div class="notificacion-item no-leida">
+                            <div class="avatar-notificacion">JG</div>
+                            <div class="contenido-notificacion">
+                                <div class="d-flex justify-content-between align-items-baseline">
+                                    <span class="notificacion-titulo">Nuevo ticket</span>
+                                    <span class="notificacion-tiempo">Hace 1 hora</span>
+                                </div>
+                                <p class="notificacion-texto">¡Josue Guinea ha creado un nuevo ticket!</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Aqui se muestran las de ayer -->
+                <div class="notificaciones-seccion">
+                    <h6 class="text-muted fw-bold mb-3 small">Ayer</h6>
+                    <div class="lista-notificaciones">
+
+                        <div class="notificacion-item">
+                            <div class="avatar-notificacion">JG</div>
+                            <div class="contenido-notificacion">
+                                <div class="d-flex justify-content-between align-items-baseline">
+                                    <span class="notificacion-titulo-visto">Nuevo ticket</span>
+                                    <span class="notificacion-tiempo">Hace 1 día</span>
+                                </div>
+                                <p class="notificacion-texto">¡Josue Guinea ha creado un nuevo ticket!</p>
+                            </div>
+                        </div>
+
+                        <div class="notificacion-item">
+                            <div class="avatar-notificacion">JG</div>
+                            <div class="contenido-notificacion">
+                                <div class="d-flex justify-content-between align-items-baseline">
+                                    <span class="notificacion-titulo-visto">Nuevo ticket</span>
+                                    <span class="notificacion-tiempo">Hace 1 día</span>
+                                </div>
+                                <p class="notificacion-texto">¡Josue Guinea ha creado un nuevo ticket!</p>
+                            </div>
+                        </div>
+
+                        <div class="notificacion-item">
+                            <div class="avatar-notificacion">JG</div>
+                            <div class="contenido-notificacion">
+                                <div class="d-flex justify-content-between align-items-baseline">
+                                    <span class="notificacion-titulo-visto">Nuevo ticket</span>
+                                    <span class="notificacion-tiempo">Hace 1 día</span>
+                                </div>
+                                <p class="notificacion-texto">¡Josue Guinea ha creado un nuevo ticket!</p>
+                            </div>
+                        </div>
+
+                        <div class="notificacion-item">
+                            <div class="avatar-notificacion">JG</div>
+                            <div class="contenido-notificacion">
+                                <div class="d-flex justify-content-between align-items-baseline">
+                                    <span class="notificacion-titulo-visto">Nuevo ticket</span>
+                                    <span class="notificacion-tiempo">Hace 1 día</span>
+                                </div>
+                                <p class="notificacion-texto">¡Josue Guinea ha creado un nuevo ticket!</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Bootstrap JS -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Componentes del proyecto -->
+        <script src="js/components/menu.js"></script>
+        <!-- Controlador de evaluaciones -->
+        <script src="js/controllers/evaluaciones.js"></script>
+        <script src="js/controllers/notificaciones.js"></script>
+
 
 </body>
+
 </html>

@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Proyectos</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet" />
+    <link rel="stylesheet" href="css/common.css" />
+    <link rel="stylesheet" href="css/vistaProyectos.css" />
+    <link rel="shortcut icon" href="/img/logo.png" type="image/x-icon" />
+    <script src="js/components/menu-cache.js"></script>
+</head>
+
+<body>
+    <!-- Navbar Vertical -->
+    <header id="contenedorMenuLateral"></header>
+    <div class="menu-lateral-overlay" id="overlay"></div>
+
+    <main class="main px-md-4 pt-3">
+        <div class="superior rounded-5 ps-4 d-none d-md-flex">
+            <a href="proyectos.html" class="mb-0 volver-button fw-bold text-dark" style="text-decoration: none"><i
+                    class="bi bi-chevron-left"></i> Volver</a>
+            <div>
+                <div class="perfil p-2 rounded-5 gap-lg-4 gap-md-2">
+                    <img src="/img/user.png" alt="" />
+                </div>
+            </div>
+        </div>
+
+        <div class="container-fluid px-4 py-4">
+            <!-- Tarjeta del proyecto -->
+            <div class="tarjeta-proyecto p-4 mb-4 rounded-5 shadow-sm bg-white">
+                <!-- Modo vista -->
+                <div id="modoVistaProyecto" class="d-flex justify-content-between align-items-start flex-wrap gap-3">
+                    <div>
+                        <h5 class="titulo-proyecto text-navy fw-bold mb-3">
+                            <i class="bi bi-tools me-2"></i><span id="txtNombreProyecto">Reconstrucción del SUM</span>
+                        </h5>
+                        <p class="meta-proyecto mb-1">
+                            <b>Ubicación:</b>
+                            <span id="txtUbicacionProyecto">Salón de usos múltiples</span>
+                        </p>
+                        <p class="meta-proyecto mb-1">
+                            <b>Tipo de proyecto:</b>
+                            <span id="txtTipoProyecto">Remodelación</span>
+                        </p>
+                        <p class="meta-proyecto mb-1">
+                            <b>Coordinador:</b>
+                            <span id="txtCoordinadorProyecto">josue_guinea@ricaldone.edu.sv</span>
+                        </p>
+                        <p class="meta-proyecto mb-1">
+                            <b>Supervisor:</b>
+                            <span id="txtSupervisorProyecto">ricardo_paz@ricaldone.edu.sv</span>
+                        </p>
+                        <p class="meta-proyecto mb-1">
+                            <b>Presupuesto:</b> $<span id="txtPresupuestoProyecto">3600.00</span>
+                        </p>
+                        <p class="meta-proyecto mb-1">
+                            <b>Total:</b> $<span id="txtTotalProyecto">4000.00</span>
+                        </p>
+                        <p class="meta-proyecto mb-0">
+                            <b>Estado:</b>
+                            <span id="txtEstadoProyecto" class="badge-estado">Finalizado</span>
+                        </p>
+                    </div>
+
+                    <button id="btnEditarProyecto" class="btn btn-azul-redondeado px-4">
+                        <i class="bi bi-pencil-square me-2"></i> Editar
+                    </button>
+                </div>
+
+                <!-- Modo edición -->
+                <form id="modoEdicionProyecto" class="d-none">
+                    <h5 class="titulo-proyecto text-navy fw-bold mb-3">
+                        <i class="bi bi-tools me-2"></i> Editar proyecto
+                    </h5>
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label text-navy fw-semibold" for="txtNombreProyectoEdicion">Nombre del
+                                proyecto</label>
+                            <input type="text" class="form-control" id="txtNombreProyectoEdicion" required />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label text-navy fw-semibold"
+                                for="txtUbicacionProyectoEdicion">Ubicación</label>
+                            <input type="text" class="form-control" id="txtUbicacionProyectoEdicion" required />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label text-navy fw-semibold" for="txtTipoProyectoEdicion">Tipo de
+                                proyecto</label>
+                            <input type="text" class="form-control" id="txtTipoProyectoEdicion" required />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label text-navy fw-semibold"
+                                for="selectEstadoProyectoEdicion">Estado</label>
+                            <select class="form-select" id="selectEstadoProyectoEdicion">
+                                <option value="En progreso">En progreso</option>
+                                <option value="Pausado">Pausado</option>
+                                <option value="Finalizado">Finalizado</option>
+                                <option value="Cancelado">Cancelado</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label text-navy fw-semibold"
+                                for="txtCoordinadorProyectoEdicion">Coordinador</label>
+                            <input type="email" class="form-control" id="txtCoordinadorProyectoEdicion" required />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label text-navy fw-semibold"
+                                for="txtSupervisorProyectoEdicion">Supervisor</label>
+                            <input type="email" class="form-control" id="txtSupervisorProyectoEdicion" required />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label text-navy fw-semibold"
+                                for="numPresupuestoProyectoEdicion">Presupuesto</label>
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                <input type="number" class="form-control" id="numPresupuestoProyectoEdicion" min="0"
+                                    step="0.01" required />
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label text-navy fw-semibold" for="numTotalProyectoEdicion">Total</label>
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                <input type="number" class="form-control" id="numTotalProyectoEdicion" min="0"
+                                    step="0.01" required />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-3 mt-4">
+                        <button type="submit" id="btnGuardarEdicionProyecto" class="btn btn-azul-redondeado px-4">
+                            <i class="bi bi-pencil-square me-2"></i> Guardar
+                        </button>
+                        <button type="button" id="btnCancelarEdicionProyecto" class="btn btn-secondary rounded-4 px-4">
+                            Cancelar
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Fases y Detalles -->
+            <div class="row g-4">
+                <!-- Panel de Fases -->
+                <div class="col-lg-6">
+                    <div class="encabezado-panel rounded-pill text-white text-center fw-bold py-2 mb-3">
+                        Fases
+                    </div>
+
+                    <div class="d-flex gap-2 mb-3 flex-wrap">
+                        <select id="selectFase" class="form-select rounded-4 flex-grow-1">
+                            <option value="">Fase</option>
+                        </select>
+                        <button id="btnEditarFase" class="btn btn-azul-redondeado px-3">
+                            <i class="bi bi-pencil-square me-1"></i> Editar
+                        </button>
+                        <button id="btnCrearFase" class="btn btn-azul-redondeado px-3" data-bs-toggle="modal"
+                            data-bs-target="#modalFasesProyecto">
+                            <i class="bi bi-plus-lg me-1"></i> Crear Fase
+                        </button>
+                    </div>
+
+                    <div id="tarjetaFaseSeleccionada" class="panel-contenido p-4 rounded-4 shadow-sm bg-white">
+                        <p class="text-muted mb-0">
+                            Selecciona o crea una fase para ver su información.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Panel de Detalles -->
+                <div class="col-lg-6">
+                    <div class="encabezado-panel rounded-pill text-white text-center fw-bold py-2 mb-3">
+                        Detalles
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2 mb-3">
+                        <button id="btnEditarDetalle" class="btn btn-azul-redondeado px-3">
+                            <i class="bi bi-pencil-square me-1"></i> Editar
+                        </button>
+                        <button id="btnAgregarDetalle" class="btn btn-azul-redondeado px-3" data-bs-toggle="modal"
+                            data-bs-target="#modalDetalleFase">
+                            <i class="bi bi-plus-lg me-1"></i> Agregar
+                        </button>
+                    </div>
+
+                    <div class="panel-contenido p-4 rounded-4 shadow-sm bg-white">
+                        <h6 class="text-navy fw-bold mb-3">Detalle de fase</h6>
+                        <ul id="listaDetalleFaseVista" class="lista-detalle list-unstyled mb-0">
+                            <li class="text-muted">
+                                Selecciona una fase para ver sus detalles.
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal para creación de fases del proyecto -->
+    <div class="modal fade" tabindex="-1" id="modalFasesProyecto" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content contenedor-modal-borde rounded-5 overflow-hidden">
+                <div class="modal-header text-center border-0 mb-3 position-relative">
+                    <h5 class="modal-title titulo-seccion text-white fw-bold w-100 fs-2">
+                        Fases del Proyecto
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white position-absolute end-0 me-3"
+                        data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body px-4 pb-4 pt-1 bg-white">
+                    <div id="listaFasesAgregadas" class="mb-4 d-flex flex-column gap-2"></div>
+
+                    <form id="formAgregarFase" class="p-3 rounded-4 shadow bg-white">
+                        <h6 class="text-navy fw-bold mb-3">Nueva fase</h6>
+
+                        <div class="row g-3">
+                            <div class="col-md-8">
+                                <label for="txtNombreFase" class="form-label text-navy fw-semibold">Nombre de la
+                                    fase</label>
+                                <input type="text" class="form-control" id="txtNombreFase" maxlength="100" required />
+                            </div>
+
+                            <div class="col-md-4">
+                                <label for="txtDepartamentoEncargado"
+                                    class="form-label text-navy fw-semibold">Departamento encargado</label>
+                                <input type="text" class="form-control" id="txtDepartamentoEncargado" maxlength="20"
+                                    required />
+                            </div>
+
+                            <div class="col-12">
+                                <label for="txtDesxripxionFase"
+                                    class="form-label text-navy fw-semibold">Descripción</label>
+                                <textarea class="form-control" id="txtDesxripxionFase" rows="2" maxlength="300"
+                                    required></textarea>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="txtFechaInicioEstimada" class="form-label text-navy fw-semibold">Fecha de
+                                    inicio estimada</label>
+                                <input type="date" class="form-control" id="txtFechaInicioEstimada" required />
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="txtFechaFinalEstimada" class="form-label text-navy fw-semibold">Fecha final
+                                    estimada</label>
+                                <input type="date" class="form-control" id="txtFechaFinalEstimada" required />
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="txtProveedor" class="form-label text-navy fw-semibold">Proveedor
+                                    <span class="text-muted fw-normal">(opcional)</span></label>
+                                <input type="text" class="form-control" id="txtProveedor" maxlength="100" />
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="numPresupuesto" class="form-label text-navy fw-semibold">Presupuesto
+                                    estimado</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">$</span>
+                                    <input type="number" class="form-control" id="numPresupuesto" min="0" step="0.01"
+                                        required />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-end mt-3">
+                            <button type="submit" class="btn btn-azul-redondeado px-4">
+                                <i class="bi bi-plus-lg me-1"></i>
+                                <span id="txtBotonGuardarFase">Agregar fase</span>
+                            </button>
+                        </div>
+                    </form>
+
+                    <div class="d-flex justify-content-end mt-4">
+                        <button type="button" class="btn btn-outline-secondary rounded-pill px-4"
+                            data-bs-dismiss="modal">
+                            Cerrar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para la creación de detalles de fase -->
+    <div class="modal fade" tabindex="-1" id="modalDetalleFase" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content contenedor-modal-borde rounded-5 overflow-hidden">
+                <div class="modal-header text-center border-0 mb-3 position-relative">
+                    <h5 class="modal-title titulo-seccion text-white fw-bold w-100 fs-2">
+                        Detalles de la Fase
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white position-absolute end-0 me-3"
+                        data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body px-4 pb-4 pt-1">
+                    <ul class="list-group mb-4" id="listaDetallesFase"></ul>
+
+                    <form id="formAgregarDetalle" class="p-3 rounded-4 shadow-sm bg-white">
+                        <input type="hidden" id="idFaseActual" />
+
+                        <label for="txtDetalleFase" class="form-label text-navy fw-semibold">Descripción de la
+                            tarea</label>
+                        <textarea class="form-control" id="txtDetalleFase" rows="2" maxlength="200" required></textarea>
+
+                        <div class="d-flex justify-content-end mt-3">
+                            <button type="submit" class="btn btn-azul-redondeado px-4">
+                                <i class="bi bi-plus-lg me-1"></i> Agregar detalle
+                            </button>
+                        </div>
+                    </form>
+
+                    <div class="d-flex justify-content-end mt-4">
+                        <button type="button" class="btn btn-azul-redondeado px-4" data-bs-dismiss="modal">
+                            Guardar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JS de Bootstrap -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+        crossorigin="anonymous"></script>
+
+    <!-- Mi JS personalizado -->
+    <script src="js/components/vistaProyecto.js"></script>
+    <script src="js/components/menu.js"></script>
+</body>
+
+</html>
