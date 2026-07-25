@@ -1,6 +1,6 @@
 const Meses = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre', 'Diciembre'];
 const Tecnicos = ['Pedro', 'Hallan', 'Julio', 'Douglas', 'Orlando', 'Samuel', 'Katherine', 'Agotin', 'Sepito', 'Octavio', 'Nova', 'Diecel'];
-
+//esto se cambiaria al conectar la api 
 
 /* LÓGICA DE VANILLA CALENDAR PRO
 ========================================================================== */
@@ -100,6 +100,7 @@ Promise.all([
 function crearGraficas() {
 
     /* 1. barras Horizontales-satisfaccion */
+    /* 1. Barras Horizontales - Satisfacción */
     if (document.getElementById('grafica_satisfaccion')) {
         new Chart(document.getElementById('grafica_satisfaccion'), {
             type: 'bar',
@@ -208,7 +209,7 @@ function crearGraficas() {
                             const {ctx, chartArea} = context.chart;
                             if (!chartArea) return null;
                             const gradient = ctx.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
-                            gradient.addColorStop(0, 'rgba(251, 186, 186, 0.6)');
+                            gradient.addColorStop(0, 'rgba(251, 186, 186, 0.6)');  
                             gradient.addColorStop(1, 'rgba(255, 255, 255, 0.0)');
                             return gradient;
                         }
@@ -255,12 +256,11 @@ function crearGraficas() {
                     x: { grid: { display: false } },
                     y: { grid: { color: 'rgba(0, 0, 0, 0.05)' } }
                 }
-            }
+            }   
         });
     }
 
-    /* 5. Grafica de barra verticales reportes-Frecuentes) */
-    if (document.getElementById('grafica_frecuentes')) {
+    
         new Chart(document.getElementById('grafica_frecuentes'), {
             type: 'bar',
             data: {
@@ -286,5 +286,5 @@ function crearGraficas() {
                 }
             }
         });
-    }
+    
 }
