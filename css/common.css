@@ -10,6 +10,7 @@
     --blue-primary: #4393f6;
     --card-bg: #fff;
     --blue-hover: #2b7ee2;
+    --oscuro-hover: #1a264e;
 }
 
 body {
@@ -453,7 +454,7 @@ body {
 }
 
 .titulo-seccion {
-    background-color: var(--blue-primary);
+    background-color: var(--bg-oscuro);
     border-radius: 20px;
     color: white;
 }
@@ -543,6 +544,24 @@ body {
   transform: translateY(-1px);
 }
 
+.btn-oscuro-redondeado{
+  background-color: var(--bg-oscuro) !important;
+  color: white !important;
+  border: none;
+  border-radius: 15px !important;
+  padding: 12px 24px !important;
+  font-weight: 600;
+  font-size: 15px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(67, 147, 246, 0.2);
+  transition: all 0.3s ease;
+}
+
+.btn-oscuro-redondeado:hover {
+  background-color: var(--oscuro-hover) !important;
+  transform: translateY(-1px);
+}
+
 .icono-tarjeta {
   position: absolute;
   top: -22px;
@@ -588,3 +607,4 @@ body {
   flex-wrap: nowrap;
   gap: 1.25rem;
 }
+

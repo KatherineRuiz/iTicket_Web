@@ -41,8 +41,10 @@ document.getElementById('formLogin').addEventListener('submit', function (e) {
 
         // Guardamos temporalmente los datos en sessionStorage/localStorage
         sessionStorage.setItem('usuarioLogueado', JSON.stringify({
+            idUsuario: 1, //Temporal segun el usuario que se esta simulando
             nombre: nombreUsuario,
-            correo: correo
+            correo: correo,
+            rolUsuario: 1
         }));
 
         // Redirigimos al Dashboard tras autenticar

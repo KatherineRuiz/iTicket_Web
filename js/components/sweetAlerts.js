@@ -4,7 +4,7 @@
 //asi evistamos escribirlas cada que las necesitemos usar y asi simplemente
 //  modificamos el mensaje o la redireccion en el controller
 
-function mostrarExitoRedireccion(titulo, mensaje, urlDestino) {
+export function mostrarExitoRedireccion(titulo, mensaje, urlDestino) {
     Swal.fire({
         title: titulo,
         text: mensaje,
@@ -15,7 +15,7 @@ function mostrarExitoRedireccion(titulo, mensaje, urlDestino) {
     });
 }
 
-function mostrarExitoSimple(titulo, mensaje) {
+export function mostrarExitoSimple(titulo, mensaje) {
     Swal.fire({
         title: titulo,
         text: mensaje,
@@ -24,7 +24,7 @@ function mostrarExitoSimple(titulo, mensaje) {
     });
 }
 
-function mostrarError(mensaje, pieDePagina = false) {
+export function mostrarError(mensaje, pieDePagina = false) {
     const configuracionAlerta = {
         icon: "error",
         title: "Oops...",
@@ -38,7 +38,7 @@ function mostrarError(mensaje, pieDePagina = false) {
     Swal.fire(configuracionAlerta);
 }
 
-function mostrarAlertaEspera(tiempoRestante, titulo = "¡Espera un momento!", mensaje = "Aún debes esperar antes de solicitar otro código.") {
+export function mostrarAlertaEspera(tiempoRestante, titulo = "¡Espera un momento!", mensaje = "Aún debes esperar antes de solicitar otro código.") {
     Swal.fire({
         title: titulo,
         text: mensaje,
@@ -48,5 +48,21 @@ function mostrarAlertaEspera(tiempoRestante, titulo = "¡Espera un momento!", me
         didOpen: () => {
             Swal.showLoading();
         },
+    });
+}
+
+export function mostrarConfirmacion(titulo, mensaje, textoBotonConfirmar = "Sí, continuar", textoBotonCancelar = "Cancelar") {
+    return Swal.fire({
+        title: titulo || "¿Estás seguro?",
+        text: mensaje,
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#4393f6",
+        cancelButtonColor: "#121F48",
+        cancelButtonText: textoBotonCancelar,
+        confirmButtonText: textoBotonConfirmar,
+        draggable: true
+    }).then((result) => {
+        return result.isConfirmed;
     });
 }

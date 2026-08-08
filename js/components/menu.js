@@ -222,3 +222,9 @@ document.addEventListener("DOMContentLoaded", function () {
         console.log("[iTicket] Rol →", nuevoRol);
     };
 });
+
+// Temporal para cambiar el usuario simulado sin tener que loguear de nuevo
+window.cambiarUsuarioSimulado = function (idUsuario, nombre, correo) {
+    sessionStorage.setItem('usuarioLogueado', JSON.stringify({ idUsuario, nombre, correo }));
+    console.log("[iTicket] Usuario simulado: ", idUsuario);
+};

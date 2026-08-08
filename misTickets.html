@@ -7,9 +7,9 @@
   <title>iTicket</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet" />
-  <link rel="stylesheet" href="css/common.css" />
   <link rel="stylesheet" href="css/tickets.css" />
   <link rel="stylesheet" href="css/notificaciones.css">
+  <link rel="stylesheet" href="css/common.css" />
   <link rel="shortcut icon" href="/img/logo.png" type="image/x-icon" />
   <script src="js/components/menu-cache.js"></script>
 </head>
@@ -42,36 +42,41 @@
           <div class="fila-indicadores pb-2">
             <div class="tarjeta-indicador text-center p-3">
               <span class="icono-tarjeta"><img src="img/TicketsAbiertosScroll.png" alt="TicketsAbiertos" /></span>
-              <p class="text-navy small fw-bold mb-1 pt-3">Tickets abiertos</p>
-              <h2 class="fw-bold text-navy m-0 pb-2">15</h2>
+              <p class="text-navy small fw-bold mb-1 pt-3">Tickets nuevos</p>
+              <h2 class="fw-bold text-navy m-0 pb-2" id="numNuevos"></h2>
             </div>
 
             <div class="tarjeta-indicador text-center p-3">
               <span class="icono-tarjeta"><img src="img/TicketsCerradosIcon.png" alt="ticketsCerrados" /></span>
               <p class="text-navy small fw-bold mb-1 pt-3">Tickets cerrados</p>
-              <h2 class="fw-bold text-navy m-0 pb-2">5</h2>
+              <h2 class="fw-bold text-navy m-0 pb-2" id="numCerrados"></h2>
             </div>
 
             <div class="tarjeta-indicador text-center p-3">
               <span class="icono-tarjeta"><img src="img/TicketsResueltos.png" alt="TicketsResueltos" /></span>
               <p class="text-navy small fw-bold mb-1 pt-3">Tickets resueltos</p>
-              <h2 class="fw-bold text-navy m-0 pb-2">2</h2>
+              <h2 class="fw-bold text-navy m-0 pb-2" id="numResueltos"></h2>
             </div>
 
             <div class="tarjeta-indicador text-center p-3">
               <span class="icono-tarjeta"><img src="img/TicketsAsignados.png" alt="TicketsAsignados" /></span>
               <p class="text-navy small fw-bold mb-1 pt-3">Tickets asignados</p>
-              <h2 class="fw-bold text-navy m-0 pb-2">4</h2>
+              <h2 class="fw-bold text-navy m-0 pb-2" id="numAsignados"></h2>
             </div>
             <div class="tarjeta-indicador text-center p-3">
               <span class="icono-tarjeta"><img src="img/Tickets en progreso.png" alt="TicketsProgreso" /></span>
               <p class="text-navy small fw-bold mb-1 pt-3">Tickets en progreso</p>
-              <h2 class="fw-bold text-navy m-0 pb-2">3</h2>
+              <h2 class="fw-bold text-navy m-0 pb-2" id="numEnProgreso"></h2>
             </div>
             <div class="tarjeta-indicador text-center p-3">
               <span class="icono-tarjeta"><img src="img/Tickets en espera.png" alt="TicketsEspera" /></span>
               <p class="text-navy small fw-bold mb-1 pt-3">Tickets en espera</p>
-              <h2 class="fw-bold text-navy m-0 pb-2">1</h2>
+              <h2 class="fw-bold text-navy m-0 pb-2" id="numEnEspera"></h2>
+            </div>
+            <div class="tarjeta-indicador text-center p-3">
+              <span class="icono-tarjeta"><img src="img/Tickets en espera.png" alt="TicketsEspera" /></span>
+              <p class="text-navy small fw-bold mb-1 pt-3">Tickets Vencidos</p>
+              <h2 class="fw-bold text-navy m-0 pb-2" id="numVencidos"></h2>
             </div>
           </div>
         </div>
@@ -84,99 +89,68 @@
 
             <!-- Sección del Buscador y Filtros -->
             <div class="row g-3 align-items-center mb-4">
-              <div class="col-12 col-md-6 col-lg-7">
+              <div class="col-12 col-md-12 col-lg-6 col-sm-8">
                 <div class="buscador-contenedor">
                   <i class="bi bi-search icono-busqueda"></i>
-                  <input type="text" class="form-control buscador-input"
+                  <input type="text" class="form-control buscador-input" id="txtBuscar"
                     placeholder="Ingresa el código o título de tu ticket">
                 </div>
               </div>
 
               <!-- Filtro de Prioridad -->
-              <div class="col-6 col-md-3 col-lg-3">
-                <select class="form-select select-ticket-filtro">
-                  <option selected disabled>Prioridad</option>
-                  <option value="critica">Crítica</option>
-                  <option value="alta">Alta</option>
-                  <option value="media">Media</option>
-                  <option value="baja">Baja</option>
+              <div class="col-4 col-md-4 col-lg-2 col-sm-4">
+                <select class="form-select select-ticket-filtro" id="sltBuscarPrioridad">
+                  <option selected value="">Prioridad</option>
+                  <option value="Critica">Crítica</option>
+                  <option value="Alta">Alta</option>
+                  <option value="Media">Media</option>
+                  <option value="Baja">Baja</option>
+                </select>
+              </div>
+
+              <!-- Filtro de Estado -->
+              <div class="col-4 col-md-4 col-lg-2 col-sm-6">
+                <select class="form-select select-ticket-filtro" id="sltBuscarEstado">
+                  <option selected value="">Estado</option>
+                  <option value="Nuevo">Nuevo</option>
+                  <option value="Asignado">Asignado</option>
+                  <option value="En proceso">En proceso</option>
+                  <option value="En espera">En espera</option>
+                  <option value="Resuelto">Resuelto</option>
+                  <option value="Cerrado">Cerrado</option>
+                  <option value="Vencido">Vencido</option>
                 </select>
               </div>
 
               <!-- Filtro de Fecha -->
-              <div class="col-6 col-md-3 col-lg-2">
-                <input type="date" class="form-control select-ticket-filtro">
+              <div class="col-4 col-md-4 col-lg-2 col-sm-6">
+                <input type="date" class="form-control select-ticket-filtro" id="dtBuscarFecha">
               </div>
             </div>
 
             <!-- Lista de Tickets -->
-            <div class="contenedor-lista-tickets">
+            <div class="contenedor-lista-tickets" id="divTickets">
 
-              <div
-                class="elemento-ticket borde-lateral-critica p-3 mb-3 rounded-4 shadow-sm d-flex justify-content-between align-items-start">
-                <div>
-                  <h6 class="fw-bold mb-1 titulo-ticket">
-                    <i class="bi bi-pc-display text-danger me-2"></i>Computadora no enciende
-                  </h6>
-                  <small class="text-muted d-block">#274261</small>
-                  <small class="text-muted d-block mt-1"><b>Estado:</b> Resuelto</small>
-                  <small class="text-muted d-block"><b>Vence:</b> 10/5/2026 12:30</small>
-                  <small class="text-muted d-block mt-1"><b>Descripción:</b> Es la computadora del docente, se encuentra
-                    conectada...</small>
-                </div>
-                <span class="badge fondo-peligro-suave px-3 py-2">Crítica</span>
-              </div>
+            </div>
 
-              <div
-                class="elemento-ticket borde-lateral-alta p-3 mb-3 rounded-4 shadow-sm d-flex justify-content-between align-items-start">
-                <div>
-                  <h6 class="fw-bold mb-1 titulo-ticket">
-                    <i class="bi bi-fire text-warning me-2"></i>Extintor descargado
-                  </h6>
-                  <small class="text-muted d-block">#274261</small>
-                  <small class="text-muted d-block mt-1"><b>Estado:</b> Asignado</small>
-                  <small class="text-muted d-block"><b>Vence:</b> 10/5/2026 12:30</small>
-                  <small class="text-muted d-block mt-1"><b>Descripción:</b> El extintor fue usado y se vació
-                    todo...</small>
-                </div>
-                <span class="badge fondo-advertencia-suave px-3 py-2">Alta</span>
-              </div>
-
-              <div
-                class="elemento-ticket borde-lateral-media p-3 mb-3 rounded-4 shadow-sm d-flex justify-content-between align-items-start">
-                <div>
-                  <h6 class="fw-bold mb-1 titulo-ticket">
-                    <i class="bi bi-printer text-warning me-2"></i>Impresora del librero fallando
-                  </h6>
-                  <small class="text-muted d-block">#274261</small>
-                  <small class="text-muted d-block mt-1"><b>Estado:</b> En espera</small>
-                  <small class="text-muted d-block"><b>Vence:</b> 10/5/2026 12:30</small>
-                  <small class="text-muted d-block mt-1"><b>Descripción:</b> La impresora no imprime
-                    correctamente...</small>
-                </div>
-                <span class="badge fondo-advertencia-suave-2 px-3 py-2">Media</span>
-              </div>
-
-              <div
-                class="elemento-ticket borde-lateral-baja p-3 mb-0 rounded-4 shadow-sm d-flex justify-content-between align-items-start">
-                <div>
-                  <h6 class="fw-bold mb-1 titulo-ticket">
-                    <i class="bi bi-lightbulb text-success me-2"></i>Lampara de pasillo quemada
-                  </h6>
-                  <small class="text-muted d-block">#274261</small>
-                  <small class="text-muted d-block mt-1"><b>Estado:</b> Resuelto</small>
-                  <small class="text-muted d-block"><b>Vence:</b> 10/5/2026 12:30</small>
-                  <small class="text-muted d-block mt-1"><b>Descripción:</b> La lampara del pasillo se fundió...</small>
-                </div>
-                <span class="badge fondo-exito-suave px-3 py-2">Baja</span>
-              </div>
-
+            <!-- Paginación -->
+            <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top">
+              <span class="text-muted small" id="infoTickets"></span>
+              <nav aria-label="Paginacion">
+                <ul class="pagination pagination-sm mb-0 align-items-center gap-1" id="paginacionTickets">
+                  <li class="page-item">
+                    <a class="page-link border-0 bg-transparent text-dark" href="#"><i
+                        class="bi bi-chevron-right"></i></a>
+                  </li>
+                </ul>
+              </nav>
             </div>
           </div>
 
           <!-- Botón Crear y panel de evaluaciones -->
           <div class="col-lg-4">
-            <a href="crearTickets.html" class="btn btn-azul-redondeado w-100 py-3 rounded-4 mb-4 fw-bold shadow-sm text-white fs-5 d-flex align-items-center justify-content-center">
+            <a href="crearTickets.html"
+              class="btn btn-azul-redondeado w-100 py-3 rounded-4 mb-4 fw-bold shadow-sm text-white fs-5 d-flex align-items-center justify-content-center">
               <i class="bi bi-plus-lg me-2"></i> Crear ticket
             </a>
 
@@ -186,12 +160,12 @@
               <div class="alerta-evaluacion">
                 <div class="p-4 text-center align-items-center">
                   <div class="p-3 rounded-4 mb-3">
-                    <h4 class="fw-bold mb-3 titulo-seccion-evaluacion">¡Tienes evaluaciones pendientes!</h4>
+                    <h4 class="fw-bold mb-3 titulo-seccion-evaluacion" id="txtMensajeEvaluaciones"></h4>
                     <h5 class="text-muted small px-2 mt-3 fw-semibold pb-3">
                       Recuerda que no puedes crear nuevos tickets si tienes una evaluación pendiente
                     </h5>
                     <button class="btn btn-azul-redondeado px-4" data-bs-toggle="modal"
-                      data-bs-target="#evaluacionModal">
+                      data-bs-target="#evaluacionModal" id="btnAbrirEvaluacion">
                       Evaluar
                     </button>
                   </div>
@@ -220,21 +194,24 @@
         <div class="modal-body p-4 pt-2">
           <p class="fw-bold text-navy mb-2">Tu Ticket</p>
           <div
-            class="elemento-ticket borde-lateral-critica p-3 mb-0 rounded-3 shadow-sm bg-white d-flex justify-content-between align-items-start">
+            class="elemento-ticket p-3 mb-0 rounded-3 shadow-sm bg-white d-flex justify-content-between align-items-start" id="divTicket">
             <div>
-              <h6 class="fw-bold mb-1">
-                <i class="bi bi-pc-display text-danger me-2"></i>Computadora
-                no enciende
+              <h6 class="fw-bold mb-1 texto-limitado-1"><i class="bi bi-ticket-perforated me-2" id="iconoTicket"></i><span id="evalAsunto"></span>
               </h6>
-              <small class="text-muted d-block">#274261</small>
-              <small class="text-muted d-block mt-1"><b>Estado:</b> Resuelto</small>
-              <small class="text-muted d-block"><b>Vence:</b> 10/5/2026 12:30</small>
-              <small class="text-muted d-block mt-1"><b>Descripción:</b> Es la computadora del docente, se
-                encuentra conectada...</small>
+              <small class="text-muted d-block" id="evalCodigo"></small>
+              <small class="text-muted d-block mt-1"><b>Estado:</b>Resuelto</small>
+              <small class="text-muted d-block"><b>Fecha de creación:</b><span id="evalCreacion"></span></small>
+              <small class="text-muted d-block"><b>Vence:</b><span id="evalVence"></span></small>
+              <small class="text-muted d-block texto-limitado"><b>Descripción:</b><span
+                  id="evalDescripcion"></span></small>
             </div>
-            <span class="badge fondo-peligro-suave text-danger rounded-pill px-3 py-2">Crítica</span>
+            <span id="evalPrioridad" class="badge rounded-pill px-3 py-2"></span>
           </div>
-          <form id="form-evaluacion">
+
+          <!--Indicador de progreso-->
+          <p class="text-center text-muted small mt-3 mb-0" id="evalProgreso"></p>
+
+          <form id="formEvaluacion">
             <div class="d-flex align-items-center justify-content-between mb-4 mt-2 px-1">
               <span class="fw-bold fs-5 text-dark">Calificación:</span>
               <div class="estrellas-rating d-flex flex-row-reverse">
@@ -386,7 +363,9 @@
 
     <!-- Mi JS personalizado -->
     <script src="js/components/menu.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="js/controllers/notificaciones.js"></script>
+    <script type="module" src="js/controllers/misTickets.js"></script>
 
 </body>
 
