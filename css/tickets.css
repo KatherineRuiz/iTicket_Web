@@ -9,20 +9,22 @@
   
   /* Colores de Prioridad */
   --prio-critica-bg: #fed7d7;
-  --prio-critica-txt: #9b2c2c;
-  --prio-critica-border: #e53e3e;
+  --prio-critica-txt: #d25a5a;
+  --prio-critica-border: #e64848;
 
   --prio-alta-bg: #feebc8;
-  --prio-alta-txt: #9c4221;
-  --prio-alta-border: #dd6b20;
+  --prio-alta-txt: #edb200;
+  --prio-alta-border: #FF8D54;
 
   --prio-media-bg: #fefcbf;
-  --prio-media-txt: #744210;
-  --prio-media-border: #d69e2e;
+  --prio-media-txt: #fabe46;
+  --prio-media-border: #f4cb6c;
 
   --prio-baja-bg: #c6f6d5;
-  --prio-baja-txt: #22543d;
-  --prio-baja-border: #38a169;
+  --prio-baja-txt: #3c9e70;
+  --prio-baja-border: #6ecf5d;
+
+  --nuevo-border: #4393f6;
 }
 
 .modal-evaluacion{
@@ -95,10 +97,11 @@
 }
 
 /* Bordes laterales por prioridad */
-.borde-lateral-critica { border-left: 6px solid var(--prio-critica-border) !important; }
-.borde-lateral-alta    { border-left: 6px solid var(--prio-alta-border) !important; }
-.borde-lateral-media   { border-left: 6px solid var(--prio-media-border) !important; }
-.borde-lateral-baja    { border-left: 6px solid var(--prio-baja-border) !important; }
+.borde-lateral-Critica{ border-left: 6px solid var(--prio-critica-border) !important; }
+.borde-lateral-Alta{ border-left: 6px solid var(--prio-alta-border) !important; }
+.borde-lateral-Media{ border-left: 6px solid var(--prio-media-border) !important; }
+.borde-lateral-Baja{ border-left: 6px solid var(--prio-baja-border) !important; }
+.borde-lateral-{ border-left: 6px solid var(--nuevo-border) !important; }
 
 /* Badges suaves de Prioridad */
 .fondo-peligro-suave {
@@ -195,4 +198,126 @@
   border-radius: 0px;
   border: none;
   box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+}
+
+/*Para badges de ticket*/
+.badge.prioridad-Critica {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    height: auto;
+    width: auto;
+    background-color: var(--prio-critica-bg);
+    color: var(--prio-critica-txt);
+    display: inline-block;
+}
+.badge.prioridad-Baja {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    height: auto;
+    width: auto;
+    background-color: var(--prio-baja-bg);
+    color: var(--prio-baja-txt);
+    display: inline-block;
+}
+.badge.prioridad-Alta {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    height: auto;
+    width: auto;
+    background-color: var(--prio-alta-bg);
+    color: var(--prio-alta-txt);
+    display: inline-block;
+}
+.badge.prioridad-Media {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    height: auto;
+    width: auto;
+    background-color: var(--prio-media-bg);
+    color: var(--prio-media-txt);
+    display: inline-block;
+}
+
+.badge.prio-Critica.sin-absolute {
+    height: auto;
+    width: auto;
+    display: inline-block;
+    height: auto;
+    width: auto;
+    background-color: var(--prio-critica-bg);
+    color: var(--prio-critica-txt);
+    display: inline-block;
+}
+.badge.prio-Baja.sin-absolute {
+    height: auto;
+    width: auto;
+    display: inline-block;
+    height: auto;
+    width: auto;
+    background-color: var(--prio-baja-bg);
+    color: var(--prio-baja-txt);
+    display: inline-block;
+}
+.badge.prio-Alta.sin-absolute {
+    height: auto;
+    width: auto;
+    display: inline-block;
+    height: auto;
+    width: auto;
+    background-color: var(--prio-alta-bg);
+    color: var(--prio-alta-txt);
+    display: inline-block;
+}
+.badge.prio-Media.sin-absolute {
+    height: auto;
+    width: auto;
+    display: inline-block;
+    height: auto;
+    width: auto;
+    background-color: var(--prio-media-bg);
+    color: var(--prio-media-txt);
+    display: inline-block;
+}
+
+/*Para iconos de ticket*/
+.bi-Critica {
+  color: var(--prio-critica-border);
+}
+.bi-Alta {
+  color: var(--prio-alta-border);
+}
+.bi-Media {
+  color: var(--prio-media-border);
+}
+.bi-Baja {
+  color: var(--prio-baja-txt);
+}
+.bi- {
+  color: var(--nuevo-border);
+}
+
+.fecha-noExiste{
+  display: none;
+}
+
+/*Para texto de una sola línea que puede ser largo*/
+.texto-limitado-1 {
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+
+/*Para texto que puede tener varias líneas pero no infinitas*/
+.texto-limitado {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    word-break: break-word;
 }

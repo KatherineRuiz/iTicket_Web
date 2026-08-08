@@ -106,13 +106,12 @@ body {
   cursor: pointer;
   transition: all 0.2s ease;
   min-height: 220px;
-  width: 350px;
-  padding: 12px;
+  width: 100%;
   box-sizing: border-box;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 80px;
+  padding: 1.5rem;
 }
 
 .icono-agregar-multimedia {
@@ -197,4 +196,19 @@ body {
 .miniatura-agregar-mas:hover {
   background-color: #e2e5e9;
   border-color: #9aa1ac;
+}
+
+.form-select:invalid, 
+.form-select option[disabled] {
+    color: #6c757d !important;
+}
+
+/*Devuelve el color negro a las opciones válidas cuando se despliega la lista*/
+.form-select option:not([disabled]) {
+    color: #212529 !important;
+}
+
+.form-select option:disabled {
+  color: #a0a6b0 !important;
+  font-style: italic;
 }

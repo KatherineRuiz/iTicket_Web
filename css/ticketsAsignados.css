@@ -1,7 +1,6 @@
 :root {
     --bg-dark: #121F48;
     --accent-celeste: #539ECD;
-    --borde-critica: #ff8484;
 }
 
 body {
@@ -34,40 +33,28 @@ body {
 
 }
 
-.lista-tickets-asignados .badge.fondo-critica {
-    position: absolute;
-    top: 15px;
-    right: 20px;
-    height: auto;
-    width: auto;
-    background-color: var(--borde-critica);
-    display: inline-block;
-}
-
-.borde-critica {
-    border-left: 6px solid var(--borde-critica) !important;
-}
-
 .scroll-lista-ticket {
     max-height: 550px;
-    overflow-y: auto;
+    overflow-y: hidden;
     padding-right: 10px 12px;
     scroll-behavior: smooth;
 }
 
-.scroll-lista-ticket::-webkit-scrollbar {
-    width: 6px;
+
+/*Para texto de una sola línea que puede ser largo*/
+.texto-limitado-1 {
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
 }
 
-.scroll-lista-ticket::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-.scroll-lista-ticket::-webkit-scrollbar-thumb {
-    background-color: #cbd5e1;
-    border-radius: 10px;
-}
-
-.scroll-lista-ticket::-webkit-scrollbar-thumb:hover {
-    background-color: #94a3b8;
+/*Para texto que puede tener varias líneas pero no infinitas*/
+.texto-limitado {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    word-break: break-word;
 }

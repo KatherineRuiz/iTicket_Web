@@ -15,14 +15,15 @@
 </head>
 
 <body>
-  <!-- Header / Menú Lateral -->
+  <!--Menu-->
   <header id="contenedorMenuLateral"></header>
   <div class="menu-lateral-overlay" id="overlay"></div>
 
   <main class="main px-2 px-md-4 pt-3">
 
     <section class="superior rounded-5 ps-4 d-none d-md-flex pt-3">
-      <a href="gestionTickets.html" class="mb-0 volver-button fw-bold text-dark"><i class="bi bi-chevron-left"></i>
+      <a href="misTickets.html" id="btnVolver" class="mb-0 volver-button fw-bold text-dark"><i
+          class="bi bi-chevron-left"></i>
         Volver</a>
     </section>
 
@@ -33,49 +34,225 @@
           <div
             class="descripcion-editarTicket borde-rojo p-3 p-md-4 rounded-4 shadow-sm bg-white h-100 d-flex flex-column justify-content-between">
 
+            <!--Modo de solo lectura-->
             <div id="modoVistaContenido" class="w-100 d-flex flex-column gap-3">
 
               <div class="d-flex justify-content-between align-items-start gap-2">
                 <h6 class="creador-ticket text-navy mb-0 d-flex align-items-center flex-wrap">
                   <b>De:</b>
                   <img src="img/user-modal.png" alt="usuario" class="img-fluid mx-2 img-usuario" />
-                  <span class="text-break">josue_guinea@ricaldone.edu.sv</span>
+                  <span class="text-break" id="txtCreador"></span>
                 </h6>
-                <span class="badge fondo-categoria text-danger rounded-pill px-3 py-2 text-center flex-shrink-0">
-                  Crítica
-                </span>
+                <span id="badgePrioridad"
+                  class="badge fondo-categoria text-danger rounded-pill px-3 py-2 text-center flex-shrink-0"></span>
               </div>
 
               <div class="bloque-informacion">
-                <p class="meta-ticket-texto mb-1"><b>Asunto:</b> Computadora no enciende</p>
-                <p class="meta-ticket-texto mb-1"><b>Estado:</b> Nuevo</p>
-                <p class="meta-ticket-texto mb-1"><b>Fecha de creación:</b> 15/08/26 14:45:05</p>
-                <p class="meta-ticket-texto mb-2">
-                  <b>Descripción:</b> Es la computadora del docente, se encuentra conectada, pero luego de entrar del
-                  receso, estaba apagada y no volvió a encender.
+                <p class="meta-ticket-texto mb-1"><b>Asunto:</b> <span id="txtAsunto" class="texto-limitado-1"></span>
                 </p>
-                <p class="meta-ticket-texto mb-1"><b>Equipo:</b> #2678982</p>
-                <p class="meta-ticket-texto mb-0"><b>Ubicación:</b> Laboratorio 2</p>
+                <p class="meta-ticket-texto mb-1"><b>Estado:</b> <span id="txtEstado"
+                    class="badge bg-info-subtle text-info-emphasis fw-semibold"></span></p>
+                <p class="meta-ticket-texto mb-1"><b>Fecha de creación:</b> <span id="dtFechaCreacion"></span></p>
+                <p class="meta-ticket-texto mb-1 d-none" id="filaVencimiento"><b>Vencimiento:</b> <span
+                    id="dtFechaVencimiento"></span></p>
+                <p class="meta-ticket-texto mb-2"><b>Descripción:</b> <span id="txtDescripcion"
+                    class="texto-limitado"></span></p>
+                <p class="meta-ticket-texto mb-0"><b>Ubicación:</b> <span id="txtUbicacion"
+                    class="texto-limitado-1"></span></p>
+                <p class="meta-ticket-texto mb-1 d-none" id="filaEquipo"><b>Equipo:</b> <span id="txtEquipoTicket"
+                    class="texto-limitado-1"></span></p>
+                <p class="meta-ticket-texto mb-1 d-none" id="filaSoftware"><b>Software a instalar:</b> <span
+                    id="txtSoftwareTicket" class="texto-limitado"></span></p>
+                <p class="meta-ticket-texto mb-1 d-none" id="filaTecnico"><b>Técnico asignado:</b> <span
+                    id="txtTecnicoAsignado" class="texto-limitado-1"></span></p>
               </div>
 
-              <div class="contenedor-evidencias d-flex flex-wrap gap-3 mt-2 pb-3">
-                <div class="tarjeta-foto-evidencia overflow-hidden rounded-3">
-                  <img src="img/Evidencias 2.png" alt="Evidencia 1" class="img-fluid object-fit-cover w-100 h-100" />
-                </div>
-                <div class="tarjeta-foto-evidencia overflow-hidden rounded-3">
-                  <img src="img/Evidencias 3.png" alt="Evidencia 3" class="img-fluid object-fit-cover w-100 h-100" />
-                </div>
+              <div class="contenedor-evidencias d-flex flex-wrap gap-3 mt-2 pb-3" id="galeriaEvidenciasVista">
+                <!--Se rellena dinámicamente-->
+              </div>
+
+              <div class="d-flex justify-content-center pt-3 mt-auto">
+                <button id="btnEditarTicket"
+                  class="btn btn-azul-redondeado w-50 py-2 rounded-3 fw-bold shadow-sm text-white d-flex align-items-center justify-content-center d-none">
+                  <i class="bi bi-pencil-square me-2"></i> Editar</button>
               </div>
 
             </div>
 
-            <div class="d-flex justify-content-center pt-3 mt-auto">
-              <a href="crearTickets.html"
-                class="btn btn-azul-redondeado w-50 py-2 rounded-3 fw-bold shadow-sm text-white d-flex align-items-center justify-content-center">
-                <i class="bi bi-pencil-square me-2"></i> Editar
-              </a>
-            </div>
+            <!--Modo de edición-->
+            <div id="modoEdicionContenido" class="w-100 d-none">
 
+              <!--Bloque 1: edición como creador -->
+              <form id="frmEdicionCreador" class="d-none border-bottom pb-4 mb-4">
+                <h6 class="text-navy fw-bold mb-3"><i class="bi bi-person-circle me-1"></i> Editar información del
+                  ticket</h6>
+
+                <div class="mb-2 row align-items-center">
+                  <label class="col-sm-3 col-form-label py-1"><b>Asunto:</b></label>
+                  <div class="col-sm-9">
+                    <input id="txtAsuntoEdicion" type="text" class="form-control rounded-4 py-1" maxlength="100"
+                      required />
+                  </div>
+                </div>
+
+                <div class="mb-2 row align-items-start">
+                  <label class="col-sm-3 col-form-label py-1"><b>Descripción:</b></label>
+                  <div class="col-sm-9">
+                    <textarea id="txtDescripcionEdicion" class="form-control rounded-4 py-1" rows="3" maxlength="500"
+                      required></textarea>
+                  </div>
+                </div>
+
+                <div class="mb-2 row align-items-center">
+                  <label class="col-sm-3 col-form-label py-1"><b>Departamento:</b></label>
+                  <div class="col-sm-9">
+                    <select id="sltDepartamentoEdicion" class="form-select rounded-4 py-1" required>
+                      <option value="" selected disabled>Selecciona un departamento</option>
+                    </select>
+                  </div>
+                </div>
+
+                <!--Campo dinámico para ticket de artículo-->
+                <div class="mb-2 row align-items-start d-none" id="campoCodigoEdicion">
+                  <label class="col-sm-3 col-form-label py-1"><b>Equipo/Mobiliario:</b></label>
+                  <div class="col-sm-9">
+                    <div class="input-group mb-2">
+                      <input type="text" class="form-control rounded-5" id="txtCodigoEdicion" placeholder="EQ123"
+                        maxlength="20" autocomplete="off" />
+                      <button class="btn btn-azul-redondeado fw-semibold ms-2" type="button"
+                        id="btnAgregarCodigoEdicion">
+                        <i class="bi bi-plus-lg"></i> Añadir
+                      </button>
+                    </div>
+                    <div id="sugerenciasCodigosEdicion" class="list-group position-relative shadow-sm d-none"
+                      style="z-index: 10;"></div>
+                    <div id="listaCodigosEdicion" class="d-flex flex-wrap gap-2 mt-2"></div>
+                  </div>
+                </div>
+
+                <!--Campo dinámico para ticket general -->
+                <div class="mb-2 row align-items-center d-none" id="campoUbicacionEdicion">
+                  <label class="col-sm-3 col-form-label py-1"><b>Ubicación:</b></label>
+                  <div class="col-sm-9">
+                    <input id="txtUbicacionEdicion" type="text" class="form-control rounded-4 py-1" maxlength="200" />
+                  </div>
+                </div>
+
+                <!-- Campo dinámico para ticket de software-->
+                <div class="mb-2 row align-items-start d-none" id="campoSoftwareEdicion">
+                  <label class="col-sm-3 col-form-label py-1"><b>Software:</b></label>
+                  <div class="col-sm-9">
+                    <div class="row g-2 mb-2 align-items-center">
+                      <div class="col-6">
+                        <input type="text" class="form-control rounded-5" id="txtNombreSoftwareEdicion"
+                          placeholder="Nombre del software" maxlength="50" />
+                      </div>
+                      <div class="col-4">
+                        <input type="text" class="form-control rounded-5" id="txtVersionEdicion" placeholder="Versión"
+                          maxlength="20" />
+                      </div>
+                      <div class="col-2">
+                        <button class="btn btn-azul-redondeado w-100" type="button" id="btnAgregarSoftwareEdicion">
+                          <i class="bi bi-plus-lg"></i>
+                        </button>
+                      </div>
+                    </div>
+                    <div id="listaSoftwareEdicion" class="d-flex flex-wrap gap-2 mb-2"></div>
+                    <label class="form-label small fw-bold">Ubicación:</label>
+                    <select id="sltUbicacionSoftwareEdicion" class="form-select rounded-5">
+                      <option value="" selected disabled>Selecciona la ubicación</option>
+                    </select>
+                  </div>
+                </div>
+
+                <!--Evidencias-->
+                <div class="mb-3 row align-items-start">
+                  <label class="col-sm-3 col-form-label py-1"><b>Evidencias:</b></label>
+                  <div class="col-sm-9">
+                    <div id="galeriaEvidenciasEdicion" class="d-flex flex-wrap gap-2 mb-2"></div>
+                    <button type="button" class="btn btn-outline-secondary btn-sm" id="btnAgregarEvidenciaEdicion">
+                      <i class="bi bi-plus-lg me-1"></i> Agregar fotografía
+                    </button>
+                    <input type="file" id="inputEvidenciaEdicion" accept="image/png, image/jpeg, image/jpg, image/webp"
+                      multiple class="d-none">
+                  </div>
+                </div>
+
+                <div class="d-flex justify-content-end">
+                  <button type="submit" class="btn btn-azul-redondeado px-4">
+                    <i class="bi bi-check-circle me-1"></i> Guardar cambios
+                  </button>
+                </div>
+              </form>
+
+              <!--Bloque 2: reasignación-->
+              <form id="frmReasignacion" class="d-none border-bottom pb-4 mb-4">
+                <h6 class="text-navy fw-bold mb-3"><i class="bi bi-arrow-left-right me-1"></i> Reasignar ticket</h6>
+
+                <div class="mb-2 row align-items-center">
+                  <label class="col-sm-4 col-form-label py-1"><b>Prioridad:</b></label>
+                  <div class="col-sm-8">
+                    <select id="sltPrioridadEdicion" class="form-select rounded-4 py-1" required>
+                      <option value="" selected disabled>Selecciona una prioridad</option>
+                      <option value="Baja">Baja</option>
+                      <option value="Media">Media</option>
+                      <option value="Alta">Alta</option>
+                      <option value="Critica">Crítica</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="mb-2 row align-items-center">
+                  <label class="col-sm-4 col-form-label py-1"><b>Técnico:</b></label>
+                  <div class="col-sm-8">
+                    <select id="sltTecnicoEdicion" class="form-select rounded-4 py-1" required>
+                      <option value="" selected disabled>Selecciona un técnico</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="mb-3 row align-items-center">
+                  <label class="col-sm-4 col-form-label py-1"><b>Vencimiento:</b></label>
+                  <div class="col-sm-8">
+                    <input id="dtFechaVencimientoEdicion" type="datetime-local" class="form-control rounded-4 py-1"
+                      required />
+                  </div>
+                </div>
+
+                <div class="d-flex justify-content-end">
+                  <button type="submit" class="btn btn-azul-redondeado px-4">
+                    <i class="bi bi-check-circle me-1"></i> Reasignar
+                  </button>
+                </div>
+              </form>
+
+              <!--Bloque 3: cambio de estado para tecnico asignado-->
+              <form id="frmEstadoAsignado" class="d-none pb-2 mb-2">
+                <h6 class="text-navy fw-bold mb-3"><i class="bi bi-arrow-repeat me-1"></i> Cambiar estado</h6>
+
+                <div class="mb-3 row align-items-center">
+                  <label class="col-sm-4 col-form-label py-1"><b>Estado:</b></label>
+                  <div class="col-sm-8">
+                    <select id="sltEstadoAsignado" class="form-select rounded-4 py-1" required>
+                      <option value="En proceso">En proceso</option>
+                      <option value="En espera">En espera</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="d-flex justify-content-end">
+                  <button type="submit" class="btn btn-azul-redondeado px-4">
+                    <i class="bi bi-check-circle me-1"></i>Actualizar estado
+                  </button>
+                </div>
+              </form>
+
+              <div class="d-flex justify-content-end mt-3">
+                <button type="button" id="btnCancelarEdicion" class="btn btn-secondary rounded-4 px-4">
+                  Cancelar
+                </button>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -85,13 +262,12 @@
 
             <div>
               <h6 class="fw-bold text-navy mb-3 d-flex align-items-center">
-                <i class="bi bi-chat-left-text-fill me-2 text-primary"></i> Comentarios
+                <i class="bi bi-chat-left-text-fill me-2 text-primary"></i>Comentarios
               </h6>
 
               <div class="lista-comentarios mb-3 pe-1" style="max-height: 250px; overflow-y: auto;">
                 <div class="p-2 bg-light rounded-3 mb-2">
-                  <small class="fw-bold text-navy d-block">Iniciaste un ticket Katherine</small>
-                  <small class="text-muted">Puedes darle más indicaciones al técnico por aquí</small>
+                  <small class="text-muted">Los comentarios se conectarán próximamente.</small>
                 </div>
               </div>
             </div>
@@ -99,9 +275,9 @@
             <form action="#" method="POST" class="mt-auto pt-3">
               <div class="mb-3">
                 <textarea class="form-control rounded-3 fs-6" rows="3" placeholder="Escribe un comentario..."
-                  required></textarea>
+                  disabled></textarea>
               </div>
-              <button type="submit"
+              <button type="submit" disabled
                 class="btn btn-azul-redondeado w-100 py-2 rounded-3 fw-bold shadow-sm text-white d-flex align-items-center justify-content-center">
                 <i class="bi bi-send-fill me-2"></i> Enviar
               </button>
@@ -113,10 +289,18 @@
       </div>
     </div>
 
-    <!-- Reporte Técnico -->
+    <!--Reporte Técnico-->
     <div class="col-12 pt-5">
       <div>
-        <h5 class="fw-bold mb-3 titulo-seccion text-center p-3">Reporte técnico</h5>
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h5 class="fw-bold titulo-seccion text-center p-3 flex-grow-1 mb-0">Reporte técnico</h5>
+        </div>
+        <div class="d-flex justify-content-end mb-3">
+          <button type="button" id="btnGestionarReporte" class="btn btn-azul-redondeado px-4 d-none"
+            data-bs-toggle="modal" data-bs-target="#modalReporte">
+            <i class="bi bi-file-earmark-text me-1"></i> <span id="txtBotonReporte">Agregar reporte</span>
+          </button>
+        </div>
         <div class="card-tabla p-4">
           <div class="table-responsive-md">
             <table class="table table-borderless table-custom align-middle text-center">
@@ -127,14 +311,9 @@
                   <th scope="col" class="w-25">Solución</th>
                 </tr>
               </thead>
-              <tbody>
-                <!-- Fila 1 -->
+              <tbody id="cuerpoReporteTecnico">
                 <tr>
-                  <td class="fw-bold text-break">emerson_gonzales@ricaldone.edu.sv</td>
-                  <td class="text-dark text-wrap text-break">La computadora entró en bucle ya que se intentó freezar
-                    mientras el sistema operativo tenía actualizaciones pendientes</td>
-                  <td class="text-dark text-wrap text-break">Para arreglarla se formateó el disco duro y se tuvieron
-                    que volver a instalar todos los programas.</td>
+                  <td colspan="3" class="text-muted">Aún no se ha generado un reporte para este ticket.</td>
                 </tr>
               </tbody>
             </table>
@@ -154,26 +333,9 @@
                   <th scope="col" class="w-25">Fecha</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody id="cuerpoBitacora">
                 <tr>
-                  <td class="fw-bold text-break">emerson_gonzales@ricaldone.edu.sv</td>
-                  <td class="text-dark text-wrap text-break">Resuelto</td>
-                  <td class="text-dark text-wrap text-break">15/02/26 14:10:67</td>
-                </tr>
-                <tr>
-                  <td class="fw-bold text-break">emerson_gonzales@ricaldone.edu.sv</td>
-                  <td class="text-dark text-wrap text-break">En proceso</td>
-                  <td class="text-dark text-wrap text-break">15/02/26 14:10:67</td>
-                </tr>
-                <tr>
-                  <td class="fw-bold text-break">emerson_gonzales@ricaldone.edu.sv</td>
-                  <td class="text-dark text-wrap text-break">Nuevo</td>
-                  <td class="text-dark text-wrap text-break">15/02/26 14:10:67</td>
-                </tr>
-                <tr>
-                  <td class="fw-bold text-break">emerson_gonzales@ricaldone.edu.sv</td>
-                  <td class="text-dark text-wrap text-break">Asignado</td>
-                  <td class="text-dark text-wrap text-break">15/02/26 14:10:67</td>
+                  <td colspan="3" class="text-muted">La bitácora estará disponible próximamente.</td>
                 </tr>
               </tbody>
             </table>
@@ -181,6 +343,42 @@
         </div>
       </div>
   </main>
+
+  <!--Modal de Reporte Técnico-->
+  <div class="modal fade" id="modalReporte" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content border-0 shadow rounded-4">
+        <div class="modal-header border-0 p-3 pb-0">
+          <div
+            class="titulo-seccion bg-primary text-white w-100 rounded-pill p-3 d-flex align-items-center justify-content-between position-relative">
+            <h5 class="fw-bold mb-0 flex-grow-1 text-center text-white">Reporte técnico</h5>
+            <button type="button" class="btn-close btn-close-white position-absolute end-0 me-3" data-bs-dismiss="modal"
+              aria-label="Cerrar"></button>
+          </div>
+        </div>
+        <div class="modal-body p-4">
+          <form id="frmReporteTicket">
+            <div class="mb-3">
+              <label for="txtDescripcionFalla" class="form-label fw-bold text-navy">Diagnóstico / Descripción de la
+                falla</label>
+              <textarea id="txtDescripcionFalla" class="form-control rounded-3" rows="3" maxlength="500"
+                required></textarea>
+            </div>
+            <div class="mb-3">
+              <label for="txtDescripcionSolucion" class="form-label fw-bold text-navy">Solución aplicada</label>
+              <textarea id="txtDescripcionSolucion" class="form-control rounded-3" rows="3" maxlength="500"
+                required></textarea>
+            </div>
+            <div class="d-flex justify-content-end">
+              <button type="submit" class="btn btn-azul-redondeado px-4">
+                <i class="bi bi-check-circle me-1"></i> Guardar reporte
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- Todo esto es lo de notificaciones y siempre ira al final -->
   <div class="notificaciones-overlay" id="notificacionesOverlay">
@@ -290,8 +488,10 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="js/components/sweetAlerts.js"></script>
     <script src="js/components/menu.js"></script>
-    <script src="js/controllers/vistaTicket.js"></script>
+    <script type="module" src="js/controllers/vistaTicket.js"></script>
     <script src="js/controllers/notificaciones.js"></script>
 </body>
 

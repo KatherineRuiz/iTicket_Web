@@ -1,6 +1,6 @@
 :root {
     --fondo-oscuro: #121F48;
-    --acento-celeste: #539ECD;
+    --acento-celeste: #4393f6;
     --aprobaciones-celeste: #BDDCE8;
     --panel-fondo: #F4F4F4;
     --modal-fondo: #EAF7FF;
@@ -158,7 +158,8 @@
 }
 
 .contenedor-scroll-v-indicadores::-webkit-scrollbar-thumb,
-.scroll-interno-aprobaciones::-webkit-scrollbar-thumb {
+.scroll-interno-aprobaciones::-webkit-scrollbar-thumb,
+.contenedor-evidencias-vertical::-webkit-scrollbar-thumb {
     background-color: #cbd5e1;
     border-radius: 20px;
 }
@@ -175,7 +176,7 @@
 }
 
 .contenedor-modal-borde {
-border: none !important;
+    border: none !important;
     background-color: #f7fbfe !important;
     overflow: hidden !important;
 }
@@ -209,12 +210,22 @@ border: none !important;
 
 /* Mazo de evidencias del lado derecho */
 .contenedor-evidencias-vertical {
+    overflow-y: auto;
     width: 200px !important;
-    height: 200px !important;
+    max-height: 200px !important;
+    height: auto;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
     flex-shrink: 0 !important;
+}
+
+.contenedor-evidencias-vertical::-webkit-scrollbar {
+    width: 5px;
+}
+
+.contenedor-evidencias-vertical::-webkit-scrollbar-thumb {
+    border-radius: 10px;
 }
 
 .tarjeta-foto-evidencia {
@@ -336,6 +347,7 @@ border: none !important;
     transform: translateY(-2px);
     box-shadow: 0 6px 14px rgba(0, 0, 0, 0.12) !important;
 }
+
 .icono-boton-ticket {
     width: 50px;
     height: auto;
@@ -355,3 +367,59 @@ border: none !important;
     background-color: #f8fafc;
 }
 
+/* Pantallas pequeñas */
+@media (max-width: 1214.98px) {
+    .fila-control-modal {
+        display: flex;
+        align-items: normal;
+        width: 100%;
+    }
+
+    .contenedor-evidencias-vertical {
+        overflow-x: auto !important;
+        overflow-y: auto !important;
+        width: 100% !important;
+        display: flex !important;
+        align-items: start !important;
+        justify-content: center !important;
+        flex-shrink: 0 !important;
+    }
+}
+
+/*Para texto de una sola línea que puede ser largo*/
+.texto-limitado-1 {
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+
+/*Para texto que puede tener varias líneas pero no infinitas*/
+.texto-limitado {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    word-break: break-word;
+}
+
+.miniatura-evidencia {
+    width: 90px;
+    height: 90px;
+    border-radius: 12px;
+    overflow: hidden;
+    cursor: pointer;
+    border: 1px solid #dbeafe;
+    transition: transform 0.15s ease;
+}
+
+.miniatura-evidencia:hover {
+    transform: scale(1.05);
+}
+
+.miniatura-evidencia img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
