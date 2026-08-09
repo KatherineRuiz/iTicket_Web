@@ -49,6 +49,4 @@ document.getElementById('formLogin').addEventListener('submit', function (e) {
 
             // 3. Notificación de éxito y redirección al Dashboard
             mostrarExitoRedireccion("¡Sesión Iniciada!", "", "dashboardAdmin.html");
-        });
-    }
-})
+        }});
