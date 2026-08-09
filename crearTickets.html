@@ -39,109 +39,108 @@
         </div>
 
         <div class="card-categoria text-center p-3 d-flex flex-column align-items-center justify-content-center"
-          id="btn-electricidad">
+          id="btn-general">
           <img src="img/redes_cards.png" alt="electricidad y redes" class="mb-2" style="height: 200px" />
           <span class="fw-bold text-primary-custom">Electricidad, red y otros</span>
         </div>
         <div class="card-categoria text-center p-3 d-flex flex-column align-items-center justify-content-center"
-          id="btn-instalacion">
+          id="btn-Software">
           <img src="img/instalacionSoftware.png" alt="electricidad y redes" class="mb-2" style="height: 200px" />
           <span class="fw-bold text-primary-custom">Instalación de Software</span>
         </div>
       </div>
 
       <div class="bg-white rounded-5 shadow-sm p-4 p-md-5 border mb-4">
-        <div class="row g-4">
-          <div class="col-12 col-md-7">
-            <!-- Formulario estándar -->
-            <div id="formulario-estandar">
-              <form>
-                <div class="mb-3" id="crearTicketAsunto">
-                  <label class="form-label fw-bold">Asunto:</label>
-                  <input type="text" class="form-control rounded-5 border-primary-custom bg-blue-light"
-                    placeholder="Escribe el asunto del problema" />
-                </div>
-                <div class="mb-3" id="crearTicketDescripcion">
-                  <label class="form-label fw-bold">Descripción:</label>
-                  <textarea class="form-control rounded-4 border-primary-custom bg-blue-light" rows="4"
-                    placeholder="Describe la falla..."></textarea>
-                </div>
-                <div class="mb-4 campo-dinamico" id="campo-codigo">
-                  <label class="form-label fw-bold">Código del equipo/mobiliario:</label>
-                  <input type="text" class="form-control rounded-5 border-primary-custom bg-blue-light"
-                    placeholder="#21239986" />
-                </div>
-                <div class="mb-4 campo-dinamico" id="campo-ubicacion">
-                  <label class="form-label fw-bold">Ubicación:</label>
-                  <input type="text" class="form-control rounded-5 border-primary-custom bg-blue-light"
-                    placeholder="Pasillo del lobby frente al salón 64.13" />
-                </div>
-                <div class="mb-4">
-                  <label class="form-label fw-bold">Departamento:</label>
-                  <select class="form-select rounded-5 border-primary-custom bg-blue-light">
-                    <option selected>IT</option>
-                    <option value="1">Mantenimiento</option>
-                  </select>
-                </div>
-                <button type="submit"
-                  class="btn btn-azul-redondeado w-100 py-3 rounded-4 mb-4 fw-bold shadow-sm text-white fs-5 d-flex align-items-center justify-content-center"
-                  id="btn-go-create">
-                  <i class="bi bi-plus-lg me-2"></i> Crear Ticket
-                </button>
-              </form>
-            </div>
-
-            <!-- Formulario software -->
-            <div id="formulario-software" class="d-none">
-              <form>
-                <div class="mb-3" id="crearTicketAsuntoSoftware">
-                  <label class="form-label fw-bold">Asunto:</label>
-                  <input type="text" class="form-control rounded-5 border-primary-custom bg-blue-light"
-                    placeholder="Escribe el asunto del problema" readonly />
-                </div>
-                <div class="mb-3" id="crearTicketDescripcionSoftware">
-                  <label class="form-label fw-bold">Descripción:</label>
-                  <textarea class="form-control rounded-4 border-primary-custom bg-blue-light" rows="4"
-                    placeholder="Describe la falla..."></textarea>
-                </div>
-                <div class="mb-3" id="ticketNombreSoftware">
-                  <label class="form-label fw-bold">Nombre del software:</label>
-                  <input type="text" class="form-control rounded-5 border-primary-custom bg-blue-light"
-                    placeholder="Escribe el asunto del problema" />
-                </div>
-                <div class="mb-3" id="ticketVersionPrograma">
-                  <label class="form-label fw-bold">Version del programa:</label>
-                  <input class="form-control rounded-4 border-primary-custom bg-blue-light"
-                    placeholder="Indica la version del programa" />
-                </div>
-                <div class="mb-4" id="crearTicketDepartamentoSoftware">
-                  <label class="form-label fw-bold">Departamento:</label>
-                  <select class="form-select rounded-5 border-primary-custom bg-blue-light">
-                    <option selected>IT</option>
-                    <option value="1">IT-CFP</option>
-                  </select>
-                </div>
-                <button type="submit"
-                  class="btn btn-azul-redondeado w-100 py-3 rounded-4 mb-4 fw-bold shadow-sm text-white fs-5 d-flex align-items-center justify-content-center"
-                  id="btn-go-create">
-                  <i class="bi bi-plus-lg me-2"></i> Crear Ticket
-                </button>
-              </form>
-            </div>
-          </div>
-
-          <!-- Agregar foto -->
-          <div class="col-12 col-md-5 d-flex align-items-center justify-content-center">
-            <div class="agregar-multimedia" id="cajaMultimedia">
-              <div id="contenidoMultimedia" class="d-flex flex-column align-items-center justify-content-center">
-                <i class="bi bi-plus-lg icono-agregar-multimedia mb-2"></i>
-                <span class="texto-agregar-multimedia text-muted fs-5">Agrega fotografías<br>del problema</span>
+        <!-- Formulario estándar -->
+        <form id="frmTicket">
+          <div class="row g-4 align-items-center">
+            <div class="col-12 col-lg-8">
+              <div class="mb-3" id="crearTicketAsunto">
+                <label for="txtAsunto" class="form-label fw-bold">Asunto:</label>
+                <input type="text" class="form-control rounded-5 border-primary-custom bg-blue-light"
+                  placeholder="Escribe el asunto del ticket" id="txtAsunto" required maxlength="100" />
               </div>
-              <div id="galeriaMultimedia" class="galeria-multimedia d-none"></div>
+              <div class="mb-3" id="crearTicketDescripcion">
+                <label for="txtDescripcion" class="form-label fw-bold">Descripción:</label>
+                <textarea class="form-control rounded-4 border-primary-custom bg-blue-light" rows="4"
+                  placeholder="Describe la falla o problema..." id="txtDescripcion" required maxlength="500"></textarea>
+              </div>
+              <div class="mb-4 campo-dinamico" id="campo-codigo">
+                <label for="txtCodigo" class="form-label fw-bold">Código del equipo/mobiliario:</label>
+                <div class="input-group mb-2">
+                  <input type="text" class="form-control border-primary-custom bg-blue-light rounded-5"
+                    placeholder="EQ123" id="txtCodigo" maxlength="20" autocomplete="off" />
+                  <button class="btn btn-azul-redondeado fw-semibold ms-2" type="button" id="btnAgregarCodigo">
+                    <i class="bi bi-plus-lg"></i> Añadir
+                  </button>
+                </div>
+                <!--Contenedor de sugerencias-->
+                <div id="sugerenciasCodigos" class="list-group position-relative w-50 shadow-sm d-none"
+                  style="top: 100%; z-index: 10;"></div>
+                <!--Contenedor donde se mostrarán los códigos agregados -->
+                <div id="listaCodigos" class="d-flex flex-wrap gap-2 mt-2 mb-3"></div>
+              </div>
+              <div class="mb-4 campo-dinamico" id="campo-ubicacion">
+                <label for="txtUbicacion" class="form-label fw-bold">Ubicación:</label>
+                <input type="text" class="form-control rounded-5 border-primary-custom bg-blue-light"
+                  placeholder="Pasillo del lobby frente al salón 64.13" id="txtUbicacion" maxlength="100" />
+              </div>
+              <div class="mb-3 campo-dinamico" id="campos-Software">
+                <label class="form-label fw-bold">Software a instalar:</label>
+                <div class="row g-2 mb-2 align-items-center">
+                  <div class="col-6">
+                    <input type="text" class="form-control rounded-5 border-primary-custom bg-blue-light"
+                      placeholder="Nombre del software" id="txtNombreSoftware" maxlength="50" />
+                  </div>
+                  <div class="col-4">
+                    <input type="text" class="form-control rounded-5 border-primary-custom bg-blue-light"
+                      placeholder="Versión" id="txtVersion" maxlength="20" />
+                  </div>
+                  <div class="col-2">
+                    <button class="btn btn-azul-redondeado w-100" type="button" id="btnAgregarSoftware">
+                      <i class="bi bi-plus-lg"></i>
+                    </button>
+                  </div>
+                </div>
+                <div id="listaSoftware" class="d-flex flex-wrap gap-2"></div>
+                <label for="sltUbicacionSoftware" class="form-label fw-bold">Ubicación:</label>
+                <select class="form-select rounded-5 border-primary-custom bg-blue-light" id="sltUbicacionSoftware"
+                  required>
+                  <option selected disabled value="">Selecciona la ubicación</option>
+                </select>
+              </div>
+              <div class="mb-4">
+                <label for="sltDepartamento" class="form-label fw-bold">Departamento:</label>
+                <select class="form-select rounded-5 border-primary-custom bg-blue-light" id="sltDepartamento" required>
+                  <option selected disabled value="">Selecciona un departamento</option>
+                </select>
+              </div>
             </div>
-            <input type="file" id="inputMultimedia" accept="image/*" multiple class="d-none">
+
+            <div class="col-12 col-lg-4 col-md-4">
+              <!-- Agregar foto -->
+              <div class="d-flex align-items-center justify-content-center">
+                <div class="agregar-multimedia" id="cajaMultimedia">
+                  <div id="contenidoMultimedia" class="d-flex flex-column align-items-center justify-content-center">
+                    <i class="bi bi-plus-lg icono-agregar-multimedia mb-2"></i>
+                    <span class="texto-agregar-multimedia text-muted fs-5">Agrega fotografías<br>del problema</span>
+                  </div>
+                  <div id="galeriaMultimedia" class="galeria-multimedia d-none"></div>
+                </div>
+                <input type="file" id="inputMultimedia" accept="image/png, image/jpeg, image/jpg, image/webp" multiple
+                  class="d-none">
+              </div>
+            </div>
+
+            <div class="col-12">
+              <button type="submit"
+                class="btn btn-azul-redondeado w-100 py-3 rounded-4 mb-4 fw-bold shadow-sm text-white fs-5 d-flex align-items-center justify-content-center"
+                id="btn-go-create">
+                <i class="bi bi-plus-lg me-2"></i> Crear Ticket
+              </button>
+            </div>
           </div>
-        </div>
+        </form>
       </div>
     </div>
   </main>
@@ -257,8 +256,9 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <!-- Mi JS personalizado -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="js/components/menu.js"></script>
-    <script src="js/controllers/crearTickets.js"></script>
+    <script type="module" src="js/controllers/crearTickets.js"></script>
     <script src="js/controllers/notificaciones.js"></script>
 
 

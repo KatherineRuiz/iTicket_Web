@@ -22,11 +22,6 @@ body {
     height: 20px;
 }
 
-.boton-editar-ticket {
-    background-color: var(--acento-celeste) !important;
-    font-size: 17px !important;
-}
-
 .fondo-categoria {
     background-color: #ffcccc;
 }
@@ -134,4 +129,22 @@ body {
         padding: 12px 10px !important;
         font-size: 0.85rem;
     }
+}
+
+/*Para texto de una sola línea que puede ser largo*/
+.texto-limitado-1 {
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+
+/*Para texto que puede tener varias líneas pero no infinitas*/
+.texto-limitado {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    word-break: break-word;
 }
