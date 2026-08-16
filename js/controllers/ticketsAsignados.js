@@ -1,5 +1,6 @@
 import { mostrarError } from "../components/sweetAlerts.js";
 import { getTicketsAsignados } from "../services/ticketsService.js";
+import { formatearFecha12H } from "../utils/formateadores.js";
 
 const divTickets = document.getElementById("divTickets");
 const paginacionTickets = document.getElementById("paginacionTickets"); 
@@ -46,8 +47,8 @@ function renderizarTickets(tickets){
                   <small class="text-muted d-block mb-2">${ticket.codigo}</small>
                   <small class="text-muted d-block"><b>Creador:</b>${ticket.correoCreador}</small>
                   <small class="text-muted d-block"><b>Estado:</b>${ticket.estado}</small>
-                  <small class="text-muted d-block"><b>Fecha de creación:</b> ${ticket.fechaCreacion}</small>
-                  <small class="text-muted d-block"><b class="text-danger">Vence:</b> ${ticket.fechaVencimiento}</small>
+                  <small class="text-muted d-block"><b>Fecha de creación:</b> ${formatearFecha12H(ticket.fechaCreacion)}</small>
+                  <small class="text-muted d-block"><b class="text-danger">Vence:</b> ${formatearFecha12H(ticket.fechaVencimiento)}</small>
                   <small class="text-muted d-block texto-limitado">
                     <b>Descripción:</b>${ticket.descripcion}
                   </small>

@@ -526,85 +526,84 @@ body {
 
 .btn-azul-redondeado,
 .btn-personalizado-primario {
-  background-color: var(--blue-primary) !important;
-  color: white !important;
-  border: none;
-  border-radius: 15px !important;
-  padding: 12px 24px !important;
-  font-weight: 600;
-  font-size: 15px;
-  text-align: center;
-  box-shadow: 0 4px 12px rgba(67, 147, 246, 0.2);
-  transition: all 0.3s ease;
+    background-color: var(--blue-primary) !important;
+    color: white !important;
+    border: none;
+    border-radius: 15px !important;
+    padding: 12px 24px !important;
+    font-weight: 600;
+    font-size: 15px;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(67, 147, 246, 0.2);
+    transition: all 0.3s ease;
 }
 
 .btn-azul-redondeado:hover,
 .btn-personalizado-primario:hover {
-  background-color: var(--blue-hover) !important;
-  transform: translateY(-1px);
+    background-color: var(--blue-hover) !important;
+    transform: translateY(-1px);
 }
 
-.btn-oscuro-redondeado{
-  background-color: var(--bg-oscuro) !important;
-  color: white !important;
-  border: none;
-  border-radius: 15px !important;
-  padding: 12px 24px !important;
-  font-weight: 600;
-  font-size: 15px;
-  text-align: center;
-  box-shadow: 0 4px 12px rgba(67, 147, 246, 0.2);
-  transition: all 0.3s ease;
+.btn-oscuro-redondeado {
+    background-color: var(--bg-oscuro) !important;
+    color: white !important;
+    border: none;
+    border-radius: 15px !important;
+    padding: 12px 24px !important;
+    font-weight: 600;
+    font-size: 15px;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(67, 147, 246, 0.2);
+    transition: all 0.3s ease;
 }
 
 .btn-oscuro-redondeado:hover {
-  background-color: var(--oscuro-hover) !important;
-  transform: translateY(-1px);
+    background-color: var(--oscuro-hover) !important;
+    transform: translateY(-1px);
 }
 
 .icono-tarjeta {
-  position: absolute;
-  top: -22px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 44px;
-  height: 44px;
-  background-color: var(--blue-primary);
-  color: #ffffff;
-  border-radius: 50%;
-  font-size: 18px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  z-index: 2;
+    position: absolute;
+    top: -22px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    background-color: var(--blue-primary);
+    color: #ffffff;
+    border-radius: 50%;
+    font-size: 18px;
+    box-shadow: 0 4px 14px rgba(14, 165, 233, 0.55);
+    z-index: 2;
 }
 
 .icono-tarjeta img {
-  width: 24px;
-  height: 24px;
-  object-fit: contain;
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
 }
 
 .tarjeta-indicator,
 .tarjeta-indicador {
-  flex: 0 0 220px;
-  background-color: var(--card-bg);
-  border-radius: 20px;
-  box-shadow: 0 10px 25px rgba(30, 45, 90, 0.05);
-  border: none;
-  position: relative;
-  padding: 24px 15px 15px 15px !important;
-  height: 110px !important;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+    flex: 0 0 220px;
+    background-color: var(--card-bg);
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(30, 45, 90, 0.05);
+    border: none;
+    position: relative;
+    padding: 24px 15px 15px 15px !important;
+    height: 110px !important;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
 .fila-indicadores {
-  display: flex;
-  flex-wrap: nowrap;
-  gap: 1.25rem;
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 1.25rem;
 }
-

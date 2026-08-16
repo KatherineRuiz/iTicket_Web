@@ -48,11 +48,18 @@
   padding-right: 5px;
 }
 
-.contenedor-lista-tickets::-webkit-scrollbar {
+.contenedor-lista-tickets::-webkit-scrollbar,
+.lista-comentarios::-webkit-scrollbar {
   width: 6px;
 }
 
-.contenedor-lista-tickets::-webkit-scrollbar-thumb {
+.contenedor-scroll-horizontal::-webkit-scrollbar {
+  height: 6px;
+}
+
+.contenedor-lista-tickets::-webkit-scrollbar-thumb,
+.contenedor-scroll-horizontal::-webkit-scrollbar-thumb,
+.lista-comentarios::-webkit-scrollbar-thumb {
   background: #cbd5e1;
   border-radius: 10px;
 }
@@ -76,12 +83,6 @@
 .titulo-ticket,
 .titulo-seccion-evaluacion{
   color: var(--text-dark, #2d3748);
-}
-
-.titulo-seccion{
-  background-color: var(--blue-primary);
-  border-radius: 20px;
-  color: white;
 }
 
 .servicio-text{
@@ -320,4 +321,10 @@
     -webkit-box-orient: vertical;
     overflow: hidden;
     word-break: break-word;
+}
+
+.meta-ticket-texto {
+    color: #4a5568 !important;
+    font-size: 0.90rem;
+    line-height: 1.45;
 }
