@@ -7,10 +7,17 @@ import { getTecnicosPorDepartamento } from "../services/usuariosService.js";
 import { mostrarError, mostrarExitoSimple, mostrarConfirmacion } from "../components/sweetAlerts.js";
 import { validarFormularioTicket, validarFormularioAprobacion, validarFormularioReporte } from "../validators/ticketsValidator.js";
 import { obtenerPermisos } from "../validators/permisosTicket.js";
-
+import { getBitacorasPorTicket } from "../services/bitacorasService.js";
+import { crearComentario, obtenerComentariosPorTicket, eliminarComentario } from "../services/comentariosService.js";
+import { subirMultimediaComentario } from "../services/multimediaComentariosService.js";
+import { formatearFecha24H, formatearFecha12H, formatearParaDateTimeLocal } from "../utils/formateadores.js";
+import { validarFormularioComentario } from "../validators/comentariosValidator.js";
 
 const CATEGORIA_POR_TIPO = { "Articulo": "equipos", "General": "general", "Software": "software" };
+const limiteEvidenciasTicket = 10;
+const limiteMultimediaComentario = 3;
 
+const targetaTicket = document.getElementById("targetaTicket");
 const btnVolver = document.getElementById("btnVolver");
 const txtCreador = document.getElementById("txtCreador");
 const badgePrioridad = document.getElementById("badgePrioridad");
@@ -28,12 +35,13 @@ const txtSoftwareTicket = document.getElementById("txtSoftwareTicket");
 const filaTecnico = document.getElementById("filaTecnico");
 const txtTecnicoAsignado = document.getElementById("txtTecnicoAsignado");
 const galeriaEvidenciasVista = document.getElementById("galeriaEvidenciasVista");
-const btnEditarTicket = document.getElementById("btnEditarTicket");
 
-const modoVistaContenido = document.getElementById("modoVistaContenido");
-const modoEdicionContenido = document.getElementById("modoEdicionContenido");
-const btnCancelarEdicion = document.getElementById("btnCancelarEdicion");
+const btnAbrirEdicionCreador = document.getElementById("btnAbrirEdicionCreador");
+const btnAbrirReasignacion = document.getElementById("btnAbrirReasignacion");
+const btnAbrirEstadoAsignado = document.getElementById("btnAbrirEstadoAsignado");
 
+//Modal: edición como creador
+const modalEdicionCreadorEl = document.getElementById("modalEdicionCreador");
 const frmEdicionCreador = document.getElementById("frmEdicionCreador");
 const txtAsuntoEdicion = document.getElementById("txtAsuntoEdicion");
 const txtDescripcionEdicion = document.getElementById("txtDescripcionEdicion");
@@ -51,36 +59,57 @@ const txtVersionEdicion = document.getElementById("txtVersionEdicion");
 const btnAgregarSoftwareEdicion = document.getElementById("btnAgregarSoftwareEdicion");
 const listaSoftwareEdicion = document.getElementById("listaSoftwareEdicion");
 const sltUbicacionSoftwareEdicion = document.getElementById("sltUbicacionSoftwareEdicion");
-const galeriaEvidenciasEdicion = document.getElementById("galeriaEvidenciasEdicion");
 const btnAgregarEvidenciaEdicion = document.getElementById("btnAgregarEvidenciaEdicion");
+const galeriaMultimediaEdicion = document.getElementById("galeriaMultimediaEdicion");
 const inputEvidenciaEdicion = document.getElementById("inputEvidenciaEdicion");
 
+//Modal: reasignación
+const modalReasignacionEl = document.getElementById("modalReasignacion");
 const frmReasignacion = document.getElementById("frmReasignacion");
 const sltPrioridadEdicion = document.getElementById("sltPrioridadEdicion");
 const sltTecnicoEdicion = document.getElementById("sltTecnicoEdicion");
 const dtFechaVencimientoEdicion = document.getElementById("dtFechaVencimientoEdicion");
 
+//Modal: estado
+const modalEstadoAsignadoEl = document.getElementById("modalEstadoAsignado");
 const frmEstadoAsignado = document.getElementById("frmEstadoAsignado");
 const sltEstadoAsignado = document.getElementById("sltEstadoAsignado");
 
+//Modal: reporte técnico
+const modalReporteEl = document.getElementById("modalReporte");
 const btnGestionarReporte = document.getElementById("btnGestionarReporte");
 const txtBotonReporte = document.getElementById("txtBotonReporte");
 const frmReporteTicket = document.getElementById("frmReporteTicket");
 const txtDescripcionFalla = document.getElementById("txtDescripcionFalla");
 const txtDescripcionSolucion = document.getElementById("txtDescripcionSolucion");
-const cuerpoReporteTecnico = document.getElementById("cuerpoReporteTecnico");
-const modalReporteEl = document.getElementById("modalReporte");
+const tablaReporteTecnico = document.getElementById("tablaReporteTecnico");
+
+const tablaBitacora = document.getElementById("tablaBitacora");
+
+//Comentarios
+const listaComentarios = document.getElementById("listaComentarios");
+const frmComentario = document.getElementById("frmComentario");
+const txtComentario = document.getElementById("txtComentario");
+const btnEnviarComentario = document.getElementById("btnEnviarComentario");
+const btnAdjuntarComentario = document.getElementById("btnAdjuntarComentario");
+const inputComentarioMultimedia = document.getElementById("inputComentarioMultimedia");
+const galeriaComentarioAdjuntos = document.getElementById("galeriaComentarioAdjuntos");
+
+const img = document.getElementById('imagenVista');
+const modalVistaPrevia = new bootstrap.Modal(document.getElementById('modalVistaPrevia'));
 
 let idTicketActual = null;
 let ticketActual = null;
-let evidenciasActuales = []; //[{idEvidencia, evidenciaUrl}]
+let evidenciasActuales = [];
 let archivosNuevosEvidencia = [];
 let listaCodigosEquipos = [];
 let listaSoftwareVersion = [];
 let departamentosCargados = false;
+let listaDepartamentosDisponibles = [];
 let ubicacionesCargadas = false;
-let tecnicosCargados = false;
 let temporizadorBusqueda = null;
+let comentariosActuales = [];
+let archivosComentarioSeleccionados = [];
 
 document.addEventListener("DOMContentLoaded", () => {
     if (btnVolver) {
@@ -99,6 +128,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     cargarTicket();
+    cargarBitacoras();
 });
 
 function obtenerIdTicketDesdeURL() {
@@ -106,27 +136,31 @@ function obtenerIdTicketDesdeURL() {
     return parametros.get("id");
 }
 
-
 function obtenerSesion() {
     const usuarioGuardado = sessionStorage.getItem("usuarioLogueado");
-    const idUsuario = usuarioGuardado ? Number(JSON.parse(usuarioGuardado).idUsuario) : null;
-    const rol = (localStorage.getItem("rolUsuario") || "").toLowerCase();
-    return { idUsuario, rol };
+    if (!usuarioGuardado) {
+        return { idUsuario: null, rol: null };
+    }
+    const { idUsuario, rolUsuario } = JSON.parse(usuarioGuardado);
+    return { idUsuario: Number(idUsuario), rol: (rolUsuario || "").toLowerCase() };
 }
 
 async function cargarTicket() {
     try {
-        const [ticket, evidencias] = await Promise.all([
+        const [ticket, evidencias, comentarios] = await Promise.all([
             getTicket(idTicketActual),
-            obtenerEvidenciasPorTicket(idTicketActual)
+            obtenerEvidenciasPorTicket(idTicketActual),
+            obtenerComentariosPorTicket(idTicketActual)
         ]);
 
         ticketActual = ticket;
         evidenciasActuales = evidencias || [];
+        comentariosActuales = comentarios || [];
 
         renderizarVista();
         configurarPermisos();
         renderizarReporte();
+        renderizarComentarios();
     } catch (error) {
         console.error("Error al cargar el ticket:", error);
         mostrarError("No se pudo cargar la información del ticket.");
@@ -135,19 +169,21 @@ async function cargarTicket() {
 
 function renderizarVista() {
     const t = ticketActual;
+    const prio = t.prioridad || '';
 
-    txtCreador.textContent = t.correoCreador ?? "";
-    txtAsunto.textContent = t.asunto ?? "";
-    txtEstado.textContent = t.estado ?? "";
-    txtDescripcion.textContent = t.descripcion ?? "";
-    txtUbicacion.textContent = t.ubicacion ?? "Sin definir";
-    dtFechaCreacion.textContent = t.fechaCreacion ?? "";
+    txtCreador.textContent = t.correoCreador;
+    txtAsunto.textContent = t.asunto;
+    txtEstado.textContent = t.estado;
+    txtDescripcion.textContent = t.descripcion;
+    txtUbicacion.textContent = t.ubicacion;
+    dtFechaCreacion.textContent = formatearFecha12H(t.fechaCreacion);
 
-    badgePrioridad.textContent = t.prioridad ?? "Sin prioridad";
-    badgePrioridad.className = `badge fondo-${clasePrioridad(t.prioridad)} rounded-pill px-3 py-2 text-center flex-shrink-0`;
+    targetaTicket.classList.add(`borde-lateral-${prio}`);
+    badgePrioridad.textContent = t.prioridad ?? "";
+    badgePrioridad.classList.add(`prioridad-${t.prioridad}`);
 
     if (t.fechaVencimiento) {
-        dtFechaVencimiento.textContent = t.fechaVencimiento;
+        dtFechaVencimiento.textContent = formatearFecha12H(t.fechaVencimiento);
         filaVencimiento.classList.remove("d-none");
     } else {
         filaVencimiento.classList.add("d-none");
@@ -161,9 +197,7 @@ function renderizarVista() {
     }
 
     if (t.tipoTicket === "Software" && t.detallesSoftware?.length) {
-        txtSoftwareTicket.textContent = t.detallesSoftware
-            .map((sw) => `${sw.nombreSoftware} (v.${sw.version})`)
-            .join(", ");
+        txtSoftwareTicket.textContent = t.detallesSoftware.map((sw) => `${sw.nombreSoftware} (v.${sw.version})`).join(", ");
         filaSoftware.classList.remove("d-none");
     } else {
         filaSoftware.classList.add("d-none");
@@ -179,23 +213,21 @@ function renderizarVista() {
     renderizarGaleriaVista();
 }
 
-function clasePrioridad(prioridad) {
-    const mapa = { Critica: "peligro-suave", Alta: "advertencia-suave", Media: "advertencia-suave-2", Baja: "exito-suave" };
-    return mapa[prioridad] ?? "peligro-suave";
-}
-
 function renderizarGaleriaVista() {
     galeriaEvidenciasVista.innerHTML = "";
 
     if (evidenciasActuales.length === 0) {
+        galeriaEvidenciasVista.classList.remove("contenedor-evidencias");
+        galeriaEvidenciasVista.classList.add("contenedor-evidencias-null");
         galeriaEvidenciasVista.innerHTML = `<p class="text-muted small mb-0">Sin evidencias adjuntas.</p>`;
         return;
     }
+    galeriaEvidenciasVista.classList.add("contenedor-evidencias");
 
-    evidenciasActuales.forEach((ev) => {
+    evidenciasActuales.forEach((evidencia) => {
         galeriaEvidenciasVista.insertAdjacentHTML("beforeend", `
-            <div class="tarjeta-foto-evidencia overflow-hidden rounded-3">
-                <img src="${ev.evidenciaUrl}" alt="Evidencia" class="img-fluid object-fit-cover w-100 h-100" />
+            <div class="tarjeta-foto-evidencia overflow-hidden rounded-3" onclick="abrirVistaImagen('${evidencia.evidenciaUrl}')">
+                <img src="${evidencia.evidenciaUrl}" alt="Evidencia" class="img-fluid object-fit-cover w-100 h-100" />
             </div>
         `);
     });
@@ -205,40 +237,25 @@ function configurarPermisos() {
     const { idUsuario, rol } = obtenerSesion();
     const permisos = obtenerPermisos(ticketActual, idUsuario, rol);
 
-    const hayAlgunPermiso = permisos.editarCreador || permisos.reasignar || permisos.cambiarEstado;
-    btnEditarTicket.classList.toggle("d-none", !hayAlgunPermiso);
-
+    btnAbrirEdicionCreador.classList.toggle("d-none", !permisos.editarCreador);
+    btnAbrirReasignacion.classList.toggle("d-none", !permisos.reasignar);
+    btnAbrirEstadoAsignado.classList.toggle("d-none", !permisos.cambiarEstado);
     btnGestionarReporte.classList.toggle("d-none", !permisos.reportar);
-
-    btnEditarTicket.onclick = () => activarModoEdicion(permisos, idUsuario);
-    btnCancelarEdicion.onclick = () => desactivarModoEdicion();
 }
 
-async function activarModoEdicion(permisos, idUsuario) {
-    modoVistaContenido.classList.add("d-none");
-    modoEdicionContenido.classList.remove("d-none");
+//Modal de edición (creador)
 
-    frmEdicionCreador.classList.toggle("d-none", !permisos.editarCreador);
-    frmReasignacion.classList.toggle("d-none", !permisos.reasignar);
-    frmEstadoAsignado.classList.toggle("d-none", !permisos.cambiarEstado);
+modalEdicionCreadorEl?.addEventListener("show.bs.modal", () => {
+    cargarEdicionCreador();
+});
 
-    if (permisos.editarCreador) await prepararBloqueCreador();
-    if (permisos.reasignar) await prepararBloqueReasignacion();
-    if (permisos.cambiarEstado) prepararBloqueEstado();
-}
-
-function desactivarModoEdicion() {
-    modoEdicionContenido.classList.add("d-none");
-    modoVistaContenido.classList.remove("d-none");
-}
-
-//===================== BLOQUE 1: EDICIÓN COMO CREADOR =====================
-
-async function prepararBloqueCreador() {
+async function cargarEdicionCreador() {
     const t = ticketActual;
 
-    txtAsuntoEdicion.value = t.asunto ?? "";
-    txtDescripcionEdicion.value = t.descripcion ?? "";
+    frmEdicionCreador.querySelectorAll(".is-invalid").forEach((el) => el.classList.remove("is-invalid"));
+
+    txtAsuntoEdicion.value = t.asunto;
+    txtDescripcionEdicion.value = t.descripcion;
 
     campoCodigoEdicion.classList.add("d-none");
     campoUbicacionEdicion.classList.add("d-none");
@@ -251,12 +268,15 @@ async function prepararBloqueCreador() {
         campoCodigoEdicion.classList.remove("d-none");
         listaCodigosEquipos = [...(t.codigosArticulos ?? [])];
         renderizarCodigosEdicion();
+        liberarDepartamento();
     } else if (t.tipoTicket === "General") {
         campoUbicacionEdicion.classList.remove("d-none");
-        txtUbicacionEdicion.value = t.ubicacion ?? "";
+        txtUbicacionEdicion.value = t.ubicacion;
+        liberarDepartamento();
     } else if (t.tipoTicket === "Software") {
         campoSoftwareEdicion.classList.remove("d-none");
         listaSoftwareVersion = (t.detallesSoftware ?? []).map((sw) => ({ nombreSoftware: sw.nombreSoftware, version: sw.version }));
+        forzarDepartamentoIT();
         renderizarSoftwareEdicion();
         await cargarUbicacionesEdicion();
         preseleccionarUbicacionSoftware(t.ubicacion);
@@ -269,12 +289,31 @@ async function prepararBloqueCreador() {
     renderizarGaleriaEdicion();
 }
 
+function forzarDepartamentoIT() {
+    if (!sltDepartamentoEdicion || listaDepartamentosDisponibles.length === 0) return;
+
+    const departamentoIT = listaDepartamentosDisponibles.find((d) => d.nombreDepartamento.trim().toUpperCase() === "IT");
+
+    if (departamentoIT) {
+        sltDepartamentoEdicion.value = departamentoIT.idDepartamento;
+    }
+
+    sltDepartamentoEdicion.disabled = true;
+}
+
+function liberarDepartamento() {
+    if (!sltDepartamentoEdicion) return;
+    sltDepartamentoEdicion.disabled = false;
+}
+
 async function cargarDepartamentosEdicion() {
     if (departamentosCargados) return;
     const { idUsuario } = obtenerSesion();
     try {
         const departamentos = await getDepartamentosAsignables(idUsuario);
-        sltDepartamentoEdicion.innerHTML = '<option value="" selected disabled>Selecciona un departamento</option>';
+        listaDepartamentosDisponibles = departamentos;
+
+        sltDepartamentoEdicion.innerHTML = '<option value="" selected disabled>Selecciona un departamento...</option>';
         departamentos.forEach((dep) => {
             const opcion = document.createElement("option");
             opcion.value = dep.idDepartamento;
@@ -292,11 +331,11 @@ async function cargarUbicacionesEdicion() {
     if (ubicacionesCargadas) return;
     try {
         const ubicaciones = await getUbicaciones();
-        sltUbicacionSoftwareEdicion.innerHTML = '<option value="" selected disabled>Selecciona la ubicación</option>';
-        ubicaciones.forEach((ub) => {
+        sltUbicacionSoftwareEdicion.innerHTML = '<option value="" selected disabled>Selecciona la ubicación...</option>';
+        ubicaciones.forEach((ubicacion) => {
             const opcion = document.createElement("option");
-            opcion.value = ub.id;
-            opcion.textContent = ub.nombreUbicacion;
+            opcion.value = ubicacion.id;
+            opcion.textContent = ubicacion.nombreUbicacion;
             sltUbicacionSoftwareEdicion.appendChild(opcion);
         });
         ubicacionesCargadas = true;
@@ -306,10 +345,10 @@ async function cargarUbicacionesEdicion() {
     }
 }
 
-//El backend solo devuelve el nombre de la ubicación (no el id), así que se busca por texto
+//Buscar por el nombre la ubicacion que se debe preseleccionar
 function preseleccionarUbicacionSoftware(nombreUbicacion) {
     if (!nombreUbicacion) return;
-    const opcion = Array.from(sltUbicacionSoftwareEdicion.options).find((o) => o.textContent === nombreUbicacion);
+    const opcion = Array.from(sltUbicacionSoftwareEdicion.options).find((option) => option.textContent === nombreUbicacion);
     if (opcion) sltUbicacionSoftwareEdicion.value = opcion.value;
 }
 
@@ -414,7 +453,7 @@ function renderizarSoftwareEdicion() {
         badge.className = "badge text-white p-2 rounded-4 d-flex align-items-center gap-2 fs-6 shadow-sm";
         badge.style.backgroundColor = "#90BFDB";
         badge.innerHTML = `
-            <span>${escapeHTML(item.nombreSoftware)} — ${escapeHTML(item.version)}</span>
+            <span>${escapeHTML(item.nombreSoftware)} — v.${escapeHTML(item.version)}</span>
             <button type="button" class="btn-close btn-close-white small" style="font-size: 0.65rem;"
                 aria-label="Eliminar" data-index="${index}"></button>
         `;
@@ -435,9 +474,7 @@ if (btnAgregarSoftwareEdicion) {
         const version = txtVersionEdicion.value.trim();
         if (!nombre || !version) return;
 
-        const yaExiste = listaSoftwareVersion.some(
-            (item) => item.nombreSoftware.toLowerCase() === nombre.toLowerCase() && item.version === version
-        );
+        const yaExiste = listaSoftwareVersion.some((item) => item.nombreSoftware.toLowerCase() === nombre.toLowerCase() && item.version === version);
         if (yaExiste) {
             mostrarError("Este software con esa versión ya fue agregado.");
             return;
@@ -451,38 +488,67 @@ if (btnAgregarSoftwareEdicion) {
     });
 }
 
-//Evidencias: eliminación inmediata de las ya existentes
 function renderizarGaleriaEdicion() {
-    galeriaEvidenciasEdicion.innerHTML = "";
+    const contenedor = document.getElementById("galeriaMultimediaEdicion");
+    contenedor.innerHTML = "";
 
+    //Evidencias ya guardadas en el servidor
     evidenciasActuales.forEach((ev) => {
-        galeriaEvidenciasEdicion.insertAdjacentHTML("beforeend", `
-            <div class="miniatura-foto position-relative" style="width: 90px; height: 90px;" data-id-evidencia="${ev.idEvidencia}">
-                <img src="${ev.evidenciaUrl}" alt="Evidencia" class="w-100 h-100 rounded-3" style="object-fit: cover;">
-                <button type="button" class="btn-eliminar-foto btn-eliminar-evidencia" data-id-evidencia="${ev.idEvidencia}" aria-label="Eliminar">
-                    <i class="bi bi-x"></i>
-                </button>
-            </div>
-        `);
+        const miniatura = document.createElement("div");
+        miniatura.className = "miniatura-foto";
+        miniatura.innerHTML = `
+            <img src="${ev.evidenciaUrl}" alt="Evidencia">
+            <button type="button" class="btn-eliminar-foto btn-eliminar-evidencia" data-id-evidencia="${ev.idEvidencia}" aria-label="Eliminar evidencia">
+                <i class="bi bi-x"></i>
+            </button>
+        `;
+        contenedor.appendChild(miniatura);
     });
 
+    //Evidencias nuevas, aún no subidas
     archivosNuevosEvidencia.forEach((archivo, index) => {
         const lector = new FileReader();
-        lector.onload = (e) => {
-            galeriaEvidenciasEdicion.insertAdjacentHTML("beforeend", `
-                <div class="miniatura-foto position-relative" style="width: 90px; height: 90px;">
-                    <img src="${e.target.result}" alt="Nueva evidencia" class="w-100 h-100 rounded-3" style="object-fit: cover;">
-                    <button type="button" class="btn-eliminar-foto btn-eliminar-nueva" data-index="${index}" aria-label="Eliminar">
-                        <i class="bi bi-x"></i>
-                    </button>
-                </div>
-            `);
+        lector.onload = function (e) {
+            const miniatura = document.createElement("div");
+            miniatura.className = "miniatura-foto";
+            miniatura.innerHTML = `
+                <img src="${e.target.result}" alt="Nueva evidencia">
+                <button type="button" class="btn-eliminar-foto btn-eliminar-nueva" data-index="${index}" aria-label="Eliminar foto">
+                    <i class="bi bi-x"></i>
+                </button>
+            `;
+            contenedor.appendChild(miniatura);
         };
         lector.readAsDataURL(archivo);
     });
+
+    if (btnAgregarEvidenciaEdicion) {
+        btnAgregarEvidenciaEdicion.disabled = (evidenciasActuales.length + archivosNuevosEvidencia.length) >= limiteEvidenciasTicket;
+    }
 }
 
-galeriaEvidenciasEdicion?.addEventListener("click", async (e) => {
+if (btnAgregarEvidenciaEdicion) {
+    btnAgregarEvidenciaEdicion.addEventListener("click", () => inputEvidenciaEdicion.click());
+}
+
+if (inputEvidenciaEdicion) {
+    inputEvidenciaEdicion.addEventListener("change", function () {
+        const nuevosArchivos = Array.from(this.files);
+        const espacioDisponible = limiteEvidenciasTicket - evidenciasActuales.length - archivosNuevosEvidencia.length;
+
+        if (nuevosArchivos.length > espacioDisponible) {
+            archivosNuevosEvidencia = archivosNuevosEvidencia.concat(nuevosArchivos.slice(0, Math.max(espacioDisponible, 0)));
+            mostrarError(`Solo puedes tener un máximo de ${limiteEvidenciasTicket} evidencias por ticket.`);
+        } else {
+            archivosNuevosEvidencia = archivosNuevosEvidencia.concat(nuevosArchivos);
+        }
+
+        renderizarGaleriaEdicion();
+        this.value = "";
+    });
+}
+
+galeriaMultimediaEdicion?.addEventListener("click", async (e) => {
     const btnEliminarExistente = e.target.closest(".btn-eliminar-evidencia");
     if (btnEliminarExistente) {
         const idEvidencia = Number(btnEliminarExistente.dataset.idEvidencia);
@@ -508,19 +574,21 @@ galeriaEvidenciasEdicion?.addEventListener("click", async (e) => {
     }
 });
 
-if (btnAgregarEvidenciaEdicion) {
-    btnAgregarEvidenciaEdicion.addEventListener("click", () => inputEvidenciaEdicion.click());
-
-    inputEvidenciaEdicion.addEventListener("change", function () {
-        archivosNuevosEvidencia = archivosNuevosEvidencia.concat(Array.from(this.files));
-        renderizarGaleriaEdicion();
-        this.value = "";
-    });
-}
+//Traduce los campos que devuelve la función de validarFormularioTicket
+const mapeoCamposEdicionCreador = {
+    txtAsunto: "txtAsuntoEdicion",
+    txtDescripcion: "txtDescripcionEdicion",
+    sltDepartamento: "sltDepartamentoEdicion",
+    txtCodigo: "txtCodigoEdicion",
+    txtUbicacion: "txtUbicacionEdicion",
+    txtNombreSoftware: "txtNombreSoftwareEdicion",
+    txtVersion: "txtVersionEdicion",
+    sltUbicacionSoftware: "sltUbicacionSoftwareEdicion"
+};
 
 frmEdicionCreador?.addEventListener("submit", async (e) => {
     e.preventDefault();
-    document.querySelectorAll("#frmEdicionCreador .is-invalid").forEach((el) => el.classList.remove("is-invalid"));
+    frmEdicionCreador.querySelectorAll(".is-invalid").forEach((el) => el.classList.remove("is-invalid"));
 
     const categoria = CATEGORIA_POR_TIPO[ticketActual.tipoTicket];
     const datosFormulario = {
@@ -536,7 +604,8 @@ frmEdicionCreador?.addEventListener("submit", async (e) => {
     const errores = validarFormularioTicket(categoria, datosFormulario);
     if (errores.length > 0) {
         errores.forEach((error) => {
-            const campo = document.getElementById(error.campo);
+            const idReal = mapeoCamposEdicionCreador[error.campo] ?? error.campo;
+            const campo = document.getElementById(idReal);
             if (campo) campo.classList.add("is-invalid");
         });
         mostrarError(errores.map((e) => e.mensaje).join(" "));
@@ -573,18 +642,25 @@ frmEdicionCreador?.addEventListener("submit", async (e) => {
 
         mostrarExitoSimple("¡Ticket actualizado!", "Los cambios se guardaron correctamente.");
         await cargarTicket();
-        desactivarModoEdicion();
+        cerrarModal(modalEdicionCreadorEl);
     } catch (error) {
         console.error("Error al editar el ticket:", error);
         mostrarError(error.message || "No se pudo actualizar el ticket.");
     }
 });
 
-//===================== BLOQUE 2: REASIGNACIÓN (ADMIN) =====================
+//Modal de reasignacion (para administradores)
 
-async function prepararBloqueReasignacion() {
+modalReasignacionEl?.addEventListener("show.bs.modal", () => {
+    cargarDatosReasignacion();
+});
+
+async function cargarDatosReasignacion() {
+
+    frmReasignacion.querySelectorAll(".is-invalid").forEach((el) => el.classList.remove("is-invalid"));
+
     sltPrioridadEdicion.value = ticketActual.prioridad ?? "";
-    dtFechaVencimientoEdicion.value = "";
+    dtFechaVencimientoEdicion.value = formatearParaDateTimeLocal(ticketActual.fechaVencimiento);;
     await cargarTecnicosEdicion();
     if (ticketActual.tecnicoAsignado) {
         sltTecnicoEdicion.value = ticketActual.tecnicoAsignado;
@@ -592,17 +668,15 @@ async function prepararBloqueReasignacion() {
 }
 
 async function cargarTecnicosEdicion() {
-    tecnicosCargados = false; //Puede cambiar el departamento entre visitas, siempre se recarga
     try {
         const tecnicos = await getTecnicosPorDepartamento(ticketActual.departamento);
-        sltTecnicoEdicion.innerHTML = '<option value="" selected disabled>Selecciona un técnico</option>';
+        sltTecnicoEdicion.innerHTML = '<option value="" selected disabled>Selecciona un técnico...</option>';
         tecnicos.forEach((tecnico) => {
             const opcion = document.createElement("option");
             opcion.value = tecnico.idUsuario;
             opcion.textContent = `${tecnico.correo} (${tecnico.nombreRol})`;
             sltTecnicoEdicion.appendChild(opcion);
         });
-        tecnicosCargados = true;
     } catch (error) {
         console.error("Error al cargar técnicos:", error);
         mostrarError("No se pudieron cargar los técnicos disponibles.");
@@ -611,7 +685,7 @@ async function cargarTecnicosEdicion() {
 
 frmReasignacion?.addEventListener("submit", async (e) => {
     e.preventDefault();
-    document.querySelectorAll("#frmReasignacion .is-invalid").forEach((el) => el.classList.remove("is-invalid"));
+    frmReasignacion.querySelectorAll(".is-invalid").forEach((el) => el.classList.remove("is-invalid"));
 
     const datos = {
         prioridad: sltPrioridadEdicion.value,
@@ -622,14 +696,17 @@ frmReasignacion?.addEventListener("submit", async (e) => {
     const errores = validarFormularioAprobacion(datos);
     if (errores.length > 0) {
         errores.forEach((error) => {
-            const campo = document.getElementById(error.campo === "sltPrioridad" ? "sltPrioridadEdicion" : error.campo === "sltTecnico" ? "sltTecnicoEdicion" : "dtFechaVencimientoEdicion");
+            const idCampo = error.campo === "sltPrioridad" ? "sltPrioridadEdicion"
+                : error.campo === "sltTecnico" ? "sltTecnicoEdicion"
+                    : "dtFechaVencimientoEdicion";
+            const campo = document.getElementById(idCampo);
             if (campo) campo.classList.add("is-invalid");
         });
         mostrarError(errores.map((e) => e.mensaje).join(" "));
         return;
     }
 
-    const confirmar = await mostrarConfirmacion("¿Reasignar este ticket?", "El ticket volverá al estado 'Asignado'", "Reasignar");
+    const confirmar = await mostrarConfirmacion("¿Deseas reasignar este ticket?", "El ticket volverá al estado 'Asignado'", "Reasignar");
     if (!confirmar) return;
 
     const { idUsuario } = obtenerSesion();
@@ -643,20 +720,21 @@ frmReasignacion?.addEventListener("submit", async (e) => {
 
         mostrarExitoSimple("¡Ticket reasignado!", "Los cambios se guardaron correctamente.");
         await cargarTicket();
-        desactivarModoEdicion();
+        await cargarBitacoras();
+        cerrarModal(modalReasignacionEl);
     } catch (error) {
         console.error("Error al reasignar el ticket:", error);
         mostrarError(error.message || "No se pudo reasignar el ticket.");
     }
 });
 
-//===================== BLOQUE 3: CAMBIO DE ESTADO (ASIGNADO) =====================
+//Modal de cambio de estado (para usuario asignado)
 
-function prepararBloqueEstado() {
+modalEstadoAsignadoEl?.addEventListener("show.bs.modal", () => {
     if (["En proceso", "En espera"].includes(ticketActual.estado)) {
         sltEstadoAsignado.value = ticketActual.estado;
     }
-}
+});
 
 frmEstadoAsignado?.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -666,20 +744,21 @@ frmEstadoAsignado?.addEventListener("submit", async (e) => {
         await editarEstadoAsignado(idTicketActual, sltEstadoAsignado.value, idUsuario);
         mostrarExitoSimple("¡Estado actualizado!", "El estado del ticket fue actualizado.");
         await cargarTicket();
-        desactivarModoEdicion();
+        await cargarBitacoras();
+        cerrarModal(modalEstadoAsignadoEl);
     } catch (error) {
         console.error("Error al actualizar el estado:", error);
         mostrarError(error.message || "No se pudo actualizar el estado del ticket.");
     }
 });
 
-//===================== REPORTE TÉCNICO =====================
+//Modal de reporte técnico
 
 function renderizarReporte() {
     const t = ticketActual;
 
     if (t.descripcionFalla && t.descripcionSolucion) {
-        cuerpoReporteTecnico.innerHTML = `
+        tablaReporteTecnico.innerHTML = `
             <tr>
                 <td class="fw-bold text-break">${escapeHTML(t.correoTecnico ?? "")}</td>
                 <td class="text-dark text-wrap text-break">${escapeHTML(t.descripcionFalla)}</td>
@@ -690,8 +769,8 @@ function renderizarReporte() {
         txtDescripcionFalla.value = t.descripcionFalla;
         txtDescripcionSolucion.value = t.descripcionSolucion;
     } else {
-        cuerpoReporteTecnico.innerHTML = `
-            <tr><td colspan="3" class="text-muted">Aún no se ha generado un reporte para este ticket.</td></tr>
+        tablaReporteTecnico.innerHTML = `
+            <tr><td colspan="3" class="text-muted">Aún no se ha registrado un reporte para este ticket.</td></tr>
         `;
         txtBotonReporte.textContent = "Agregar reporte";
         txtDescripcionFalla.value = "";
@@ -701,7 +780,7 @@ function renderizarReporte() {
 
 frmReporteTicket?.addEventListener("submit", async (e) => {
     e.preventDefault();
-    document.querySelectorAll("#frmReporteTicket .is-invalid").forEach((el) => el.classList.remove("is-invalid"));
+    frmReporteTicket.querySelectorAll(".is-invalid").forEach((el) => el.classList.remove("is-invalid"));
 
     const datos = {
         descripcionFalla: txtDescripcionFalla.value,
@@ -728,17 +807,230 @@ frmReporteTicket?.addEventListener("submit", async (e) => {
 
         mostrarExitoSimple("¡Reporte guardado!", "El ticket pasó a estado 'Resuelto'.");
         await cargarTicket();
-
-        const instancia = bootstrap.Modal.getInstance(modalReporteEl);
-        if (instancia) instancia.hide();
+        cerrarModal(modalReporteEl);
     } catch (error) {
         console.error("Error al guardar el reporte:", error);
         mostrarError(error.message || "No se pudo guardar el reporte.");
     }
 });
 
+function cerrarModal(modalEl) {
+    const instancia = bootstrap.Modal.getInstance(modalEl);
+    if (instancia) instancia.hide();
+}
+
 function escapeHTML(texto) {
     const div = document.createElement("div");
     div.textContent = texto ?? "";
     return div.innerHTML;
+}
+
+//Cargar y mostrar bitácoras
+async function cargarBitacoras() {
+    try{
+        const bitacoras = await getBitacorasPorTicket(idTicketActual);
+
+        tablaBitacora.innerHTML = "";
+
+        bitacoras.forEach((bitacora) => {
+            tablaBitacora.innerHTML += `
+            <tr>
+                <td class="fw-bold">${bitacora.correoUsuario}</td>
+                <td>${bitacora.nuevoEstado}</td>
+                <td>${formatearFecha12H(bitacora.fechaHora)}</td>
+            </tr>
+            `
+        });
+    }catch (error) {
+        console.error("Error al cargar la tabla de bitácoras:", error);
+        mostrarError("Oops... No se pudo cargar la bitácora");
+    }
+}
+
+//Comentarios
+
+function renderizarComentarios() {
+    if (comentariosActuales.length === 0) {
+        listaComentarios.innerHTML = `<p class="text-muted small mb-0">Aún no hay comentarios. ¡Sé el primero en escribir uno!</p>`;
+        return;
+    }
+
+    const { idUsuario } = obtenerSesion();
+
+    listaComentarios.innerHTML = comentariosActuales.map((comentario) => {
+        const esPropio = Number(comentario.idUsuarioComentario) === idUsuario;
+        const tipo = esPropio ? "propio" : "otro";
+
+        const correo = !esPropio ? `<span class="correo-comentario">${escapeHTML(comentario.correoUsuario ?? "")}</span>`: "";
+        const galeria = (comentario.multimediaUrls && comentario.multimediaUrls.length > 0) ? `<div class="galeria-burbuja-comentario">${comentario.multimediaUrls.map((url) => `<img src="${url}" alt="Imagen adjunta" onclick="abrirVistaImagen('${url}')">`).join("")}</div>` : "";
+
+        const btnEliminar = esPropio ? `
+            <button type="button" class="btn-eliminar-comentario" data-id-comentario="${comentario.id}" aria-label="Eliminar comentario" title="Eliminar comentario">
+                   <i class="bi bi-trash3"></i>
+            </button>`: "";
+
+        return `
+            <div class="burbuja-comentario-wrapper ${tipo}">
+                ${correo}
+                <div class="burbuja-comentario ${tipo} animar-mensaje">
+                    <span class="text-break">${escapeHTML(comentario.comentario)}</span>
+                    ${galeria}
+                </div>
+                <div class="pie-comentario">
+                    <span class="hora-comentario">${formatearFecha12H(comentario.fechaHora)}</span>
+                    ${btnEliminar}
+                </div>
+            </div>
+        `;
+    }).join("");
+
+    listaComentarios.scrollTop = listaComentarios.scrollHeight;
+}
+
+listaComentarios?.addEventListener("click", async (e) => {
+    const btnEliminar = e.target.closest(".btn-eliminar-comentario");
+    if (!btnEliminar) return;
+
+    const idComentario = Number(btnEliminar.dataset.idComentario);
+
+    const confirmar = await mostrarConfirmacion("¿Deseas eliminar este comentario?", "Esta acción no se puede revertir", "Eliminar");
+    if (!confirmar) return;
+
+    try {
+        await eliminarComentario(idComentario);
+        comentariosActuales = comentariosActuales.filter((c) => c.id !== idComentario);
+        renderizarComentarios();
+    } catch (error) {
+        console.error("Error al eliminar el comentario:", error);
+        mostrarError("No se pudo eliminar el comentario.");
+    }
+});
+
+function renderizarGaleriaComentario() {
+    if (archivosComentarioSeleccionados.length === 0) {
+        galeriaComentarioAdjuntos.classList.add("d-none");
+        galeriaComentarioAdjuntos.innerHTML = "";
+        return;
+    }
+
+    galeriaComentarioAdjuntos.classList.remove("d-none");
+    galeriaComentarioAdjuntos.innerHTML = "";
+
+    archivosComentarioSeleccionados.forEach((archivo, index) => {
+        const lector = new FileReader();
+        lector.onload = function (e) {
+            const miniatura = document.createElement("div");
+            miniatura.className = "miniatura-foto";
+            miniatura.innerHTML = `
+                <img src="${e.target.result}" alt="Adjunto ${index + 1}">
+                <button type="button" class="btn-eliminar-foto" data-index="${index}" aria-label="Eliminar adjunto">
+                    <i class="bi bi-x"></i>
+                </button>
+            `;
+            galeriaComentarioAdjuntos.appendChild(miniatura);
+        };
+        lector.readAsDataURL(archivo);
+    });
+}
+
+if (btnAdjuntarComentario) {
+    btnAdjuntarComentario.addEventListener("click", () => inputComentarioMultimedia.click());
+}
+
+if (inputComentarioMultimedia) {
+    inputComentarioMultimedia.addEventListener("change", function () {
+        let combinados = archivosComentarioSeleccionados.concat(Array.from(this.files));
+
+        if (combinados.length > limiteMultimediaComentario) {
+            combinados = combinados.slice(0, limiteMultimediaComentario);
+            mostrarError(`Solo puedes adjuntar un máximo de ${limiteMultimediaComentario} imágenes por comentario.`);
+        }
+
+        archivosComentarioSeleccionados = combinados;
+        renderizarGaleriaComentario();
+        this.value = "";
+    });
+}
+
+//El textarea del comentario crece junto con el texto
+if (txtComentario) {
+    txtComentario.addEventListener("input", function () {
+        this.style.height = "auto";
+        this.style.height = this.scrollHeight + "px";
+
+        if (this.scrollHeight >= 60) {
+            this.style.overflowY = "auto";
+        } else {
+            this.style.overflowY = "hidden";
+        }
+    });
+}
+
+galeriaComentarioAdjuntos?.addEventListener("click", (e) => {
+    const btnEliminar = e.target.closest(".btn-eliminar-foto");
+    if (btnEliminar) {
+        archivosComentarioSeleccionados.splice(Number(btnEliminar.dataset.index), 1);
+        renderizarGaleriaComentario();
+    }
+});
+
+frmComentario?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const { idUsuario } = obtenerSesion();
+    if (!idUsuario) {
+        mostrarError("No se pudo identificar al usuario. Inicia sesión nuevamente.");
+        return;
+    }
+
+    const comentario = txtComentario.value.trim();
+
+    const errores = validarFormularioComentario(comentario);
+    if (errores.length > 0) {
+        errores.forEach((error) => {
+            const campo = document.getElementById(error.campo);
+            if (campo) campo.classList.add("is-invalid");
+        });
+        mostrarError(errores.map((e) => e.mensaje).join(" "));
+        return;
+    }
+
+    btnEnviarComentario.disabled = true;
+
+    try {
+        const comentarioCreado = await crearComentario({
+            comentario: comentario,
+            idTicket: idTicketActual,
+            idUsuarioComentario: idUsuario
+        });
+
+        if (archivosComentarioSeleccionados.length > 0) {
+            const subidas = archivosComentarioSeleccionados.map((archivo) =>
+                subirMultimediaComentario(archivo, comentarioCreado.id)
+            );
+            await Promise.all(subidas);
+        }
+
+        txtComentario.value = "";
+        txtComentario.style.height = "auto";
+        archivosComentarioSeleccionados = [];
+        renderizarGaleriaComentario();
+
+        comentariosActuales = await obtenerComentariosPorTicket(idTicketActual);
+        renderizarComentarios();
+    } catch (error) {
+        console.error("Error al enviar el comentario:", error);
+        mostrarError("No se pudo enviar el comentario.");
+    } finally {
+        btnEnviarComentario.disabled = false;
+    }
+});
+
+//Función para cargar la url y mostrar el modal de vista previa
+window.abrirVistaImagen = function (url) {
+    if (document.activeElement) {
+        document.activeElement.blur();
+    }
+    img.src = url;
+    modalVistaPrevia.show();
 }

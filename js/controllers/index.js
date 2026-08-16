@@ -44,7 +44,7 @@ document.getElementById('formLogin').addEventListener('submit', function (e) {
             idUsuario: 1, //Temporal segun el usuario que se esta simulando
             nombre: nombreUsuario,
             correo: correo,
-            rolUsuario: 1
+            rolUsuario: "Administrador"
         }));
 
         // Redirigimos al Dashboard tras autenticar
