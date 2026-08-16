@@ -15,6 +15,16 @@ export function mostrarExitoRedireccion(titulo, mensaje, urlDestino) {
     });
 }
 
+export function mostrarErrorRedireccion(titulo, mensaje, urlDestino) {
+    Swal.fire({
+        title: titulo || "Oops...",
+        text: mensaje || "¡Algo salió mal!",
+        icon: "error",
+    }).then(function () {
+        window.location.href = urlDestino;
+    });
+}
+
 export function mostrarExitoSimple(titulo, mensaje) {
     Swal.fire({
         title: titulo,
