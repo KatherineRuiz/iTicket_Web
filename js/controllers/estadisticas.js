@@ -1,114 +1,133 @@
-const Meses = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre', 'Diciembre'];
-const Tecnicos = ['Pedro', 'Hallan', 'Julio', 'Douglas', 'Orlando', 'Samuel', 'Katherine', 'Agotin', 'Sepito', 'Octavio', 'Nova', 'Diecel'];
-//esto se cambiaria al conectar la api 
+import { getTickets } from "../services/ticketsService.js";
+import { obtenerEvaluaciones } from "../services/evaluacionesService.js";
 
-/* LÓGICA DE VANILLA CALENDAR PRO
-========================================================================== */
-function inicializarCalendarioPro(idBoton, idContenedor, idTexto) {
-    const boton = document.getElementById(idBoton);
-    const contenedor = document.getElementById(idContenedor);
-    const texto = document.getElementById(idTexto);
+const Meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 
-    if (!boton || !contenedor || !texto) return;
+const ESTADOS_RESUELTOS = ['Resuelto', 'Cerrado'];
+const ESTADOS_NO_VENCIDOS = ['Resuelto', 'Cerrado', 'Eliminado', 'Vencido'];
 
-    // Abrir/Cerrar menú flotante
-    boton.addEventListener('click', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        contenedor.classList.toggle('d-none');
-    });
+let listaTicketsCompleta = [];
+let listaEvaluacionesCompleta = [];
+let mapaTickets = new Map();
+let graficos = [];
 
-    // Cerrar automáticamente si hacen clic afuera
-    document.addEventListener('click', (e) => {
-        if (!contenedor.contains(e.target) && e.target !== boton) {
-            contenedor.classList.add('d-none');
-        }
-    });
-
-    if (typeof VanillaCalendar !== 'undefined') {
-        try {
-            const calendar = new VanillaCalendar(`#${idContenedor}`, {
-                settings: {
-                    visibility: {
-                        theme: 'light', 
-                        weekNumbers: true 
-                    },
-                    selection: {
-                        day: 'single', 
-                    }
-                },
-                actions: {
-                    // El segundo parámetro es la instancia 'self' de la librería
-                    clickDay(event, self) {
-                        // Accedemos a las  fechas seleccionadas de la librería
-                        const dates = self.selectedDates; 
-                        
-                        if (dates && dates.length > 0) {
-                            const [year, month, day] = dates[0].split('-');
-                            const fechaFormateada = `${day}/${month}/${year.slice(2)}`;
-                            
-                            texto.innerText = fechaFormateada;
-                            contenedor.classList.add('d-none');
-                        }
-                    },
-                    clickWeekNumber(event, number, days, year) {
-                        texto.innerText = `Semana ${number} (${year})`;
-                        contenedor.classList.add('d-none');
-                    },
-                    clickMonth(event, self) {
-                        // Extrae el mes seleccionado 
-                        const m = typeof self === 'number' ? self : self.selectedMonth;
-                        texto.innerText = `${Meses[m]}`;
-                        contenedor.classList.add('d-none');
-                    },
-                    clickYear(event, self) {
-                        // Extrae el año 
-                        const y = typeof self === 'number' ? self : self.selectedYear;
-                        texto.innerText = `${y}`;
-                        contenedor.classList.add('d-none');
-                    }
-                }
-            });
-            calendar.init();
-        } catch (error) {
-            console.error("Error al crear el calendario:", error);
-        }
-    } else {
-        console.error("VanillaCalendar no se cargó correctamente.");
-    }
+function parseFecha(fechaStr) {
+    if (!fechaStr) return null;
+    const [fecha, hora] = String(fechaStr).split(' ');
+    const partes = fecha.split('/');
+    if (partes.length < 3) return null;
+    const anio = Number(partes[2]);
+    const mes = Number(partes[1]) - 1;
+    const dia = Number(partes[0]);
+    const [hh, mm] = (hora || '00:00').split(':');
+    return new Date(anio, mes, dia, Number(hh) || 0, Number(mm) || 0);
 }
 
-// Inicialización de componentes al cargar el DOM
-document.addEventListener('DOMContentLoaded', function () {
-    inicializarCalendarioPro('btnFiltroFecha', 'calendarioPrincipal', 'textoFiltroFecha');
-    inicializarCalendarioPro('btnFiltroFechaEquipos', 'calendarioEquipos', 'textoFiltroFechaEquipos');
-});
+function mesDe(fecha) {
+    const d = fecha instanceof Date ? fecha : parseFecha(fecha);
+    return d ? d.getMonth() : -1;
+}
 
-/*ESTABILIZADOR DE RENDERIZADO: Gráficas de Chart.js
-========================================================================== */
-Promise.all([
-    new Promise(resolve => window.addEventListener('load', resolve)),
-    document.fonts.ready
-]).then(function () {
-    requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-            crearGraficas();
-        });
+function contarPorMes(lista, selector) {
+    const conteo = new Array(12).fill(0);
+    lista.forEach(item => {
+        const mes = mesDe(selector(item));
+        if (mes >= 0) conteo[mes]++;
     });
-});
+    return conteo;
+}
 
-function crearGraficas() {
+function normalizarPrioridad(prioridad) {
+    if (!prioridad) return null;
+    const limpia = String(prioridad)
+        .toLowerCase()
+        .replace(/á/g, 'a')
+        .replace(/í/g, 'i')
+        .replace(/é/g, 'e')
+        .trim();
+    const mapa = { critica: 'Crítica', alta: 'Alta', media: 'Media', baja: 'Baja' };
+    return mapa[limpia] || prioridad;
+}
 
-    /* 1. barras Horizontales-satisfaccion */
-    /* 1. Barras Horizontales - Satisfacción */
-    if (document.getElementById('grafica_satisfaccion')) {
-        new Chart(document.getElementById('grafica_satisfaccion'), {
+function promedio(lista) {
+    if (!lista.length) return 0;
+    return lista.reduce((acc, valor) => acc + valor, 0) / lista.length;
+}
+
+function formatearTiempo(minutos) {
+    if (minutos == null || isNaN(minutos)) return '—';
+    const horas = Math.floor(minutos / 60);
+    const mins = Math.round(minutos % 60);
+    return horas > 0 ? `${String(horas).padStart(2, '0')}h ${String(mins).padStart(2, '0')}m` : `${mins}m`;
+}
+
+function esVencido(ticket) {
+    if (ticket.estado === 'Vencido') return true;
+    if (ESTADOS_NO_VENCIDOS.includes(ticket.estado)) return false;
+    const fechaVen = parseFecha(ticket.fechaVencimiento);
+    return fechaVen ? fechaVen < new Date() : false;
+}
+
+function obtenerTiempoResolucionMin(ticket) {
+    const creacion = parseFecha(ticket.fechaCreacion);
+    const resolucion = parseFecha(ticket.fechaResolucion);
+    if (!creacion || !resolucion) return null;
+    return (resolucion - creacion) / 60000;
+}
+
+function destruirGraficos() {
+    graficos.forEach(grafico => grafico.destroy());
+    graficos = [];
+}
+
+function renderizar(listaTickets, listaEvaluaciones) {
+    destruirGraficos();
+
+    /* ================= KPI ================= */
+    const totalTickets = listaTickets.length;
+
+    const calificaciones = listaEvaluaciones.map(e => Number(e.calificacion)).filter(c => !isNaN(c));
+    const csat = calificaciones.length ? promedio(calificaciones) : null;
+
+    const tiemposResolucion = listaTickets
+        .map(obtenerTiempoResolucionMin)
+        .filter(t => t !== null && t >= 0);
+    const tiempoMedio = tiemposResolucion.length ? promedio(tiemposResolucion) : null;
+
+    const elTotalTickets = document.getElementById('kpi_total_tickets');
+    if (elTotalTickets) elTotalTickets.textContent = totalTickets;
+
+    const elCsat = document.getElementById('kpi_csat_general');
+    if (elCsat) {
+        elCsat.innerHTML = csat !== null
+            ? `${csat.toFixed(1)} <span class="fs-5 fw-semibold text-muted">/ 5.0</span>`
+            : '<span class="fs-5 fw-semibold text-muted">Sin datos</span>';
+    }
+
+    const elTiempoMedio = document.getElementById('kpi_tiempo_resolucion');
+    if (elTiempoMedio) elTiempoMedio.textContent = formatearTiempo(tiempoMedio);
+
+    /* ================= 1. Barras horizontales: satisfacción por técnico ================= */
+    const canvasSatisfaccion = document.getElementById('grafica_satisfaccion');
+    if (canvasSatisfaccion) {
+        const satisfaccionPorTecnico = {};
+        listaEvaluaciones.forEach(evaluacion => {
+            const ticket = mapaTickets.get(evaluacion.idTicket);
+            const nombre = ticket?.nombreTecnico || 'Sin asignar';
+            if (!satisfaccionPorTecnico[nombre]) satisfaccionPorTecnico[nombre] = [];
+            satisfaccionPorTecnico[nombre].push(Number(evaluacion.calificacion));
+        });
+
+        const tecnicos = Object.keys(satisfaccionPorTecnico);
+        const datos = tecnicos.map(nombre => promedio(satisfaccionPorTecnico[nombre]));
+
+        graficos.push(new Chart(canvasSatisfaccion, {
             type: 'bar',
             data: {
-                labels: Tecnicos,
+                labels: tecnicos,
                 datasets: [{
                     label: 'Nivel de Satisfacción',
-                    data: [4, 5, 4, 3, 2.1, 3.5, 4.5, 4.9, 3.2, 1, 2, 3],
+                    data: datos,
                     backgroundColor: (ctx) => ctx.dataIndex % 2 === 0 ? 'rgba(3, 4, 94, 0.8)' : 'rgba(67, 161, 255, 0.8)',
                     borderColor: (ctx) => ctx.dataIndex % 2 === 0 ? 'rgb(3, 4, 94)' : 'rgb(67, 161, 255)',
                     borderWidth: 1,
@@ -127,19 +146,27 @@ function crearGraficas() {
                     y: { reverse: true }
                 }
             }
-        });
+        }));
     }
 
-    /* 2. Grafica de pie o pastel-Estrelas*/
-    if (document.getElementById('grafica_estrellas')) {
-        new Chart(document.getElementById('grafica_estrellas'), {
-            type: 'pie', // Tipo pastel
+    /* ================= 2. Pie: distribución de estrellas ================= */
+    const canvasEstrellas = document.getElementById('grafica_estrellas');
+    if (canvasEstrellas) {
+        const conteoEstrellas = { '5 Estrellas': 0, '4 Estrellas': 0, '3 Estrellas': 0, '1-2 Estrellas': 0 };
+        calificaciones.forEach(calificacion => {
+            if (calificacion >= 4.5) conteoEstrellas['5 Estrellas']++;
+            else if (calificacion >= 3.5) conteoEstrellas['4 Estrellas']++;
+            else if (calificacion >= 2.5) conteoEstrellas['3 Estrellas']++;
+            else conteoEstrellas['1-2 Estrellas']++;
+        });
+
+        graficos.push(new Chart(canvasEstrellas, {
+            type: 'pie',
             data: {
-                labels: ['5 Estrellas', '4 Estrellas', '3 Estrellas', '1-2 Estrellas'],
+                labels: Object.keys(conteoEstrellas),
                 datasets: [{
-                    data: [300, 150, 100, 50],
+                    data: Object.values(conteoEstrellas),
                     backgroundColor: ['#43a1ff', '#b2f5b2', '#ffe173', '#ff8484'],
-                    // Propiedades de espaciado copiadas exactamente de la dona:
                     borderWidth: 5,
                     borderColor: '#F5F7FA',
                     borderRadius: 5,
@@ -154,21 +181,35 @@ function crearGraficas() {
                 maintainAspectRatio: false,
                 layout: { padding: 10 },
                 plugins: {
-                    legend: { position: 'left' }, /*aqui le cambias la posicion a  las rallitas para quitarle las lineas solo pon lengen:false  */
+                    legend: { position: 'left' },
                     tooltip: { usePointStyle: true, boxPadding: 6 }
                 }
             }
-        });
+        }));
     }
 
-    /* 3. Grafica de dona-Tickets-Prioridades */
-    if (document.getElementById('grafica_prioridades')) {
-        new Chart(document.getElementById('grafica_prioridades'), {
+    /* ================= 3. Dona: tickets por prioridad ================= */
+    const canvasPrioridades = document.getElementById('grafica_prioridades');
+    if (canvasPrioridades) {
+        const ordenPrioridades = ['Crítica', 'Alta', 'Media', 'Baja'];
+        const conteoPrioridades = { 'Crítica': 0, 'Alta': 0, 'Media': 0, 'Baja': 0 };
+        listaTickets.forEach(ticket => {
+            const prioridad = normalizarPrioridad(ticket.prioridad);
+            if (prioridad && conteoPrioridades[prioridad] !== undefined) {
+                conteoPrioridades[prioridad]++;
+            }
+        });
+        const labelsPrioridades = Object.keys(conteoPrioridades).sort(
+            (a, b) => ordenPrioridades.indexOf(a) - ordenPrioridades.indexOf(b)
+        );
+        const valoresPrioridades = labelsPrioridades.map(p => conteoPrioridades[p]);
+
+        graficos.push(new Chart(canvasPrioridades, {
             type: 'doughnut',
             data: {
-                labels: ['Crítica', 'Alta', 'Media', 'Baja'],
+                labels: labelsPrioridades,
                 datasets: [{
-                    data: [20, 40, 60, 80],
+                    data: valoresPrioridades,
                     backgroundColor: ['#ff8484', '#ffbc66', '#ffe173', '#b2f5b2'],
                     borderWidth: 5,
                     borderColor: '#F5F7FA',
@@ -189,61 +230,45 @@ function crearGraficas() {
                     tooltip: { usePointStyle: true, boxPadding: 6 }
                 }
             }
-        });
+        }));
     }
 
-    /* 4. Graficaa de lineas multiples-Tickets-Vencidos-Creados*/
-    if (document.getElementById('grafica_historico')) {
-        new Chart(document.getElementById('grafica_historico'), {
+    /* ================= 4. Lineas: creados, vencidos y resueltos por mes ================= */
+    const canvasHistorico = document.getElementById('grafica_historico');
+    if (canvasHistorico) {
+        const creados = contarPorMes(listaTickets, t => t.fechaCreacion);
+
+        const vencidos = contarPorMes(listaTickets.filter(esVencido), t => t.fechaVencimiento);
+
+        const resueltos = contarPorMes(
+            listaTickets.filter(t => ESTADOS_RESUELTOS.includes(t.estado)),
+            t => t.fechaResolucion || t.fechaCreacion
+        );
+
+        const crearDataset = (label, datos, color, colorFondo) => ({
+            label,
+            data: datos,
+            borderColor: color,
+            fill: true,
+            tension: 0.4,
+            backgroundColor: (context) => {
+                const { ctx, chartArea } = context.chart;
+                if (!chartArea) return null;
+                const gradiente = ctx.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
+                gradiente.addColorStop(0, colorFondo);
+                gradiente.addColorStop(1, 'rgba(255, 255, 255, 0.0)');
+                return gradiente;
+            }
+        });
+
+        graficos.push(new Chart(canvasHistorico, {
             type: 'line',
             data: {
                 labels: Meses,
                 datasets: [
-                    {
-                        label: 'Vencidos',
-                        data: [12, 19, 15, 25, 22, 30, 25, 35, 28, 40, 32, 45],
-                        borderColor: '#FBBABA',
-                        fill: true,
-                        tension: 0.4,
-                        backgroundColor: (context) => {
-                            const {ctx, chartArea} = context.chart;
-                            if (!chartArea) return null;
-                            const gradient = ctx.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
-                            gradient.addColorStop(0, 'rgba(251, 186, 186, 0.6)');  
-                            gradient.addColorStop(1, 'rgba(255, 255, 255, 0.0)');
-                            return gradient;
-                        }
-                    },
-                    {
-                        label: 'Creados',
-                        data: [18, 12, 28, 20, 15, 26, 30, 22, 38, 29, 41, 35],
-                        borderColor: '#CAEBFF',
-                        fill: true,
-                        tension: 0.4,
-                        backgroundColor: (context) => {
-                            const {ctx, chartArea} = context.chart;
-                            if (!chartArea) return null;
-                            const gradient = ctx.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
-                            gradient.addColorStop(0, 'rgba(202, 235, 255, 0.6)');
-                            gradient.addColorStop(1, 'rgba(255, 255, 255, 0.0)');
-                            return gradient;
-                        }
-                    },
-                    {
-                        label: 'Resueltos',
-                        data: [25, 28, 22, 32, 27, 18, 23, 29, 31, 22, 35, 39],
-                        borderColor: '#D4FFCA',
-                        fill: true,
-                        tension: 0.4,
-                        backgroundColor: (context) => {
-                            const {ctx, chartArea} = context.chart;
-                            if (!chartArea) return null;
-                            const gradient = ctx.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
-                            gradient.addColorStop(0, 'rgba(212, 255, 202, 0.6)');
-                            gradient.addColorStop(1, 'rgba(255, 255, 255, 0.0)');
-                            return gradient;
-                        }
-                    }
+                    crearDataset('Vencidos', vencidos, '#FBBABA', 'rgba(251, 186, 186, 0.6)'),
+                    crearDataset('Creados', creados, '#CAEBFF', 'rgba(202, 235, 255, 0.6)'),
+                    crearDataset('Resueltos', resueltos, '#D4FFCA', 'rgba(212, 255, 202, 0.6)')
                 ]
             },
             options: {
@@ -256,35 +281,92 @@ function crearGraficas() {
                     x: { grid: { display: false } },
                     y: { grid: { color: 'rgba(0, 0, 0, 0.05)' } }
                 }
-            }   
-        });
+            }
+        }));
     }
 
-    
-        new Chart(document.getElementById('grafica_frecuentes'), {
-            type: 'bar',
-            data: {
-                labels: ['Equipos averiados', 'Conexión', 'Fallos de sistema', 'Pupitres arruinados', 'Vidrios', 'Pantallas no imagen','Cañon no enciende','Fuga de agua','Oasis fuera de servicio'],
-                datasets: [{
-                    label: 'Reportes',
-                    data: [65, 30, 45, 35, 56, 80,30,50,48,90],
-                    backgroundColor: (ctx) => ctx.dataIndex % 2 === 0 ? 'rgba(3, 4, 94, 0.8)' : 'rgba(67, 161, 255, 0.8)',
-                    borderColor: (ctx) => ctx.dataIndex % 2 === 0 ? 'rgb(3, 4, 94)' : 'rgb(67, 161, 255)',
-                    borderWidth: 1,
-                    borderRadius: 10
-                }]
-            },
-            options: {
-                animation: { duration: 2000, easing: 'easeOutQuart' },
-                responsive: true,
-                resizeDelay: 200,
-                maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
-                scales: {
-                    x: { grid: { display: false } },
-                    y: { beginAtZero: true }
-                }
-            }
+    /* ================= 5. Tabla de alertas de insatisfacción ================= */
+    const tbodyAlertas = document.getElementById('tbody_alertas_insatisfaccion');
+    if (tbodyAlertas) {
+        const alertas = listaEvaluaciones
+            .filter(evaluacion => Number(evaluacion.calificacion) < 3)
+            .sort((a, b) => Number(a.calificacion) - Number(b.calificacion));
+
+        tbodyAlertas.innerHTML = '';
+
+        const lblAlertaConteo = document.getElementById('lblAlertaConteo');
+        if (lblAlertaConteo) lblAlertaConteo.textContent = `Mostrando ${alertas.length} de ${listaEvaluaciones.length}`;
+
+        if (!alertas.length) {
+            tbodyAlertas.innerHTML = '<tr><td colspan="4" class="text-muted py-3">Sin alertas de insatisfacción</td></tr>';
+        } else {
+            alertas.forEach(evaluacion => {
+                const ticket = mapaTickets.get(evaluacion.idTicket);
+                const fila = document.createElement('tr');
+                fila.innerHTML = `
+                    <td class="fw-semibold">${ticket?.codigo || '—'}</td>
+                    <td>${ticket?.nombreCreador || '—'}</td>
+                    <td>${ticket?.nombreTecnico || '—'}</td>
+                    <td>${evaluacion.comentario || '—'} <span class="badge bg-danger-light text-danger ms-1">${Number(evaluacion.calificacion).toFixed(1)}★</span></td>
+                `;
+                tbodyAlertas.appendChild(fila);
+            });
+        }
+    }
+}
+
+function aplicarFiltroFechas() {
+    const fechaInicio = document.getElementById('fechaInicio').value;
+    const fechaFin = document.getElementById('fechaFin').value;
+
+    const inicio = fechaInicio ? new Date(`${fechaInicio}T00:00:00`) : null;
+    const fin = fechaFin ? new Date(`${fechaFin}T23:59:59`) : null;
+
+    const ticketsFiltrados = listaTicketsCompleta.filter(ticket => {
+        const fecha = parseFecha(ticket.fechaCreacion);
+        if (!fecha) return true;
+        if (inicio && fecha < inicio) return false;
+        if (fin && fecha > fin) return false;
+        return true;
+    });
+
+    const idsTickets = new Set(ticketsFiltrados.map(t => t.idTicket));
+    const evaluacionesFiltradas = listaEvaluacionesCompleta.filter(e => idsTickets.has(e.idTicket));
+
+    renderizar(ticketsFiltrados, evaluacionesFiltradas);
+}
+
+async function crearGraficas() {
+    const [tickets, evaluaciones] = await Promise.all([getTickets(), obtenerEvaluaciones()]);
+
+    listaTicketsCompleta = Array.isArray(tickets) ? tickets : [];
+    listaEvaluacionesCompleta = Array.isArray(evaluaciones) ? evaluaciones : [];
+    mapaTickets = new Map(listaTicketsCompleta.map(t => [t.idTicket, t]));
+
+    renderizar(listaTicketsCompleta, listaEvaluacionesCompleta);
+}
+
+Promise.all([
+    new Promise(resolve => window.addEventListener('load', resolve)),
+    document.fonts.ready
+]).then(function () {
+    requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+            crearGraficas();
         });
-    
+    });
+});
+
+const btnFiltrarFechas = document.getElementById('btnFiltrarFechas');
+if (btnFiltrarFechas) {
+    btnFiltrarFechas.addEventListener('click', aplicarFiltroFechas);
+}
+
+const btnLimpiarFechas = document.getElementById('btnLimpiarFechas');
+if (btnLimpiarFechas) {
+    btnLimpiarFechas.addEventListener('click', () => {
+        document.getElementById('fechaInicio').value = '';
+        document.getElementById('fechaFin').value = '';
+        renderizar(listaTicketsCompleta, listaEvaluacionesCompleta);
+    });
 }

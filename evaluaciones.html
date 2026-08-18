@@ -19,8 +19,7 @@
     <header id="contenedorMenuLateral"></header>
     <div class="menu-lateral-overlay" id="overlay"></div>
 
-
-    <!-- Contenido principañ -->
+    <!-- Contenido principal -->
     <main class="main px-md-4 pt-3">
 
         <section class="superior rounded-5 ps-4 d-none d-md-flex">
@@ -45,7 +44,7 @@
                             <i class="bi bi-star-fill text-white"></i>
                         </span>
                         <p class="text-navy small fw-bold mb-1 pt-2">Total evaluaciones</p>
-                        <h2 class="fw-bold text-navy m-0">142</h2>
+                        <h2 class="fw-bold text-navy m-0" id="totalEvaluaciones">0</h2>
                     </div>
                 </div>
 
@@ -55,7 +54,7 @@
                             <i class="bi bi-grid-1x2-fill text-white"></i>
                         </span>
                         <p class="text-navy small fw-bold mb-1 pt-2">Calificación promedio</p>
-                        <h2 class="fw-bold text-navy m-0">4.1</h2>
+                        <h2 class="fw-bold text-navy m-0" id="promedioCalificacion">0.0</h2>
                     </div>
                 </div>
 
@@ -65,44 +64,52 @@
                             <i class="bi bi-hand-thumbs-up-fill"></i>
                         </span>
                         <p class="text-navy small fw-bold mb-1 pt-2">Evaluaciones positivas</p>
-                        <h2 class="fw-bold text-navy m-0">130</h2>
+                        <h2 class="fw-bold text-navy m-0" id="evaluacionesPositivas">0</h2>
                     </div>
                 </div>
 
                 <div class="col-12 col-sm-6 col-md-3">
                     <div class="tarjeta-indicador text-center">
                         <span class="icono-tarjeta">
-                            <i class="bi bi-hand-thumbs-down-fill"></i> </span>
+                            <i class="bi bi-hand-thumbs-down-fill"></i>
+                        </span>
                         <p class="text-navy small fw-bold mb-1 pt-2">Evaluaciones negativas</p>
-                        <h2 class="fw-bold text-navy m-0">12</h2>
+                        <h2 class="fw-bold text-navy m-0" id="evaluacionesNegativas">0</h2>
                     </div>
                 </div>
 
             </div>
 
-            <!-- Grafica de Barras-Verticales -->
+            <!-- Tabla de Evaluaciones de Servicio -->
             <div class="col-12 mt-4 pb-4">
                 <h5 class="fw-bold mb-3 titulo-seccion text-center p-3">Evaluaciones de servicio</h5>
+                
                 <!-- Sección del Buscador y Filtros -->
                 <div class="row g-3 align-items-center mb-4">
                     <div class="col-12 col-md-6 col-lg-7">
                         <div class="buscador-contenedor">
                             <i class="bi bi-search icono-busqueda"></i>
-                            <input type="text" class="form-control buscador-input"
+                            <input type="text" id="inputBusqueda" class="form-control buscador-input"
                                 placeholder="Busca por ticket o asunto">
                         </div>
                     </div>
 
-                    <!-- Filtro de Prioridad -->
+                    <!-- Filtro de Calificación -->
                     <div class="col-6 col-md-3 col-lg-3">
-                        <select class="form-select select-ticket-filtro">
-                            <option selected disabled>Calificación </option>
+                        <select id="selectCalificacion" class="form-select select-ticket-filtro">
+                            <option value="0" selected disabled hidden>Calificaciones</option>
+                            <option value="0">Todas</option>
+                            <option value="5">5 estrellas</option>
+                            <option value="4">4 estrellas</option>
+                            <option value="3">3 estrellas</option>
+                            <option value="2">2 estrellas</option>
+                            <option value="1">1 estrella</option>
                         </select>
                     </div>
 
                     <!-- Filtro de Fecha -->
                     <div class="col-6 col-md-3 col-lg-2">
-                        <input type="date" class="form-control select-ticket-filtro">
+                        <input type="date" id="inputFecha" class="form-control select-ticket-filtro" pleace>
                     </div>
                 </div>
 
@@ -112,113 +119,26 @@
                         <table class="table table-borderless table-custom align-middle">
                             <thead>
                                 <tr>
-                                    <th scope="col">Código</th>
+                                    <th scope="col">Código Ticket</th>
                                     <th scope="col">Asunto</th>
                                     <th scope="col">Técnico</th>
                                     <th scope="col">Calificación</th>
                                     <th scope="col">Comentarios</th>
-                                    <th scope="col">Fecha de evaluacion</th>
+                                    <th scope="col">Fecha de evaluación</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <tr>
-                                    <td class="text-muted fw-bold">#26859490</td>
-                                    <td class="text-truncate celda-asunto">Caída del sistema</td>
-                                    <td>María López</td>
-                                    <td data-calificacion="3">
-                                        <span class="estrellas">
-                                            <i class="bi bi-star-fill estrella-llena"></i>
-                                            <i class="bi bi-star-fill estrella-llena"></i>
-                                            <i class="bi bi-star-fill estrella-llena"></i>
-                                            <i class="bi bi-star estrella-vacia"></i>
-                                            <i class="bi bi-star estrella-vacia"></i>
-                                        </span>
-                                    </td>
-                                    <td class="text-truncate celda-comentario text-muted">Se tardó un poco pero lo
-                                        arregló
-                                    </td>
-                                    <td class="text-muted">17/05/2026</td>
-                                </tr>
-                                <tr>
-                                    <td class="text-muted fw-bold">#26859490</td>
-                                    <td class="text-truncate celda-asunto">Caída del sistema</td>
-                                    <td>María López</td>
-                                    <td data-calificacion="3">
-                                        <span class="estrellas">
-                                            <i class="bi bi-star-fill estrella-llena"></i>
-                                            <i class="bi bi-star-fill estrella-llena"></i>
-                                            <i class="bi bi-star-fill estrella-llena"></i>
-                                            <i class="bi bi-star estrella-vacia"></i>
-                                            <i class="bi bi-star estrella-vacia"></i>
-                                        </span>
-                                    </td>
-                                    <td class="text-truncate celda-comentario text-muted">Se tardó un poco pero lo
-                                        arregló
-                                    </td>
-                                    <td class="text-muted">17/05/2026</td>
-                                </tr>
-                                <tr>
-                                    <td class="text-muted fw-bold">#26859490</td>
-                                    <td class="text-truncate celda-asunto">Caída del sistema</td>
-                                    <td>María López</td>
-                                    <td data-calificacion="3">
-                                        <span class="estrellas">
-                                            <i class="bi bi-star-fill estrella-llena"></i>
-                                            <i class="bi bi-star-fill estrella-llena"></i>
-                                            <i class="bi bi-star-fill estrella-llena"></i>
-                                            <i class="bi bi-star estrella-vacia"></i>
-                                            <i class="bi bi-star estrella-vacia"></i>
-                                        </span>
-                                    </td>
-                                    <td class="text-truncate celda-comentario text-muted">Se tardó un poco pero lo
-                                        arregló
-                                    </td>
-                                    <td class="text-muted">17/05/2026</td>
-                                </tr>
-                                <tr>
-                                    <td class="text-muted fw-bold">#26859490</td>
-                                    <td class="text-truncate celda-asunto">Caída del sistema</td>
-                                    <td>María López</td>
-                                    <td data-calificacion="3">
-                                        <span class="estrellas">
-                                            <i class="bi bi-star-fill estrella-llena"></i>
-                                            <i class="bi bi-star-fill estrella-llena"></i>
-                                            <i class="bi bi-star-fill estrella-llena"></i>
-                                            <i class="bi bi-star estrella-vacia"></i>
-                                            <i class="bi bi-star estrella-vacia"></i>
-                                        </span>
-                                    </td>
-                                    <td class="text-truncate celda-comentario text-muted">Se tardó un poco pero lo
-                                        arregló
-                                    </td>
-                                    <td class="text-muted">17/05/2026</td>
-                                </tr>
+                            <tbody id="tablaEvaluaciones">
+                                <!-- Se llena dinámicamente desde JavaScript -->
                             </tbody>
                         </table>
                     </div>
 
-                    <!-- Paginación del 1 al 10 hasta la pagina 150 -->
+                    <!-- Paginación -->
                     <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top">
-                        <span class="text-muted small">Mostrando 4 de 142</span>
+                        <span class="text-muted small" id="textoContador">Mostrando 0 de 0</span>
                         <nav aria-label="Paginacion">
-                            <ul class="pagination pagination-sm mb-0 align-items-center gap-1">
-                                <li class="page-item disabled"><span
-                                        class="page-link border-0 bg-transparent text-muted">1</span></li>
-                                <li class="page-item"><a class="page-link border-0 bg-transparent text-dark"
-                                        href="#">2</a>
-                                </li>
-                                <li class="page-item"><a class="page-link border-0 bg-transparent text-dark"
-                                        href="#">3</a>
-                                </li>
-                                <li class="page-item"><a class="page-link border-0 bg-transparent text-dark"
-                                        href="#">4</a>
-                                </li>
-                                <li class="page-item"><span class="mx-1 text-muted">...</span></li>
-                                <li class="page-item"><a class="page-link border-0 bg-transparent text-dark"
-                                        href="#">15</a>
-                                </li>
-                                <li class="page-item"><a class="page-link border-0 bg-transparent text-dark" href="#"><i
-                                            class="bi bi-chevron-right"></i></a></li>
+                            <ul class="pagination pagination-sm mb-0 align-items-center gap-1" id="contenedorPaginacion">
+                                <!-- Se genera dinámicamente desde JavaScript -->
                             </ul>
                         </nav>
                     </div>
@@ -227,22 +147,17 @@
         </div>
     </main>
 
-    <!-- Todo esto es lo de notificaciones y siempre ira al final -->
+    <!-- Notificaciones -->
     <div class="notificaciones-overlay" id="notificacionesOverlay">
         <div class="panel-notificaciones" id="panelNotificaciones">
             <div class="p-4">
-                <!-- Título -->
-                <h6 class="titulo-notificaciones mb-0">Notificaciones</h3>
+                <h6 class="titulo-notificaciones mb-0">Notificaciones</h6>
             </div>
 
             <div class="notificaciones-body px-4 pb-4">
-
-                <!-- Todo esto es las notificaciones de hoy -->
                 <div class="notificaciones-seccion mb-4">
                     <h6 class="text-muted fw-bold mb-3 small">Hoy</h6>
                     <div class="lista-notificaciones">
-
-                        <!-- Los divs de notificaciones empiezan desde aqui -->
                         <div class="notificacion-item no-leida">
                             <div class="avatar-notificacion">JG</div>
                             <div class="contenido-notificacion">
@@ -253,37 +168,12 @@
                                 <p class="notificacion-texto">¡Josue Guinea ha creado un nuevo ticket!</p>
                             </div>
                         </div>
-
-                        <div class="notificacion-item no-leida">
-                            <div class="avatar-notificacion">JG</div>
-                            <div class="contenido-notificacion">
-                                <div class="d-flex justify-content-between align-items-baseline">
-                                    <span class="notificacion-titulo">Nuevo ticket</span>
-                                    <span class="notificacion-tiempo">Hace 1 hora</span>
-                                </div>
-                                <p class="notificacion-texto">¡Josue Guinea ha creado un nuevo ticket!</p>
-                            </div>
-                        </div>
-
-                        <div class="notificacion-item no-leida">
-                            <div class="avatar-notificacion">JG</div>
-                            <div class="contenido-notificacion">
-                                <div class="d-flex justify-content-between align-items-baseline">
-                                    <span class="notificacion-titulo">Nuevo ticket</span>
-                                    <span class="notificacion-tiempo">Hace 1 hora</span>
-                                </div>
-                                <p class="notificacion-texto">¡Josue Guinea ha creado un nuevo ticket!</p>
-                            </div>
-                        </div>
-
                     </div>
                 </div>
 
-                <!-- Aqui se muestran las de ayer -->
                 <div class="notificaciones-seccion">
                     <h6 class="text-muted fw-bold mb-3 small">Ayer</h6>
                     <div class="lista-notificaciones">
-
                         <div class="notificacion-item">
                             <div class="avatar-notificacion">JG</div>
                             <div class="contenido-notificacion">
@@ -294,54 +184,19 @@
                                 <p class="notificacion-texto">¡Josue Guinea ha creado un nuevo ticket!</p>
                             </div>
                         </div>
-
-                        <div class="notificacion-item">
-                            <div class="avatar-notificacion">JG</div>
-                            <div class="contenido-notificacion">
-                                <div class="d-flex justify-content-between align-items-baseline">
-                                    <span class="notificacion-titulo-visto">Nuevo ticket</span>
-                                    <span class="notificacion-tiempo">Hace 1 día</span>
-                                </div>
-                                <p class="notificacion-texto">¡Josue Guinea ha creado un nuevo ticket!</p>
-                            </div>
-                        </div>
-
-                        <div class="notificacion-item">
-                            <div class="avatar-notificacion">JG</div>
-                            <div class="contenido-notificacion">
-                                <div class="d-flex justify-content-between align-items-baseline">
-                                    <span class="notificacion-titulo-visto">Nuevo ticket</span>
-                                    <span class="notificacion-tiempo">Hace 1 día</span>
-                                </div>
-                                <p class="notificacion-texto">¡Josue Guinea ha creado un nuevo ticket!</p>
-                            </div>
-                        </div>
-
-                        <div class="notificacion-item">
-                            <div class="avatar-notificacion">JG</div>
-                            <div class="contenido-notificacion">
-                                <div class="d-flex justify-content-between align-items-baseline">
-                                    <span class="notificacion-titulo-visto">Nuevo ticket</span>
-                                    <span class="notificacion-tiempo">Hace 1 día</span>
-                                </div>
-                                <p class="notificacion-texto">¡Josue Guinea ha creado un nuevo ticket!</p>
-                            </div>
-                        </div>
-
                     </div>
                 </div>
-
             </div>
         </div>
+    </div>
 
-        <!-- Bootstrap JS -->
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-        <!-- Componentes del proyecto -->
-        <script src="js/components/menu.js"></script>
-        <!-- Controlador de evaluaciones -->
-        <script src="js/controllers/evaluaciones.js"></script>
-        <script src="js/controllers/notificaciones.js"></script>
-
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Componentes del proyecto -->
+    <script src="js/components/menu.js"></script>
+    <!-- Controlador de evaluaciones -->
+    <script type="module" src="js/controllers/evaluaciones.js"></script>
+    <script src="js/controllers/notificaciones.js"></script>
 
 </body>
 

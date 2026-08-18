@@ -1,3 +1,5 @@
+import { mostrarError, mostrarExitoRedireccion } from "../components/sweetAlerts.js";
+
 document.addEventListener("DOMContentLoaded", function () {
     const formularioLogin = document.querySelector("#formLogin");
 
@@ -22,31 +24,18 @@ document.addEventListener("DOMContentLoaded", function () {
                 );
                 return;
             }
+
+            // 2. Guardar datos de sesión temporalmente
+            const nombreUsuario = correo.split('@')[0];
+            sessionStorage.setItem('usuarioLogueado', JSON.stringify({
+                idUsuario: 1, //Temporal segun el usuario que se esta simulando
+                nombre: nombreUsuario,
+                correo: correo,
+                rolUsuario: 1
+            }));
+
+            // 3. Notificación de éxito y redirección al Dashboard
             mostrarExitoRedireccion("¡Sesión Iniciada!", "", "dashboardAdmin.html");
         });
     }
 });
-
-document.getElementById('formLogin').addEventListener('submit', function (e) {
-    e.preventDefault(); // Evita la recarga automática
-
-    const correo = e.target.querySelector('input[type="email"]').value;
-    const password = e.target.querySelector('input[type="password"]').value;
-
-    // Aquí irá tu consumo de API / Fetch a Spring Boot más adelante.
-    // Ejemplo de simulación local:
-    if (correo && password) {
-        // Extraemos un nombre para mostrar dinámicamente en el Dashboard
-        const nombreUsuario = correo.split('@')[0];
-
-        // Guardamos temporalmente los datos en sessionStorage/localStorage
-        sessionStorage.setItem('usuarioLogueado', JSON.stringify({
-            idUsuario: 1, //Temporal segun el usuario que se esta simulando
-            nombre: nombreUsuario,
-            correo: correo,
-            rolUsuario: 1
-        }));
-
-            // 3. Notificación de éxito y redirección al Dashboard
-            mostrarExitoRedireccion("¡Sesión Iniciada!", "", "dashboardAdmin.html");
-        }});
