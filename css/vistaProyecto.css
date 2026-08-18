@@ -80,14 +80,14 @@
   border-bottom: none;
 }
 
-.lista-detalle .btn-eliminar-detalle {
+.lista-detalle .btnEliminarDetalle {
   display: none;
   margin-left: auto;
   color: #d9534f;
   cursor: pointer;
 }
 
-.lista-detalle.modo-edicion .btn-eliminar-detalle {
+.lista-detalle.modo-edicion .btnEliminarDetalle {
   display: inline-block;
 }
 

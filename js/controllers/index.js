@@ -38,4 +38,33 @@ document.addEventListener("DOMContentLoaded", function () {
             mostrarExitoRedireccion("¡Sesión Iniciada!", "", "dashboardAdmin.html");
         });
     }
+<<<<<<< HEAD
 });
+=======
+});
+
+document.getElementById('formLogin').addEventListener('submit', function (e) {
+    e.preventDefault(); // Evita la recarga automática
+
+    const correo = e.target.querySelector('input[type="email"]').value;
+    const password = e.target.querySelector('input[type="password"]').value;
+
+    // Aquí irá tu consumo de API / Fetch a Spring Boot más adelante.
+    // Ejemplo de simulación local:
+    if (correo && password) {
+        // Extraemos un nombre para mostrar dinámicamente en el Dashboard
+        const nombreUsuario = correo.split('@')[0];
+
+        // Guardamos temporalmente los datos en sessionStorage/localStorage
+        sessionStorage.setItem('usuarioLogueado', JSON.stringify({
+            idUsuario: 1, //Temporal segun el usuario que se esta simulando
+            nombre: nombreUsuario,
+            correo: correo,
+            rolUsuario: "Administrador"
+        }));
+
+        // Redirigimos al Dashboard tras autenticar
+        window.location.href = 'dashboardAdmin.html';
+    }
+});
+>>>>>>> ed1b951234cd0a5257804e7e4f268bae92b0a8b5

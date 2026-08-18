@@ -44,6 +44,9 @@ let listaDepartamentosDisponibles = [];
 let categoriaActual = "equipos";
 const usuarioGuardado = sessionStorage.getItem("usuarioLogueado");
 
+let archivosSeleccionados = []; //Aquí se "almacenan" los archivos elegidos
+const limiteEvidencias = 10;
+
 //Crear Tickets segun categoria
 function cambiarCategoria(categoria) {
 
@@ -94,8 +97,6 @@ if (btnSoftware) {
   );
 }
 
-let archivosSeleccionados = []; //Aquí se "almacenan" los archivos elegidos
-
 //Sincroniza el array con el input real, para que el <form> lo envíe correctamente
 function actualizarInputFiles() {
   const dataTransfer = new DataTransfer();
@@ -131,18 +132,27 @@ function renderizarGaleria() {
     lector.readAsDataURL(archivo);
   });
 
-  // Tile para seguir agregando fotos
-  const agregarMas = document.createElement("div");
-  agregarMas.className = "miniatura-agregar-mas";
-  agregarMas.id = "btnAgregarMas";
-  agregarMas.innerHTML = '<i class="bi bi-plus-lg"></i>';
-  galeriaMultimedia.appendChild(agregarMas);
+  // Tile para seguir agregando fotos (se oculta al llegar al límite)
+  if (archivosSeleccionados.length < limiteEvidencias) {
+    const agregarMas = document.createElement("div");
+    agregarMas.className = "miniatura-agregar-mas";
+    agregarMas.id = "btnAgregarMas";
+    agregarMas.innerHTML = '<i class="bi bi-plus-lg"></i>';
+    galeriaMultimedia.appendChild(agregarMas);
+  }
 }
 
 if (inputMultimedia) {
   inputMultimedia.addEventListener("change", function () {
     const nuevosArchivos = Array.from(this.files);
-    archivosSeleccionados = archivosSeleccionados.concat(nuevosArchivos);
+    let combinados = archivosSeleccionados.concat(nuevosArchivos);
+
+    if (combinados.length > limiteEvidencias) {
+      combinados = combinados.slice(0, limiteEvidencias);
+      mostrarError(`Solo puedes adjuntar un máximo de ${limiteEvidencias} imágenes por ticket.`);
+    }
+
+    archivosSeleccionados = combinados;
     actualizarInputFiles();
     renderizarGaleria();
     // Limpiamos el value para poder volver a seleccionar el mismo archivo si se elimina

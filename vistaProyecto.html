@@ -8,7 +8,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet" />
     <link rel="stylesheet" href="css/common.css" />
-    <link rel="stylesheet" href="css/vistaProyectos.css" />
+    <link rel="stylesheet" href="css/vistaProyecto.css" />
     <link rel="shortcut icon" href="/img/logo.png" type="image/x-icon" />
     <script src="js/components/menu-cache.js"></script>
 </head>
@@ -19,15 +19,20 @@
     <div class="menu-lateral-overlay" id="overlay"></div>
 
     <main class="main px-md-4 pt-3">
-        <div class="superior rounded-5 ps-4 d-none d-md-flex">
-            <a href="proyectos.html" class="mb-0 volver-button fw-bold text-dark" style="text-decoration: none"><i
-                    class="bi bi-chevron-left"></i> Volver</a>
-            <div>
-                <div class="perfil p-2 rounded-5 gap-lg-4 gap-md-2">
-                    <img src="/img/user.png" alt="" />
+
+        <!--Parte superior-->
+        <section class="superior rounded-5 ps-4 d-none d-md-flex">
+            <h6 class="mb-0 bold">Proyectos</h6>
+            <div class="position-relative">
+                <div class="perfil p-2 rounded-5 gap-lg-4 gap-md-2" id="perfilBienvenida">
+                    <h6 class="perfil-nombre text-white mb-0 ps-2" id="nombrePerfil">Bienvenida, Katherine</h6>
+                    <div class="perfil-foto" id="fotoPerfil">
+                        <span class="foto-letra" id="fotoLetra">K</span>
+                        <img src="img/usuario.png" alt="Foto de perfil" class="foto-img" id="fotoDePerfil">
+                    </div>
                 </div>
             </div>
-        </div>
+        </section>
 
         <div class="container-fluid px-4 py-4">
             <!-- Tarjeta del proyecto -->
@@ -36,33 +41,33 @@
                 <div id="modoVistaProyecto" class="d-flex justify-content-between align-items-start flex-wrap gap-3">
                     <div>
                         <h5 class="titulo-proyecto text-navy fw-bold mb-3">
-                            <i class="bi bi-tools me-2"></i><span id="txtNombreProyecto">Reconstrucción del SUM</span>
+                            <i class="bi bi-tools me-2"></i><span id="txtNombreProyecto"></span>
                         </h5>
                         <p class="meta-proyecto mb-1">
                             <b>Ubicación:</b>
-                            <span id="txtUbicacionProyecto">Salón de usos múltiples</span>
+                            <span id="txtUbicacionProyecto"></span>
                         </p>
                         <p class="meta-proyecto mb-1">
                             <b>Tipo de proyecto:</b>
-                            <span id="txtTipoProyecto">Remodelación</span>
+                            <span id="txtTipoProyecto"></span>
                         </p>
                         <p class="meta-proyecto mb-1">
                             <b>Coordinador:</b>
-                            <span id="txtCoordinadorProyecto">josue_guinea@ricaldone.edu.sv</span>
+                            <span id="txtCoordinadorProyecto"></span>
                         </p>
                         <p class="meta-proyecto mb-1">
                             <b>Supervisor:</b>
-                            <span id="txtSupervisorProyecto">ricardo_paz@ricaldone.edu.sv</span>
+                            <span id="txtSupervisorProyecto"></span>
                         </p>
                         <p class="meta-proyecto mb-1">
-                            <b>Presupuesto:</b> $<span id="txtPresupuestoProyecto">3600.00</span>
+                            <b>Presupuesto:</b> $<span id="txtPresupuestoProyecto"></span>
                         </p>
                         <p class="meta-proyecto mb-1">
-                            <b>Total:</b> $<span id="txtTotalProyecto">4000.00</span>
+                            <b>Total:</b> $<span id="txtTotalProyecto"></span>
                         </p>
                         <p class="meta-proyecto mb-0">
                             <b>Estado:</b>
-                            <span id="txtEstadoProyecto" class="badge-estado">Finalizado</span>
+                            <span id="txtEstadoProyecto" class="badge-estado"></span>
                         </p>
                     </div>
 
@@ -93,7 +98,20 @@
                         <div class="col-md-6">
                             <label class="form-label text-navy fw-semibold" for="txtTipoProyectoEdicion">Tipo de
                                 proyecto</label>
-                            <input type="text" class="form-control" id="txtTipoProyectoEdicion" required />
+                            <select class="form-select" id="txtTipoProyectoEdicion" required>
+                                <option value="" selected disabled>Selecciona el tipo</option>
+                                <option value="Construccion">Construcción</option>
+                                <option value="Remodelacion">Remodelación</option>
+                                <option value="Ampliacion">Ampliación</option>
+                                <option value="Mantenimiento">Mantenimiento</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label text-navy fw-semibold"
+                                for="txtDescripcionProyectoEdicion">Descripción</label>
+                            <textarea class="form-control" id="txtDescripcionProyectoEdicion" rows="3" maxlength="300"
+                                required></textarea>
                         </div>
 
                         <div class="col-md-6">
@@ -101,9 +119,7 @@
                                 for="selectEstadoProyectoEdicion">Estado</label>
                             <select class="form-select" id="selectEstadoProyectoEdicion">
                                 <option value="En progreso">En progreso</option>
-                                <option value="Pausado">Pausado</option>
                                 <option value="Finalizado">Finalizado</option>
-                                <option value="Cancelado">Cancelado</option>
                             </select>
                         </div>
 
@@ -133,8 +149,7 @@
                             <label class="form-label text-navy fw-semibold" for="numTotalProyectoEdicion">Total</label>
                             <div class="input-group">
                                 <span class="input-group-text">$</span>
-                                <input type="number" class="form-control" id="numTotalProyectoEdicion" min="0"
-                                    step="0.01" required />
+                                <input type="number" class="form-control" id="numTotalProyectoEdicion" readonly />
                             </div>
                         </div>
                     </div>
@@ -143,6 +158,13 @@
                         <button type="submit" id="btnGuardarEdicionProyecto" class="btn btn-azul-redondeado px-4">
                             <i class="bi bi-pencil-square me-2"></i> Guardar
                         </button>
+
+                        <!-- Boton para eliminar el proyecto -->
+                        <button type="button" id="btnEliminarProyecto" class="btn btn-oscuro-redondeado rounded-4 px-4">
+                            <i class="bi bi-trash me-1"></i> Eliminar
+                        </button>
+
+                        <!-- Boton para cancelar la edicion del proyecto -->
                         <button type="button" id="btnCancelarEdicionProyecto" class="btn btn-secondary rounded-4 px-4">
                             Cancelar
                         </button>
@@ -165,9 +187,13 @@
                         <button id="btnEditarFase" class="btn btn-azul-redondeado px-3">
                             <i class="bi bi-pencil-square me-1"></i> Editar
                         </button>
-                        <button id="btnCrearFase" class="btn btn-azul-redondeado px-3" data-bs-toggle="modal"
-                            data-bs-target="#modalFasesProyecto">
+                        <button id="btnCrearFase" class="btn btn-azul-redondeado px-3">
                             <i class="bi bi-plus-lg me-1"></i> Crear Fase
+                        </button>
+
+                        <!-- Boton para eliminar la fase -->
+                        <button id="btnEliminarFase" type="button" class="btn btn-oscuro-redondeado rounded-4 px-4">
+                            <i class="bi bi-trash me-1"></i> Eliminar
                         </button>
                     </div>
 
@@ -188,8 +214,7 @@
                         <button id="btnEditarDetalle" class="btn btn-azul-redondeado px-3">
                             <i class="bi bi-pencil-square me-1"></i> Editar
                         </button>
-                        <button id="btnAgregarDetalle" class="btn btn-azul-redondeado px-3" data-bs-toggle="modal"
-                            data-bs-target="#modalDetalleFase">
+                        <button id="btnAgregarDetalle" class="btn btn-azul-redondeado px-3">
                             <i class="bi bi-plus-lg me-1"></i> Agregar
                         </button>
                     </div>
@@ -235,8 +260,13 @@
                             <div class="col-md-4">
                                 <label for="txtDepartamentoEncargado"
                                     class="form-label text-navy fw-semibold">Departamento encargado</label>
-                                <input type="text" class="form-control" id="txtDepartamentoEncargado" maxlength="20"
-                                    required />
+                                <select class="form-select" id="txtDepartamentoEncargado" required>
+                                    <option value="" selected disabled>Selecciona el departamento</option>
+                                    <option value="IT">IT</option>
+                                    <option value="Mantenimiento">Mantenimiento</option>
+                                    <option value="Ambos">Ambos</option>
+                                    <option value="Externo">Externo</option>
+                                </select>
                             </div>
 
                             <div class="col-12">
@@ -259,9 +289,8 @@
                             </div>
 
                             <div class="col-md-6">
-                                <label for="txtProveedor" class="form-label text-navy fw-semibold">Proveedor
-                                    <span class="text-muted fw-normal">(opcional)</span></label>
-                                <input type="text" class="form-control" id="txtProveedor" maxlength="100" />
+                                <label for="txtProveedor" class="form-label text-navy fw-semibold">Proveedor</label>
+                                <input type="text" class="form-control" id="txtProveedor" maxlength="100" required />
                             </div>
 
                             <div class="col-md-6">
@@ -275,7 +304,7 @@
                             </div>
                         </div>
 
-                        <div class="d-flex justify-content-end mt-3">
+                        <div class="d-flex justify-content-end mt-3 gap-2">
                             <button type="submit" class="btn btn-azul-redondeado px-4">
                                 <i class="bi bi-plus-lg me-1"></i>
                                 <span id="txtBotonGuardarFase">Agregar fase</span>
@@ -283,7 +312,7 @@
                         </div>
                     </form>
 
-                    <div class="d-flex justify-content-end mt-4">
+                    <div class="d-flex justify-content-end mt-4 gap-2">
                         <button type="button" class="btn btn-outline-secondary rounded-pill px-4"
                             data-bs-dismiss="modal">
                             Cerrar
@@ -337,10 +366,12 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
         crossorigin="anonymous"></script>
+    <!-- Libreria para las alertas -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <!-- Mi JS personalizado -->
-    <script src="js/components/vistaProyecto.js"></script>
     <script src="js/components/menu.js"></script>
+    <script type="module" src="js/controllers/vistaProyecto.js"></script>
 </body>
 
 </html>

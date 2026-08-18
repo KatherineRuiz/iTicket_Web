@@ -1,6 +1,7 @@
 import { getTicketsPropios, getIndicadoresEstadoPropios, getTicketsPendientesEvaluacion } from "../services/ticketsService.js";
 import { mostrarError, mostrarConfirmacion } from "../components/sweetAlerts.js";
 import { crearEvaluacion } from "../services/evaluacionesService.js";
+import { formatearFecha12H } from "../utils/formateadores.js";
 
 const numNuevos = document.getElementById("numNuevos");
 const numResueltos = document.getElementById("numResueltos");
@@ -50,7 +51,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     document.addEventListener("click", function (e) {
 
-    const tarjetaTicket = e.target.closest(".lista-tickets-asignados");
+    const tarjetaTicket = e.target.closest(".lista-tickets");
 
     if (!tarjetaTicket) return;
       
@@ -106,15 +107,15 @@ function renderizarTickets(tickets) {
         }
 
         divTickets.innerHTML += `
-            <article data-id="${ticket.idTicket}" class="lista-tickets-asignados position-relative shadow-sm bg-white borde-lateral-${prio} rounded-3 p-3 mb-3 d-flex justify-content-between align-items-start">
+            <article data-id="${ticket.idTicket}" class="lista-tickets position-relative shadow-sm bg-white borde-lateral-${prio} rounded-3 p-3 mb-3 d-flex justify-content-between align-items-start">
                 <div class="elemento-ticket-asignado pe-1">
                   <h6 class="fw-bold mb-1 fs-5 d-flex align-items-start texto-limitado-1">
                     <i class="bi bi-ticket-perforated bi-${prio} me-2"></i>${ticket.asunto}</h6>
                   <small class="text-muted d-block mb-2">${ticket.codigo}</small>
-                  <small class="text-muted d-block"><b>Creador:</b>${ticket.correoCreador}</small>
-                  <small class="text-muted d-block"><b>Estado:</b>${ticket.estado}</small>
-                  <small class="text-muted d-block"><b>Fecha de creación:</b> ${ticket.fechaCreacion}</small>
-                  ${ticket.fechaVencimiento ? `<small class="text-muted d-block"><b class="text-danger">Vence:</b> ${ticket.fechaVencimiento}</small>` : ''}
+                  <small class="text-muted d-block"><b>Creador: </b>${ticket.correoCreador}</small>
+                  <small class="text-muted d-block"><b>Estado: </b>${ticket.estado}</small>
+                  <small class="text-muted d-block"><b>Fecha de creación: </b> ${formatearFecha12H(ticket.fechaCreacion)}</small>
+                  ${ticket.fechaVencimiento ? `<small class="text-muted d-block"><b class="text-danger">Vence: </b> ${formatearFecha12H(ticket.fechaVencimiento)}</small>` : ''}
                   <small class="text-muted d-block texto-limitado">
                     <b>Descripción:</b>${ticket.descripcion}
                   </small>
@@ -206,10 +207,13 @@ btnAbrirEvaluacion.addEventListener("click", async () => {
 function pintarTicketEvaluacion() {
     const ticket = colaEvaluaciones[indiceActual];
 
+    itemTicket.dataset.id=`${ticket.idTicket}`;
+    itemTicket.classList.add("lista-tickets");
+
     evalAsunto.textContent = ticket.asunto;
     evalCodigo.textContent = ticket.codigo;
-    evalCreacion.textContent = ticket.fechaCreacion;
-    evalVence.textContent = ticket.fechaVencimiento ?? "—";
+    evalCreacion.textContent = formatearFecha12H(ticket.fechaCreacion);
+    evalVence.textContent =  formatearFecha12H(ticket.fechaVencimiento) ?? "—";
     evalDescripcion.textContent = ticket.descripcion;
     evalPrioridad.textContent = ticket.prioridad;
     evalProgreso.textContent = `Evaluación ${indiceActual + 1} de ${colaEvaluaciones.length}`;
@@ -263,6 +267,8 @@ formEvaluacion.addEventListener("submit", async (e) => {
         mostrarExitoSimple("¡Gracias!", "Has completado todas tus evaluaciones pendientes.");
         cargarIndicadores();
     }
+
+    await cargarTickets();
 });
 
 evaluacionModalEl.addEventListener("hidden.bs.modal", () => {
