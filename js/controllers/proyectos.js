@@ -34,14 +34,8 @@ const numPresupuesto = document.getElementById('numPresupuesto');
 const txtCoordinador = document.getElementById('txtCoordinador');
 const txtSupervisor = document.getElementById('txtSupervisor');
 
-//Iconos segun el tipo de proyecto
-const ICONOS_TIPO = {
-    "Construcción": "bi-hammer",
-    "Remodelación": "bi-wrench-adjustable",
-    "Ampliación": "bi-arrows-angle-expand",
-    "Mantenimiento": "bi-cone-striped"
-};
-
+//que hace?
+/* Esta función se encarga de normalizar el tipo de proyecto, eliminando acentos y espacios en blanco, y convirtiendo todo a minúsculas. */
 const TIPOS_PROYECTO = ['Construcción', 'Remodelación', 'Ampliación', 'Mantenimiento'];
 
 function normalizarTipoProyecto(tipo) {
@@ -55,6 +49,8 @@ function normalizarTipoProyecto(tipo) {
         .toLowerCase();
 }
 
+//que hace?
+/* Esta función se encarga de obtener el tipo de proyecto visible, es decir, el tipo de proyecto en su forma original (sin normalizar). */
 function obtenerTipoProyectoVisible(tipo) {
     const normalizado = normalizarTipoProyecto(tipo);
 
@@ -74,6 +70,7 @@ let temporizadorBusqueda = null;
 let graficoProyectos = null;
 
 //Grafico de tipos de proyecto
+/* Esta función se encarga de crear un gráfico de tipo donut que muestra la distribución de los proyectos por tipo. */
 if (graficoTipoProyecto) {
     const grfTipoProyecto = graficoTipoProyecto.getContext('2d');
     graficoProyectos = new Chart(grfTipoProyecto, {
@@ -170,9 +167,9 @@ function renderizarProyectos(proyectos) {
         return;
     }
 
+    //Se recorre la lista de proyectos y se genera el HTML para cada tarjeta de proyecto
     proyectos.forEach((proyecto) => {
         const tipoVisible = obtenerTipoProyectoVisible(proyecto.tipoProyecto);
-        const icono = ICONOS_TIPO[tipoVisible] || "bi-kanban";
         const presupuesto = Number(proyecto.presupuestoEstimado || 0).toFixed(2);
         const total = Number(proyecto.gastoTotal || 0).toFixed(2);
         const estado = proyecto.finalizado ? "Finalizado" : "En progreso";
@@ -182,7 +179,6 @@ function renderizarProyectos(proyectos) {
                 <div class="card tarjeta-proyecto border-0 shadow-sm rounded-4 p-3 position-relative h-100">
                     <div class="card-body">
                         <h6 class="tarjeta-titulo d-flex align-items-center gap-2 fw-bold mb-3">
-                            <i class="bi ${icono} fs-4"></i>
                             <a href="vistaProyecto.html?id=${proyecto.idProyecto}"
                                 class="text-decoration-none text-dark stretched-link">
                                 ${proyecto.nombreProyecto}
@@ -211,7 +207,7 @@ function actualizarIndicadores(proyectos) {
     txtProyectosTerminados.textContent = terminados;
 }
 
-//Actualiza el grafico de dona con la cantidad real de proyectos por tipo
+//Actualiza el grafico de dona con la cantidad de proyectos por tipo
 function actualizarGrafico(proyectos) {
     if (!graficoProyectos) return;
 
@@ -243,7 +239,7 @@ formCrearProyecto.addEventListener('submit', async (e) => {
         correoSupervisor: txtSupervisor.value.trim().toLowerCase()
     };
 
-    //--- Validaciones en JavaScript (campos vacios, formato, longitud máxima, etc.) ---
+    //Valida los datos del formulario y muestra errores si los hay
     const errores = validarFormularioProyecto(datosFormulario);
 
     if (errores.length > 0) {
@@ -256,6 +252,7 @@ formCrearProyecto.addEventListener('submit', async (e) => {
         return;
     }
 
+    /* Esta función se encarga de obtener la lista de usuarios y validar que los correos de coordinador y supervisor ingresados en el formulario correspondan a usuarios existentes. */
     let usuarios;
     try {
         usuarios = await obtenerUsuarios();
@@ -307,6 +304,7 @@ formCrearProyecto.addEventListener('submit', async (e) => {
 });
 
 //Busqueda y filtros
+/* Esta función se encarga de buscar proyectos por nombre y aplicar filtros según el tipo y la fecha. */
 txtBuscarProyecto.addEventListener('input', () => {
     clearTimeout(temporizadorBusqueda);
     temporizadorBusqueda = setTimeout(aplicarFiltros, 400);
@@ -315,6 +313,7 @@ txtBuscarProyecto.addEventListener('input', () => {
 sltFiltroTipo.addEventListener('change', aplicarFiltros);
 dtFiltroFecha.addEventListener('change', aplicarFiltros);
 
+// Normaliza una fecha para su comparación
 function normalizarFechaParaComparar(fechaValor) {
     if (!fechaValor) return "";
 
@@ -340,6 +339,7 @@ function normalizarFechaParaComparar(fechaValor) {
     return `${anio}-${mes}-${dia}`;
 }
 
+/* Esta función se encarga de filtrar una lista de proyectos por fecha. */
 function filtrarPorFecha(proyectos, fechaSeleccionada) {
     if (!fechaSeleccionada) return proyectos;
 
