@@ -5,6 +5,7 @@ import { mostrarError, mostrarExitoSimple, mostrarConfirmacion } from "../compon
 import { validarFormularioTicket } from "../validators/ticketsValidator.js";
 import { buscarArticulosPorCodigoParcial } from "../services/articulosService.js";
 import { subirEvidencia } from "../services/evidenciasService.js";
+import { obtenerIdUsuario } from "../utils/sesion.js";
 
 const btnEquipos = document.getElementById("btn-equipos"); // tarjeta del formulario
 const btnGeneral = document.getElementById("btn-general"); // tarjeta del formulario
@@ -42,7 +43,7 @@ let ubicacionesCargadas = false;
 let listaDepartamentosDisponibles = [];
 
 let categoriaActual = "equipos";
-const usuarioGuardado = sessionStorage.getItem("usuarioLogueado");
+const idUsuario = obtenerIdUsuario();
 
 let archivosSeleccionados = []; //Aquí se "almacenan" los archivos elegidos
 const limiteEvidencias = 5;
@@ -282,14 +283,10 @@ function liberarDepartamento() {
 async function cargarDepartamentos() {
   if (!sltDepartamento || departamentosCargados) return;
 
-  const usuarioGuardado = sessionStorage.getItem("usuarioLogueado");
-  if (!usuarioGuardado) {
-    console.error("No hay usuario logueado en sessionStorage");
+  if (!idUsuario) {
     mostrarError("No se pudo identificar al usuario. Inicia sesión nuevamente.");
     return;
   }
-
-  const { idUsuario } = JSON.parse(usuarioGuardado);
 
   try {
     const departamentos = await getDepartamentosAsignables(idUsuario);
@@ -432,12 +429,11 @@ frmTicket.addEventListener("submit", async function (e) {
   //Limpia marcas de error de un intento anterior
   document.querySelectorAll(".is-invalid").forEach((el) => el.classList.remove("is-invalid"));
 
-  //Validación de usuario logueado(temporal)
-  if (!usuarioGuardado) {
+  //Validación de usuario logueado
+  if (!idUsuario) {
     mostrarError("No se pudo identificar al usuario. Inicia sesión nuevamente.")
     return;
   }
-  const { idUsuario } = JSON.parse(usuarioGuardado);
 
   //Recolectar los datos actuales del formulario
   const datosFormulario = {

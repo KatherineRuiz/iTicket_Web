@@ -2,6 +2,7 @@ import { getTicketsPropios, getIndicadoresEstadoPropios, getTicketsPendientesEva
 import { mostrarError, mostrarConfirmacion } from "../components/sweetAlerts.js";
 import { crearEvaluacion } from "../services/evaluacionesService.js";
 import { formatearFecha12H } from "../utils/formateadores.js";
+import { obtenerIdUsuario } from "../utils/sesion.js";
 
 const numNuevos = document.getElementById("numNuevos");
 const numResueltos = document.getElementById("numResueltos");
@@ -42,8 +43,7 @@ let filtrosActuales = {};
 let temporizadorBusqueda = null;
 let colaEvaluaciones = [];
 let indiceActual = 0;
-const usuarioGuardado = sessionStorage.getItem("usuarioLogueado");//Temporal
-const { idUsuario } = JSON.parse(usuarioGuardado);
+const idUsuario = obtenerIdUsuario();
 
 document.addEventListener("DOMContentLoaded", () => {
     cargarTickets(1);

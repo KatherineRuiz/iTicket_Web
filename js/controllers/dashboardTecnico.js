@@ -1,11 +1,12 @@
 // Dashboard Técnico - Controller con conexión a API
 
-import { 
+import {
     getTicketsPropios,
     getIndicadoresEstadoPropios,
     procesarDatosGraficos,
     obtenerContadoresPorEstado
 } from "../services/dashboardTecnicosService.js";
+import { obtenerUsuarioLogueado } from "../utils/sesion.js";
 
 // Elementos del DOM
 const graficoResolucion = document.getElementById('graficoResolucion');
@@ -24,12 +25,12 @@ let graficoCalificacionesInstance = null;
 let graficoTiempoInstance = null;
 
 // Obtener ID del usuario logueado
-const usuarioGuardado = sessionStorage.getItem('usuarioLogueado');
-if (!usuarioGuardado) {
+const usuarioLogueado = obtenerUsuarioLogueado();
+if (!usuarioLogueado) {
     console.warn('No hay usuario logueado');
 }
 
-let idUsuario = usuarioGuardado ? JSON.parse(usuarioGuardado).idUsuario : null;
+let idUsuario = usuarioLogueado ? usuarioLogueado.idUsuario : null;
 
 // ---------- CARGAR DATOS DE LA API ----------
 async function cargarDatos() {
