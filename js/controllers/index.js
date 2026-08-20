@@ -1,14 +1,16 @@
+import { login } from "../services/authService.js";
+import { mostrarError, mostrarExitoRedireccion } from "../components/sweetAlerts.js";
+
 document.addEventListener("DOMContentLoaded", function () {
     const formularioLogin = document.querySelector("#formLogin");
+    const botonIniciarSesion = document.querySelector("#btnIniciarSesion");
 
     if (formularioLogin) {
-        formularioLogin.addEventListener("submit", function (evento) {
+        formularioLogin.addEventListener("submit", async function (evento) {
             evento.preventDefault();
 
-            const correo = formularioLogin.querySelector('input[type="email"]').value;
-            const contrasena = formularioLogin.querySelector(
-                'input[type="password"]',
-            ).value;
+            const correo = document.querySelector("#txtCorreo").value;
+            const contrasena = document.querySelector("#txtClave").value;
 
             if (!esCorreoValido(correo)) {
                 mostrarError("Ingresa un correo electrónico válido.", false);
@@ -22,32 +24,24 @@ document.addEventListener("DOMContentLoaded", function () {
                 );
                 return;
             }
-            mostrarExitoRedireccion("¡Sesión Iniciada!", "", "dashboardAdmin.html");
+
+            botonIniciarSesion.disabled = true;
+
+            try {
+                const usuario = await login(correo, contrasena);
+
+                if (!usuario) {
+                    mostrarError("Correo o contraseña incorrectos.", false);
+                    botonIniciarSesion.disabled = false;
+                    return;
+                }
+
+                sessionStorage.setItem("usuarioLogueado", JSON.stringify(usuario));
+                mostrarExitoRedireccion("¡Sesión Iniciada!", "", "dashboardAdmin.html");
+            } catch (error) {
+                mostrarError("No se pudo conectar con el servidor. Intenta de nuevo.", false);
+                botonIniciarSesion.disabled = false;
+            }
         });
-    }
-});
-
-document.getElementById('formLogin').addEventListener('submit', function (e) {
-    e.preventDefault(); // Evita la recarga automática
-
-    const correo = e.target.querySelector('input[type="email"]').value;
-    const password = e.target.querySelector('input[type="password"]').value;
-
-    // Aquí irá tu consumo de API / Fetch a Spring Boot más adelante.
-    // Ejemplo de simulación local:
-    if (correo && password) {
-        // Extraemos un nombre para mostrar dinámicamente en el Dashboard
-        const nombreUsuario = correo.split('@')[0];
-
-        // Guardamos temporalmente los datos en sessionStorage/localStorage
-        sessionStorage.setItem('usuarioLogueado', JSON.stringify({
-            idUsuario: 1, //Temporal segun el usuario que se esta simulando
-            nombre: nombreUsuario,
-            correo: correo,
-            rolUsuario: "Administrador"
-        }));
-
-        // Redirigimos al Dashboard tras autenticar
-        window.location.href = 'dashboardAdmin.html';
     }
 });
