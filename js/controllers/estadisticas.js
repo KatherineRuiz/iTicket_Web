@@ -1,274 +1,259 @@
-import { getTickets } from "../services/ticketsService.js";
-import { obtenerEvaluaciones } from "../services/evaluacionesService.js";
+import { obtenerMetricas, obtenerAlertas, obtenerEquiposMasReportados } from "../services/estadisticasService.js";
+import { mostrarError } from "../components/sweetAlerts.js";
 
-const Meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
-
-const ESTADOS_RESUELTOS = ['Resuelto', 'Cerrado'];
-const ESTADOS_NO_VENCIDOS = ['Resuelto', 'Cerrado', 'Eliminado', 'Vencido'];
-
-let listaTicketsCompleta = [];
-let listaEvaluacionesCompleta = [];
-let mapaTickets = new Map();
 let graficos = [];
 
-function parseFecha(fechaStr) {
-    if (!fechaStr) return null;
-    const [fecha, hora] = String(fechaStr).split(' ');
-    const partes = fecha.split('/');
-    if (partes.length < 3) return null;
-    const anio = Number(partes[2]);
-    const mes = Number(partes[1]) - 1;
-    const dia = Number(partes[0]);
-    const [hh, mm] = (hora || '00:00').split(':');
-    return new Date(anio, mes, dia, Number(hh) || 0, Number(mm) || 0);
+// Paginación Alertas
+let paginaAlertas = 0;
+const TAMANO_PAGINA_ALERTAS = 5;
+let totalPaginasAlertas = 0;
+
+// Paginación Equipos
+let paginaEquipos = 0;
+const TAMANO_PAGINA_EQUIPOS = 5;
+let totalPaginasEquipos = 0;
+
+// ============================================================
+// FUNCIONES AUXILIARES
+// ============================================================
+
+function formatearHoras(horasDecimales) {
+    if (horasDecimales == null || isNaN(horasDecimales) || horasDecimales <= 0) return '0m';
+    const totalMinutos = Math.round(horasDecimales * 60);
+    const dias = Math.floor(totalMinutos / (60 * 24));
+    const horas = Math.floor((totalMinutos % (60 * 24)) / 60);
+    const mins = totalMinutos % 60;
+    if (dias > 0) return `${dias}d ${horas}h`;
+    if (horas > 0) return mins > 0 ? `${horas}h ${mins}m` : `${horas}h`;
+    return `${mins}m`;
 }
 
-function mesDe(fecha) {
-    const d = fecha instanceof Date ? fecha : parseFecha(fecha);
-    return d ? d.getMonth() : -1;
+function generarEstrellasHTML(calificacion) {
+    if (calificacion == null || isNaN(calificacion)) return '—';
+    const entero = Math.floor(calificacion);
+    let html = '';
+    for (let i = 1; i <= 5; i++) {
+        if (i <= entero) {
+            html += '<i class="bi bi-star-fill text-warning me-1"></i>';
+        } else if (i - calificacion <= 0.5) {
+            html += '<i class="bi bi-star-half text-warning me-1"></i>';
+        } else {
+            html += '<i class="bi bi-star text-muted opacity-50 me-1"></i>';
+        }
+    }
+    return html;
 }
 
-function contarPorMes(lista, selector) {
-    const conteo = new Array(12).fill(0);
-    lista.forEach(item => {
-        const mes = mesDe(selector(item));
-        if (mes >= 0) conteo[mes]++;
-    });
-    return conteo;
-}
-
-function normalizarPrioridad(prioridad) {
-    if (!prioridad) return null;
-    const limpia = String(prioridad)
-        .toLowerCase()
-        .replace(/á/g, 'a')
-        .replace(/í/g, 'i')
-        .replace(/é/g, 'e')
-        .trim();
-    const mapa = { critica: 'Crítica', alta: 'Alta', media: 'Media', baja: 'Baja' };
-    return mapa[limpia] || prioridad;
-}
-
-function promedio(lista) {
-    if (!lista.length) return 0;
-    return lista.reduce((acc, valor) => acc + valor, 0) / lista.length;
-}
-
-function formatearTiempo(minutos) {
-    if (minutos == null || isNaN(minutos)) return '—';
-    const horas = Math.floor(minutos / 60);
-    const mins = Math.round(minutos % 60);
-    return horas > 0 ? `${String(horas).padStart(2, '0')}h ${String(mins).padStart(2, '0')}m` : `${mins}m`;
-}
-
-function esVencido(ticket) {
-    if (ticket.estado === 'Vencido') return true;
-    if (ESTADOS_NO_VENCIDOS.includes(ticket.estado)) return false;
-    const fechaVen = parseFecha(ticket.fechaVencimiento);
-    return fechaVen ? fechaVen < new Date() : false;
-}
-
-function obtenerTiempoResolucionMin(ticket) {
-    const creacion = parseFecha(ticket.fechaCreacion);
-    const resolucion = parseFecha(ticket.fechaResolucion);
-    if (!creacion || !resolucion) return null;
-    return (resolucion - creacion) / 60000;
+function formatearFechaAmigable(fechaIso) {
+    if (!fechaIso) return '—';
+    const fecha = new Date(fechaIso);
+    return fecha.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' });
 }
 
 function destruirGraficos() {
-    graficos.forEach(grafico => grafico.destroy());
+    graficos.forEach(g => g.destroy());
     graficos = [];
 }
 
-function renderizar(listaTickets, listaEvaluaciones) {
+// ============================================================
+// CARGA PRINCIPAL
+// ============================================================
+
+async function cargarMetricas() {
+    const fechaInicio = document.getElementById('fechaInicio')?.value || '';
+    const fechaFin = document.getElementById('fechaFin')?.value || '';
+
+    try {
+        // Cargar métricas, alertas y equipos en paralelo para mayor fluidez
+        const [dataMetricas, dataAlertas, dataEquipos] = await Promise.all([
+            obtenerMetricas(fechaInicio, fechaFin, paginaAlertas, TAMANO_PAGINA_ALERTAS),
+            obtenerAlertas(fechaInicio, fechaFin, paginaAlertas, TAMANO_PAGINA_ALERTAS),
+            obtenerEquiposMasReportados(fechaInicio, fechaFin, paginaEquipos, TAMANO_PAGINA_EQUIPOS)
+        ]);
+
+        if (dataMetricas) {
+            renderizarGraficosYKPIs(dataMetricas);
+        }
+
+        if (dataAlertas) {
+            renderizarTablaAlertas(dataAlertas);
+        } else {
+            renderizarTablaAlertas({ content: [], totalPages: 0 });
+        }
+
+        if (dataEquipos) {
+            renderizarTablaEquipos(dataEquipos);
+        } else {
+            renderizarTablaEquipos({ content: [], totalPages: 0 });
+        }
+
+    } catch (error) {
+        console.error(' [Controller] Error en cargarMetricas:', error);
+        renderizarTablaAlertas({ content: [], totalPages: 0 });
+        renderizarTablaEquipos({ content: [], totalPages: 0 });
+    }
+}
+
+// ============================================================
+// RENDERIZADO DE GRÁFICAS Y KPIS
+// ============================================================
+
+function renderizarGraficosYKPIs(data) {
     destruirGraficos();
+    const { tickets, evaluaciones, ticketsPorPrioridad, ticketsPorMes, satisfaccionPorTecnico } = data;
 
-    /* ================= KPI ================= */
-    const totalTickets = listaTickets.length;
-
-    const calificaciones = listaEvaluaciones.map(e => Number(e.calificacion)).filter(c => !isNaN(c));
-    const csat = calificaciones.length ? promedio(calificaciones) : null;
-
-    const tiemposResolucion = listaTickets
-        .map(obtenerTiempoResolucionMin)
-        .filter(t => t !== null && t >= 0);
-    const tiempoMedio = tiemposResolucion.length ? promedio(tiemposResolucion) : null;
-
+    // ----- KPIs -----
     const elTotalTickets = document.getElementById('kpi_total_tickets');
-    if (elTotalTickets) elTotalTickets.textContent = totalTickets;
+    if (elTotalTickets) elTotalTickets.textContent = tickets?.totalTickets ?? 0;
 
     const elCsat = document.getElementById('kpi_csat_general');
     if (elCsat) {
-        elCsat.innerHTML = csat !== null
-            ? `${csat.toFixed(1)} <span class="fs-5 fw-semibold text-muted">/ 5.0</span>`
-            : '<span class="fs-5 fw-semibold text-muted">Sin datos</span>';
+        const csatVal = evaluaciones?.promedioCsat;
+        if (csatVal != null) {
+            elCsat.innerHTML = `${csatVal.toFixed(1)} <span class="fs-5 fw-semibold text-muted">/ 5.0</span>`;
+            const contenedorEstrellas = document.getElementById('contenedor_estrellas_csat');
+            if (contenedorEstrellas) contenedorEstrellas.innerHTML = generarEstrellasHTML(csatVal);
+        } else {
+            elCsat.innerHTML = '<span class="fs-5 fw-semibold text-muted">Sin datos</span>';
+        }
     }
 
     const elTiempoMedio = document.getElementById('kpi_tiempo_resolucion');
-    if (elTiempoMedio) elTiempoMedio.textContent = formatearTiempo(tiempoMedio);
+    if (elTiempoMedio) {
+        elTiempoMedio.textContent = formatearHoras(tickets?.tiempoMedioResolucionHoras);
+    }
 
-    /* ================= 1. Barras horizontales: satisfacción por técnico ================= */
-    const canvasSatisfaccion = document.getElementById('grafica_satisfaccion');
-    if (canvasSatisfaccion) {
-        const satisfaccionPorTecnico = {};
-        listaEvaluaciones.forEach(evaluacion => {
-            const ticket = mapaTickets.get(evaluacion.idTicket);
-            const nombre = ticket?.nombreTecnico || 'Sin asignar';
-            if (!satisfaccionPorTecnico[nombre]) satisfaccionPorTecnico[nombre] = [];
-            satisfaccionPorTecnico[nombre].push(Number(evaluacion.calificacion));
-        });
+    Chart.defaults.font.family = "'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif";
+    Chart.defaults.color = '#6c757d';
 
-        const tecnicos = Object.keys(satisfaccionPorTecnico);
-        const datos = tecnicos.map(nombre => promedio(satisfaccionPorTecnico[nombre]));
+    // 1. Gráfica de Satisfacción por Técnico
+    const ctxSatisfaccion = document.getElementById('grafica_satisfaccion');
+    if (ctxSatisfaccion) {
+        const tecnicos = satisfaccionPorTecnico || [];
+        const labels = tecnicos.map(item => item.tecnico || 'Desconocido');
+        const datos = tecnicos.map(item => item.promedio || 0);
 
-        graficos.push(new Chart(canvasSatisfaccion, {
+        const chartSatisfaccion = new Chart(ctxSatisfaccion, {
             type: 'bar',
             data: {
-                labels: tecnicos,
+                labels: labels.length ? labels : ['Sin datos'],
                 datasets: [{
-                    label: 'Nivel de Satisfacción',
-                    data: datos,
-                    backgroundColor: (ctx) => ctx.dataIndex % 2 === 0 ? 'rgba(3, 4, 94, 0.8)' : 'rgba(67, 161, 255, 0.8)',
-                    borderColor: (ctx) => ctx.dataIndex % 2 === 0 ? 'rgb(3, 4, 94)' : 'rgb(67, 161, 255)',
+                    label: 'Puntuación Promedio',
+                    data: labels.length ? datos : [0],
+                    backgroundColor: 'rgba(54, 162, 235, 0.7)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
                     borderWidth: 1,
                     borderRadius: 4
                 }]
             },
             options: {
-                animation: { duration: 2000, easing: 'easeOutQuart' },
                 indexAxis: 'y',
                 responsive: true,
-                resizeDelay: 200,
                 maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
-                scales: {
-                    x: { beginAtZero: true, max: 5 },
-                    y: { reverse: true }
-                }
+                scales: { x: { beginAtZero: true, max: 5 } },
+                plugins: { legend: { display: false } }
             }
-        }));
+        });
+        graficos.push(chartSatisfaccion);
     }
 
-    /* ================= 2. Pie: distribución de estrellas ================= */
-    const canvasEstrellas = document.getElementById('grafica_estrellas');
-    if (canvasEstrellas) {
-        const conteoEstrellas = { '5 Estrellas': 0, '4 Estrellas': 0, '3 Estrellas': 0, '1-2 Estrellas': 0 };
-        calificaciones.forEach(calificacion => {
-            if (calificacion >= 4.5) conteoEstrellas['5 Estrellas']++;
-            else if (calificacion >= 3.5) conteoEstrellas['4 Estrellas']++;
-            else if (calificacion >= 2.5) conteoEstrellas['3 Estrellas']++;
-            else conteoEstrellas['1-2 Estrellas']++;
-        });
-
-        graficos.push(new Chart(canvasEstrellas, {
+    // 2. Gráfica de Total de Estrellas
+    const ctxEstrellas = document.getElementById('grafica_estrellas');
+    if (ctxEstrellas) {
+        const e = evaluaciones || {};
+        const chartEstrellas = new Chart(ctxEstrellas, {
             type: 'pie',
             data: {
-                labels: Object.keys(conteoEstrellas),
+                labels: ['5 Estrellas', '4 Estrellas', '3 Estrellas', '1-2 Estrellas'],
                 datasets: [{
-                    data: Object.values(conteoEstrellas),
+                    data: [e.estrellas5 || 0, e.estrellas4 || 0, e.estrellas3 || 0, e.estrellas1y2 || 0],
                     backgroundColor: ['#43a1ff', '#b2f5b2', '#ffe173', '#ff8484'],
-                    borderWidth: 5,
-                    borderColor: '#F5F7FA',
-                    borderRadius: 5,
-                    hoverOffset: 10,
-                    radius: '105%'
+                    borderWidth: 1
                 }]
             },
             options: {
-                animation: { animateRotate: true, animateScale: true, duration: 2000, easing: 'easeOutCirc' },
                 responsive: true,
-                resizeDelay: 200,
                 maintainAspectRatio: false,
-                layout: { padding: 10 },
-                plugins: {
-                    legend: { position: 'left' },
-                    tooltip: { usePointStyle: true, boxPadding: 6 }
-                }
-            }
-        }));
-    }
-
-    /* ================= 3. Dona: tickets por prioridad ================= */
-    const canvasPrioridades = document.getElementById('grafica_prioridades');
-    if (canvasPrioridades) {
-        const ordenPrioridades = ['Crítica', 'Alta', 'Media', 'Baja'];
-        const conteoPrioridades = { 'Crítica': 0, 'Alta': 0, 'Media': 0, 'Baja': 0 };
-        listaTickets.forEach(ticket => {
-            const prioridad = normalizarPrioridad(ticket.prioridad);
-            if (prioridad && conteoPrioridades[prioridad] !== undefined) {
-                conteoPrioridades[prioridad]++;
+                plugins: { legend: { position: 'left' } }
             }
         });
-        const labelsPrioridades = Object.keys(conteoPrioridades).sort(
-            (a, b) => ordenPrioridades.indexOf(a) - ordenPrioridades.indexOf(b)
-        );
-        const valoresPrioridades = labelsPrioridades.map(p => conteoPrioridades[p]);
+        graficos.push(chartEstrellas);
+    }
 
-        graficos.push(new Chart(canvasPrioridades, {
+    // 3. Gráfica de Tickets por Prioridad
+    const ctxPrioridades = document.getElementById('grafica_prioridades');
+    if (ctxPrioridades) {
+        const prioridades = ticketsPorPrioridad || [];
+        const labels = prioridades.map(p => p.prioridad || 'Sin prioridad');
+        const datos = prioridades.map(p => p.cantidad || 0);
+
+        const chartPrioridades = new Chart(ctxPrioridades, {
             type: 'doughnut',
             data: {
-                labels: labelsPrioridades,
+                labels: labels.length ? labels : ['Sin datos'],
                 datasets: [{
-                    data: valoresPrioridades,
-                    backgroundColor: ['#ff8484', '#ffbc66', '#ffe173', '#b2f5b2'],
-                    borderWidth: 5,
-                    borderColor: '#F5F7FA',
-                    borderRadius: 5,
-                    hoverOffset: 15,
-                    radius: '90%'
+                    data: labels.length ? datos : [1],
+                    backgroundColor: ['#ff8484', '#b2f5b2', '#ffe173', '#ffbc66', '#43a1ff'],
+                    borderWidth: 1
                 }]
             },
             options: {
-                animation: { animateRotate: true, animateScale: true, duration: 2000, easing: 'easeOutCirc' },
-                cutout: '60%',
                 responsive: true,
-                resizeDelay: 200,
                 maintainAspectRatio: false,
-                layout: { padding: 10 },
-                plugins: {
-                    legend: { position: 'right' },
-                    tooltip: { usePointStyle: true, boxPadding: 6 }
-                }
-            }
-        }));
-    }
-
-    /* ================= 4. Lineas: creados, vencidos y resueltos por mes ================= */
-    const canvasHistorico = document.getElementById('grafica_historico');
-    if (canvasHistorico) {
-        const creados = contarPorMes(listaTickets, t => t.fechaCreacion);
-
-        const vencidos = contarPorMes(listaTickets.filter(esVencido), t => t.fechaVencimiento);
-
-        const resueltos = contarPorMes(
-            listaTickets.filter(t => ESTADOS_RESUELTOS.includes(t.estado)),
-            t => t.fechaResolucion || t.fechaCreacion
-        );
-
-        const crearDataset = (label, datos, color, colorFondo) => ({
-            label,
-            data: datos,
-            borderColor: color,
-            fill: true,
-            tension: 0.4,
-            backgroundColor: (context) => {
-                const { ctx, chartArea } = context.chart;
-                if (!chartArea) return null;
-                const gradiente = ctx.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
-                gradiente.addColorStop(0, colorFondo);
-                gradiente.addColorStop(1, 'rgba(255, 255, 255, 0.0)');
-                return gradiente;
+                cutout: '65%',
+                plugins: { legend: { position: 'right' } }
             }
         });
+        graficos.push(chartPrioridades);
+    }
 
-        graficos.push(new Chart(canvasHistorico, {
+    // 4. Gráfica Histórico 
+    const ctxHistorico = document.getElementById('grafica_historico');
+    if (ctxHistorico) {
+        const meses = ticketsPorMes || [];
+        const labels = meses.map(m => `${m.mes} ${m.year}`);
+        const creados = meses.map(m => m.creados || 0);
+        const resueltos = meses.map(m => m.resueltos || 0);
+        const vencidos = meses.map(m => m.vencidos || 0);
+
+        const crearGradiente = (r, g, b) => (context) => {
+            const { ctx, chartArea } = context.chart;
+            if (!chartArea) return null;
+            const gradient = ctx.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
+            gradient.addColorStop(0, `rgba(${r}, ${g}, ${b}, 0.6)`);
+            gradient.addColorStop(1, `rgba(255, 255, 255, 0.07)`);
+            return gradient;
+        };
+
+        const chartHistorico = new Chart(ctxHistorico, {
             type: 'line',
             data: {
-                labels: Meses,
+                labels: labels.length ? labels : ['Sin datos'],
                 datasets: [
-                    crearDataset('Vencidos', vencidos, '#FBBABA', 'rgba(251, 186, 186, 0.6)'),
-                    crearDataset('Creados', creados, '#CAEBFF', 'rgba(202, 235, 255, 0.6)'),
-                    crearDataset('Resueltos', resueltos, '#D4FFCA', 'rgba(212, 255, 202, 0.6)')
+                    {
+                        label: 'Vencidos',
+                        data: labels.length ? vencidos : [0],
+                        borderColor: '#FBBABA',
+                        fill: true,
+                        tension: 0.4,
+                        backgroundColor: crearGradiente(251, 186, 186)
+                    },
+                    {
+                        label: 'Creados',
+                        data: labels.length ? creados : [0],
+                        borderColor: '#CAEBFF',
+                        fill: true,
+                        tension: 0.4,
+                        backgroundColor: crearGradiente(202, 235, 255)
+                    },
+                    {
+                        label: 'Resueltos',
+                        data: labels.length ? resueltos : [0],
+                        borderColor: '#D4FFCA',
+                        fill: true,
+                        tension: 0.4,
+                        backgroundColor: crearGradiente(212, 255, 202)
+                    }
                 ]
             },
             options: {
@@ -279,94 +264,227 @@ function renderizar(listaTickets, listaEvaluaciones) {
                 plugins: { legend: { display: true, position: 'top' } },
                 scales: {
                     x: { grid: { display: false } },
-                    y: { grid: { color: 'rgba(0, 0, 0, 0.05)' } }
+                    y: { beginAtZero: true, grid: { color: 'rgba(0, 0, 0, 0.05)' } }
                 }
             }
-        }));
-    }
-
-    /* ================= 5. Tabla de alertas de insatisfacción ================= */
-    const tbodyAlertas = document.getElementById('tbody_alertas_insatisfaccion');
-    if (tbodyAlertas) {
-        const alertas = listaEvaluaciones
-            .filter(evaluacion => Number(evaluacion.calificacion) < 3)
-            .sort((a, b) => Number(a.calificacion) - Number(b.calificacion));
-
-        tbodyAlertas.innerHTML = '';
-
-        const lblAlertaConteo = document.getElementById('lblAlertaConteo');
-        if (lblAlertaConteo) lblAlertaConteo.textContent = `Mostrando ${alertas.length} de ${listaEvaluaciones.length}`;
-
-        if (!alertas.length) {
-            tbodyAlertas.innerHTML = '<tr><td colspan="4" class="text-muted py-3">Sin alertas de insatisfacción</td></tr>';
-        } else {
-            alertas.forEach(evaluacion => {
-                const ticket = mapaTickets.get(evaluacion.idTicket);
-                const fila = document.createElement('tr');
-                fila.innerHTML = `
-                    <td class="fw-semibold">${ticket?.codigo || '—'}</td>
-                    <td>${ticket?.nombreCreador || '—'}</td>
-                    <td>${ticket?.nombreTecnico || '—'}</td>
-                    <td>${evaluacion.comentario || '—'} <span class="badge bg-danger-light text-danger ms-1">${Number(evaluacion.calificacion).toFixed(1)}★</span></td>
-                `;
-                tbodyAlertas.appendChild(fila);
-            });
-        }
+        });
+        graficos.push(chartHistorico);
     }
 }
 
-function aplicarFiltroFechas() {
-    const fechaInicio = document.getElementById('fechaInicio').value;
-    const fechaFin = document.getElementById('fechaFin').value;
+// ============================================================
+// RENDERIZADO DE TABLA DE ALERTAS
+// ============================================================
 
-    const inicio = fechaInicio ? new Date(`${fechaInicio}T00:00:00`) : null;
-    const fin = fechaFin ? new Date(`${fechaFin}T23:59:59`) : null;
+function renderizarTablaAlertas(pageData) {
+    const tbodyAlertas = document.getElementById('tablaEvaluaciones');
+    const contenedorPaginacion = document.getElementById('contenedorPaginacion');
+    const textoContador = document.getElementById('textoContador');
 
-    const ticketsFiltrados = listaTicketsCompleta.filter(ticket => {
-        const fecha = parseFecha(ticket.fechaCreacion);
-        if (!fecha) return true;
-        if (inicio && fecha < inicio) return false;
-        if (fin && fecha > fin) return false;
-        return true;
+    if (!tbodyAlertas) return;
+    tbodyAlertas.innerHTML = '';
+
+    const lista = pageData?.content || [];
+    totalPaginasAlertas = pageData?.totalPages || 0;
+
+    if (lista.length === 0) {
+        tbodyAlertas.innerHTML = '<tr><td colspan="7" class="text-muted text-center py-4">No hay evaluaciones insatisfechas</td></tr>';
+        if (contenedorPaginacion) contenedorPaginacion.innerHTML = "";
+        if (textoContador) textoContador.textContent = "Mostrando 0 de 0";
+        return;
+    }
+
+    lista.forEach(ev => {
+        const fila = document.createElement('tr');
+        const puntos = Math.round(ev.calificacion || 0);
+        let estrellasHTML = "";
+        for (let i = 1; i <= 5; i++) {
+            estrellasHTML += i <= puntos
+                ? '<i class="bi bi-star-fill text-warning me-1"></i>'
+                : '<i class="bi bi-star text-muted opacity-50 me-1"></i>';
+        }
+
+        // Campos del backend (AlertaInsatisfaccionDTO):
+        // codigoTicket, asunto, usuario, tecnico, calificacion, comentario, fechaEvaluacion
+        fila.innerHTML = `
+            <td class="fw-semibold text-primary">${ev.codigoTicket || '—'}</td>
+            <td class="text-truncate" style="max-width: 150px;" title="${ev.asunto || ''}">${ev.asunto || 'Sin asunto'}</td>
+            <td class="text-truncate" style="max-width: 150px;">${ev.usuario || 'Sin usuario'}</td>
+            <td>${ev.tecnico || 'No asignado'}</td>
+            <td><div class="text-nowrap">${estrellasHTML}</div></td>
+            <td class="text-secondary small text-start text-truncate" style="max-width: 200px;" title="${ev.comentario || ''}">${ev.comentario || 'Sin comentario'}</td>
+            <td class="text-muted small">${formatearFechaAmigable(ev.fechaEvaluacion)}</td>
+        `;
+        tbodyAlertas.appendChild(fila);
     });
 
-    const idsTickets = new Set(ticketsFiltrados.map(t => t.idTicket));
-    const evaluacionesFiltradas = listaEvaluacionesCompleta.filter(e => idsTickets.has(e.idTicket));
+    if (textoContador) {
+        const totalElementos = pageData?.totalElements || lista.length;
+        textoContador.textContent = `Mostrando página ${paginaAlertas + 1} de ${totalPaginasAlertas} (${totalElementos} registros)`;
+    }
 
-    renderizar(ticketsFiltrados, evaluacionesFiltradas);
-}
+    if (contenedorPaginacion) {
+        let paginacionHTML = '';
+        
+        paginacionHTML += `
+            <li class="page-item ${paginaAlertas === 0 ? 'disabled' : ''}">
+                <a class="page-link border-0 shadow-sm rounded-1 text-secondary px-2 btn-pag" href="#" data-page="${paginaAlertas - 1}">&laquo;</a>
+            </li>
+        `;
 
-async function crearGraficas() {
-    const [tickets, evaluaciones] = await Promise.all([getTickets(), obtenerEvaluaciones()]);
+        for (let i = 0; i < totalPaginasAlertas; i++) {
+            const isActiveClass = i === paginaAlertas ? 'bg-primary text-white fw-bold' : 'text-secondary';
+            const activeLi = i === paginaAlertas ? 'active' : '';
+            paginacionHTML += `
+                <li class="page-item ${activeLi}">
+                    <a class="page-link border-0 shadow-sm rounded-1 ${isActiveClass} btn-pag" href="#" data-page="${i}">${i + 1}</a>
+                </li>
+            `;
+        }
 
-    listaTicketsCompleta = Array.isArray(tickets) ? tickets : [];
-    listaEvaluacionesCompleta = Array.isArray(evaluaciones) ? evaluaciones : [];
-    mapaTickets = new Map(listaTicketsCompleta.map(t => [t.idTicket, t]));
+        paginacionHTML += `
+            <li class="page-item ${paginaAlertas >= totalPaginasAlertas - 1 ? 'disabled' : ''}">
+                <a class="page-link border-0 shadow-sm rounded-1 text-secondary px-2 btn-pag" href="#" data-page="${paginaAlertas + 1}">&raquo;</a>
+            </li>
+        `;
 
-    renderizar(listaTicketsCompleta, listaEvaluacionesCompleta);
-}
+        contenedorPaginacion.innerHTML = paginacionHTML;
 
-Promise.all([
-    new Promise(resolve => window.addEventListener('load', resolve)),
-    document.fonts.ready
-]).then(function () {
-    requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-            crearGraficas();
+        document.querySelectorAll('.btn-pag').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const nuevaPagina = parseInt(e.currentTarget.getAttribute('data-page'));
+                if (!isNaN(nuevaPagina) && nuevaPagina !== paginaAlertas && nuevaPagina >= 0 && nuevaPagina < totalPaginasAlertas) {
+                    paginaAlertas = nuevaPagina;
+                    cargarMetricas();
+                }
+            });
         });
+    }
+}
+
+// ============================================================
+// RENDERIZADO DE TABLA DE EQUIPOS MÁS REPORTADOS
+// ============================================================
+
+function renderizarTablaEquipos(pageData) {
+    const tbodyEquipos = document.getElementById('tbody_equipos_reportados');
+    const contenedorPaginacion = document.getElementById('contenedorPaginacionEquipos');
+    const textoContador = document.getElementById('textoContadorEquipos');
+
+    if (!tbodyEquipos) return;
+    tbodyEquipos.innerHTML = '';
+
+    const lista = pageData?.content || [];
+    totalPaginasEquipos = pageData?.totalPages || 0;
+
+    if (lista.length === 0) {
+        tbodyEquipos.innerHTML = '<tr><td colspan="6" class="text-muted text-center py-4">No hay datos de equipos reportados</td></tr>';
+        if (contenedorPaginacion) contenedorPaginacion.innerHTML = "";
+        if (textoContador) textoContador.textContent = "Mostrando 0 de 0";
+        return;
+    }
+
+    lista.forEach(eq => {
+        const fila = document.createElement('tr');
+
+        // Campos del backend (ReportadosDTO):
+        // codigoEquipo, ubicacion, modeloMarca, categoria, numeroTickets, estadoGeneral
+        // estadoGeneral viene como: "Normal", "Atención" o "Crítico"
+        let badgeClass = 'bg-secondary';
+        if (eq.estadoGeneral === 'Normal') badgeClass = 'bg-success';
+        if (eq.estadoGeneral === 'Atención') badgeClass = 'bg-warning text-dark';
+        if (eq.estadoGeneral === 'Crítico') badgeClass = 'bg-danger';
+
+        fila.innerHTML = `
+            <td class="fw-semibold text-primary">${eq.codigoEquipo || '—'}</td>
+            <td>${eq.ubicacion || '—'}</td>
+            <td>${eq.modeloMarca || '—'}</td>
+            <td>${eq.categoria || '—'}</td>
+            <td class="fw-bold">${eq.numeroTickets ?? 0}</td>
+            <td><span class="badge ${badgeClass} px-2 py-1">${eq.estadoGeneral || '—'}</span></td>
+        `;
+        tbodyEquipos.appendChild(fila);
+    });
+
+    if (textoContador) {
+        const totalElementos = pageData?.totalElements || lista.length;
+        textoContador.textContent = `Mostrando página ${paginaEquipos + 1} de ${totalPaginasEquipos} (${totalElementos} registros)`;
+    }
+
+    if (contenedorPaginacion) {
+        let paginacionHTML = '';
+
+        paginacionHTML += `
+            <li class="page-item ${paginaEquipos === 0 ? 'disabled' : ''}">
+                <a class="page-link border-0 shadow-sm rounded-1 text-secondary px-2 btn-pag-equipos" href="#" data-page="${paginaEquipos - 1}">&laquo;</a>
+            </li>
+        `;
+
+        for (let i = 0; i < totalPaginasEquipos; i++) {
+            const isActiveClass = i === paginaEquipos ? 'bg-primary text-white fw-bold' : 'text-secondary';
+            const activeLi = i === paginaEquipos ? 'active' : '';
+            paginacionHTML += `
+                <li class="page-item ${activeLi}">
+                    <a class="page-link border-0 shadow-sm rounded-1 ${isActiveClass} btn-pag-equipos" href="#" data-page="${i}">${i + 1}</a>
+                </li>
+            `;
+        }
+
+        paginacionHTML += `
+            <li class="page-item ${paginaEquipos >= totalPaginasEquipos - 1 ? 'disabled' : ''}">
+                <a class="page-link border-0 shadow-sm rounded-1 text-secondary px-2 btn-pag-equipos" href="#" data-page="${paginaEquipos + 1}">&raquo;</a>
+            </li>
+        `;
+
+        contenedorPaginacion.innerHTML = paginacionHTML;
+
+        document.querySelectorAll('.btn-pag-equipos').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const nuevaPagina = parseInt(e.currentTarget.getAttribute('data-page'));
+                if (!isNaN(nuevaPagina) && nuevaPagina !== paginaEquipos && nuevaPagina >= 0 && nuevaPagina < totalPaginasEquipos) {
+                    paginaEquipos = nuevaPagina;
+                    cargarMetricas();
+                }
+            });
+        });
+    }
+}
+
+// ============================================================
+// INICIALIZACIÓN
+// ============================================================
+document.addEventListener('DOMContentLoaded', () => {
+    cargarMetricas();
+
+    document.getElementById('btnFiltrarFechas')?.addEventListener('click', () => {
+        const inputInicio = document.getElementById('fechaInicio').value;
+        const inputFin = document.getElementById('fechaFin').value;
+
+        if (inputInicio && inputFin) {
+            if (new Date(inputInicio) > new Date(inputFin)) {
+                mostrarError("La fecha de inicio no puede ser mayor que la fecha de fin.", "Por favor, ajusta las fechas antes de filtrar.", false);
+                return;
+            }
+        }
+
+        paginaAlertas = 0;
+        paginaEquipos = 0;
+        cargarMetricas();
+    });
+
+    document.getElementById('btnLimpiarFechas')?.addEventListener('click', () => {
+        const inputInicio = document.getElementById('fechaInicio');
+        const inputFin = document.getElementById('fechaFin');
+        if (inputInicio) inputInicio.value = '';
+        if (inputFin) inputFin.value = '';
+        paginaAlertas = 0;
+        paginaEquipos = 0;
+        cargarMetricas();
+    });
+
+    document.getElementById('btnExportarPDF')?.addEventListener('click', () => {
+        console.log("Iniciando exportación a PDF...");
     });
 });
-
-const btnFiltrarFechas = document.getElementById('btnFiltrarFechas');
-if (btnFiltrarFechas) {
-    btnFiltrarFechas.addEventListener('click', aplicarFiltroFechas);
-}
-
-const btnLimpiarFechas = document.getElementById('btnLimpiarFechas');
-if (btnLimpiarFechas) {
-    btnLimpiarFechas.addEventListener('click', () => {
-        document.getElementById('fechaInicio').value = '';
-        document.getElementById('fechaFin').value = '';
-        renderizar(listaTicketsCompleta, listaEvaluacionesCompleta);
-    });
-}

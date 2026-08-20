@@ -1,5 +1,5 @@
 import { crearTicket } from "../services/ticketsService.js";
-import { getDepartamentosAsignables } from "../services/departamentosService.js";
+import { getDepartamentosAsignables } from "../services/.js";
 import { getUbicaciones } from "../services/ubicacionesService.js";
 import { mostrarError, mostrarExitoSimple, mostrarConfirmacion } from "../components/sweetAlerts.js";
 import { validarFormularioTicket } from "../validators/ticketsValidator.js";
