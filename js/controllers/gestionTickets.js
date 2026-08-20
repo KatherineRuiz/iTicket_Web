@@ -4,6 +4,7 @@ import { validarFormularioAprobacion, validarFormularioReasignacionDep } from ".
 import { getTecnicosPorDepartamento } from "../services/usuariosService.js";
 import { getDepartamentosAsignables } from "../services/departamentosService.js";
 import { formatearFecha12H } from "../utils/formateadores.js";
+import { obtenerIdUsuario } from "../utils/sesion.js";
 
 const numNuevos = document.getElementById("numNuevos");
 const numResueltos = document.getElementById("numResueltos");
@@ -62,7 +63,7 @@ let temporizadorBusqueda = null;
 let departamentosCargados = false;
 let departamentoTicketActual = "";
 let listaDepartamentosDisponibles = [];
-const idUsuario = 1;//Temporal
+const idUsuario = obtenerIdUsuario();
 
 document.addEventListener("DOMContentLoaded", () => {
     cargarIndicadores();

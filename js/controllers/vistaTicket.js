@@ -3,7 +3,7 @@ import { obtenerEvidenciasPorTicket, eliminarEvidencia, subirEvidencia } from ".
 import { getDepartamentosAsignables } from "../services/departamentosService.js";
 import { getUbicaciones } from "../services/ubicacionesService.js";
 import { buscarArticulosPorCodigoParcial } from "../services/articulosService.js";
-import { getTecnicosPorDepartamento } from "../services/usuariosService.js";
+import { getTecnicosPorDepartamento, getUsuarioById } from "../services/usuariosService.js";
 import { mostrarError, mostrarExitoSimple, mostrarConfirmacion } from "../components/sweetAlerts.js";
 import { validarFormularioTicket, validarFormularioAprobacion, validarFormularioReporte } from "../validators/ticketsValidator.js";
 import { obtenerPermisos } from "../validators/permisosTicket.js";
@@ -12,6 +12,7 @@ import { crearComentario, obtenerComentariosPorTicket, eliminarComentario } from
 import { subirMultimediaComentario } from "../services/multimediaComentariosService.js";
 import { formatearFecha24H, formatearFecha12H, formatearParaDateTimeLocal } from "../utils/formateadores.js";
 import { validarFormularioComentario } from "../validators/comentariosValidator.js";
+import { obtenerIdUsuario } from "../utils/sesion.js";
 
 const CATEGORIA_POR_TIPO = { "Articulo": "equipos", "General": "general", "Software": "software" };
 const limiteEvidenciasTicket = 5;
@@ -110,6 +111,9 @@ let ubicacionesCargadas = false;
 let temporizadorBusqueda = null;
 let comentariosActuales = [];
 let archivosComentarioSeleccionados = [];
+const idUsuario = obtenerIdUsuario();
+// nombreRol viene de getUsuarioById (la API de usuarios), la sesión guardada en el login solo trae idRol numérico
+let rol = "";
 
 document.addEventListener("DOMContentLoaded", () => {
     if (btnVolver) {
@@ -136,26 +140,19 @@ function obtenerIdTicketDesdeURL() {
     return parametros.get("id");
 }
 
-function obtenerSesion() {
-    const usuarioGuardado = sessionStorage.getItem("usuarioLogueado");
-    if (!usuarioGuardado) {
-        return { idUsuario: null, rol: null };
-    }
-    const { idUsuario, rolUsuario } = JSON.parse(usuarioGuardado);
-    return { idUsuario: Number(idUsuario), rol: (rolUsuario || "").toLowerCase() };
-}
-
 async function cargarTicket() {
     try {
-        const [ticket, evidencias, comentarios] = await Promise.all([
+        const [ticket, evidencias, comentarios, usuarioActual] = await Promise.all([
             getTicket(idTicketActual),
             obtenerEvidenciasPorTicket(idTicketActual),
-            obtenerComentariosPorTicket(idTicketActual)
+            obtenerComentariosPorTicket(idTicketActual),
+            getUsuarioById(idUsuario)
         ]);
 
         ticketActual = ticket;
         evidenciasActuales = evidencias || [];
         comentariosActuales = comentarios || [];
+        rol = (usuarioActual?.nombreRol || "").toLowerCase();
 
         renderizarVista();
         configurarPermisos();
@@ -234,7 +231,6 @@ function renderizarGaleriaVista() {
 }
 
 function configurarPermisos() {
-    const { idUsuario, rol } = obtenerSesion();
     const permisos = obtenerPermisos(ticketActual, idUsuario, rol);
 
     btnAbrirEdicionCreador.classList.toggle("d-none", !permisos.editarCreador);
@@ -307,7 +303,6 @@ function liberarDepartamento() {
 
 async function cargarDepartamentosEdicion() {
     if (departamentosCargados) return;
-    const { idUsuario } = obtenerSesion();
     try {
         const departamentos = await getDepartamentosAsignables(idUsuario);
         listaDepartamentosDisponibles = departamentos;
@@ -629,8 +624,6 @@ frmEdicionCreador?.addEventListener("submit", async (e) => {
         }));
     }
 
-    const { idUsuario } = obtenerSesion();
-
     try {
         await editarComoCreador(idTicketActual, dto, idUsuario);
 
@@ -708,8 +701,6 @@ frmReasignacion?.addEventListener("submit", async (e) => {
     const confirmar = await mostrarConfirmacion("¿Deseas reasignar este ticket?", "El ticket volverá al estado 'Asignado'", "Reasignar");
     if (!confirmar) return;
 
-    const { idUsuario } = obtenerSesion();
-
     try {
         await editarComoGestor(idTicketActual, {
             fechaVencimiento: datos.fechaVencimiento,
@@ -737,8 +728,6 @@ modalEstadoAsignadoEl?.addEventListener("show.bs.modal", () => {
 
 frmEstadoAsignado?.addEventListener("submit", async (e) => {
     e.preventDefault();
-    const { idUsuario } = obtenerSesion();
-
     try {
         await editarEstadoAsignado(idTicketActual, sltEstadoAsignado.value, idUsuario);
         mostrarExitoSimple("¡Estado actualizado!", "El estado del ticket fue actualizado.");
@@ -796,8 +785,6 @@ frmReporteTicket?.addEventListener("submit", async (e) => {
         return;
     }
 
-    const { idUsuario } = obtenerSesion();
-
     try {
         await reportarTicket(idTicketActual, {
             descripcionFalla: datos.descripcionFalla.trim(),
@@ -853,8 +840,6 @@ function renderizarComentarios() {
         listaComentarios.innerHTML = `<p class="text-muted small mb-0">Aún no hay comentarios. ¡Sé el primero en escribir uno!</p>`;
         return;
     }
-
-    const { idUsuario } = obtenerSesion();
 
     listaComentarios.innerHTML = comentariosActuales.map((comentario) => {
         const esPropio = Number(comentario.idUsuarioComentario) === idUsuario;
@@ -976,7 +961,6 @@ galeriaComentarioAdjuntos?.addEventListener("click", (e) => {
 frmComentario?.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    const { idUsuario } = obtenerSesion();
     if (!idUsuario) {
         mostrarError("No se pudo identificar al usuario. Inicia sesión nuevamente.");
         return;

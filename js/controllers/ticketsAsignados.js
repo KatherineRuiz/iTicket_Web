@@ -1,6 +1,7 @@
 import { mostrarError } from "../components/sweetAlerts.js";
 import { getTicketsAsignados } from "../services/ticketsService.js";
 import { formatearFecha12H } from "../utils/formateadores.js";
+import { obtenerIdUsuario } from "../utils/sesion.js";
 
 const divTickets = document.getElementById("divTickets");
 const paginacionTickets = document.getElementById("paginacionTickets"); 
@@ -15,7 +16,7 @@ let paginaActualTickets = 1;
 let idTicketSeleccionado = null;
 let filtrosActuales = {};
 let temporizadorBusqueda = null;
-const idUsuario = 1;//Temporal
+const idUsuario = obtenerIdUsuario();
 
 document.addEventListener("DOMContentLoaded", function () {
   cargarTicketsAsignados(1);
