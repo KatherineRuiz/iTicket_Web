@@ -1,0 +1,42 @@
+:root {
+    --bg-oscuro-bitacoras: #121F48;
+}
+
+.truncate-celda {
+    max-width: 220px;
+}
+
+#tblBitacoras tr:hover,
+#tblBitacorasEliminados tr:hover {
+    background-color: #f8fafc;
+}
+
+/* Pestañas de Bitácoras */
+.nav-tabs {
+    border-bottom: none;
+}
+
+.nav-tabs .nav-link {
+    border: none;
+    border-radius: 16px 16px 0 0;
+    color: #4a5568;
+    font-weight: 600;
+    padding: 12px 22px;
+    background-color: transparent;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.nav-tabs .nav-link:hover {
+    color: var(--bg-oscuro-bitacoras);
+    border: none;
+}
+
+.nav-tabs .nav-link.active {
+    background-color: #ffffff;
+    color: var(--bg-oscuro-bitacoras);
+    box-shadow: 0 -6px 16px rgba(30, 45, 90, 0.05);
+}
+
+.contenido-tabs-bitacoras .card-tabla {
+    border-top-left-radius: 0;
+}
