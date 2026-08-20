@@ -14,7 +14,7 @@ import { formatearFecha24H, formatearFecha12H, formatearParaDateTimeLocal } from
 import { validarFormularioComentario } from "../validators/comentariosValidator.js";
 
 const CATEGORIA_POR_TIPO = { "Articulo": "equipos", "General": "general", "Software": "software" };
-const limiteEvidenciasTicket = 10;
+const limiteEvidenciasTicket = 5;
 const limiteMultimediaComentario = 3;
 
 const targetaTicket = document.getElementById("targetaTicket");
@@ -197,7 +197,7 @@ function renderizarVista() {
     }
 
     if (t.tipoTicket === "Software" && t.detallesSoftware?.length) {
-        txtSoftwareTicket.textContent = t.detallesSoftware.map((sw) => `${sw.nombreSoftware} (v.${sw.version})`).join(", ");
+        txtSoftwareTicket.textContent = 
         filaSoftware.classList.remove("d-none");
     } else {
         filaSoftware.classList.add("d-none");
@@ -264,26 +264,25 @@ async function cargarEdicionCreador() {
     listaCodigosEquipos = [];
     listaSoftwareVersion = [];
 
+    await cargarDepartamentosEdicion();
+    sltDepartamentoEdicion.value = t.departamento;
+    liberarDepartamento();
+
     if (t.tipoTicket === "Articulo") {
         campoCodigoEdicion.classList.remove("d-none");
         listaCodigosEquipos = [...(t.codigosArticulos ?? [])];
         renderizarCodigosEdicion();
-        liberarDepartamento();
     } else if (t.tipoTicket === "General") {
         campoUbicacionEdicion.classList.remove("d-none");
         txtUbicacionEdicion.value = t.ubicacion;
-        liberarDepartamento();
     } else if (t.tipoTicket === "Software") {
         campoSoftwareEdicion.classList.remove("d-none");
         listaSoftwareVersion = (t.detallesSoftware ?? []).map((sw) => ({ nombreSoftware: sw.nombreSoftware, version: sw.version }));
-        forzarDepartamentoIT();
         renderizarSoftwareEdicion();
         await cargarUbicacionesEdicion();
         preseleccionarUbicacionSoftware(t.ubicacion);
+        forzarDepartamentoIT();
     }
-
-    await cargarDepartamentosEdicion();
-    sltDepartamentoEdicion.value = t.departamento;
 
     archivosNuevosEvidencia = [];
     renderizarGaleriaEdicion();

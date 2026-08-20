@@ -1,18 +1,29 @@
 const API_URL = "http://localhost:8080/api/ubicaciones";
 
-//Obtener la lista completa de ubicaciones
 export async function getUbicaciones() {
-    try{
+    try {
         const respuesta = await fetch(API_URL);
-        if(!respuesta.ok){
-            console.error("Error al obtener las ubicaciones");
-            throw new Error("Error al obtene las ubicaciones");
-        }
-
+        if (!respuesta.ok) throw new Error("Error al obtener las ubicaciones");
         const registros = await respuesta.json();
         return registros.data;
-    }catch(error){
+    } catch (error) {
         console.error("Error al obtener las ubicaciones: ", error);
         throw error;
     }
+}
+
+export async function crearUbicacion(nombreUbicacion, idTipoUbicacion) {
+    const respuesta = await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ nombreUbicacion, idTipoUbicacion })
+    });
+    const resultado = await respuesta.json();
+    if (!respuesta.ok) throw new Error(resultado.message || "No se pudo crear la ubicación");
+    return resultado.data;
+}
+
+export async function eliminarUbicacion(id) {
+    const respuesta = await fetch(`${API_URL}/${id}`, { method: "DELETE" });
+    if (!respuesta.ok) throw new Error("No se pudo eliminar la ubicación");
 }

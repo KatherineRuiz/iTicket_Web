@@ -1,4 +1,49 @@
-const API_URL = "http://localhost:8080/api/usuarios";
+import { API_BASE_URL, manejarRespuesta } from "./apiConfig.js";
+
+const URL_USUARIOS = `${API_BASE_URL}/usuarios`;
+
+export async function getUsuarios() {
+    const respuesta = await fetch(URL_USUARIOS);
+    return manejarRespuesta(respuesta);
+}
+
+export async function getUsuarioById(idUsuario) {
+    const respuesta = await fetch(`${URL_USUARIOS}/${idUsuario}`);
+    return manejarRespuesta(respuesta);
+}
+
+// Este nombre lo utiliza actualmente authService.js
+export async function getUsuarioPorId(idUsuario) {
+    return getUsuarioById(idUsuario);
+}
+
+export async function crearUsuario(usuario) {
+    const respuesta = await fetch(URL_USUARIOS, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(usuario)
+    });
+
+    return manejarRespuesta(respuesta);
+}
+
+export async function actualizarUsuario(idUsuario, usuario) {
+    const respuesta = await fetch(`${URL_USUARIOS}/${idUsuario}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(usuario)
+    });
+
+    return manejarRespuesta(respuesta);
+}
+
+export async function eliminarUsuario(idUsuario) {
+    const respuesta = await fetch(`${URL_USUARIOS}/${idUsuario}`, {
+        method: "DELETE"
+    });
+
+    return manejarRespuesta(respuesta);
+}
 
 //Obtener la lista completa de usuarios
 export async function getUsuarios() {
@@ -15,14 +60,10 @@ export async function getUsuarios() {
 }
 
 export async function getTecnicosPorDepartamento(idDepartamento) {
-    try {
-        const respuesta = await fetch(`${API_URL}/tecnicos?idDepartamento=${idDepartamento}`);
-        if (!respuesta.ok) throw new Error("Error al obtener los técnicos");
-        const resultado = await respuesta.json();
-        return resultado.data;
-    }
-    catch (error) {
-        console.error("Error al obtener técnicos:", error);
-        throw error;
-    }
+    const parametros = new URLSearchParams({ idDepartamento });
+    const respuesta = await fetch(
+        `${URL_USUARIOS}/tecnicos?${parametros}`
+    );
+
+    return manejarRespuesta(respuesta);
 }

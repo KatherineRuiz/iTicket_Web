@@ -79,9 +79,28 @@ async function inicializarVistaProyecto(id) {
     const modalFasesProyecto = document.getElementById('modalFasesProyecto');
     const modalDetalleFase = document.getElementById('modalDetalleFase');
     const btnEliminarProyecto = document.getElementById('btnEliminarProyecto');
-    // Utilidades
+
+    /* Muestra u oculta los campos de edición de la fase  */
+    function mostrarCamposEdicionFase(mostrar) {
+        ['campoGastoTotalFase', 'campoFechaInicioReal', 'campoFechaFinalReal']
+            .forEach((id) => document.getElementById(id).classList.toggle('d-none', !mostrar));
+    }
+
+    /* Obtiene una fase por su ID */
     function obtenerFasePorId(id) {
         return fases.find((f) => f.id === id);
+    }
+
+    // Normaliza el valor de finalizado de la fase a un booleano
+    function normalizarEstadoFase(valor) {
+        if (valor === true || valor === false) return valor;
+
+        //Convierte el valor a string, lo recorta y lo convierte a mayúsculas para compararlo con los valores permitidos.
+        const texto = String(valor ?? '').trim().toUpperCase();
+        if (texto === 'T' || texto === 'TRUE' || texto === '1') return true;
+        if (texto === 'F' || texto === 'FALSE' || texto === '0' || texto === '') return false;
+
+        return Boolean(valor);
     }
 
     //Pinta en pantalla los datos del proyecto que se trajo de la API
@@ -96,12 +115,15 @@ async function inicializarVistaProyecto(id) {
         document.getElementById('txtEstadoProyecto').textContent = proyecto.finalizado ? "Finalizado" : "En progreso";
     }
 
+    //Carga las fases del proyecto desde la API y las almacena en la variable "fases".
+    //Luego, llama a las funciones para renderizar el select de fases y la tarjeta de la fase seleccionada.
     function renderSelectFases() {
         selectFase.innerHTML = '<option value="">Selecciona una fase</option>';
         fases.forEach((f) => {
+            const finalizado = normalizarEstadoFase(f.finalizado ?? f.faseFinalizada ?? 'F');
             const opt = document.createElement('option');
             opt.value = f.id;
-            opt.textContent = f.nombreFase;
+            opt.textContent = `${f.nombreFase}`;
             if (f.id === faseSeleccionadaId) opt.selected = true;
             selectFase.appendChild(opt);
         });
@@ -114,17 +136,28 @@ async function inicializarVistaProyecto(id) {
                 '<p class="text-muted mb-0">Selecciona o crea una fase para ver su información.</p>';
             return;
         }
+
+        //convierte el valor de finalizado a booleano
+        const finalizado = normalizarEstadoFase(fase.finalizado ?? fase.faseFinalizada ?? 'F');
+
         tarjetaFase.innerHTML = `
       <h6 class="text-navy fw-bold mb-3">${fase.nombreFase}</h6>
       <p class="meta-proyecto mb-1"><b>Departamento encargado:</b> ${fase.departamentoEncargado}</p>
       <p class="meta-proyecto mb-1"><b>Descripción:</b> ${fase.faseDescripcion}</p>
       <p class="meta-proyecto mb-1"><b>Inicio estimado:</b> ${fase.fechaInicioEstimada || '—'}</p>
       <p class="meta-proyecto mb-1"><b>Final estimado:</b> ${fase.fechaFinalEstimada || '—'}</p>
+      <p class="meta-proyecto mb-1"><b>Inicio real:</b> ${fase.fechaInicioReal || '—'}</p>
+      <p class="meta-proyecto mb-1"><b>Final real:</b> ${fase.fechaFinalReal || '—'}</p>
       <p class="meta-proyecto mb-1"><b>Proveedor:</b> ${fase.nombreProveedor || 'N/A'}</p>
       <p class="meta-proyecto mb-0"><b>Presupuesto estimado:</b> $${Number(fase.presupuestoEstimado).toFixed(2)}</p>
+      <p class="meta-proyecto mb-0"><b>Gasto total:</b> $${Number(fase.gastoTotal || 0).toFixed(2)}</p>
+      <p class="meta-proyecto mb-0"><b>Estado de la fase:</b> ${finalizado ? 'Finalizada' : 'En progreso'}</p>
     `;
     }
 
+    //Normalizar: convertir los datos de un formato a otro para que tengan una estructura consistente.
+    //El formato estándar que se busca es un objeto con las siguientes propiedades: id, descripcionDetalle, texto, completado y fase.
+    //Esto permite que el front-end pueda manejar los detalles de fase de manera consistente, sin importar cómo se reciban desde la API.
     function normalizarDetalle(detalle) {
         if (!detalle) return null;
 
@@ -153,6 +186,7 @@ async function inicializarVistaProyecto(id) {
             return;
         }
 
+        //Se asegura de que la propiedad "detalles" de la fase sea un array. Si no lo es, se asigna un array vacío.
         const detalles = Array.isArray(fase.detalles) ? fase.detalles : [];
         if (detalles.length === 0) {
             listaDetalleVista.innerHTML =
@@ -160,6 +194,7 @@ async function inicializarVistaProyecto(id) {
             return;
         }
 
+        //Recorre cada detalle de la fase y crea un elemento <li> en la lista de detalles de la vista del proyecto.
         detalles.forEach((d) => {
             const detalle = normalizarDetalle(d);
             const li = document.createElement('li');
@@ -176,6 +211,7 @@ async function inicializarVistaProyecto(id) {
         });
     }
 
+    /* Esta función se encarga de cargar los detalles de una fase específica desde la API y mostrarlos en la vista del proyecto. */
     async function cargarDetallesDeFase(idFase) {
         const fase = obtenerFasePorId(idFase);
         if (!fase) return;
@@ -203,6 +239,7 @@ async function inicializarVistaProyecto(id) {
         renderListaDetalles();
     }
 
+    /* Esta función se encarga de seleccionar una fase específica y cargar sus detalles. */
     function seleccionarFase(id) {
         faseSeleccionadaId = id ? Number(id) : null;
         renderTarjetaFase();
@@ -266,6 +303,9 @@ async function inicializarVistaProyecto(id) {
     });
 
     //Guarda los cambios del proyecto llamando al PUT
+    //Escucha el evento de submit del formulario de edición del proyecto.
+    //construye un objeto con los datos actualizados del proyecto y llama a la función actualizarProyecto para enviar los cambios a la API. Si la actualización es exitosa, muestra un mensaje de éxito, actualiza la vista del proyecto y desactiva el modo de edición.
+    //Si ocurre algún error durante el proceso, muestra un mensaje de error.
     modoEdicionProyecto.addEventListener('submit', async (e) => {
         e.preventDefault();
 
@@ -281,7 +321,7 @@ async function inicializarVistaProyecto(id) {
             correoSupervisor: document.getElementById('txtSupervisorProyectoEdicion').value.trim().toLowerCase()
         };
 
-        
+        //Valida los datos del formulario
         const errores = validarFormularioProyecto(datosFormulario);
         if (errores.length > 0) {
             errores.forEach((error) => {
@@ -292,7 +332,7 @@ async function inicializarVistaProyecto(id) {
             return;
         }
 
-        //--- Resolución de correos a idUsuario ---
+        //Se obtienen los usuarios desde la API y se buscan los usuarios correspondientes a los correos de coordinador y supervisor ingresados en el formulario.
         let usuarios;
         try {
             usuarios = await obtenerUsuarios();
@@ -338,6 +378,17 @@ async function inicializarVistaProyecto(id) {
         }
     });
 
+    //Refresca los datos del proyecto desde la API, esto para cuando se actualice el total al crear/editar/eliminar
+    //una fase, puedan verse los cambios reflejados sin la necesidad de recargar la pagina
+    async function refrescarProyecto() {
+        try {
+            proyecto = await getProyecto(proyecto.idProyecto);
+            pintarDatosProyecto();
+        } catch (error) {
+            console.error("No se pudo refrescar el total del proyecto:", error);
+        }
+    }
+
     // Seleccion de fase
     selectFase.addEventListener('change', (e) => seleccionarFase(e.target.value));
 
@@ -347,6 +398,8 @@ async function inicializarVistaProyecto(id) {
         event.stopPropagation();
         faseEnEdicionId = null;
         formAgregarFase.reset();
+        mostrarCamposEdicionFase(false);
+        document.getElementById('faseFinalizada').value = 'En progreso';
         txtBotonGuardarFase.textContent = 'Agregar fase';
         const instancia = bootstrap.Modal.getOrCreateInstance(modalFasesProyecto);
         instancia.show();
@@ -359,14 +412,21 @@ async function inicializarVistaProyecto(id) {
             mostrarError('Selecciona una fase para editar.');
             return;
         }
+        /* Esta función permite editar una fase seleccionada. */
         faseEnEdicionId = fase.id;
+        mostrarCamposEdicionFase(true);
         document.getElementById('txtNombreFase').value = fase.nombreFase;
         document.getElementById('txtDepartamentoEncargado').value = fase.departamentoEncargado;
         document.getElementById('txtDesxripxionFase').value = fase.faseDescripcion;
         document.getElementById('txtFechaInicioEstimada').value = fase.fechaInicioEstimada;
         document.getElementById('txtFechaFinalEstimada').value = fase.fechaFinalEstimada;
+        document.getElementById('txtFechaInicioReal').value = fase.fechaInicioReal ?? '';
+        document.getElementById('txtFechaFinalReal').value = fase.fechaFinalReal ?? '';
         document.getElementById('txtProveedor').value = fase.nombreProveedor;
         document.getElementById('numPresupuesto').value = fase.presupuestoEstimado;
+        document.getElementById('numTotal').value = fase.gastoTotal ?? '';
+        const finalizadoFase = normalizarEstadoFase(fase.finalizado ?? fase.faseFinalizada ?? false);
+        document.getElementById('faseFinalizada').value = finalizadoFase ? 'Finalizada' : 'En progreso';
         txtBotonGuardarFase.textContent = 'Guardar cambios';
         new bootstrap.Modal(modalFasesProyecto).show();
     });
@@ -395,6 +455,7 @@ async function inicializarVistaProyecto(id) {
             renderSelectFases();
             renderTarjetaFase();
             renderListaDetalles();
+            await refrescarProyecto();
             mostrarExitoSimple("¡Listo!", "La fase se eliminó correctamente");
         } catch (error) {
             mostrarError(error.message);
@@ -403,75 +464,87 @@ async function inicializarVistaProyecto(id) {
 
     //Guarda los cambios de la fase (creación o edición)
     formAgregarFase.addEventListener('submit', async (e) => {
-    e.preventDefault();
+        e.preventDefault();
 
-    const nombreFase = document.getElementById('txtNombreFase').value.trim();
-    const departamentoEncargado = document.getElementById('txtDepartamentoEncargado').value.trim();
-    const faseDescripcion = document.getElementById('txtDesxripxionFase').value.trim();
-    const fechaInicioEstimada = document.getElementById('txtFechaInicioEstimada').value;
-    const fechaFinalEstimada = document.getElementById('txtFechaFinalEstimada').value;
-    const nombreProveedor = document.getElementById('txtProveedor').value.trim();
-    const presupuestoEstimado = document.getElementById('numPresupuesto').value;
+        const nombreFase = document.getElementById('txtNombreFase').value.trim();
+        const departamentoEncargado = document.getElementById('txtDepartamentoEncargado').value.trim();
+        const faseDescripcion = document.getElementById('txtDesxripxionFase').value.trim();
+        const fechaInicioEstimada = document.getElementById('txtFechaInicioEstimada').value;
+        const fechaFinalEstimada = document.getElementById('txtFechaFinalEstimada').value;
+        const fechaInicioReal = document.getElementById('txtFechaInicioReal').value;
+        const fechaFinalReal = document.getElementById('txtFechaFinalReal').value;
+        const nombreProveedor = document.getElementById('txtProveedor').value.trim();
+        const presupuestoEstimado = document.getElementById('numPresupuesto').value;
+        const gastoTotal = document.getElementById('numTotal').value;
+        const estadoFase = document.getElementById('faseFinalizada').value;
+        const finalizado = estadoFase === 'Finalizada';
 
-    const datosFase = {
-        nombreFase,
-        departamentoEncargado,
-        faseDescripcion,
-        fechaInicioEstimada,
-        fechaFinalEstimada,
-        nombreProveedor,
-        presupuestoEstimado: Number(presupuestoEstimado),
-        proyecto: proyecto.idProyecto
-    };
+        //Construye un objeto "datosFase" con los datos del formulario, normalizando los valores de presupuesto y gasto total a números y asegurándose de que las fechas reales sean nulas si no se proporcionan.
+        const datosFase = {
+            nombreFase,
+            departamentoEncargado,
+            faseDescripcion,
+            fechaInicioEstimada,
+            fechaFinalEstimada,
+            fechaInicioReal: fechaInicioReal || null,
+            fechaFinalReal: fechaFinalReal || null,
+            nombreProveedor,
+            presupuestoEstimado: Number(presupuestoEstimado),
+            gastoTotal: gastoTotal === '' || gastoTotal === null || gastoTotal === undefined ? null : Number(gastoTotal),
+            estadoFase,
+            finalizado,
+            faseFinalizada: finalizado,
+            proyecto: proyecto.idProyecto
+        };
 
-    // Validaciones de fase
-    formAgregarFase.querySelectorAll('.is-invalid').forEach((el) => el.classList.remove('is-invalid'));
-    const erroresValidacion = validarFormularioFase(datosFase);
-    if (erroresValidacion.length > 0) {
-        erroresValidacion.forEach((error) => {
-            const campo = formAgregarFase.querySelector(`[id="${error.campo}"]`);
-            if (campo) campo.classList.add('is-invalid');
-        });
-        mostrarError(erroresValidacion.map((error) => error.mensaje).join('<br>'));
-        return;
-    }
-
-    try {
-        if (faseEnEdicionId) {
-            //Al editar, conservamos el estado "finalizado" y el gasto real que ya tenía la fase
-            const faseOriginal = obtenerFasePorId(faseEnEdicionId);
-            datosFase.finalizado = faseOriginal.finalizado ?? false;
-            datosFase.gastoTotal = faseOriginal.gastoTotal ?? null;
-
-            const faseActualizada = await actualizarFase(faseEnEdicionId, datosFase);
-            const fase = obtenerFasePorId(faseEnEdicionId);
-            Object.assign(fase, faseActualizada, { id: faseActualizada.idFase });
-            mostrarExitoSimple("¡Listo!", "La fase se actualizó correctamente");
-        } else {
-            datosFase.finalizado = false;
-            const nuevaFaseApi = await crearFase(datosFase);
-            const nuevaFase = { id: nuevaFaseApi.idFase, detalles: [], ...nuevaFaseApi };
-            fases.push(nuevaFase);
-            faseSeleccionadaId = nuevaFase.id;
-            mostrarExitoSimple("¡Listo!", "La fase se creó correctamente");
+        // Validaciones de fase
+        formAgregarFase.querySelectorAll('.is-invalid').forEach((el) => el.classList.remove('is-invalid'));
+        const erroresValidacion = validarFormularioFase(datosFase);
+        if (erroresValidacion.length > 0) {
+            erroresValidacion.forEach((error) => {
+                const campo = formAgregarFase.querySelector(`[id="${error.campo}"]`);
+                if (campo) campo.classList.add('is-invalid');
+            });
+            mostrarError(erroresValidacion.map((error) => error.mensaje).join('<br>'));
+            return;
         }
 
-        renderSelectFases();
-        renderTarjetaFase();
-        renderListaDetalles();
-        formAgregarFase.reset();
-        faseEnEdicionId = null;
+        try {
+            if (faseEnEdicionId) {
+                const faseActualizada = await actualizarFase(faseEnEdicionId, datosFase);
+                const fase = obtenerFasePorId(faseEnEdicionId);
+                Object.assign(fase, faseActualizada, {
+                    id: faseActualizada.idFase ?? faseEnEdicionId,
+                    fechaInicioReal: faseActualizada.fechaInicioReal ?? datosFase.fechaInicioReal,
+                    fechaFinalReal: faseActualizada.fechaFinalReal ?? datosFase.fechaFinalReal
+                });
+                mostrarExitoSimple("¡Listo!", "La fase se actualizó correctamente");
+            } else {
+                const nuevaFaseApi = await crearFase(datosFase);
+                const nuevaFase = { id: nuevaFaseApi.idFase, detalles: [], ...nuevaFaseApi };
+                fases.push(nuevaFase);
+                faseSeleccionadaId = nuevaFase.id;
+                mostrarExitoSimple("¡Listo!", "La fase se creó correctamente");
+            }
 
-        const instancia = bootstrap.Modal.getInstance(modalFasesProyecto);
-        if (instancia) instancia.hide();
-    } catch (error) {
-        mostrarError(error.message);
-    }
-});
+            renderSelectFases();
+            renderTarjetaFase();
+            renderListaDetalles();
+            await refrescarProyecto();
+            formAgregarFase.reset();
+            faseEnEdicionId = null;
+
+            const instancia = bootstrap.Modal.getInstance(modalFasesProyecto);
+            if (instancia) instancia.hide();
+        } catch (error) {
+            mostrarError(error.message);
+        }
+    });
 
     //Agregar detalle a la fase seleccionada, ya conectado con la API de Detalle_fase (POST)
     btnAgregarDetalle.addEventListener('click', (event) => {
         event.preventDefault();
+        //Previene que el evento de click se propague a otros elementos padres, evitando que se ejecuten otros manejadores de eventos que puedan estar asociados a esos elementos.
         event.stopPropagation();
 
         if (!faseSeleccionadaId) {
@@ -537,7 +610,7 @@ async function inicializarVistaProyecto(id) {
         });
     });
 
-    //Eventos de la lista de detalles de la fase, ya conectados con la API de Detalle_fase
+    //Escucha los clicks en la lista de detalles de la fase y si se hace click en un botón de eliminar, elimina el detalle correspondiente.
     listaDetalleVista.addEventListener('click', async (e) => {
         if (e.target.matches('.btnEliminarDetalle')) {
             const idDetalle = Number(e.target.dataset.idDetalle);
@@ -562,7 +635,7 @@ async function inicializarVistaProyecto(id) {
         }
     });
 
-
+    //Escucha los cambios en los chechbox de los detalles de la fase y actualiza el estado de completado en la API.
     listaDetalleVista.addEventListener('change', async (e) => {
         if (e.target.matches('input[type="checkbox"]')) {
             const idDetalle = Number(e.target.dataset.idDetalle);
@@ -574,19 +647,21 @@ async function inicializarVistaProyecto(id) {
 
             const nuevoEstado = e.target.checked;
 
+            //Se crea un objeto con los datos actualizados del detalle, manteniendo la descripción y la fase, pero cambiando el estado de completado.
             const detalleActualizado = {
                 descripcionDetalle: detalle.descripcionDetalle,
                 completado: nuevoEstado,
                 fase: fase.id
             };
 
+            //Se intenta actualizar el detalle en la API y si hay un error, se revierte el cambio en el checkbox y se muestra un mensaje de error.
             try {
                 const respuestaApi = await actualizarDetalleFase(detalle.id, detalleActualizado);
                 detalle.completado = respuestaApi.completado;
             }
-            catch (error){
+            catch (error) {
                 e.target.checked = !nuevoEstado;
-                mostrarError (error.message);
+                mostrarError(error.message);
             }
             renderListaDetalles();
         }
@@ -595,7 +670,7 @@ async function inicializarVistaProyecto(id) {
     //Se cargan las fases del proyecto desde la API
     //en caso de que existan; si no, se deja la lista vacía y se puede crear una nueva fase.
     try {
-        const fasesApi = await(getFasesPorProyecto(proyecto.idProyecto));
+        const fasesApi = await (getFasesPorProyecto(proyecto.idProyecto));
         fases = fasesApi.map((f) => ({ id: f.idFase, detalles: [], ...f }));
 
         //El contador local sigue usándose solo para fases que se creen sin recargar la página

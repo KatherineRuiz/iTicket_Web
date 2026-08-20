@@ -1,5 +1,5 @@
 import { crearTicket } from "../services/ticketsService.js";
-import { getDepartamentosAsignables } from "../services/.js";
+import { getDepartamentosAsignables } from "../services/departamentosService.js";
 import { getUbicaciones } from "../services/ubicacionesService.js";
 import { mostrarError, mostrarExitoSimple, mostrarConfirmacion } from "../components/sweetAlerts.js";
 import { validarFormularioTicket } from "../validators/ticketsValidator.js";
@@ -45,7 +45,7 @@ let categoriaActual = "equipos";
 const usuarioGuardado = sessionStorage.getItem("usuarioLogueado");
 
 let archivosSeleccionados = []; //Aquí se "almacenan" los archivos elegidos
-const limiteEvidencias = 10;
+const limiteEvidencias = 5;
 
 //Crear Tickets segun categoria
 function cambiarCategoria(categoria) {
