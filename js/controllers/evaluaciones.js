@@ -1,137 +1,206 @@
+import { obtenerEvaluaciones, obtenerMetricasEvaluaciones } from "../services/evaluacionesService.js";
+import { mostrarError } from "../components/sweetAlerts.js";
+
+const totalEvaluaciones     = document.getElementById("totalEvaluaciones");
+const promedioCalificacion  = document.getElementById("promedioCalificacion");
+const evaluacionesPositivas = document.getElementById("evaluacionesPositivas");
+const evaluacionesNegativas = document.getElementById("evaluacionesNegativas");
+const inputBusqueda         = document.getElementById("inputBusqueda");
+const selectCalificacion    = document.getElementById("selectCalificacion");
+const inputFecha            = document.getElementById("inputFecha");
+const tablaEvaluaciones     = document.getElementById("tablaEvaluaciones");
+const textoContador         = document.getElementById("textoContador");
+const contenedorPaginacion  = document.getElementById("contenedorPaginacion");
+
+// Estado global
+let paginaActual = 0;
+const tamanioPagina = 10;
+let totalPaginas = 0;
+let totalElementos = 0;
+
 document.addEventListener("DOMContentLoaded", function () {
-
-    const FILAS_POR_PAGINA = 8;
-
-    const inputBuscar        = document.getElementById("inputBuscar");
-    const btnBuscar          = document.getElementById("btnBuscar");
-    const filtroCalificacion = document.getElementById("filtroCalificacion");
-    const filtroFecha        = document.getElementById("filtroFecha");
-    const cuerpoTabla        = document.getElementById("cuerpoTabla");
-    const estadoVacio        = document.getElementById("estadoVacio");
-    const infoRegistros      = document.getElementById("infoRegistros");
-    const paginacion         = document.getElementById("paginacion");
-
-    let paginaActual = 1;
-    const todasLasFilas = Array.from(cuerpoTabla.querySelectorAll("tr"));
-
-    // Aplica los filtros activos y devuelve las filas que coinciden
-    function obtenerFilasFiltradas() {
-        const termino    = inputBuscar.value.trim().toLowerCase();
-        const calFiltro  = filtroCalificacion.value;
-        const fechaFiltro = filtroFecha.value;
-
-        return todasLasFilas.filter(function (fila) {
-            const celdas       = fila.querySelectorAll("td");
-            const codigo       = celdas[0]?.textContent.toLowerCase() ?? "";
-            const asunto       = celdas[1]?.textContent.toLowerCase() ?? "";
-            const tecnico      = celdas[2]?.textContent.toLowerCase() ?? "";
-            const calificacion = celdas[3]?.dataset.calificacion ?? "";
-            const fechaTexto   = celdas[5]?.textContent.trim() ?? "";
-
-            const coincideBusqueda =
-                termino === "" ||
-                codigo.includes(termino) ||
-                asunto.includes(termino) ||
-                tecnico.includes(termino);
-
-            const coincideCalificacion = calFiltro === "" || calificacion === calFiltro;
-
-            // Convierte "DD/MM/YYYY" a "YYYY-MM-DD" para comparar con el input date
-            let coincideFecha = true;
-            if (fechaFiltro !== "") {
-                const partes = fechaTexto.split("/");
-                const fechaNorm = partes.length === 3
-                    ? `${partes[2]}-${partes[1].padStart(2, "0")}-${partes[0].padStart(2, "0")}`
-                    : "";
-                coincideFecha = fechaNorm === fechaFiltro;
-            }
-
-            return coincideBusqueda && coincideCalificacion && coincideFecha;
-        });
+    if (selectCalificacion && selectCalificacion.value === "") {
+        selectCalificacion.value = "0";
     }
+    cargarDatos();
+});
 
-    // Muestra las filas de la página actual y actualiza el contador
-    function renderizar() {
-        const filasFiltradas = obtenerFilasFiltradas();
-        const totalFiltradas = filasFiltradas.length;
+async function cargarDatos() {
+    try {
+        const busqueda = inputBusqueda ? inputBusqueda.value : "";
+        const calificacion = selectCalificacion ? selectCalificacion.value : "0";
+        
+        // El input type="date" entrega la fecha en formato YYYY-MM-DD (Ej: 2026-07-01)
+        // Se asume que el backend Spring Boot lo recibe en este formato estándar por la URL.
+        const fecha = inputFecha ? inputFecha.value : "";
 
-        const inicio = (paginaActual - 1) * FILAS_POR_PAGINA;
-        const fin    = Math.min(inicio + FILAS_POR_PAGINA, totalFiltradas);
-        const filasPagina = filasFiltradas.slice(inicio, fin);
+        // Peticiones en paralelo para tabla paginada y métricas globales
+        const [pageData, metricas] = await Promise.all([
+            obtenerEvaluaciones(paginaActual, tamanioPagina, busqueda, calificacion, fecha),
+            obtenerMetricasEvaluaciones(busqueda, calificacion, fecha)
+        ]);
 
-        todasLasFilas.forEach(function (fila) { fila.classList.add("d-none"); });
-        filasPagina.forEach(function (fila)   { fila.classList.remove("d-none"); });
-
-        estadoVacio.classList.toggle("d-none", totalFiltradas !== 0);
-
-        infoRegistros.textContent =
-            `Mostrando ${filasPagina.length} de ${totalFiltradas} evaluación${totalFiltradas !== 1 ? "es" : ""}`;
-
-        renderizarPaginacion(totalFiltradas);
-    }
-
-    function renderizarPaginacion(totalFiltradas) {
-        paginacion.innerHTML = "";
-        const totalPaginas = Math.ceil(totalFiltradas / FILAS_POR_PAGINA);
-        if (totalPaginas <= 1) return;
-
-        paginacion.appendChild(crearItemPagina("&laquo;", paginaActual - 1, paginaActual === 1));
-
-        obtenerRangoPaginas(paginaActual, totalPaginas).forEach(function (p) {
-            if (p === "...") {
-                const li = document.createElement("li");
-                li.className = "page-item disabled";
-                li.innerHTML = '<span class="page-link">…</span>';
-                paginacion.appendChild(li);
-            } else {
-                paginacion.appendChild(crearItemPagina(p, p, false, p === paginaActual));
-            }
-        });
-
-        paginacion.appendChild(crearItemPagina("&raquo;", paginaActual + 1, paginaActual === totalPaginas));
-    }
-
-    function crearItemPagina(etiqueta, pagina, deshabilitado, activo = false) {
-        const li = document.createElement("li");
-        li.className = `page-item${deshabilitado ? " disabled" : ""}${activo ? " active" : ""}`;
-
-        const a = document.createElement("a");
-        a.className = "page-link";
-        a.href      = "#";
-        a.innerHTML = etiqueta;
-
-        if (!deshabilitado) {
-            a.addEventListener("click", function (e) {
-                e.preventDefault();
-                paginaActual = pagina;
-                renderizar();
-                document.getElementById("tablaEvaluaciones")
-                    ?.scrollIntoView({ behavior: "smooth", block: "start" });
-            });
+        if (!pageData) {
+            renderizarTabla([]);
+            actualizarMetricas(null, 0);
+            renderizarPaginacion();
+            return;
         }
 
-        li.appendChild(a);
-        return li;
+        const lista = pageData.content || [];
+        totalPaginas = pageData.totalPages || 0;
+        totalElementos = pageData.totalElements || 0;
+
+        renderizarTabla(lista);
+        actualizarMetricas(metricas, totalElementos);
+        renderizarPaginacion();
+    } catch (error) {
+        console.error("Error al cargar datos de evaluaciones:", error);
+        mostrarError("No se pudieron cargar las evaluaciones. Intenta de nuevo más tarde.");
+    }
+}
+
+function actualizarMetricas(metricas, totalGral) {
+    if (metricas) {
+        totalEvaluaciones.textContent = metricas.totalEvaluaciones ?? 0;
+        promedioCalificacion.textContent = Number(metricas.promedio || 0).toFixed(1);
+        evaluacionesPositivas.textContent = metricas.positivas ?? 0;
+        evaluacionesNegativas.textContent = metricas.negativas ?? 0;
+    } else {
+        totalEvaluaciones.textContent = "0";
+        promedioCalificacion.textContent = "0.0";
+        evaluacionesPositivas.textContent = "0";
+        evaluacionesNegativas.textContent = "0";
     }
 
-    function obtenerRangoPaginas(actual, total) {
-        if (total <= 7) return Array.from({ length: total }, function (_, i) { return i + 1; });
-        if (actual <= 4) return [1, 2, 3, 4, 5, "...", total];
-        if (actual >= total - 3) return [1, "...", total - 4, total - 3, total - 2, total - 1, total];
-        return [1, "...", actual - 1, actual, actual + 1, "...", total];
+    const inicio = totalGral === 0 ? 0 : (paginaActual * tamanioPagina) + 1;
+    const fin = Math.min((paginaActual + 1) * tamanioPagina, totalGral);
+    if (textoContador) {
+        textoContador.textContent = `Mostrando ${inicio}-${fin} de ${totalGral}`;
+    }
+}
+
+function renderizarTabla(data) {
+    tablaEvaluaciones.innerHTML = "";
+
+    if (!data || data.length === 0) {
+        tablaEvaluaciones.innerHTML = '<tr><td colspan="6" class="text-center text-muted py-4">No se encontraron evaluaciones</td></tr>';
+        return;
     }
 
-    // Eventos de búsqueda y filtros
-    inputBuscar.addEventListener("input", function () { paginaActual = 1; renderizar(); });
-    btnBuscar.addEventListener("click",   function () { paginaActual = 1; renderizar(); });
+    data.forEach(ev => {
+        const fila = document.createElement("tr");
+        const puntos = Math.round(ev.calificacion || 0);
 
-    inputBuscar.addEventListener("keydown", function (e) {
-        if (e.key === "Enter") { paginaActual = 1; renderizar(); }
+        let estrellasHTML = "";
+        for (let i = 1; i <= 5; i++) {
+            estrellasHTML += i <= puntos 
+                ? '<i class="bi bi-star-fill estrella-llena"></i>' 
+                : '<i class="bi bi-star estrella-vacia"></i>';
+        }
+
+        // Formatear la fecha para que se muestre como DD/MM/YYYY y coincida visualmente con el Input
+        let fechaMostrar = "N/A";
+        const fechaRaw = ev.fechaEvaluacion || ev.fechaCreacion;
+        if (fechaRaw) {
+            const soloFecha = fechaRaw.includes("T") ? fechaRaw.split("T")[0] : fechaRaw;
+            const [anio, mes, dia] = soloFecha.split("-");
+            fechaMostrar = `${dia}/${mes}/${anio}`;
+        }
+
+        fila.innerHTML = `
+            <td>${ev.codigoTicket || ev.codigo || "N/A"}</td>
+            <td class="celda-asunto text-truncate" style="max-width: 180px;">${ev.asuntoTicket || ev.asunto || "Sin asunto"}</td>
+            <td>${ev.nombreTecnico || ev.tecnico || "No asignado"}</td>
+            <td><span class="estrellas">${estrellasHTML}</span></td>
+            <td class="celda-comentario text-truncate" style="max-width: 200px;">${ev.comentario || "Sin comentarios"}</td>
+            <td>${fechaMostrar}</td>
+        `;
+
+        tablaEvaluaciones.appendChild(fila);
     });
+}
 
-    filtroCalificacion.addEventListener("change", function () { paginaActual = 1; renderizar(); });
-    filtroFecha.addEventListener("change",        function () { paginaActual = 1; renderizar(); });
+function renderizarPaginacion() {
+    if (!contenedorPaginacion) return;
+    contenedorPaginacion.innerHTML = "";
 
-    renderizar();
+    if (totalPaginas <= 1) return;
 
-});
+    // Botón Anterior
+    const liAnt = document.createElement("li");
+    liAnt.className = `page-item ${paginaActual === 0 ? 'disabled' : ''}`;
+    liAnt.innerHTML = `<a class="page-link border-0 bg-transparent ${paginaActual === 0 ? 'text-muted' : 'text-dark'}" href="#"><i class="bi bi-chevron-left"></i></a>`;
+    liAnt.addEventListener("click", (e) => {
+        e.preventDefault();
+        if (paginaActual > 0) { paginaActual--; cargarDatos(); }
+    });
+    contenedorPaginacion.appendChild(liAnt);
+
+    const ventana = 1;
+    let inicio = Math.max(0, paginaActual - ventana);
+    let fin = Math.min(totalPaginas - 1, paginaActual + ventana);
+
+    if (inicio > 0) {
+        agregarBotonPagina(0);
+        if (inicio > 1) agregarEllipsis();
+    }
+
+    for (let i = inicio; i <= fin; i++) {
+        agregarBotonPagina(i);
+    }
+
+    if (fin < totalPaginas - 1) {
+        if (fin < totalPaginas - 2) agregarEllipsis();
+        agregarBotonPagina(totalPaginas - 1);
+    }
+
+    // Botón Siguiente
+    const liSig = document.createElement("li");
+    liSig.className = `page-item ${paginaActual >= totalPaginas - 1 ? 'disabled' : ''}`;
+    liSig.innerHTML = `<a class="page-link border-0 bg-transparent ${paginaActual >= totalPaginas - 1 ? 'text-muted' : 'text-dark'}" href="#"><i class="bi bi-chevron-right"></i></a>`;
+    liSig.addEventListener("click", (e) => {
+        e.preventDefault();
+        if (paginaActual < totalPaginas - 1) { paginaActual++; cargarDatos(); }
+    });
+    contenedorPaginacion.appendChild(liSig);
+}
+
+function agregarBotonPagina(i) {
+    const li = document.createElement("li");
+    const esActiva = i === paginaActual;
+    li.className = `page-item ${esActiva ? 'active' : ''}`;
+    li.innerHTML = `<a class="page-link border-0 ${esActiva ? 'bg-primary text-white rounded-circle' : 'bg-transparent text-dark'}" href="#">${i + 1}</a>`;
+    li.addEventListener("click", (e) => {
+        e.preventDefault();
+        if (paginaActual !== i) {
+            paginaActual = i;
+            cargarDatos();
+        }
+    });
+    contenedorPaginacion.appendChild(li);
+}
+
+function agregarEllipsis() {
+    const li = document.createElement("li");
+    li.className = "page-item disabled";
+    li.innerHTML = `<span class="page-link border-0 bg-transparent text-muted px-1">...</span>`;
+    contenedorPaginacion.appendChild(li);
+}
+
+// Escuchadores de eventos para filtros
+let debounceTimer;
+if (inputBusqueda) {
+    inputBusqueda.addEventListener("input", () => {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => { paginaActual = 0; cargarDatos(); }, 300);
+    });
+}
+
+if (selectCalificacion) {
+    selectCalificacion.addEventListener("change", () => { paginaActual = 0; cargarDatos(); });
+}
+
+if (inputFecha) {
+    inputFecha.addEventListener("change", () => { paginaActual = 0; cargarDatos(); });
+}
