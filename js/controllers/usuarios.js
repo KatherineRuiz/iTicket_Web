@@ -93,7 +93,7 @@ function cargarUsuarioEnFormulario(id, usuarios) {
     if (usuario.idDepartamento) selectDepartamentoUsuario.value = usuario.idDepartamento;
  
     campoEstadoUsuario.style.display = 'block';
-    selectEstadoUsuario.value = usuario.estado === 'F' ? 'inactivo' : 'activo';
+    selectEstadoUsuario.value = usuario.estado === false ? 'inactivo' : 'activo';
  
     tituloFormUsuario.textContent = 'Editar usuario';
     btnTextoUsuario.textContent = 'Actualizar usuario';
@@ -123,7 +123,7 @@ formUsuario.addEventListener('submit', async (evento) => {
         correo: correoUsuarioInput.value.trim(),
         idRol: Number(selectRol.value),
         idDepartamento: Number(selectDepartamentoUsuario.value),
-        estado: 'T' // Los usuarios nuevos se crean activos por defecto (el campo Estado va oculto al crear)
+        estado: true // Los usuarios nuevos se crean activos por defecto (el campo Estado va oculto al crear)
     };
     if (passwordUsuarioInput.value.trim()) {
         usuario.clave = passwordUsuarioInput.value.trim();

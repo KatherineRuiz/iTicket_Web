@@ -262,10 +262,16 @@ if (btnAgregarSoftware && txtNombreSoftware && txtVersion) {
   });
 }
 
-function forzarDepartamentoIT() {
-  if (!sltDepartamento || listaDepartamentosDisponibles.length === 0) return;
+async function forzarDepartamentoIT() {
+  if (!sltDepartamento) return;
 
-  const departamentoIT = listaDepartamentosDisponibles.find((d) => d.nombreDepartamento.trim().toUpperCase() === "IT");
+  if (!departamentosCargados) {
+    await cargarDepartamentos();
+  }
+
+  const departamentoIT = listaDepartamentosDisponibles.find(
+    (d) => d.nombreDepartamento.trim().toUpperCase() === "IT"
+  );
 
   if (departamentoIT) {
     sltDepartamento.value = departamentoIT.idDepartamento;
