@@ -27,12 +27,13 @@ export async function crearTicket(ticket) {
             body: JSON.stringify(ticket)
         });
 
+        const cuerpo = await respuesta.json().catch(() => null);
+
         if(!respuesta.ok) {
-            throw new Error("Error al crear el ticket");
+            throw new Error(cuerpo?.message || "Error al crear el ticket");
         }
 
-        const nuevoRegistro = await respuesta.json();
-        return nuevoRegistro;
+        return cuerpo;
     }catch(error){
         console.error("Error al crear el ticket: ", error);
         throw error;

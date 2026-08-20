@@ -517,7 +517,7 @@ frmTicket.addEventListener("submit", async function (e) {
     limpiarFormulario();
   } catch (error) {
     console.error("Error al crear el ticket:", error);
-    mostrarError("No se pudo crear el ticket. Por favor, revisa si los datos son correctos.");
+    mostrarError(error.message || "No se pudo crear el ticket. Por favor, revisa si los datos son correctos.");
   }
 })
 
