@@ -3,6 +3,7 @@ import { getIndicadoresEstado, getAprobacionesPendientes, getTicket, asignarTick
 import { validarFormularioAprobacion, validarFormularioReasignacionDep } from "../validators/ticketsValidator.js";
 import { getTecnicosPorDepartamento } from "../services/usuariosService.js";
 import { getDepartamentosAsignables } from "../services/departamentosService.js";
+import { formatearFecha12H } from "../utils/formateadores.js";
 
 const numNuevos = document.getElementById("numNuevos");
 const numResueltos = document.getElementById("numResueltos");
@@ -127,7 +128,7 @@ function renderizarAprobaciones(tickets) {
                 </h6>
                 <span class="text-muted-custom d-block text-mini">${ticket.codigo}</span>
                 <span class="text-muted-custom d-block text-mini mt-2"><b>Creador:</b> ${ticket.correoCreador}</span>
-                <span class="text-muted-custom d-block text-mini mt-2"><b>Fecha de creación:</b> ${ticket.fechaCreacion}</span>
+                <span class="text-muted-custom d-block text-mini mt-2"><b>Fecha de creación:</b> ${formatearFecha12H(ticket.fechaCreacion)}</span>
                 <p class="text-muted-custom text-mini mb-0 mt-1 text-truncate pe-2">
                     <b>Descripción:</b> ${ticket.descripcion}
                 </p>
@@ -200,8 +201,8 @@ function renderizarTablaTickets(tickets) {
                 <td class="text-truncate truncate-celda">${ticket.asunto}</td>
                 <td>${ticket.nombreCreador}</td>
                 <td>${ticket.nombreTecnico ?? "Sin asignar"}</td>
-                <td>${ticket.fechaCreacion}</td>
-                <td>${ticket.fechaVencimiento ?? "-"}</td>
+                <td>${formatearFecha12H(ticket.fechaCreacion)}</td>
+                <td>${formatearFecha12H(ticket.fechaVencimiento) ?? "-"}</td>
                 <td>${ticket.prioridad ?? "-"}</td>
                 <td>${ticket.estado}</td>
                 <td>
@@ -257,7 +258,7 @@ formAprobaciones.addEventListener("submit", async (e) => {
     if (document.activeElement) {
         document.activeElement.blur();
     }
-    const confirmar = await mostrarConfirmacion("¿Estás seguro de aprobar este ticket?", "Podrás eliminarlo mientras no cambie de estado", "Aprobar");
+    const confirmar = await mostrarConfirmacion("¿Estás seguro de aprobar este ticket?", "Ya no podrás eliminarlo", "Aprobar");
     if (!confirmar) {
         return;
     }
@@ -299,7 +300,7 @@ modalAprobacionesEl.addEventListener("show.bs.modal", async (e) => {
         modalCodigoTicket.textContent = ticket.codigo;
         modalEstadoTicket.textContent = ticket.estado;
         modalDescripcionTicket.textContent = ticket.descripcion;
-        modalFechaCreacion.textContent = ticket.fechaCreacion;
+        modalFechaCreacion.textContent = formatearFecha12H(ticket.fechaCreacion);
         modalUbicacionTicket.textContent = ticket.ubicacion;
         if (Array.isArray(ticket.codigosArticulos) && ticket.codigosArticulos.length > 0) {
             modalArticulosTicket.textContent = Array.isArray(ticket.codigosArticulos) ? ticket.codigosArticulos.join(", ") : ticket.codigosArticulos;

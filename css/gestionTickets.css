@@ -29,24 +29,6 @@
     align-items: center;
 }
 
-.icono-tarjeta {
-    position: absolute;
-    top: -22px;
-    left: 50%;
-    transform: translateX(-50%);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 50px;
-    height: 50px;
-    background-color: var(--blue-primary);
-    color: #ffffff;
-    border-radius: 50%;
-    font-size: 18px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    z-index: 2;
-}
-
 .icono-tarjeta img {
     width: 33px;
     height: 44px;
@@ -200,12 +182,6 @@
     color: #a0aec0;
     font-size: 0.85rem;
     padding-left: 32px;
-}
-
-.meta-ticket-texto {
-    color: #4a5568 !important;
-    font-size: 0.95rem;
-    line-height: 1.45;
 }
 
 /* Mazo de evidencias del lado derecho */
