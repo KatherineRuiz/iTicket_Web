@@ -12,11 +12,13 @@ export function validarFormularioProyecto(datos) {
         errores.push({ campo: "txtNombreProyecto", mensaje: "El nombre del proyecto es obligatorio." });
     } else if (datos.nombreProyecto.length > 100) {
         errores.push({ campo: "txtNombreProyecto", mensaje: "El nombre del proyecto no puede superar los 100 caracteres." });
-    } 
+    }
 
-    //--- Tipo de proyecto ---
+    //Tipo de proyecto
     if (!datos.tipoProyecto) {
         errores.push({ campo: "tipoProyecto", mensaje: "Debes seleccionar el tipo de proyecto." });
+    } else if (datos.tipoProyecto && !["Construccion", "Remodelacion", "Ampliacion", "Mantenimiento"].includes(datos.tipoProyecto)) {
+        errores.push({ campo: "tipoProyecto", mensaje: "El tipo de proyecto no es válido." });
     }
 
     //--- Ubicación ---
@@ -29,7 +31,7 @@ export function validarFormularioProyecto(datos) {
     //--- Contratista (opcional) ---
     if (datos.contratista && datos.contratista.length > 100) {
         errores.push({ campo: "txtContratista", mensaje: "El contratista no puede superar los 100 caracteres." });
-    } 
+    }
 
     //--- Descripción ---
     if (!datos.descripcionProyecto || !datos.descripcionProyecto.trim()) {
@@ -43,7 +45,10 @@ export function validarFormularioProyecto(datos) {
         errores.push({ campo: "numPresupuesto", mensaje: "El presupuesto estimado es obligatorio." });
     } else if (isNaN(Number(datos.presupuestoEstimado)) || Number(datos.presupuestoEstimado) <= 0) {
         errores.push({ campo: "numPresupuesto", mensaje: "El presupuesto estimado debe ser mayor que 0." });
+    } else if (datos.presupuestoEstimado && !/^[0-9]+$/.test(datos.presupuestoEstimado)) {
+        errores.push({ campo: "numPresupuesto", mensaje: "El presupuesto estimado solo puede contener números." });
     }
+
 
     //--- Correo del coordinador ---
     if (!datos.correoCoordinador || !datos.correoCoordinador.trim()) {
@@ -57,6 +62,12 @@ export function validarFormularioProyecto(datos) {
         errores.push({ campo: "txtSupervisor", mensaje: "El correo del supervisor es obligatorio." });
     } else if (!PATRON_CORREO.test(datos.correoSupervisor)) {
         errores.push({ campo: "txtSupervisor", mensaje: "El correo del supervisor no tiene un formato válido." });
+    }
+
+    //Campo de total
+    //solo debe ser de lectura, no se valida ya que se calcula automaticamente con un trigger en la base de datos, pero si se valida que sea un numero mayor o igual a 0
+    if (datos.totalProyecto && (isNaN(Number(datos.totalProyecto)) || Number(datos.totalProyecto) < 0)) {
+        errores.push({ campo: "numTotalProyecto", mensaje: "El total del proyecto debe ser un número mayor o igual a 0." });
     }
 
     return errores;

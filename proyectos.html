@@ -46,109 +46,6 @@
                         </button>
                     </div>
 
-                    <!-- Modal para crear proyecto -->
-                    <div class="modal fade" tabindex="-1" id="modalCrearProyecto" aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-centered modal-lg">
-                            <div class="modal-content rounded-5 overflow-hidden bg-white">
-
-                                <div class="modal-header text-center border-0 mb-3 position-relative">
-                                    <h5 class="modal-title titulo-seccion text-white fw-bold w-100 fs-2">Crear Proyecto
-                                    </h5>
-                                    <button type="button" class="btn-close btn-close-white position-absolute end-0 me-3"
-                                        data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-
-                                <div class="modal-body px-4 pb-4 pt-1">
-                                    <form id="formCrearProyecto" novalidate>
-
-                                        <div class="p-3 mb-4 rounded-4 shadow bg-white">
-                                            <div class="row g-3">
-                                                <div class="col-md-8">
-                                                    <label for="txtNombreProyecto"
-                                                        class="form-label text-navy fw-semibold">Nombre del
-                                                        proyecto</label>
-                                                    <input type="text" class="form-control" id="txtNombreProyecto"
-                                                        maxlength="100" required>
-                                                </div>
-
-                                                <div class="col-md-4">
-                                                    <label for="tipoProyecto"
-                                                        class="form-label text-navy fw-semibold">Tipo de
-                                                        proyecto</label>
-                                                    <select class="form-select" id="tipoProyecto" required>
-                                                        <option value="" selected disabled>Selecciona</option>
-                                                        <option value="Construccion">Construcción</option>
-                                                        <option value="Remodelacion">Remodelación</option>
-                                                        <option value="Ampliacion">Ampliación</option>
-                                                        <option value="Mantenimiento">Mantenimiento</option>
-                                                    </select>
-                                                </div>
-
-                                                <div class="col-md-6">
-                                                    <label for="txtUbicacion"
-                                                        class="form-label text-navy fw-semibold">Ubicación</label>
-                                                    <input type="text" class="form-control" id="txtUbicacion"
-                                                        maxlength="100" required>
-                                                </div>
-
-                                                <div class="col-md-6">
-                                                    <label for="txtContratista"
-                                                        class="form-label text-navy fw-semibold">Contratista
-                                                        <span class="text-muted fw-normal">(opcional)</span></label>
-                                                    <input type="text" class="form-control" id="txtContratista"
-                                                        maxlength="100">
-                                                </div>
-
-                                                <div class="col-12">
-                                                    <label for="txtDescripcion"
-                                                        class="form-label text-navy fw-semibold">Descripción</label>
-                                                    <textarea class="form-control" id="txtDescripcion" rows="3"
-                                                        maxlength="300" required></textarea>
-                                                </div>
-
-                                                <div class="col-md-6">
-                                                    <label for="numPresupuesto"
-                                                        class="form-label text-navy fw-semibold">Presupuesto
-                                                        estimado</label>
-                                                    <div class="input-group">
-                                                        <span class="input-group-text">$</span>
-                                                        <input type="number" class="form-control" id="numPresupuesto"
-                                                            min="0" max="100000000" step="0.01" required>
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-md-6">
-                                                    <label for="txtCoordinador"
-                                                        class="form-label text-navy fw-semibold">Correo del
-                                                        coordinador</label>
-                                                    <input type="email" class="form-control" id="txtCoordinador"
-                                                        maxlength="100" placeholder="usuario@ricaldone.edu.sv" required>
-                                                </div>
-
-                                                <div class="col-md-6">
-                                                    <label for="txtSupervisor"
-                                                        class="form-label text-navy fw-semibold">Correo del
-                                                        supervisor</label>
-                                                    <input type="email" class="form-control" id="txtSupervisor"
-                                                        maxlength="100" placeholder="usuario@ricaldone.edu.sv" required>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="d-flex justify-content-end gap-2 mt-4">
-                                            <button type="button" class="btn btn-outline-secondary rounded-pill px-4"
-                                                data-bs-dismiss="modal">Cancelar</button>
-                                            <button type="submit" class="btn btn-azul-redondeado px-4">
-                                                Crear y continuar
-                                            </button>
-                                        </div>
-
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
                     <!--Sección de proyectos-->
                     <div class="card border-0 shadow-sm text-center p-2 rounded-4 mx-sm-5 mx-md-0 mb-4 mb-md-3">
                         <div class="card-body">
@@ -212,6 +109,103 @@
                 </section>
             </div>
 
+        </div>
+
+        <!-- Modal para crear proyecto -->
+        <div class="modal fade" tabindex="-1" id="modalCrearProyecto" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content rounded-5 overflow-hidden bg-white">
+
+                    <div class="modal-header text-center border-0 mb-3 position-relative">
+                        <h5 class="modal-title titulo-seccion text-white fw-bold w-100 fs-2 p-1">Crear Proyecto
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white position-absolute end-0 me-3"
+                            data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+
+                    <div class="modal-body px-4 pb-4 pt-1">
+                        <form id="formCrearProyecto" novalidate>
+
+                            <div class="p-3 mb-4 rounded-4 shadow bg-white">
+                                <div class="row g-3">
+                                    <div class="col-md-8">
+                                        <label for="txtNombreProyecto" class="form-label text-navy fw-semibold">Nombre
+                                            del
+                                            proyecto</label>
+                                        <input type="text" class="form-control" id="txtNombreProyecto" maxlength="100"
+                                            required>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label for="tipoProyecto" class="form-label text-navy fw-semibold">Tipo de
+                                            proyecto</label>
+                                        <select class="form-select" id="tipoProyecto" required>
+                                            <option value="" selected disabled>Selecciona</option>
+                                            <option value="Construccion">Construcción</option>
+                                            <option value="Remodelacion">Remodelación</option>
+                                            <option value="Ampliacion">Ampliación</option>
+                                            <option value="Mantenimiento">Mantenimiento</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label for="txtUbicacion"
+                                            class="form-label text-navy fw-semibold">Ubicación</label>
+                                        <input type="text" class="form-control" id="txtUbicacion" maxlength="100"
+                                            required>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label for="txtContratista" class="form-label text-navy fw-semibold">Contratista
+                                            <span class="text-muted fw-normal">(opcional)</span></label>
+                                        <input type="text" class="form-control" id="txtContratista" maxlength="100">
+                                    </div>
+
+                                    <div class="col-12">
+                                        <label for="txtDescripcion"
+                                            class="form-label text-navy fw-semibold">Descripción</label>
+                                        <textarea class="form-control" id="txtDescripcion" rows="3" maxlength="300"
+                                            required></textarea>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label for="numPresupuesto" class="form-label text-navy fw-semibold">Presupuesto
+                                            estimado</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text">$</span>
+                                            <input type="number" class="form-control" id="numPresupuesto" min="0"
+                                                max="100000000" step="0.01" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label for="txtCoordinador" class="form-label text-navy fw-semibold">Correo del
+                                            coordinador</label>
+                                        <input type="email" class="form-control" id="txtCoordinador" maxlength="100"
+                                            placeholder="usuario@ricaldone.edu.sv" required>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label for="txtSupervisor" class="form-label text-navy fw-semibold">Correo del
+                                            supervisor</label>
+                                        <input type="email" class="form-control" id="txtSupervisor" maxlength="100"
+                                            placeholder="usuario@ricaldone.edu.sv" required>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-end gap-2 mt-4">
+                                <button type="button" class="btn btn-outline-secondary rounded-pill px-4"
+                                    data-bs-dismiss="modal">Cancelar</button>
+                                <button type="submit" class="btn btn-azul-redondeado px-4">
+                                    Crear y continuar
+                                </button>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
 
     </main>
