@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iTicket - Bitácoras</title>
+    <link rel="shortcut icon" href="/img/logo.png" type="image/x-icon">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/notificaciones.css">
+    <link rel="stylesheet" href="css/bitacoras.css">
+    <script src="js/components/menu-cache.js"></script>
+</head>
+
+<body>
+
+    <!-- Todo el header -->
+    <header id="contenedorMenuLateral"></header>
+    <div class="menu-lateral-overlay" id="overlay"></div>
+
+    <main class="main px-3 px-md-4 pt-3">
+
+        <section class="superior rounded-5 ps-4 d-none d-md-flex">
+            <h6 class="mb-0 bold">Bitácoras</h6>
+            <div class="position-relative">
+                <!-- La lógica de todo esto esta en el js del menú -->
+                <div class="perfil p-2 rounded-5 gap-lg-4 gap-md-2" id="perfilBienvenida">
+                    <h6 class="perfil-nombre text-white mb-0 ps-2" id="nombrePerfil">Bienvenida, Katherine</h6>
+                    <div class="perfil-foto" id="fotoPerfil">
+                        <span class="foto-letra" id="fotoLetra">K</span>
+                        <img src="img/usuario.png" alt="Foto de perfil" class="foto-img" id="fotoDePerfil">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="contenido-principal" id="view-bitacoras">
+            <div class="row">
+                <div class="col-12">
+                    <h5 class="fw-bold mb-3 titulo-seccion text-center p-3">Bitácora de actividad</h5>
+
+                    <!-- Pestañas -->
+                    <ul class="nav nav-tabs mb-0 border-0 gap-2" id="tabsBitacoras" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="tab-todos" data-bs-toggle="tab"
+                                data-bs-target="#panel-todos" type="button" role="tab" aria-controls="panel-todos"
+                                aria-selected="true">
+                                <span class="text-secondary"><i class="bi bi-clock-history me-1"></i>Todos los registros</span>
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="tab-eliminados" data-bs-toggle="tab"
+                                data-bs-target="#panel-eliminados" type="button" role="tab"
+                                aria-controls="panel-eliminados" aria-selected="false">
+                                <span class="text-secondary"><i class="bi bi-trash3 me-1"></i>Tickets eliminados</span>
+                            </button>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content contenido-tabs-bitacoras" id="contenidoTabsBitacoras">
+
+                        <!-- Panel: Todos los registros -->
+                        <div class="tab-pane fade show active" id="panel-todos" role="tabpanel"
+                            aria-labelledby="tab-todos">
+
+                            <div class="row g-3 align-items-center mb-4 pt-4">
+                                <div class="col-12 col-md-8 col-lg-9">
+                                    <div class="buscador-contenedor">
+                                        <i class="bi bi-search icono-busqueda"></i>
+                                        <input type="text" class="form-control buscador-input" id="txtBuscarBitacora"
+                                            placeholder="Buscar por código, asunto o usuario">
+                                    </div>
+                                </div>
+                                <div class="col-12 col-md-4 col-lg-3">
+                                    <select class="form-select select-ticket-filtro" id="sltEstadoBitacora">
+                                        <option value="">Todos los estados</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="card-tabla p-4">
+                                <div class="table-responsive">
+                                    <table class="table table-borderless table-custom align-middle text-center">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">Fecha y hora</th>
+                                                <th scope="col">Código</th>
+                                                <th scope="col">Asunto</th>
+                                                <th scope="col">Usuario</th>
+                                                <th scope="col">Nuevo estado</th>
+                                                <th scope="col">Detalles</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tblBitacoras"></tbody>
+                                    </table>
+                                </div>
+
+                                <!-- Paginación -->
+                                <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top">
+                                    <span class="text-muted small" id="infoBitacoras"></span>
+                                    <nav aria-label="Paginacion">
+                                        <ul class="pagination pagination-sm mb-0 align-items-center gap-1"
+                                            id="paginacionBitacoras"></ul>
+                                    </nav>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Panel: Tickets eliminados -->
+                        <div class="tab-pane fade" id="panel-eliminados" role="tabpanel"
+                            aria-labelledby="tab-eliminados">
+
+                            <div class="row g-3 align-items-center mb-4 pt-4">
+                                <div class="col-12">
+                                    <div class="buscador-contenedor">
+                                        <i class="bi bi-search icono-busqueda"></i>
+                                        <input type="text" class="form-control buscador-input"
+                                            id="txtBuscarEliminados" placeholder="Buscar por código, asunto o usuario">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card-tabla p-4">
+                                <p class="text-muted small mb-3">
+                                    <i class="bi bi-info-circle me-1"></i>
+                                    Estos tickets ya no existen en el sistema; el único rastro de ellos es su
+                                    registro en la bitácora.
+                                </p>
+                                <div class="table-responsive">
+                                    <table class="table table-borderless table-custom align-middle text-center">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">Fecha de eliminación</th>
+                                                <th scope="col">Código</th>
+                                                <th scope="col">Asunto</th>
+                                                <th scope="col">Eliminado por</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tblBitacorasEliminados"></tbody>
+                                    </table>
+                                </div>
+
+                                <!-- Paginación -->
+                                <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top">
+                                    <span class="text-muted small" id="infoBitacorasEliminados"></span>
+                                    <nav aria-label="Paginacion">
+                                        <ul class="pagination pagination-sm mb-0 align-items-center gap-1"
+                                            id="paginacionBitacorasEliminados"></ul>
+                                    </nav>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Todo esto es lo de notificaciones y siempre ira al final -->
+    <div class="notificaciones-overlay" id="notificacionesOverlay">
+        <div class="panel-notificaciones" id="panelNotificaciones">
+            <div class="p-4">
+                <!-- Título -->
+                <h6 class="titulo-notificaciones mb-0">Notificaciones</h3>
+            </div>
+
+            <div class="notificaciones-body px-4 pb-4">
+
+                <!-- Todo esto es las notificaciones de hoy -->
+                <div class="notificaciones-seccion mb-4">
+                    <h6 class="text-muted fw-bold mb-3 small">Hoy</h6>
+                    <div class="lista-notificaciones">
+
+                        <!-- Los divs de notificaciones empiezan desde aqui -->
+                        <div class="notificacion-item no-leida">
+                            <div class="avatar-notificacion">JG</div>
+                            <div class="contenido-notificacion">
+                                <div class="d-flex justify-content-between align-items-baseline">
+                                    <span class="notificacion-titulo">Nuevo ticket</span>
+                                    <span class="notificacion-tiempo">Hace 1 hora</span>
+                                </div>
+                                <p class="notificacion-texto">¡Josue Guinea ha creado un nuevo ticket!</p>
+                            </div>
+                        </div>
+
+                        <div class="notificacion-item no-leida">
+                            <div class="avatar-notificacion">JG</div>
+                            <div class="contenido-notificacion">
+                                <div class="d-flex justify-content-between align-items-baseline">
+                                    <span class="notificacion-titulo">Nuevo ticket</span>
+                                    <span class="notificacion-tiempo">Hace 1 hora</span>
+                                </div>
+                                <p class="notificacion-texto">¡Josue Guinea ha creado un nuevo ticket!</p>
+                            </div>
+                        </div>
+
+                        <div class="notificacion-item no-leida">
+                            <div class="avatar-notificacion">JG</div>
+                            <div class="contenido-notificacion">
+                                <div class="d-flex justify-content-between align-items-baseline">
+                                    <span class="notificacion-titulo">Nuevo ticket</span>
+                                    <span class="notificacion-tiempo">Hace 1 hora</span>
+                                </div>
+                                <p class="notificacion-texto">¡Josue Guinea ha creado un nuevo ticket!</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Aqui se muestran las de ayer -->
+                <div class="notificaciones-seccion">
+                    <h6 class="text-muted fw-bold mb-3 small">Ayer</h6>
+                    <div class="lista-notificaciones">
+
+                        <div class="notificacion-item">
+                            <div class="avatar-notificacion">JG</div>
+                            <div class="contenido-notificacion">
+                                <div class="d-flex justify-content-between align-items-baseline">
+                                    <span class="notificacion-titulo-visto">Nuevo ticket</span>
+                                    <span class="notificacion-tiempo">Hace 1 día</span>
+                                </div>
+                                <p class="notificacion-texto">¡Josue Guinea ha creado un nuevo ticket!</p>
+                            </div>
+                        </div>
+
+                        <div class="notificacion-item">
+                            <div class="avatar-notificacion">JG</div>
+                            <div class="contenido-notificacion">
+                                <div class="d-flex justify-content-between align-items-baseline">
+                                    <span class="notificacion-titulo-visto">Nuevo ticket</span>
+                                    <span class="notificacion-tiempo">Hace 1 día</span>
+                                </div>
+                                <p class="notificacion-texto">¡Josue Guinea ha creado un nuevo ticket!</p>
+                            </div>
+                        </div>
+
+                        <div class="notificacion-item">
+                            <div class="avatar-notificacion">JG</div>
+                            <div class="contenido-notificacion">
+                                <div class="d-flex justify-content-between align-items-baseline">
+                                    <span class="notificacion-titulo-visto">Nuevo ticket</span>
+                                    <span class="notificacion-tiempo">Hace 1 día</span>
+                                </div>
+                                <p class="notificacion-texto">¡Josue Guinea ha creado un nuevo ticket!</p>
+                            </div>
+                        </div>
+
+                        <div class="notificacion-item">
+                            <div class="avatar-notificacion">JG</div>
+                            <div class="contenido-notificacion">
+                                <div class="d-flex justify-content-between align-items-baseline">
+                                    <span class="notificacion-titulo-visto">Nuevo ticket</span>
+                                    <span class="notificacion-tiempo">Hace 1 día</span>
+                                </div>
+                                <p class="notificacion-texto">¡Josue Guinea ha creado un nuevo ticket!</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- JS de Bootstrap -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Mi JS Personalizado -->
+    <script src="js/components/menu.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script type="module" src="js/controllers/bitacoras.js"></script>
+    <script src="js/controllers/notificaciones.js"></script>
+
+</body>
+
+</html>
