@@ -56,7 +56,7 @@ function pintarTablaUsuarios(usuarios) {
             <td class="text-center">${usuario.nombreUsuario}</td>
             <td class="text-center">${usuario.nombreRol ?? ''}</td>
             <td class="text-center">${usuario.nombreDepartamento ?? ''}</td>
-            <td class="text-center">${usuario.estado === false ? 'Inactivo' : 'Activo'}</td>
+            <td class="text-center">${usuario.estado === 'F' ? 'Inactivo' : 'Activo'}</td>
             <td class="text-center">${usuario.correo}</td>
             <td class="text-center">
                 <button class="btn btn-sm btn-outline-primary btn-editar-usuario" data-id="${usuario.idUsuario}">
@@ -93,7 +93,7 @@ function cargarUsuarioEnFormulario(id, usuarios) {
     if (usuario.idDepartamento) selectDepartamentoUsuario.value = usuario.idDepartamento;
  
     campoEstadoUsuario.style.display = 'block';
-    selectEstadoUsuario.value = usuario.estado === false ? 'inactivo' : 'activo';
+    selectEstadoUsuario.value = usuario.estado === 'F' ? 'inactivo' : 'activo';
  
     tituloFormUsuario.textContent = 'Editar usuario';
     btnTextoUsuario.textContent = 'Actualizar usuario';
@@ -122,14 +122,15 @@ formUsuario.addEventListener('submit', async (evento) => {
         nombreUsuario: nombreUsuarioInput.value.trim(),
         correo: correoUsuarioInput.value.trim(),
         idRol: Number(selectRol.value),
-        idDepartamento: Number(selectDepartamentoUsuario.value)
+        idDepartamento: Number(selectDepartamentoUsuario.value),
+        estado: 'T' // Los usuarios nuevos se crean activos por defecto (el campo Estado va oculto al crear)
     };
     if (passwordUsuarioInput.value.trim()) {
         usuario.clave = passwordUsuarioInput.value.trim();
     }
- 
+
     if (id) {
-        usuario.estado = selectEstadoUsuario.value === 'activo';
+        usuario.estado = selectEstadoUsuario.value === 'activo' ? 'T' : 'F';
     }
  
     try {
