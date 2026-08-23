@@ -1,29 +1,52 @@
 // ============================================================
 // DASHBOARD ADMIN — CONTROLADOR PRINCIPAL
-// Consume endpoints existentes para poblar las 4 secciones
 // ============================================================
 
-const API_BASE = "http://localhost:8080/api";
+import {
+    obtenerTickets,
+    obtenerMetricasDashboard,
+    obtenerResumenMensual,
+    obtenerResolucionPorDia
+} from '../services/dashboardAdminService.js';
 
 // ============================================================
 // VARIABLES GLOBALES
 // ============================================================
-let todosLosTickets = [];     // Todos los tickets del sistema
-let ticketsFiltrados = [];    // Tickets filtrados por la pestaña activa
-let filtroActual = 'pendientes';
+let todosLosTickets = [];
 let graficoResolucionChart = null;
+
+// ============================================================
+// UTILIDAD: Parsear fecha en formato ISO o "dd/MM/yyyy HH:mm"
+// ============================================================
+function parseFecha(fechaStr) {
+    if (!fechaStr) return null;
+    // Intenta parsear como ISO (ej: "2026-01-28T07:00:00")
+    let date = new Date(fechaStr);
+    if (!isNaN(date.getTime())) return date;
+
+    // Si falla, intenta con "dd/MM/yyyy HH:mm"
+    const partes = fechaStr.split(' ');
+    if (partes.length === 2) {
+        const fechaPart = partes[0]; // "25/01/2026"
+        const horaPart = partes[1];   // "00:00"
+        const [dia, mes, anio] = fechaPart.split('/').map(Number);
+        const [hora, min] = horaPart.split(':').map(Number);
+        date = new Date(anio, mes - 1, dia, hora, min);
+        if (!isNaN(date.getTime())) return date;
+    }
+    return null;
+}
 
 // ============================================================
 // INICIALIZACIÓN
 // ============================================================
 const btnCrear = document.getElementById('btnCrear');
 if (btnCrear) {
-    btnCrear.addEventListener('click', function () {
+    btnCrear.addEventListener('click', () => {
         window.location.href = 'misTickets.html';
     });
 }
 
-// Esperar carga completa + fuentes para gráficos
 Promise.all([
     new Promise(resolve => window.addEventListener('load', resolve)),
     document.fonts.ready
@@ -36,30 +59,41 @@ Promise.all([
 // ============================================================
 async function cargarDashboard() {
     try {
-        // 3 llamadas en paralelo: métricas, tickets, resolución por día
-        const [metricas, tickets, resolucionDia] = await Promise.all([
-            fetchJSON(`${API_BASE}/estadisticas/metricas`),
-            fetchJSON(`${API_BASE}/tickets`),
-            fetchJSON(`${API_BASE}/estadisticas/resolucion-por-dia`)
+        const [metricas, tickets, resumenMensual, resolucionDia] = await Promise.all([
+            obtenerMetricasDashboard(),
+            obtenerTickets(),
+            obtenerResumenMensual(),
+            obtenerResolucionPorDia() // si no existe, fallará pero no interrumpe
         ]);
 
-        // 1. Contadores de tickets abiertos/cerrados (este mes)
-        if (tickets) {
-            poblarContadoresTickets(tickets);
+        // 1. Contadores de abiertos/cerrados desde el backend
+        if (resumenMensual) {
+            poblarContadoresDesdeResumen(resumenMensual);
+        } else {
+            console.warn('No se pudo obtener el resumen mensual, los contadores quedarán en 0');
+        }
+
+        // 2. Panel de evaluaciones (pendientes/vencidos/hoy) usa todos los tickets
+        if (tickets && Array.isArray(tickets)) {
             poblarPanelEvaluaciones(tickets);
         }
 
-        // 2. Mejores técnicos (del endpoint de métricas)
-        if (metricas) {
+        // 3. Mejores técnicos desde métricas
+        if (metricas && metricas.satisfaccionPorTecnico) {
             poblarMejoresTecnicos(metricas.satisfaccionPorTecnico);
         }
 
-        // 3. Gráfica de resolución por día de semana
-        requestAnimationFrame(() => {
+        // 4. Gráfico de resolución por día (si el endpoint existe)
+        if (resolucionDia) {
             requestAnimationFrame(() => {
-                crearGraficoResolucion(resolucionDia);
+                requestAnimationFrame(() => {
+                    crearGraficoResolucion(resolucionDia);
+                });
             });
-        });
+        } else {
+            // Si no hay datos, mostrar gráfico vacío o con valores cero
+            crearGraficoResolucion([]);
+        }
 
     } catch (error) {
         console.error('[Dashboard] Error al cargar:', error);
@@ -67,51 +101,12 @@ async function cargarDashboard() {
 }
 
 // ============================================================
-// UTILIDAD FETCH
+// 1. CONTADORES DESDE EL RESUMEN DEL BACKEND
 // ============================================================
-async function fetchJSON(url) {
-    try {
-        const resp = await fetch(url);
-        if (!resp.ok) return null;
-        const json = await resp.json();
-        return json.data ?? json;
-    } catch (e) {
-        console.error(`Error fetching ${url}:`, e);
-        return null;
-    }
-}
-
-// ============================================================
-// 1. CONTADORES: TICKETS ABIERTOS / CERRADOS (ESTE MES)
-// ============================================================
-function poblarContadoresTickets(tickets) {
-    if (!Array.isArray(tickets)) return;
-
-    const ahora = new Date();
-    const primerDiaMes = new Date(ahora.getFullYear(), ahora.getMonth(), 1);
-
-    // Filtrar tickets creados este mes
-    const ticketsEsteMes = tickets.filter(t => {
-        if (!t.fechaCreacion) return false;
-        return new Date(t.fechaCreacion) >= primerDiaMes;
-    });
-
-    const estadosAbiertos = ['nuevo', 'abierto', 'en proceso', 'asignado', 'en espera'];
-    const estadosCerrados = ['resuelto', 'cerrado'];
-
-    let abiertos = 0;
-    let cerrados = 0;
-
-    ticketsEsteMes.forEach(t => {
-        const estado = (t.estado || '').toLowerCase();
-        if (estadosAbiertos.includes(estado)) abiertos++;
-        if (estadosCerrados.includes(estado)) cerrados++;
-    });
-
-    const elAbiertos = document.getElementById('numTicketsAbiertos');
-    const elCerrados = document.getElementById('numTicketsCerrados');
-    if (elAbiertos) elAbiertos.textContent = abiertos;
-    if (elCerrados) elCerrados.textContent = cerrados;
+function poblarContadoresDesdeResumen(resumen) {
+    if (!resumen) return;
+    document.getElementById('numTicketsAbiertos').textContent = resumen.ticketsAbiertos ?? 0;
+    document.getElementById('numTicketsCerrados').textContent = resumen.ticketsCerrados ?? 0;
 }
 
 // ============================================================
@@ -120,7 +115,6 @@ function poblarContadoresTickets(tickets) {
 function poblarMejoresTecnicos(satisfaccionPorTecnico) {
     if (!Array.isArray(satisfaccionPorTecnico) || satisfaccionPorTecnico.length === 0) return;
 
-    // Ya viene ordenado DESC por promedio desde el backend
     const top3 = satisfaccionPorTecnico.slice(0, 3);
 
     const el1 = document.getElementById('txtNombreTecnico1');
@@ -131,7 +125,7 @@ function poblarMejoresTecnicos(satisfaccionPorTecnico) {
     if (el2 && top3[1]) el2.textContent = top3[1].tecnico || 'Sin datos';
     if (el3 && top3[2]) el3.textContent = top3[2].tecnico || 'Sin datos';
 
-    // Si hay menos de 3, ocultar items sobrantes del carrusel
+    // Si hay menos de 3 técnicos, ocultar los items sobrantes del carrusel
     const items = document.querySelectorAll('#carruselTecnicos .carousel-item');
     items.forEach((item, i) => {
         if (i >= top3.length) {
@@ -149,13 +143,13 @@ function poblarPanelEvaluaciones(tickets) {
     todosLosTickets = tickets;
 
     const ahora = new Date();
-    const hoyStr = ahora.toISOString().split('T')[0]; // YYYY-MM-DD
+    const hoy = new Date(ahora.getFullYear(), ahora.getMonth(), ahora.getDate());
 
     const estadosFinalizados = ['resuelto', 'cerrado', 'cancelado'];
 
-    let pendientes = [];
-    let vencidos = [];
-    let vencenHoy = [];
+    const pendientes = [];
+    const vencidos = [];
+    const vencenHoy = [];
 
     tickets.forEach(t => {
         const estado = (t.estado || '').toLowerCase();
@@ -166,32 +160,27 @@ function poblarPanelEvaluaciones(tickets) {
         }
 
         if (t.fechaVencimiento) {
-            const fechaVenc = new Date(t.fechaVencimiento);
-            const fechaVencStr = fechaVenc.toISOString().split('T')[0];
+            const fechaVenc = parseFecha(t.fechaVencimiento);
+            if (!fechaVenc) return;
 
-            if (fechaVenc < ahora && esNoFinalizado) {
+            const fechaVencSinHora = new Date(fechaVenc.getFullYear(), fechaVenc.getMonth(), fechaVenc.getDate());
+
+            if (fechaVencSinHora < hoy && esNoFinalizado) {
                 vencidos.push(t);
             }
 
-            if (fechaVencStr === hoyStr) {
+            if (fechaVencSinHora.getTime() === hoy.getTime()) {
                 vencenHoy.push(t);
             }
         }
     });
 
-    // Actualizar contadores
-    const elPendientes = document.getElementById('num-pendientes');
-    const elVencidos = document.getElementById('num-vencidas');
-    const elHoy = document.getElementById('num-hoy');
+    document.getElementById('num-pendientes').textContent = pendientes.length;
+    document.getElementById('num-vencidas').textContent = vencidos.length;
+    document.getElementById('num-hoy').textContent = vencenHoy.length;
 
-    if (elPendientes) elPendientes.textContent = pendientes.length;
-    if (elVencidos) elVencidos.textContent = vencidos.length;
-    if (elHoy) elHoy.textContent = vencenHoy.length;
-
-    // Guardar las categorías para los botones
     window._categorias = { pendientes, vencidos, hoy: vencenHoy };
 
-    // Renderizar la pestaña activa por defecto
     renderizarListaTickets(pendientes);
 }
 
@@ -210,29 +199,22 @@ function renderizarListaTickets(lista) {
 
     lista.forEach((t, index) => {
         const prioridad = (t.prioridad || 'Media').toLowerCase();
-
-        // Mapeo de clases según prioridad
         const config = {
-            'crítica':  { borde: 'borde-lateral-critica',  badge: 'fondo-peligro-suave text-danger',     icono: 'text-danger' },
-            'critica':  { borde: 'borde-lateral-critica',  badge: 'fondo-peligro-suave text-danger',     icono: 'text-danger' },
-            'alta':     { borde: 'borde-lateral-alta',     badge: 'fondo-advertencia-suave text-warning', icono: '' },
-            'media':    { borde: 'borde-lateral-media',    badge: 'fondo-advertencia-suave-2 texto-advertencia-oscuro', icono: '' },
-            'baja':     { borde: 'borde-lateral-baja',     badge: 'fondo-exito-suave text-success',      icono: 'text-success' }
+            'crítica':  { borde: 'border-start-critical',  badge: 'bg-danger-light text-danger',     icono: 'text-danger' },
+            'critica':  { borde: 'border-start-critical',  badge: 'bg-danger-light text-danger',     icono: 'text-danger' },
+            'alta':     { borde: 'border-start-high',      badge: 'bg-warning-light text-warning',   icono: '' },
+            'media':    { borde: 'border-start-medium',    badge: 'bg-warning-light-2 text-warning-oscuro', icono: '' },
+            'baja':     { borde: 'border-start-low',       badge: 'bg-success-light text-success',   icono: 'text-success' }
         };
-
         const c = config[prioridad] || config['media'];
-        const esUltimo = index === lista.length - 1;
 
-        const fechaVenc = t.fechaVencimiento
-            ? new Date(t.fechaVencimiento).toLocaleDateString('es-ES', { day: 'numeric', month: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' })
-            : 'Sin fecha';
-
+        const fechaVenc = t.fechaVencimiento || 'Sin fecha';
         const desc = t.descripcion
             ? (t.descripcion.length > 60 ? t.descripcion.substring(0, 60) + '...' : t.descripcion)
             : 'Sin descripción';
 
         const div = document.createElement('div');
-        div.className = `elemento-ticket ${c.borde} p-3 ${esUltimo ? 'mb-0' : 'mb-3'} rounded-3 shadow-sm d-flex justify-content-between align-items-start`;
+        div.className = `elemento-ticket ${c.borde} p-3 ${index === lista.length - 1 ? 'mb-0' : 'mb-3'} rounded-3 shadow-sm d-flex justify-content-between align-items-start`;
         div.innerHTML = `
             <div>
                 <h6 class="fw-bold mb-1">
@@ -260,11 +242,10 @@ function crearGraficoResolucion(data) {
         graficoResolucionChart.destroy();
     }
 
-    // Nombres de días: Oracle TO_CHAR('D') → 1=Domingo, 2=Lunes... 7=Sábado
     const diasOrden = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
     const oracleToIndex = { '2': 0, '3': 1, '4': 2, '5': 3, '6': 4, '7': 5, '1': 6 };
 
-    const horas = [0, 0, 0, 0, 0, 0, 0]; // Lun-Dom
+    const horas = [0, 0, 0, 0, 0, 0, 0];
 
     if (Array.isArray(data)) {
         data.forEach(row => {
@@ -287,10 +268,7 @@ function crearGraficoResolucion(data) {
             datasets: [{
                 label: 'Horas promedio',
                 data: horas,
-                backgroundColor: [
-                    '#539ECD', '#90BFDB', '#184E8C',
-                    '#539ECD', '#90BFDB', '#184E8C', '#539ECD'
-                ],
+                backgroundColor: ['#539ECD','#90BFDB','#184E8C','#539ECD','#90BFDB','#184E8C','#539ECD'],
                 borderWidth: 0,
                 borderRadius: 8
             }]
@@ -333,6 +311,9 @@ botonesResumen.forEach(boton => {
                 break;
             case 'hoy':
                 renderizarListaTickets(categorias.hoy || []);
+                break;
+            default:
+                renderizarListaTickets(categorias.pendientes || []);
                 break;
         }
     });
