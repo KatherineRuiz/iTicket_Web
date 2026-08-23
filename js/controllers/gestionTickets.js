@@ -372,7 +372,7 @@ dtBuscarFecha.addEventListener("change", () => {
 
 async function cargarDepartamentos() {
     try {
-        const departamentos = await getDepartamentosAsignables(idUsuario);
+        const departamentos = await getDepartamentosAsignables();
         listaDepartamentosDisponibles = departamentos;
 
         sltDepartamentoReasignar.innerHTML = '<option selected disabled value="">Selecciona un departamento</option>';

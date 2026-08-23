@@ -2,11 +2,6 @@ import { API_BASE_URL, manejarRespuesta } from "./apiConfig.js";
 
 const URL_USUARIOS = `${API_BASE_URL}/usuarios`;
 
-export async function getUsuarios() {
-    const respuesta = await fetch(URL_USUARIOS);
-    return manejarRespuesta(respuesta);
-}
-
 export async function getUsuarioById(idUsuario) {
     const respuesta = await fetch(`${URL_USUARIOS}/${idUsuario}`);
     return manejarRespuesta(respuesta);
@@ -47,16 +42,8 @@ export async function eliminarUsuario(idUsuario) {
 
 //Obtener la lista completa de usuarios
 export async function getUsuarios() {
-    try {
-        const respuesta = await fetch(API_URL);
-        if (!respuesta.ok) throw new Error("Error al obtener los usuarios");
-        const resultado = await respuesta.json();
-        return resultado.data;
-    }
-    catch (error) {
-        console.error("Error al obtener usuarios:", error);
-        throw error;
-    }
+    const respuesta = await fetch(URL_USUARIOS);
+    return manejarRespuesta(respuesta);
 }
 
 export async function getTecnicosPorDepartamento(idDepartamento) {

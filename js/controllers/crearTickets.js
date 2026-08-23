@@ -269,8 +269,9 @@ async function forzarDepartamentoIT() {
     await cargarDepartamentos();
   }
 
+  //Por tipo y no por nombre: cada area puede llamar distinto a su departamento de IT
   const departamentoIT = listaDepartamentosDisponibles.find(
-    (d) => d.nombreDepartamento.trim().toUpperCase() === "IT"
+    (d) => d.tipoDepartamento === "IT"
   );
 
   if (departamentoIT) {
@@ -295,7 +296,7 @@ async function cargarDepartamentos() {
   }
 
   try {
-    const departamentos = await getDepartamentosAsignables(idUsuario);
+    const departamentos = await getDepartamentosAsignables();
     listaDepartamentosDisponibles = departamentos;
 
     sltDepartamento.innerHTML = '<option selected disabled value="">Selecciona un departamento</option>';
