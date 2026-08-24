@@ -2,11 +2,6 @@ import { API_BASE_URL, manejarRespuesta } from "./apiConfig.js";
 
 const URL_USUARIOS = `${API_BASE_URL}/usuarios`;
 
-export async function getUsuarios() {
-    const respuesta = await fetch(URL_USUARIOS);
-    return manejarRespuesta(respuesta);
-}
-
 export async function getUsuarioById(idUsuario) {
     const respuesta = await fetch(`${URL_USUARIOS}/${idUsuario}`);
     return manejarRespuesta(respuesta);
@@ -45,6 +40,11 @@ export async function eliminarUsuario(idUsuario) {
     return manejarRespuesta(respuesta);
 }
 
+//Obtener la lista completa de usuarios
+export async function getUsuarios() {
+    const respuesta = await fetch(URL_USUARIOS);
+    return manejarRespuesta(respuesta);
+}
 
 export async function getTecnicosPorDepartamento(idDepartamento) {
     const parametros = new URLSearchParams({ idDepartamento });

@@ -35,10 +35,10 @@ export async function eliminarDepartamento(id) {
     return manejarRespuesta(respuesta);
 }
 
-//Obtener los departamentos asignables a tickets según el área del usuario
-export async function getDepartamentosAsignables(idUsuario) {
+//Departamentos que reciben tickets. La lista es la misma para todos, no depende del area
+export async function getDepartamentosAsignables() {
     try {
-        const respuesta = await fetch(`${URL_DEPARTAMENTOS}/asignables/${idUsuario}`);
+        const respuesta = await fetch(`${URL_DEPARTAMENTOS}/asignables`);
         if (!respuesta.ok) {
             console.error("Error al obtener los departamentos asignables");
             throw new Error("Error al obtener los departamentos asignables");

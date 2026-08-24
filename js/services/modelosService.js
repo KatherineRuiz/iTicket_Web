@@ -22,3 +22,14 @@ export async function eliminarModelo(id) {
     const respuesta = await fetch(`${API_URL}/${id}`, { method: "DELETE" });
     if (!respuesta.ok) throw new Error("No se pudo eliminar el modelo");
 }
+
+export async function actualizarModelo(id, nombreModelo, idMarca) {
+    const respuesta = await fetch(`${API_URL}/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ nombreModelo, idMarca })
+    });
+    const resultado = await respuesta.json();
+    if (!respuesta.ok) throw new Error(resultado.message || "No se pudo actualizar el modelo");
+    return resultado.data;
+}
