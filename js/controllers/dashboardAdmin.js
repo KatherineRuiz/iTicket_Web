@@ -43,7 +43,7 @@ function parseFecha(fechaStr) {
 const btnCrear = document.getElementById('btnCrear');
 if (btnCrear) {
     btnCrear.addEventListener('click', () => {
-        window.location.href = 'misTickets.html';
+        window.location.href = 'crearTickets.html';
     });
 }
 

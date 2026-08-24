@@ -1,4 +1,7 @@
 import { getAreas, crearArea, actualizarArea, eliminarArea } from '../services/areasService.js';
+import { llenarSelectAreas } from './departamentos.js';
+import { validarFormularioArea } from '../validators/areasValidator.js';
+import { mostrarError } from '../components/sweetAlerts.js';
  
 const formArea = document.getElementById('formArea');
 const areaIdInput = document.getElementById('areaId');
@@ -71,10 +74,23 @@ btnCancelarArea.addEventListener('click', limpiarFormularioArea);
  
 formArea.addEventListener('submit', async (evento) => {
     evento.preventDefault();
- 
+
+    //Limpia marcas de error de un intento anterior
+    document.querySelectorAll('#formArea .is-invalid').forEach(el => el.classList.remove('is-invalid'));
+
     const area = { nombreArea: nombreAreaInput.value.trim() };
     const id = areaIdInput.value;
- 
+
+    const errores = validarFormularioArea(area);
+    if (errores.length > 0) {
+        errores.forEach(error => {
+            const campo = document.getElementById(error.campo);
+            if (campo) campo.classList.add('is-invalid');
+        });
+        mostrarError(errores.map(error => error.mensaje).join(' '));
+        return;
+    }
+
     try {
         if (id) {
             await actualizarArea(id, area);
@@ -85,6 +101,7 @@ formArea.addEventListener('submit', async (evento) => {
         }
         limpiarFormularioArea();
         cargarAreas();
+        llenarSelectAreas();
     } catch (error) {
         console.error(error);
         Swal.fire('Error', error.message || 'No se pudo guardar el área', 'error');
@@ -105,6 +122,7 @@ function confirmarEliminarArea(id) {
                 await eliminarArea(id);
                 Swal.fire('Eliminada', 'El área se eliminó correctamente', 'success');
                 cargarAreas();
+                llenarSelectAreas();
             } catch (error) {
                 console.error(error);
                 Swal.fire('Error', error.message || 'No se pudo eliminar el área', 'error');

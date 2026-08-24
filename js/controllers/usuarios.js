@@ -1,5 +1,8 @@
 import { getUsuarios, crearUsuario, actualizarUsuario, eliminarUsuario } from '../services/usuariosService.js';
 import { getDepartamentos } from '../services/departamentosService.js';
+import { getRoles } from '../services/rolesService.js';
+import { validarFormularioUsuario } from '../validators/usuariosValidator.js';
+import { mostrarError } from '../components/sweetAlerts.js';
  
 const formUsuario = document.getElementById('formUsuario');
 const usuarioIdInput = document.getElementById('usuarioId');
@@ -14,13 +17,39 @@ const tituloFormUsuario = document.getElementById('tituloFormUsuario');
 const btnTextoUsuario = document.getElementById('btnTextoUsuario');
 const btnCancelarUsuario = document.getElementById('btnCancelarUsuario');
 const tablaUsuariosBody = document.getElementById('tablaUsuariosBody');
- 
+
+//Nombres de roles tal como se guardan en BD (sin tilde por el CHECK de Oracle) vs. como se muestran en pantalla
+const NOMBRES_ROL_VISUAL = {
+    Tecnico: 'Técnico'
+};
+
+function formatearNombreRol(nombreRol) {
+    return NOMBRES_ROL_VISUAL[nombreRol] ?? nombreRol;
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
+    await llenarSelectRoles();
     await llenarSelectDepartamentos();
     cargarUsuarios();
 });
- 
-async function llenarSelectDepartamentos() {
+
+async function llenarSelectRoles() {
+    try {
+        const roles = await getRoles();
+        selectRol.innerHTML = '<option value="" selected disabled>Selecciona el rol...</option>';
+        roles.forEach(rol => {
+            const opcion = document.createElement('option');
+            opcion.value = rol.idRol;
+            opcion.textContent = formatearNombreRol(rol.nombreRol);
+            selectRol.appendChild(opcion);
+        });
+    } catch (error) {
+        console.error(error);
+        Swal.fire('Error', 'No se pudieron cargar los roles', 'error');
+    }
+}
+
+export async function llenarSelectDepartamentos() {
     try {
         const departamentos = await getDepartamentos();
         selectDepartamentoUsuario.innerHTML = '<option selected disabled>Selecciona el departamento...</option>';
@@ -54,9 +83,9 @@ function pintarTablaUsuarios(usuarios) {
         const fila = document.createElement('tr');
         fila.innerHTML = `
             <td class="text-center">${usuario.nombreUsuario}</td>
-            <td class="text-center">${usuario.nombreRol ?? ''}</td>
+            <td class="text-center">${usuario.nombreRol ? formatearNombreRol(usuario.nombreRol) : ''}</td>
             <td class="text-center">${usuario.nombreDepartamento ?? ''}</td>
-            <td class="text-center">${usuario.estado === 'F' ? 'Inactivo' : 'Activo'}</td>
+            <td class="text-center">${usuario.estado === false ? 'Inactivo' : 'Activo'}</td>
             <td class="text-center">${usuario.correo}</td>
             <td class="text-center">
                 <button class="btn btn-sm btn-outline-primary btn-editar-usuario" data-id="${usuario.idUsuario}">
@@ -115,9 +144,12 @@ btnCancelarUsuario.addEventListener('click', limpiarFormularioUsuario);
  
 formUsuario.addEventListener('submit', async (evento) => {
     evento.preventDefault();
- 
+
+    //Limpia marcas de error de un intento anterior
+    document.querySelectorAll('#formUsuario .is-invalid').forEach(el => el.classList.remove('is-invalid'));
+
     const id = usuarioIdInput.value;
- 
+
     const usuario = {
         nombreUsuario: nombreUsuarioInput.value.trim(),
         correo: correoUsuarioInput.value.trim(),
@@ -130,9 +162,19 @@ formUsuario.addEventListener('submit', async (evento) => {
     }
 
     if (id) {
-        usuario.estado = selectEstadoUsuario.value === 'activo' ? 'T' : 'F';
+        usuario.estado = selectEstadoUsuario.value === 'activo';
     }
- 
+
+    const errores = validarFormularioUsuario(usuario, Boolean(id));
+    if (errores.length > 0) {
+        errores.forEach(error => {
+            const campo = document.getElementById(error.campo);
+            if (campo) campo.classList.add('is-invalid');
+        });
+        mostrarError(errores.map(error => error.mensaje).join(' '));
+        return;
+    }
+
     try {
         if (id) {
             await actualizarUsuario(id, usuario);

@@ -69,6 +69,7 @@ document.addEventListener("DOMContentLoaded", () => {
     cargarIndicadores();
     cargarAprobacionesPendientes(idUsuario);
     cargarTablaTickets(1)
+
 });
 
 function limitarFechasPasadas() {

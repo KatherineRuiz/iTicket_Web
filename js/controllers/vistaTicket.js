@@ -35,6 +35,7 @@ const filaSoftware = document.getElementById("filaSoftware");
 const txtSoftwareTicket = document.getElementById("txtSoftwareTicket");
 const filaTecnico = document.getElementById("filaTecnico");
 const txtTecnicoAsignado = document.getElementById("txtTecnicoAsignado");
+const txtDepartamento = document.getElementById("txtDepartamento");
 const galeriaEvidenciasVista = document.getElementById("galeriaEvidenciasVista");
 
 const btnAbrirEdicionCreador = document.getElementById("btnAbrirEdicionCreador");
@@ -173,6 +174,7 @@ function renderizarVista() {
     txtEstado.textContent = t.estado;
     txtDescripcion.textContent = t.descripcion;
     txtUbicacion.textContent = t.ubicacion;
+    txtDepartamento.textContent = t.nombreDepartamento;
     dtFechaCreacion.textContent = formatearFecha12H(t.fechaCreacion);
 
     targetaTicket.classList.add(`borde-lateral-${prio}`);
@@ -794,6 +796,7 @@ frmReporteTicket?.addEventListener("submit", async (e) => {
 
         mostrarExitoSimple("¡Reporte guardado!", "El ticket pasó a estado 'Resuelto'.");
         await cargarTicket();
+        await cargarBitacoras();
         cerrarModal(modalReporteEl);
     } catch (error) {
         console.error("Error al guardar el reporte:", error);
