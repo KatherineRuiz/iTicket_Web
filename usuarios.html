@@ -46,47 +46,60 @@
                             <form id="formUsuario" class="h-100 d-flex flex-column justify-content-between">
                                 <input type="hidden" id="usuarioId" value="">
                                 <div class="py-2">
-                                    <h6 class="fw-bold text-navy mb-3 text-center" id="tituloFormUsuario">Agregar usuario</h6>
+                                    <h6 class="fw-bold text-navy mb-3 text-center" id="tituloFormUsuario">Agregar
+                                        usuario</h6>
                                     <div class="mb-3">
-                                        <label for="nombreUsuario" class="form-label small fw-bold text-navy">Nombre</label>
-                                        <input type="text" class="form-control rounded-3" id="nombreUsuario" placeholder="Ej: Juan Pérez" required>
+                                        <label for="nombreUsuario"
+                                            class="form-label small fw-bold text-navy">Nombre</label>
+                                        <input type="text" class="form-control rounded-3" id="nombreUsuario" maxlength="30"
+                                            placeholder="Ej: Juan Pérez" required>
                                     </div>
                                     <div class="mb-3">
                                         <label for="selectRol" class="form-label small fw-bold text-navy">Rol</label>
-                                        <select class="form-select rounded-3 py-2 fs-6 shadow-sm" id="selectRol" required>
+                                        <select class="form-select rounded-3 py-2 fs-6 shadow-sm" id="selectRol"
+                                            required>
                                             <option value="" selected disabled>Selecciona el rol...</option>
-                                            <option value="1">Administrador</option>
-                                            <option value="3">Técnico</option>
-                                            <option value="2">Usuario</option>
                                         </select>
                                     </div>
                                     <div class="mb-3">
-                                        <label for="correoUsuario" class="form-label small fw-bold text-navy">Correo electrónico</label>
-                                        <input type="email" class="form-control rounded-3" id="correoUsuario" placeholder="ejemplo@correo.com" required>
+                                        <label for="correoUsuario" class="form-label small fw-bold text-navy">Correo
+                                            electrónico</label>
+                                        <input type="email" class="form-control rounded-3" id="correoUsuario" maxlength="100"
+                                            placeholder="ejemplo@correo.com" required>
                                     </div>
                                     <div class="mb-3">
-                                        <label for="passwordUsuario" class="form-label small fw-bold text-navy">Contraseña</label>
-                                        <input type="password" class="form-control rounded-3" id="passwordUsuario" placeholder="Mínimo 8 caracteres" required>
+                                        <label for="passwordUsuario"
+                                            class="form-label small fw-bold text-navy">Contraseña</label>
+                                        <input type="password" class="form-control rounded-3" id="passwordUsuario"
+                                            placeholder="Mínimo 8 caracteres" required>
                                     </div>
                                     <div class="mb-3">
-                                        <label for="selectDepartamentoUsuario" class="form-label small fw-bold text-navy">Departamento</label>
-                                        <select class="form-select rounded-3 py-2 fs-6 shadow-sm" id="selectDepartamentoUsuario" required>
+                                        <label for="selectDepartamentoUsuario"
+                                            class="form-label small fw-bold text-navy">Departamento</label>
+                                        <select class="form-select rounded-3 py-2 fs-6 shadow-sm"
+                                            id="selectDepartamentoUsuario" required>
                                             <option value="" selected disabled>Selecciona el departamento...</option>
                                         </select>
                                     </div>
-                                    <div class="mb-3" id="campoEstadoUsuario">
-                                        <label for="selectEstadoUsuario" class="form-label small fw-bold text-navy">Estado</label>
-                                        <select class="form-select rounded-3 py-2 fs-6 shadow-sm" id="selectEstadoUsuario">
+                                    <div class="mb-3" id="campoEstadoUsuario" style="display: none;">
+                                        <label for="selectEstadoUsuario"
+                                            class="form-label small fw-bold text-navy">Estado</label>
+                                        <select class="form-select rounded-3 py-2 fs-6 shadow-sm"
+                                            id="selectEstadoUsuario">
                                             <option value="activo">Activo</option>
                                             <option value="inactivo">Inactivo</option>
                                         </select>
                                     </div>
                                 </div>
                                 <div class="pt-2 mt-auto">
-                                    <button type="submit" class="btn btn-azul-redondeado w-100 py-2 rounded-3 fw-bold text-white shadow-sm d-flex align-items-center justify-content-center">
-                                        <i class="bi bi-check-circle me-2"></i> <span id="btnTextoUsuario">Guardar usuario</span>
+                                    <button type="submit"
+                                        class="btn btn-azul-redondeado w-100 py-2 rounded-3 fw-bold text-white shadow-sm d-flex align-items-center justify-content-center">
+                                        <i class="bi bi-check-circle me-2"></i> <span id="btnTextoUsuario">Guardar
+                                            usuario</span>
                                     </button>
-                                    <button type="button" id="btnCancelarUsuario" class="btn btn-secondary w-100 mt-2 rounded-3" style="display: none;">Cancelar</button>
+                                    <button type="button" id="btnCancelarUsuario"
+                                        class="btn btn-secondary w-100 mt-2 rounded-3"
+                                        style="display: none;">Cancelar</button>
                                 </div>
                             </form>
                         </div>
@@ -131,15 +144,21 @@
                                 <div class="py-2">
                                     <h6 class="fw-bold text-navy mb-3 text-center" id="tituloFormArea">Agregar área</h6>
                                     <div class="mb-3">
-                                        <label for="nombreArea" class="form-label small fw-bold text-navy">Nombre del área</label>
-                                        <input type="text" class="form-control rounded-3" id="nombreArea" placeholder="Ej: CFP" required>
+                                        <label for="nombreArea" class="form-label small fw-bold text-navy">Nombre del
+                                            área</label>
+                                        <input type="text" class="form-control rounded-3" id="nombreArea" maxlength="50"
+                                            placeholder="Ej: CFP" required>
                                     </div>
                                 </div>
                                 <div class="pt-2 mt-auto">
-                                    <button type="submit" class="btn btn-azul-redondeado w-100 py-2 rounded-3 fw-bold text-white shadow-sm d-flex align-items-center justify-content-center">
-                                        <i class="bi bi-check-circle me-2"></i> <span id="btnTextoArea">Guardar área</span>
+                                    <button type="submit"
+                                        class="btn btn-azul-redondeado w-100 py-2 rounded-3 fw-bold text-white shadow-sm d-flex align-items-center justify-content-center">
+                                        <i class="bi bi-check-circle me-2"></i> <span id="btnTextoArea">Guardar
+                                            área</span>
                                     </button>
-                                    <button type="button" id="btnCancelarArea" class="btn btn-secondary w-100 mt-2 rounded-3" style="display: none;">Cancelar</button>
+                                    <button type="button" id="btnCancelarArea"
+                                        class="btn btn-secondary w-100 mt-2 rounded-3"
+                                        style="display: none;">Cancelar</button>
                                 </div>
                             </form>
                         </div>
@@ -178,23 +197,45 @@
                             <form id="formDepartamento" class="h-100 d-flex flex-column justify-content-between">
                                 <input type="hidden" id="departamentoId" value="">
                                 <div class="py-2">
-                                    <h6 class="fw-bold text-navy mb-3 text-center" id="tituloFormDepartamento">Agregar departamento</h6>
+                                    <h6 class="fw-bold text-navy mb-3 text-center" id="tituloFormDepartamento">Agregar
+                                        departamento</h6>
                                     <div class="mb-3">
-                                        <label for="nombreDepartamento" class="form-label small fw-bold text-navy">Nombre del departamento</label>
-                                        <input type="text" class="form-control rounded-3" id="nombreDepartamento" placeholder="Ej: IT" required>
+                                        <label for="nombreDepartamento"
+                                            class="form-label small fw-bold text-navy">Nombre del departamento</label>
+                                        <input type="text" class="form-control rounded-3" id="nombreDepartamento" maxlength="50"
+                                            placeholder="Ej: IT" required>
                                     </div>
+                                    
                                     <div class="mb-3">
-                                        <label for="selectAreaDepartamento" class="form-label small fw-bold text-navy">Área</label>
-                                        <select class="form-select rounded-3 py-2 fs-6 shadow-sm" id="selectAreaDepartamento" required>
+                                        <label for="selectAreaDepartamento"
+                                            class="form-label small fw-bold text-navy">Área</label>
+                                        <select class="form-select rounded-3 py-2 fs-6 shadow-sm"
+                                            id="selectAreaDepartamento" required>
                                             <option value="" selected disabled>Selecciona el área...</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="selectTipoDepartamento"
+                                            class="form-label small fw-bold text-navy">Tipo de departamento</label>
+                                        <select class="form-select rounded-3 py-2 fs-6 shadow-sm"
+                                            id="selectTipoDepartamento" required>
+                                            <option value="" selected disabled>Selecciona el tipo...</option>
+                                            <option value="IT">IT</option>
+                                            <option value="Mantenimiento">Mantenimiento</option>
+                                            <option value="Otro">Otro</option>
                                         </select>
                                     </div>
                                 </div>
                                 <div class="pt-2 mt-auto">
-                                    <button type="submit" class="btn btn-azul-redondeado w-100 py-2 rounded-3 fw-bold text-white shadow-sm d-flex align-items-center justify-content-center">
-                                        <i class="bi bi-check-circle me-2"></i> <span id="btnTextoDepartamento">Guardar departamento</span>
+                                    <button type="submit"
+                                        class="btn btn-azul-redondeado w-100 py-2 rounded-3 fw-bold text-white shadow-sm d-flex align-items-center justify-content-center">
+                                        <i class="bi bi-check-circle me-2"></i> <span id="btnTextoDepartamento">Guardar
+                                            departamento</span>
                                     </button>
-                                    <button type="button" id="btnCancelarDepartamento" class="btn btn-secondary w-100 mt-2 rounded-3" style="display: none;">Cancelar</button>
+                                    <button type="button" id="btnCancelarDepartamento"
+                                        class="btn btn-secondary w-100 mt-2 rounded-3"
+                                        style="display: none;">Cancelar</button>
                                 </div>
                             </form>
                         </div>
@@ -209,6 +250,7 @@
                                         <thead>
                                             <tr>
                                                 <th class="text-center">Departamento</th>
+                                                <th class="text-center">Tipo</th>
                                                 <th class="text-center">Área</th>
                                                 <th class="text-center">Acciones</th>
                                             </tr>
@@ -270,15 +312,9 @@
     <script src="js/components/menu.js"></script>
     <script src="js/controllers/notificaciones.js"></script>
 
-    <script type="module">
-        import './js/services/areasService.js';
-        import './js/services/departamentosService.js';
-        import './js/services/usuariosService.js';
-        import './js/controllers/areas.js';
-        import './js/controllers/departamentos.js';
-        import './js/controllers/usuarios.js';
-        console.log('pgina de usuarios cargada correctamente');
-    </script>
+    <script type="module" src="js/controllers/areas.js"></script>
+    <script type="module" src="js/controllers/departamentos.js"></script>
+    <script type="module" src="js/controllers/usuarios.js"></script>
 </body>
 
 </html>
