@@ -1,3 +1,4 @@
+
 import { obtenerMetricas, obtenerAlertas, obtenerEquiposMasReportados } from "../services/estadisticasService.js";
 import { mostrarError } from "../components/sweetAlerts.js";
 
@@ -63,35 +64,28 @@ async function cargarMetricas() {
     const fechaInicio = document.getElementById('fechaInicio')?.value || '';
     const fechaFin = document.getElementById('fechaFin')?.value || '';
 
-    try {
-        // Cargar métricas, alertas y equipos en paralelo para mayor fluidez
-        const [dataMetricas, dataAlertas, dataEquipos] = await Promise.all([
+    // Cada bloque se resuelve por separado: si una tabla falla, las gráficas y
+    // la otra tabla siguen mostrando los datos que sí respondió la API.
+    const [metricasResult, alertasResult, equiposResult] = await Promise.allSettled([
             obtenerMetricas(fechaInicio, fechaFin, paginaAlertas, TAMANO_PAGINA_ALERTAS),
             obtenerAlertas(fechaInicio, fechaFin, paginaAlertas, TAMANO_PAGINA_ALERTAS),
             obtenerEquiposMasReportados(fechaInicio, fechaFin, paginaEquipos, TAMANO_PAGINA_EQUIPOS)
-        ]);
+    ]);
 
-        if (dataMetricas) {
-            renderizarGraficosYKPIs(dataMetricas);
+    if (metricasResult.status === 'fulfilled' && metricasResult.value) {
+        try {
+            renderizarGraficosYKPIs(metricasResult.value);
+        } catch (error) {
+            // Un error de dibujo no debe impedir que se presenten las tablas.
+            console.error('[Estadísticas] No se pudieron dibujar las gráficas:', error);
         }
-
-        if (dataAlertas) {
-            renderizarTablaAlertas(dataAlertas);
-        } else {
-            renderizarTablaAlertas({ content: [], totalPages: 0 });
-        }
-
-        if (dataEquipos) {
-            renderizarTablaEquipos(dataEquipos);
-        } else {
-            renderizarTablaEquipos({ content: [], totalPages: 0 });
-        }
-
-    } catch (error) {
-        console.error(' [Controller] Error en cargarMetricas:', error);
-        renderizarTablaAlertas({ content: [], totalPages: 0 });
-        renderizarTablaEquipos({ content: [], totalPages: 0 });
+    } else if (metricasResult.status === 'rejected') {
+        console.error('[Estadísticas] No se cargaron las métricas:', metricasResult.reason);
     }
+    renderizarTablaAlertas(alertasResult.status === 'fulfilled' && alertasResult.value
+        ? alertasResult.value : { content: [], totalPages: 0 });
+    renderizarTablaEquipos(equiposResult.status === 'fulfilled' && equiposResult.value
+        ? equiposResult.value : { content: [], totalPages: 0 });
 }
 
 // ============================================================
@@ -123,6 +117,10 @@ function renderizarGraficosYKPIs(data) {
         elTiempoMedio.textContent = formatearHoras(tickets?.tiempoMedioResolucionHoras);
     }
 
+    if (typeof Chart === 'undefined') {
+        console.error('[Estadísticas] Chart.js no terminó de cargar. Los KPIs sí fueron actualizados.');
+        return;
+    }
     Chart.defaults.font.family = "'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif";
     Chart.defaults.color = '#6c757d';
 
@@ -218,7 +216,9 @@ function renderizarGraficosYKPIs(data) {
 
         const crearGradiente = (r, g, b) => (context) => {
             const { ctx, chartArea } = context.chart;
-            if (!chartArea) return null;
+            // En el primer ciclo Chart.js todavía no conoce chartArea. Se
+            // devuelve un color válido hasta que pueda construir el degradado.
+            if (!chartArea) return `rgba(${r}, ${g}, ${b}, 0.22)`;
             const gradient = ctx.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
             gradient.addColorStop(0, `rgba(${r}, ${g}, ${b}, 0.6)`);
             gradient.addColorStop(1, `rgba(255, 255, 255, 0.07)`);
@@ -296,6 +296,7 @@ function renderizarTablaAlertas(pageData) {
 
     lista.forEach(ev => {
         const fila = document.createElement('tr');
+        fila.classList.add('fila-expandible');
         const puntos = Math.round(ev.calificacion || 0);
         let estrellasHTML = "";
         for (let i = 1; i <= 5; i++) {
@@ -307,7 +308,7 @@ function renderizarTablaAlertas(pageData) {
         // Campos del backend (AlertaInsatisfaccionDTO):
         // codigoTicket, asunto, usuario, tecnico, calificacion, comentario, fechaEvaluacion
         fila.innerHTML = `
-            <td class="fw-semibold text-primary">${ev.codigoTicket || '—'}</td>
+            <td class="fw-semibold">${ev.codigoTicket || '—'}</td>
             <td class="text-truncate" style="max-width: 150px;" title="${ev.asunto || ''}">${ev.asunto || 'Sin asunto'}</td>
             <td class="text-truncate" style="max-width: 150px;">${ev.usuario || 'Sin usuario'}</td>
             <td>${ev.tecnico || 'No asignado'}</td>
@@ -397,7 +398,7 @@ function renderizarTablaEquipos(pageData) {
         if (eq.estadoGeneral === 'Crítico') badgeClass = 'bg-danger';
 
         fila.innerHTML = `
-            <td class="fw-semibold text-primary">${eq.codigoEquipo || '—'}</td>
+            <td class="fw-semibold">${eq.codigoEquipo || '—'}</td>
             <td>${eq.ubicacion || '—'}</td>
             <td>${eq.modeloMarca || '—'}</td>
             <td>${eq.categoria || '—'}</td>
@@ -455,7 +456,26 @@ function renderizarTablaEquipos(pageData) {
 // ============================================================
 // INICIALIZACIÓN
 // ============================================================
-document.addEventListener('DOMContentLoaded', () => {
+function iniciarEstadisticas() {
+    const inputInicio = document.getElementById('fechaInicio');
+    const inputFin = document.getElementById('fechaFin');
+    const btnLimpiarFechas = document.getElementById('btnLimpiarFechas');
+
+    // "Limpiar" solo tiene utilidad cuando existe al menos un límite de fecha.
+    // Se controla con estilo inline para que la clase d-flex de Bootstrap no
+    // pueda volver a mostrar el botón mientras ambos campos estén vacíos.
+    function actualizarVisibilidadBotonLimpiar() {
+        if (!btnLimpiarFechas) return;
+        const hayLimiteFecha = Boolean(inputInicio?.value || inputFin?.value);
+        btnLimpiarFechas.hidden = !hayLimiteFecha;
+    }
+
+    // El botón aparece desde que el usuario elige cualquiera de los dos límites,
+    // incluso antes de presionar el botón que aplica el filtro.
+    inputInicio?.addEventListener('change', actualizarVisibilidadBotonLimpiar);
+    inputFin?.addEventListener('change', actualizarVisibilidadBotonLimpiar);
+    actualizarVisibilidadBotonLimpiar();
+
     cargarMetricas();
 
     document.getElementById('btnFiltrarFechas')?.addEventListener('click', () => {
@@ -474,11 +494,10 @@ document.addEventListener('DOMContentLoaded', () => {
         cargarMetricas();
     });
 
-    document.getElementById('btnLimpiarFechas')?.addEventListener('click', () => {
-        const inputInicio = document.getElementById('fechaInicio');
-        const inputFin = document.getElementById('fechaFin');
+    btnLimpiarFechas?.addEventListener('click', () => {
         if (inputInicio) inputInicio.value = '';
         if (inputFin) inputFin.value = '';
+        actualizarVisibilidadBotonLimpiar();
         paginaAlertas = 0;
         paginaEquipos = 0;
         cargarMetricas();
@@ -487,4 +506,10 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('btnExportarPDF')?.addEventListener('click', () => {
         console.log("Iniciando exportación a PDF...");
     });
-});
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', iniciarEstadisticas, { once: true });
+} else {
+    iniciarEstadisticas();
+}

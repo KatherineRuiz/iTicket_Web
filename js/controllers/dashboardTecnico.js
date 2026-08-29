@@ -1,17 +1,20 @@
-// Dashboard Técnico - Controller con conexión a API
+/* Dashboard técnico: reúne tickets, evaluaciones y bitácoras desde la API y
+   transforma esos datos en indicadores, listas y gráficas del técnico activo. */
 
 import {
-    getTicketsPropios,
-    getIndicadoresEstadoPropios,
+    getTodosTicketsAsignados,
+    getEvaluacionesDashboard,
+    getBitacorasDashboard,
     procesarDatosGraficos,
-    obtenerContadoresPorEstado
-} from "../services/dashboardTecnicosService.js";
+    obtenerContadoresPorEstado,
+    obtenerCategoriaVencimiento
+} from "../services/dashboardTecnicosService.js?v=4";
 import { obtenerUsuarioLogueado } from "../utils/sesion.js";
 
 // Elementos del DOM
 const graficoResolucion = document.getElementById('graficoResolucion');
 const graficoCalificacion = document.getElementById('graficoCalificacion');
-const botonesResumen = document.querySelectorAll('.btn-resumen');
+const botonesResumen = document.querySelectorAll('[data-opcion]');
 const btnCrear = document.querySelector('.btn-oscuro');
 const contenedorTickets = document.querySelector('.contenedor-tickets-scroll');
 const numPendientes = document.getElementById('num-pendientes');
@@ -20,7 +23,6 @@ const numHoy = document.getElementById('num-hoy');
 
 // Variables globales
 let ticketsPropios = [];
-let indicadores = {};
 let graficoCalificacionesInstance = null;
 let graficoTiempoInstance = null;
 
@@ -36,33 +38,39 @@ let idUsuario = usuarioLogueado ? usuarioLogueado.idUsuario : null;
 async function cargarDatos() {
     if (!idUsuario) {
         console.warn('ID de usuario no disponible');
-        usarDatosEjemplo();
+        mostrarDashboardVacio('No se encontró una sesión activa');
         return;
     }
 
     try {
         mostrarLoading(true);
 
-        // Obtener indicadores (contadores)
-        indicadores = await getIndicadoresEstadoPropios(idUsuario);
-        
-        // Obtener tickets propios
-        const resultadoTickets = await getTicketsPropios(idUsuario, 1, 20, {});
-        ticketsPropios = resultadoTickets.content || [];
+        const [ticketsResult, evaluacionesResult, bitacorasResult] = await Promise.allSettled([
+            getTodosTicketsAsignados(idUsuario),
+            getEvaluacionesDashboard(),
+            getBitacorasDashboard()
+        ]);
+
+        if (ticketsResult.status === 'rejected') throw ticketsResult.reason;
+        ticketsPropios = ticketsResult.value;
+        const evaluaciones = evaluacionesResult.status === 'fulfilled' ? evaluacionesResult.value : [];
+        const bitacoras = bitacorasResult.status === 'fulfilled' ? bitacorasResult.value : [];
+        if (evaluacionesResult.status === 'rejected') console.error('No se cargaron evaluaciones:', evaluacionesResult.reason);
+        if (bitacorasResult.status === 'rejected') console.error('No se cargaron bitácoras:', bitacorasResult.reason);
 
         // Actualizar UI
-        actualizarContadores(indicadores);
+        actualizarContadores(obtenerContadoresPorEstado(ticketsPropios));
         renderizarTickets(ticketsPropios);
         
         // Procesar y actualizar gráficos
-        const datosGraficos = procesarDatosGraficos(ticketsPropios);
+        const datosGraficos = procesarDatosGraficos(ticketsPropios, evaluaciones, bitacoras);
         crearGraficos(datosGraficos.calificaciones, datosGraficos.tiempos);
 
         mostrarLoading(false);
     } catch (error) {
         console.error('Error cargando datos del dashboard:', error);
         mostrarLoading(false);
-        usarDatosEjemplo();
+        mostrarDashboardVacio('No se pudieron cargar los datos de la API');
     }
 }
 
@@ -97,12 +105,14 @@ function renderizarTickets(tickets) {
         const prioridadClass = obtenerClasePrioridad(ticket.prioridad);
         const badgeClass = obtenerClaseBadge(ticket.prioridad);
         const prioridadText = obtenerTextoPrioridad(ticket.prioridad);
+        const iconoPrioridad = window.obtenerClaseIconoTicket?.(ticket.prioridad)
+            || 'icono-ticket-prioridad-sin-asignar';
 
         return `
             <div class="ticket-item ${prioridadClass} p-3 mb-3 rounded-3 shadow-sm d-flex justify-content-between align-items-start" data-id="${ticket.idTicket}">
                 <div>
                     <h6 class="fw-bold mb-1">
-                        <i class="bi bi-ticket-perforated me-2"></i>${ticket.asunto || 'Sin título'}
+                        <i class="bi bi-ticket-perforated ${iconoPrioridad} me-2"></i>${ticket.asunto || 'Sin título'}
                     </h6>
                     <small class="text-muted d-block">#${ticket.codigo || ticket.idTicket}</small>
                     <small class="text-muted d-block mt-1"><b>Estado:</b> ${ticket.estado || 'Pendiente'}</small>
@@ -119,19 +129,27 @@ function renderizarTickets(tickets) {
         item.addEventListener('click', function() {
             const id = this.dataset.id;
             if (id) {
-                window.location.href = `detalleTicket.html?id=${id}`;
+                window.location.href = `vistaTicket.html?id=${id}`;
             }
         });
         item.style.cursor = 'pointer';
     });
 }
 
-// ---------- FUNCIONES AUXILIARES PARA PRIORIDAD ----------
+
+function normalizarPrioridad(prioridad) {
+    return String(prioridad || '')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .trim()
+        .toLowerCase();
+}
+
 function obtenerClasePrioridad(prioridad) {
-    const p = prioridad?.toLowerCase() || '';
+    const p = normalizarPrioridad(prioridad);
     switch (p) {
         case 'critica':
-        case 'crítico':
+        case 'critico':
             return 'border-start-critical';
         case 'alta':
             return 'border-start-high';
@@ -143,10 +161,10 @@ function obtenerClasePrioridad(prioridad) {
 }
 
 function obtenerClaseBadge(prioridad) {
-    const p = prioridad?.toLowerCase() || '';
+    const p = normalizarPrioridad(prioridad);
     switch (p) {
         case 'critica':
-        case 'crítico':
+        case 'critico':
             return 'bg-danger-light text-danger';
         case 'alta':
             return 'bg-warning-light text-warning';
@@ -158,10 +176,10 @@ function obtenerClaseBadge(prioridad) {
 }
 
 function obtenerTextoPrioridad(prioridad) {
-    const p = prioridad?.toLowerCase() || '';
+    const p = normalizarPrioridad(prioridad);
     switch (p) {
         case 'critica':
-        case 'crítico':
+        case 'critico':
             return 'Crítica';
         case 'alta':
             return 'Alta';
@@ -174,6 +192,10 @@ function obtenerTextoPrioridad(prioridad) {
 
 // ---------- CREAR GRÁFICOS ----------
 function crearGraficos(datosCalificaciones, datosTiempos) {
+    if (typeof Chart === 'undefined') {
+        console.error('[Dashboard técnico] Chart.js no terminó de cargar.');
+        return;
+    }
     // Destruir gráficos anteriores si existen
     if (graficoCalificacionesInstance) {
         graficoCalificacionesInstance.destroy();
@@ -184,10 +206,7 @@ function crearGraficos(datosCalificaciones, datosTiempos) {
         graficoTiempoInstance = null;
     }
 
-    Promise.all([
-        new Promise(resolve => window.addEventListener('load', resolve)),
-        document.fonts.ready
-    ]).then(function() {
+    const dibujar = function() {
         requestAnimationFrame(() => {
             requestAnimationFrame(() => {
                 // Gráfico de calificaciones (Doughnut)
@@ -290,6 +309,8 @@ function crearGraficos(datosCalificaciones, datosTiempos) {
 
                 // Control de botones de resumen
                 botonesResumen.forEach(boton => {
+                    if (boton.dataset.dashboardListo === 'true') return;
+                    boton.dataset.dashboardListo = 'true';
                     boton.addEventListener('click', function () {
                         botonesResumen.forEach(b => b.classList.remove('activo'));
                         this.classList.add('activo');
@@ -299,36 +320,42 @@ function crearGraficos(datosCalificaciones, datosTiempos) {
                 });
             });
         });
-    });
+    };
+
+    if (document.readyState === 'complete') {
+        document.fonts.ready.then(dibujar);
+    } else {
+        window.addEventListener('load', () => document.fonts.ready.then(dibujar), { once: true });
+    }
 }
 
 // ---------- FILTRAR TICKETS ----------
 function filtrarTickets(opcion) {
     if (!contenedorTickets) return;
 
-    const hoy = new Date();
-    hoy.setHours(0, 0, 0, 0);
+    const ahora = new Date();
 
     let filtrados = [];
 
     switch(opcion) {
         case 'pendientes':
-            filtrados = ticketsPropios.filter(t => 
-                t.estado === 'Pendiente' || t.estado === 'En proceso'
-            );
+            filtrados = ticketsPropios.filter(t => {
+                const estado = String(t.estado || '').trim().toLowerCase();
+                return !['resuelto', 'cerrado', 'cancelado'].includes(estado);
+            });
             break;
         case 'vencidos':
             filtrados = ticketsPropios.filter(t => {
-                if (!t.fechaVencimiento) return false;
-                const fechaVenc = new Date(t.fechaVencimiento);
-                return fechaVenc < hoy && t.estado !== 'Cerrado' && t.estado !== 'Resuelto';
+                const estado = String(t.estado || '').trim().toLowerCase();
+                return !['resuelto', 'cerrado', 'cancelado'].includes(estado)
+                    && obtenerCategoriaVencimiento(t, ahora) === 'vencido';
             });
             break;
         case 'hoy':
             filtrados = ticketsPropios.filter(t => {
-                if (!t.fechaVencimiento) return false;
-                const fechaVenc = new Date(t.fechaVencimiento);
-                return fechaVenc.toDateString() === hoy.toDateString();
+                const estado = String(t.estado || '').trim().toLowerCase();
+                return !['resuelto', 'cerrado', 'cancelado'].includes(estado)
+                    && obtenerCategoriaVencimiento(t, ahora) === 'hoy';
             });
             break;
         default:
@@ -338,15 +365,18 @@ function filtrarTickets(opcion) {
     renderizarTickets(filtrados);
 }
 
-// ---------- USAR DATOS DE EJEMPLO ----------
-function usarDatosEjemplo() {
-    console.log('Usando datos de ejemplo para el dashboard');
-    
-    if (numPendientes) numPendientes.textContent = '7';
-    if (numVencidas) numVencidas.textContent = '2';
-    if (numHoy) numHoy.textContent = '5';
-
-    crearGraficos([45, 30, 15, 7, 3], [12, 19, 3, 5, 2, 3, 8]);
+// ---------- ESTADO VACÍO CUANDO NO HAY SESIÓN O FALLA LA API ----------
+function mostrarDashboardVacio(mensaje) {
+    ticketsPropios = [];
+    actualizarContadores({ pendientes: 0, vencidos: 0, vencenHoy: 0 });
+    if (contenedorTickets) {
+        contenedorTickets.innerHTML = `
+            <div class="text-center text-muted py-5">
+                <i class="bi bi-cloud-slash fs-1 d-block mb-2"></i>
+                <p>${mensaje}</p>
+            </div>`;
+    }
+    crearGraficos([0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0]);
 }
 
 // ---------- UTILITY: FORMATEAR FECHA ----------
@@ -390,7 +420,7 @@ function mostrarLoading(mostrar) {
 // ---------- EVENTO: CREAR TICKET ----------
 if (btnCrear) {
     btnCrear.addEventListener('click', function() {
-        window.location.href = 'misTickets.html';
+        window.location.href = 'crearTickets.html';
     });
 }
 
@@ -398,7 +428,7 @@ if (btnCrear) {
 if (idUsuario) {
     cargarDatos();
 } else {
-    usarDatosEjemplo();
+    mostrarDashboardVacio('No se encontró una sesión activa');
 }
 
 // Recargar datos cada 5 minutos

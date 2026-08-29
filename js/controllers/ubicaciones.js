@@ -2,11 +2,13 @@ import { mostrarError, mostrarExitoSimple, mostrarConfirmacion } from "../compon
 import {
     getTiposUbicacion,
     crearTipoUbicacion,
+    actualizarTipoUbicacion,
     eliminarTipoUbicacion,
 } from "../services/tipoUbicacionService.js";
 import {
     getUbicaciones,
     crearUbicacion,
+    actualizarUbicacion,
     eliminarUbicacion,
 } from "../services/ubicacionesService.js";
 
@@ -16,17 +18,31 @@ document.addEventListener("DOMContentLoaded", async function () {
     const tablaTiposUbicacion = document.querySelector("#tablaTiposUbicacion");
     const tablaUbicaciones = document.querySelector("#tablaUbicaciones");
     const selectTipoUbicacion = document.querySelector("#selectTipoUbicacion");
+    const tipoUbicacionId = document.querySelector("#tipoUbicacionId");
+    const txtNombreTipoUbicacion = document.querySelector("#txtNombreTipoUbicacion");
+    const tituloFormTipoUbicacion = document.querySelector("#tituloFormTipoUbicacion");
+    const btnTextoTipoUbicacion = document.querySelector("#btnTextoTipoUbicacion");
+    const btnCancelarTipoUbicacion = document.querySelector("#btnCancelarTipoUbicacion");
+    const ubicacionId = document.querySelector("#ubicacionId");
+    const txtNombreUbicacion = document.querySelector("#txtNombreUbicacion");
+    const tituloFormUbicacion = document.querySelector("#tituloFormUbicacion");
+    const btnTextoUbicacion = document.querySelector("#btnTextoUbicacion");
+    const btnCancelarUbicacion = document.querySelector("#btnCancelarUbicacion");
+    let tiposActuales = [];
+    let ubicacionesActuales = [];
 
-    // Carga inicial: solo lo que la pantalla necesita mostrar de entrada.
-    // No se piden detalles extra hasta que el usuario los necesite (crear/editar).
-    await cargarTiposUbicacion();
-    await cargarUbicaciones();
+    // Promise.all actualiza tipos y ubicaciones al mismo tiempo. Esto también
+    // renueva el select porque depende del catálogo de tipos.
+    async function recargarTablasUbicaciones() {
+        await Promise.all([cargarTiposUbicacion(), cargarUbicaciones()]);
+    }
 
     // ===== TIPO DE UBICACIÓN =====
 
     async function cargarTiposUbicacion() {
         try {
             const tipos = await getTiposUbicacion();
+            tiposActuales = tipos;
             pintarTablaTipos(tipos);
             pintarSelectTipos(tipos);
         } catch (error) {
@@ -46,6 +62,9 @@ document.addEventListener("DOMContentLoaded", async function () {
             <tr>
                 <td class="text-center fw-bold">${tipo.nombre_tipo_ubicacion}</td>
                 <td class="text-center">
+                    <button class="btn btn-sm btn-outline-primary btn-editar-tipo" data-id="${tipo.id}">
+                        <i class="bi bi-pencil"></i>
+                    </button>
                     <button class="btn btn-link text-danger p-0 btn-eliminar-tipo" data-id="${tipo.id}">
                         <i class="bi bi-trash fs-5"></i>
                     </button>
@@ -53,22 +72,51 @@ document.addEventListener("DOMContentLoaded", async function () {
             </tr>
         `).join("");
 
+        document.querySelectorAll(".btn-editar-tipo").forEach(boton => {
+            boton.addEventListener("click", () => cargarTipoEnFormulario(boton.dataset.id));
+        });
         document.querySelectorAll(".btn-eliminar-tipo").forEach(boton => {
             boton.addEventListener("click", () => confirmarEliminarTipo(boton.dataset.id));
         });
     }
 
+    function cargarTipoEnFormulario(id) {
+        const tipo = tiposActuales.find(item => item.id == id);
+        if (!tipo) return;
+        tipoUbicacionId.value = tipo.id;
+        txtNombreTipoUbicacion.value = tipo.nombre_tipo_ubicacion;
+        tituloFormTipoUbicacion.textContent = "Editar tipo de ubicación";
+        btnTextoTipoUbicacion.textContent = "Actualizar tipo de ubicación";
+        btnCancelarTipoUbicacion.classList.remove("d-none");
+        txtNombreTipoUbicacion.focus();
+    }
+
+    function limpiarFormularioTipo() {
+        formTipoUbicacion.reset();
+        tipoUbicacionId.value = "";
+        tituloFormTipoUbicacion.textContent = "Agregar tipo de ubicación";
+        btnTextoTipoUbicacion.textContent = "Guardar tipo de ubicación";
+        btnCancelarTipoUbicacion.classList.add("d-none");
+    }
+
+    btnCancelarTipoUbicacion.addEventListener("click", limpiarFormularioTipo);
+
     function pintarSelectTipos(tipos) {
+        const valorSeleccionado = selectTipoUbicacion.value;
         const opcionPlaceholder = '<option selected disabled value="">Selecciona el tipo de ubicación...</option>';
         selectTipoUbicacion.innerHTML = opcionPlaceholder + tipos.map(tipo =>
             `<option value="${tipo.id}">${tipo.nombre_tipo_ubicacion}</option>`
         ).join("");
+        if (tipos.some(tipo => tipo.id == valorSeleccionado)) {
+            selectTipoUbicacion.value = valorSeleccionado;
+        }
     }
 
     formTipoUbicacion.addEventListener("submit", async function (evento) {
         evento.preventDefault();
 
-        const nombre = document.querySelector("#txtNombreTipoUbicacion").value.trim();
+        const nombre = txtNombreTipoUbicacion.value.trim();
+        const id = tipoUbicacionId.value;
 
         if (!nombre) {
             mostrarError("El nombre del tipo de ubicación es obligatorio.", false);
@@ -80,12 +128,17 @@ document.addEventListener("DOMContentLoaded", async function () {
         }
 
         try {
-            await crearTipoUbicacion(nombre);
-            mostrarExitoSimple("¡Listo!", "Tipo de ubicación creado correctamente.");
-            formTipoUbicacion.reset();
-            await cargarTiposUbicacion();
+            if (id) {
+                await actualizarTipoUbicacion(id, nombre);
+                mostrarExitoSimple("¡Listo!", "Tipo de ubicación actualizado correctamente.");
+            } else {
+                await crearTipoUbicacion(nombre);
+                mostrarExitoSimple("¡Listo!", "Tipo de ubicación creado correctamente.");
+            }
+            limpiarFormularioTipo();
+            await recargarTablasUbicaciones();
         } catch (error) {
-            mostrarError(error.message || "No se pudo crear el tipo de ubicación.", false);
+            mostrarError(error.message || "No se pudo guardar el tipo de ubicación.", false);
         }
     });
 
@@ -100,8 +153,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         try {
             await eliminarTipoUbicacion(id);
             mostrarExitoSimple("¡Listo!", "Tipo de ubicación eliminado.");
-            await cargarTiposUbicacion();
-            await cargarUbicaciones(); // por si alguna ubicación dependía de este tipo
+            await recargarTablasUbicaciones();
         } catch (error) {
             mostrarError("No se pudo eliminar. Puede que esté en uso por alguna ubicación.", false);
         }
@@ -112,6 +164,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     async function cargarUbicaciones() {
         try {
             const ubicaciones = await getUbicaciones();
+            ubicacionesActuales = ubicaciones;
             pintarTablaUbicaciones(ubicaciones);
         } catch (error) {
             mostrarError("No se pudieron cargar las ubicaciones.", false);
@@ -131,6 +184,9 @@ document.addEventListener("DOMContentLoaded", async function () {
                 <td class="text-center fw-bold">${ubicacion.nombreUbicacion}</td>
                 <td class="text-center">${ubicacion.nombreTipoUbicacion}</td>
                 <td class="text-center">
+                    <button class="btn btn-sm btn-outline-primary btn-editar-ubicacion" data-id="${ubicacion.id}">
+                        <i class="bi bi-pencil"></i>
+                    </button>
                     <button class="btn btn-link text-danger p-0 btn-eliminar-ubicacion" data-id="${ubicacion.id}">
                         <i class="bi bi-trash fs-5"></i>
                     </button>
@@ -138,16 +194,43 @@ document.addEventListener("DOMContentLoaded", async function () {
             </tr>
         `).join("");
 
+        document.querySelectorAll(".btn-editar-ubicacion").forEach(boton => {
+            boton.addEventListener("click", () => cargarUbicacionEnFormulario(boton.dataset.id));
+        });
         document.querySelectorAll(".btn-eliminar-ubicacion").forEach(boton => {
             boton.addEventListener("click", () => confirmarEliminarUbicacion(boton.dataset.id));
         });
     }
 
+    function cargarUbicacionEnFormulario(id) {
+        const ubicacion = ubicacionesActuales.find(item => item.id == id);
+        if (!ubicacion) return;
+        ubicacionId.value = ubicacion.id;
+        txtNombreUbicacion.value = ubicacion.nombreUbicacion;
+        selectTipoUbicacion.value = ubicacion.idTipoUbicacion;
+        tituloFormUbicacion.textContent = "Editar ubicación";
+        btnTextoUbicacion.textContent = "Actualizar ubicación";
+        btnCancelarUbicacion.classList.remove("d-none");
+        txtNombreUbicacion.focus();
+    }
+
+    // Elimina el id oculto y restaura los textos de creación.
+    function limpiarFormularioUbicacion() {
+        formUbicacion.reset();
+        ubicacionId.value = "";
+        tituloFormUbicacion.textContent = "Agregar ubicación";
+        btnTextoUbicacion.textContent = "Guardar ubicación";
+        btnCancelarUbicacion.classList.add("d-none");
+    }
+
+    btnCancelarUbicacion.addEventListener("click", limpiarFormularioUbicacion);
+
     formUbicacion.addEventListener("submit", async function (evento) {
         evento.preventDefault();
 
-        const nombre = document.querySelector("#txtNombreUbicacion").value.trim();
+        const nombre = txtNombreUbicacion.value.trim();
         const idTipoUbicacion = selectTipoUbicacion.value;
+        const id = ubicacionId.value;
 
         if (!nombre) {
             mostrarError("El nombre de la ubicación es obligatorio.", false);
@@ -163,12 +246,17 @@ document.addEventListener("DOMContentLoaded", async function () {
         }
 
         try {
-            await crearUbicacion(nombre, Number(idTipoUbicacion));
-            mostrarExitoSimple("¡Listo!", "Ubicación creada correctamente.");
-            formUbicacion.reset();
-            await cargarUbicaciones();
+            if (id) {
+                await actualizarUbicacion(id, nombre, Number(idTipoUbicacion));
+                mostrarExitoSimple("¡Listo!", "Ubicación actualizada correctamente.");
+            } else {
+                await crearUbicacion(nombre, Number(idTipoUbicacion));
+                mostrarExitoSimple("¡Listo!", "Ubicación creada correctamente.");
+            }
+            limpiarFormularioUbicacion();
+            await recargarTablasUbicaciones();
         } catch (error) {
-            mostrarError(error.message || "No se pudo crear la ubicación.", false);
+            mostrarError(error.message || "No se pudo guardar la ubicación.", false);
         }
     });
 
@@ -183,9 +271,11 @@ document.addEventListener("DOMContentLoaded", async function () {
         try {
             await eliminarUbicacion(id);
             mostrarExitoSimple("¡Listo!", "Ubicación eliminada.");
-            await cargarUbicaciones();
+            await recargarTablasUbicaciones();
         } catch (error) {
             mostrarError("No se pudo eliminar. Puede que esté en uso por algún artículo.", false);
         }
     }
+
+    await recargarTablasUbicaciones();
 });

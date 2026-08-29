@@ -1,34 +1,49 @@
-// js/services/dashboardService.js
-const API_BASE = "http://localhost:8080/api";
+/*
+ * SERVICIO DEL DASHBOARD ADMINISTRATIVO
+ * Las consultas usan cache:no-store para mostrar datos recientes. Además de
+ * acceder a endpoints, este archivo normaliza el ranking por calificación que
+ * ya calcula el backend a partir de las evaluaciones.
+ */
+import { API_BASE_URL, manejarRespuesta } from './apiConfig.js';
 
+// Evita reutilizar respuestas guardadas por el navegador en un dashboard:
+// sus contadores deben reflejar siempre el estado actual de la API.
+function fetchFresco(url) {
+    return fetch(url, { cache: 'no-store' });
+}
+
+// Obtiene los tickets usados por contadores y por el ranking de técnicos.
 export async function obtenerTickets() {
-    const resp = await fetch(`${API_BASE}/tickets`);
-    if (!resp.ok) throw new Error(`Error al obtener tickets: ${resp.status}`);
-    const json = await resp.json();
-    return json.data ?? json;
+    return manejarRespuesta(await fetchFresco(`${API_BASE_URL}/tickets`));
 }
 
 export async function obtenerMetricasDashboard() {
-    const resp = await fetch(`${API_BASE}/estadisticas/metricas`);
-    if (!resp.ok) throw new Error(`Error al obtener métricas: ${resp.status}`);
-    const json = await resp.json();
-    return json.data ?? json;
+    return manejarRespuesta(await fetchFresco(`${API_BASE_URL}/estadisticas/metricas`));
 }
 
 export async function obtenerResolucionPorDia() {
-    const resp = await fetch(`${API_BASE}/estadisticas/resolucion-por-dia`);
-    if (!resp.ok) throw new Error(`Error al obtener resolución por día: ${resp.status}`);
-    const json = await resp.json();
-    return json.data ?? json;
+    return manejarRespuesta(await fetchFresco(`${API_BASE_URL}/estadisticas/resolucion-por-dia`));
 }
 
 export async function obtenerResumenMensual(fechaInicio, fechaFin) {
     const params = new URLSearchParams();
     if (fechaInicio) params.append('fechaInicio', fechaInicio);
     if (fechaFin) params.append('fechaFin', fechaFin);
-    const url = `${API_BASE}/tickets/resumen-mensual?${params.toString()}`;
-    const resp = await fetch(url);
-    if (!resp.ok) throw new Error(`Error al obtener resumen mensual: ${resp.status}`);
-    const json = await resp.json();
-    return json.data ?? json;
+    const query = params.toString();
+    const url = `${API_BASE_URL}/tickets/resumen-mensual${query ? `?${query}` : ''}`;
+    return manejarRespuesta(await fetchFresco(url));
+}
+
+// Limpia y ordena el promedio de satisfacción devuelto por /estadisticas/metricas.
+// El dashboard vuelve así a premiar la calificación, no la cantidad de tickets.
+export function obtenerTopTecnicosPorCalificacion(datos, limite = 3) {
+    if (!Array.isArray(datos)) return [];
+    return datos
+        .map((item) => ({
+            tecnico: String(item?.tecnico || 'Técnico sin nombre').trim(),
+            promedio: Math.max(0, Math.min(5, Number(item?.promedio) || 0))
+        }))
+        .filter((item) => item.promedio > 0)
+        .sort((a, b) => b.promedio - a.promedio || a.tecnico.localeCompare(b.tecnico, 'es'))
+        .slice(0, Math.max(0, limite));
 }

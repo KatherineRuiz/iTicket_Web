@@ -32,7 +32,8 @@ export async function eliminarArticulo(id) {
     if (!respuesta.ok) throw new Error("No se pudo eliminar el artículo");
 }
 
-//Buscar artícuos por coincidencia parcial de código
+// Busca artículos por coincidencia parcial. encodeURIComponent impide que
+// espacios o caracteres especiales rompan el parámetro de la URL.
 export async function buscarArticulosPorCodigoParcial(fragmento) {
     try{
         const respuesta = await fetch(`${API_URL}/buscar?codigo=${encodeURIComponent(fragmento)}`);
@@ -47,4 +48,15 @@ export async function buscarArticulosPorCodigoParcial(fragmento) {
         console.error("Error al buscar artículos: ", error);
         throw error;
     }
+}
+
+export async function actualizarArticulo(id, codigoArticulo, idCategoria, idUbicacion, idModelo) {
+    const respuesta = await fetch(`${API_URL}/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ codigoArticulo, idCategoria, idUbicacion, idModelo })
+    });
+    const resultado = await respuesta.json();
+    if (!respuesta.ok) throw new Error(resultado.message || "No se pudo actualizar el artículo");
+    return resultado.data;
 }

@@ -12,7 +12,8 @@ const tablaEvaluaciones     = document.getElementById("tablaEvaluaciones");
 const textoContador         = document.getElementById("textoContador");
 const contenedorPaginacion  = document.getElementById("contenedorPaginacion");
 
-// Estado global
+// Estado de navegación. La API usa páginas desde cero, por eso paginaActual
+// inicia en 0 aunque visualmente la primera página se muestre como 1.
 let paginaActual = 0;
 const tamanioPagina = 10;
 let totalPaginas = 0;
@@ -90,6 +91,9 @@ function renderizarTabla(data) {
 
     data.forEach(ev => {
         const fila = document.createElement("tr");
+        fila.classList.add("fila-expandible");
+        fila.setAttribute("title", "Haz clic para ver la evaluación completa");
+        fila.setAttribute("aria-expanded", "false");
         const puntos = Math.round(ev.calificacion || 0);
 
         let estrellasHTML = "";
@@ -110,10 +114,10 @@ function renderizarTabla(data) {
 
         fila.innerHTML = `
             <td>${ev.codigoTicket || ev.codigo || "N/A"}</td>
-            <td class="celda-asunto text-truncate" style="max-width: 180px;">${ev.asuntoTicket || ev.asunto || "Sin asunto"}</td>
+            <td class="celda-asunto text-truncate">${ev.asuntoTicket || ev.asunto || "Sin asunto"}</td>
             <td>${ev.nombreTecnico || ev.tecnico || "No asignado"}</td>
             <td><span class="estrellas">${estrellasHTML}</span></td>
-            <td class="celda-comentario text-truncate" style="max-width: 200px;">${ev.comentario || "Sin comentarios"}</td>
+            <td class="celda-comentario text-truncate">${ev.comentario || "Sin comentarios"}</td>
             <td>${fechaMostrar}</td>
         `;
 
@@ -188,7 +192,8 @@ function agregarEllipsis() {
     contenedorPaginacion.appendChild(li);
 }
 
-// Escuchadores de eventos para filtros
+// La búsqueda usa debounce para no consultar la API por cada tecla. Los filtros
+// cerrados pueden recargar inmediatamente y todos regresan a la primera página.
 let debounceTimer;
 if (inputBusqueda) {
     inputBusqueda.addEventListener("input", () => {

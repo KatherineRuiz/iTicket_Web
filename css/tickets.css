@@ -6,7 +6,7 @@
   --text-body: #4a5568;
   --text-muted: #a0aec0;
   --border-color: #edf2f7;
-  
+
   /* Colores de Prioridad */
   --prio-critica-bg: #fed7d7;
   --prio-critica-txt: #d25a5a;
@@ -27,7 +27,7 @@
   --nuevo-border: #4393f6;
 }
 
-.modal-evaluacion{
+.modal-evaluacion {
   padding-top: 10px;
 }
 
@@ -81,28 +81,42 @@
 
 /* --- CLASES DE TEXTO Y CONTENEDORES AUXILIARES --- */
 .titulo-ticket,
-.titulo-seccion-evaluacion{
+.titulo-seccion-evaluacion {
   color: var(--text-dark, #2d3748);
 }
 
-.servicio-text{
-  background-color:var(--blue-primary);
+.servicio-text {
+  background-color: var(--blue-primary);
   padding: 10px;
   width: 100%;
   border-radius: 20px;
 }
 
 .img-evaluacion {
-  max-height: 20  0px;
+  max-height: 20 0px;
   object-fit: contain;
 }
 
 /* Bordes laterales por prioridad */
-.borde-lateral-Critica{ border-left: 6px solid var(--prio-critica-border) !important; }
-.borde-lateral-Alta{ border-left: 6px solid var(--prio-alta-border) !important; }
-.borde-lateral-Media{ border-left: 6px solid var(--prio-media-border) !important; }
-.borde-lateral-Baja{ border-left: 6px solid var(--prio-baja-border) !important; }
-.borde-lateral-{ border-left: 6px solid var(--nuevo-border) !important; }
+.borde-lateral-Critica {
+  border-left: 6px solid var(--prio-critica-border) !important;
+}
+
+.borde-lateral-Alta {
+  border-left: 6px solid var(--prio-alta-border) !important;
+}
+
+.borde-lateral-Media {
+  border-left: 6px solid var(--prio-media-border) !important;
+}
+
+.borde-lateral-Baja {
+  border-left: 6px solid var(--prio-baja-border) !important;
+}
+
+.borde-lateral- {
+  border-left: 6px solid var(--nuevo-border) !important;
+}
 
 /* Badges suaves de Prioridad */
 .fondo-peligro-suave {
@@ -153,7 +167,7 @@
   text-align: center;
 }
 
-.panel-evaluaciones-header h5{
+.panel-evaluaciones-header h5 {
   padding-top: 5px;
 }
 
@@ -176,8 +190,8 @@
 }
 
 .estrellas-rating label:hover,
-.estrellas-rating label:hover ~ label,
-.estrellas-rating input:checked ~ label {
+.estrellas-rating label:hover~label,
+.estrellas-rating input:checked~label {
   color: #ffc107;
 }
 
@@ -201,130 +215,266 @@
   box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
 }
 
+.modal-evaluacion-pendiente {
+  border: 0;
+  border-radius: 24px !important;
+  background: #f8fafd;
+  box-shadow: 0 28px 70px rgba(20, 36, 84, 0.25);
+}
+
+.modal-evaluacion-pendiente .modal-iticket-encabezado {
+  min-height: 72px;
+  padding: 20px 24px;
+  background: var(--sidebar-bg, #142454) !important;
+  color: #ffffff;
+}
+
+.modal-evaluacion-pendiente .modal-iticket-encabezado h5 {
+  padding-inline: 38px;
+  font-size: 1.15rem;
+}
+
+.modal-evaluacion-pendiente .modal-iticket-encabezado .btn-close {
+  margin: 0 8px 0 0;
+  padding: 10px;
+  border-radius: 50%;
+  background-size: 12px;
+  opacity: 0.74;
+}
+
+.cuerpo-evaluacion-pendiente {
+  background: #f8fafd;
+}
+
+.titulo-ticket-evaluacion {
+  color: #142454;
+  font-size: 0.9rem;
+  letter-spacing: 0.01em;
+}
+
+.ticket-evaluacion-resumen {
+  position: relative;
+  border: 1px solid #e2e7f0;
+  border-left: 4px solid #539ecd;
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: 0 9px 24px rgba(20, 36, 84, 0.07);
+}
+
+.bloque-calificacion {
+  border: 1px solid #e5e9f1;
+  border-radius: 15px;
+  background: #ffffff;
+}
+
+.modal-evaluacion-pendiente .estrellas-rating label {
+  font-size: 1.75rem;
+  filter: drop-shadow(0 2px 3px rgba(20, 36, 84, 0.08));
+  transition: color 180ms ease, transform 180ms ease;
+}
+
+.modal-evaluacion-pendiente .estrellas-rating label:hover {
+  transform: translateY(-2px) scale(1.06);
+}
+
+.modal-evaluacion-pendiente .input-comentario {
+  min-height: 46px;
+  padding-inline: 14px !important;
+  border: 1px solid #dce2ec !important;
+  border-radius: 12px !important;
+  background: #ffffff !important;
+}
+
+.modal-evaluacion-pendiente .input-comentario:focus {
+  border-color: #6d83b6 !important;
+  box-shadow: 0 0 0 3px rgba(20, 36, 84, 0.1) !important;
+}
+
+.btn-evaluacion-enviar {
+  border: 0;
+  background: #142454;
+  color: #ffffff;
+  box-shadow: 0 8px 18px rgba(20, 36, 84, 0.2);
+  transition: background-color 180ms ease, transform 180ms ease, box-shadow 180ms ease;
+}
+
+.btn-evaluacion-enviar:hover,
+.btn-evaluacion-enviar:focus {
+  background: #203873;
+  color: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: 0 10px 22px rgba(20, 36, 84, 0.28);
+}
+
+html.tema-oscuro .modal-evaluacion-pendiente,
+html.tema-oscuro .cuerpo-evaluacion-pendiente {
+  background: #111a2a !important;
+}
+
+html.tema-oscuro .ticket-evaluacion-resumen,
+html.tema-oscuro .bloque-calificacion,
+html.tema-oscuro .modal-evaluacion-pendiente .input-comentario {
+  border-color: #2b374c !important;
+  background: #182235 !important;
+  color: #e4eaf3 !important;
+}
+
+html.tema-oscuro .titulo-ticket-evaluacion,
+html.tema-oscuro .bloque-calificacion>span,
+html.tema-oscuro .modal-evaluacion-pendiente .form-label {
+  color: #e4eaf3 !important;
+}
+
+@media (max-width: 575.98px) {
+  .modal-evaluacion-pendiente {
+    border-radius: 20px !important;
+  }
+
+  .cuerpo-evaluacion-pendiente {
+    padding: 18px !important;
+  }
+
+  .bloque-calificacion {
+    align-items: flex-start !important;
+    flex-direction: column;
+    gap: 8px;
+  }
+}
+
 /*Para badges de ticket*/
 .badge.prioridad-Critica {
-    position: absolute;
-    top: 15px;
-    right: 20px;
-    height: auto;
-    width: auto;
-    background-color: var(--prio-critica-bg);
-    color: var(--prio-critica-txt);
-    display: inline-block;
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  height: auto;
+  width: auto;
+  background-color: var(--prio-critica-bg);
+  color: var(--prio-critica-txt);
+  display: inline-block;
 }
+
 .badge.prioridad-Baja {
-    position: absolute;
-    top: 15px;
-    right: 20px;
-    height: auto;
-    width: auto;
-    background-color: var(--prio-baja-bg);
-    color: var(--prio-baja-txt);
-    display: inline-block;
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  height: auto;
+  width: auto;
+  background-color: var(--prio-baja-bg);
+  color: var(--prio-baja-txt);
+  display: inline-block;
 }
+
 .badge.prioridad-Alta {
-    position: absolute;
-    top: 15px;
-    right: 20px;
-    height: auto;
-    width: auto;
-    background-color: var(--prio-alta-bg);
-    color: var(--prio-alta-txt);
-    display: inline-block;
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  height: auto;
+  width: auto;
+  background-color: var(--prio-alta-bg);
+  color: var(--prio-alta-txt);
+  display: inline-block;
 }
+
 .badge.prioridad-Media {
-    position: absolute;
-    top: 15px;
-    right: 20px;
-    height: auto;
-    width: auto;
-    background-color: var(--prio-media-bg);
-    color: var(--prio-media-txt);
-    display: inline-block;
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  height: auto;
+  width: auto;
+  background-color: var(--prio-media-bg);
+  color: var(--prio-media-txt);
+  display: inline-block;
 }
 
 .badge.prio-Critica.sin-absolute {
-    height: auto;
-    width: auto;
-    display: inline-block;
-    height: auto;
-    width: auto;
-    background-color: var(--prio-critica-bg);
-    color: var(--prio-critica-txt);
-    display: inline-block;
+  height: auto;
+  width: auto;
+  display: inline-block;
+  height: auto;
+  width: auto;
+  background-color: var(--prio-critica-bg);
+  color: var(--prio-critica-txt);
+  display: inline-block;
 }
+
 .badge.prio-Baja.sin-absolute {
-    height: auto;
-    width: auto;
-    display: inline-block;
-    height: auto;
-    width: auto;
-    background-color: var(--prio-baja-bg);
-    color: var(--prio-baja-txt);
-    display: inline-block;
+  height: auto;
+  width: auto;
+  display: inline-block;
+  height: auto;
+  width: auto;
+  background-color: var(--prio-baja-bg);
+  color: var(--prio-baja-txt);
+  display: inline-block;
 }
+
 .badge.prio-Alta.sin-absolute {
-    height: auto;
-    width: auto;
-    display: inline-block;
-    height: auto;
-    width: auto;
-    background-color: var(--prio-alta-bg);
-    color: var(--prio-alta-txt);
-    display: inline-block;
+  height: auto;
+  width: auto;
+  display: inline-block;
+  height: auto;
+  width: auto;
+  background-color: var(--prio-alta-bg);
+  color: var(--prio-alta-txt);
+  display: inline-block;
 }
+
 .badge.prio-Media.sin-absolute {
-    height: auto;
-    width: auto;
-    display: inline-block;
-    height: auto;
-    width: auto;
-    background-color: var(--prio-media-bg);
-    color: var(--prio-media-txt);
-    display: inline-block;
+  height: auto;
+  width: auto;
+  display: inline-block;
+  height: auto;
+  width: auto;
+  background-color: var(--prio-media-bg);
+  color: var(--prio-media-txt);
+  display: inline-block;
 }
 
 /*Para iconos de ticket*/
 .bi-Critica {
   color: var(--prio-critica-border);
 }
+
 .bi-Alta {
   color: var(--prio-alta-border);
 }
+
 .bi-Media {
   color: var(--prio-media-border);
 }
+
 .bi-Baja {
   color: var(--prio-baja-txt);
 }
+
 .bi- {
   color: var(--nuevo-border);
 }
 
-.fecha-noExiste{
+.fecha-noExiste {
   display: none;
 }
 
 /*Para texto de una sola línea que puede ser largo*/
 .texto-limitado-1 {
-    display: block;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 100%;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
 }
 
 /*Para texto que puede tener varias líneas pero no infinitas*/
 .texto-limitado {
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    word-break: break-word;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  word-break: break-word;
 }
 
 .meta-ticket-texto {
-    color: #4a5568 !important;
-    font-size: 0.90rem;
-    line-height: 1.45;
+  color: #4a5568 !important;
+  font-size: 0.90rem;
+  line-height: 1.45;
 }

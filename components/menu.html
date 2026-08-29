@@ -1,123 +1,84 @@
-<link rel="stylesheet" href="../css/notificaciones.css">
-<nav class="menu-lateral" id="menuLateral">
-    <div class="menu-lateral-header text-white">
+<!-- Este es basicamente el esqueleto de todo el menu -->
 
-        <button class="btn text-white p-0 fs-3 d-flex align-items-center justify-content-center" id="btnMenu"
-            type="button" style="width: 40px; height: 40px;">
-            <i class="bi bi-list"></i>
-        </button>
+<link rel="stylesheet" href="css/notificaciones.css">
 
-        <img src="img/logo.png" alt="logo" class="menu-lateral-logo">
-
+<nav class="menu-lateral" id="menuLateral" aria-label="Navegación principal">
+    <div class="menu-header">
+        <a href="dashboardAdmin.html" class="menu-logo-link" aria-label="Ir al inicio">
+            <img src="img/logo.png" alt="" class="menu-logo">
+        </a>
     </div>
 
-    <div class="d-none d-md-flex justify-content-center">
-        <hr class="linea-divisora border border-light-subtle opacity-50">
-    </div>
+    <div class="menu-divider"></div>
 
-    <div class="menu-lateral-cuerpo d-flex flex-column flex-grow-1 justify-content-between">
-        <div>
-            <ul class="nav flex-column gap-2 p-0">
-                <li class="menu-opcion" data-roles="admin, tecnico, usuario">
-                    <a href="../dashboardAdmin.html" class="nav-link">
-                        <div class="icono-menu">
-                            <img src="img/inicio.svg" alt="Icono de Inicio">
-                        </div>
-                        <span class="menu-texto">Inicio</span>
-                    </a>
-                </li>
-                <li class="menu-opcion" id="ticketsMenu" data-roles="admin, tecnico, usuario">
-                    <a class="nav-link" id="btnTickets">
-                        <div class="icono-menu">
-                            <img src="img/tickets.svg" alt="Incono de Tickets">
-                        </div>
-                        <span class="menu-texto">Tickets</span>
-                        <i class="bi bi-chevron-down icono-flecha"></i>
-                    </a>
-                    <ul class="submenu">
-                        <li data-roles="admin, tecnico, usuario"><a href="../misTickets.html"><span class="menu-texto">Mis Tickets</span></a></li>
-                        <li data-roles="admin"><a href="../gestionTickets.html"><span class="menu-texto">Gestionar Tickets</span></a>
-                        </li>
-                        <li data-roles="admin, tecnico"><a href="../ticketsAsignados.html"><span class="menu-texto">Tickets
-                                    Asignados</span></a></li>
-
-                    </ul>
-                </li>
-                <li class="menu-opcion" id="equiposMenu" data-roles="admin">
-                    <a class="nav-link" id="btnEquipos">
-                        <div class="icono-menu">
-                            <img src="img/equipos.svg" alt="Icono de Equipos">
-                        </div>
-                        <span class="menu-texto">Equipos</span>
-                        <i class="bi bi-chevron-down icono-flecha"></i>
-                    </a>
-                    <ul class="submenu">
-                        <li data-roles="admin"><a href="../equiposMobiliarios.html" class="menu-texto">Equipo y Mobiliario</a></li>
-                        <li data-roles="admin"><a href="../ubicaciones.html" class="menu-texto">Ubicaciones</a></li>
-                    </ul>
-                </li>
-                <li class="menu-opcion" data-roles="admin">
-                    <a href="../usuarios.html" class="nav-link">
-                        <div class="icono-menu">
-                            <img src="img/usuarios.svg" alt="Icono de Usuarios" class="d-flex">
-                        </div>
-                        <span class="menu-texto">Usuarios</span>
-                    </a>
-                </li>
-                <li class="menu-opcion" data-roles="admin">
-                    <a href="../estadisticas.html" class="nav-link">
-                        <div class="icono-menu">
-                            <img src="img/estadisticas.svg" alt="Icono de Estadísticas" class="d-flex">
-                        </div>
-                        <span class="menu-texto">Estadísticas</span>
-                    </a>
-                </li>
-                <li class="menu-opcion" data-roles="admin, tecnico, usuario">
-                    <a href="../evaluaciones.html" class="nav-link">
-                        <div class="icono-menu">
-                            <img src="img/evaluaciones.svg" alt="Icono de Evaluaciones" class="d-flex">
-                        </div>
-                        <span class="menu-texto">Evaluaciones</span>
-                    </a>
-                </li>
-                <li class="menu-opcion activo" data-roles="admin">
-                    <a href="../proyectos.html" class="nav-link">
-                        <div class="icono-menu">
-                            <img src="img/proyectos.svg" alt="Icono de Proyectos" class="d-flex">
-                        </div>
-                        <span class="menu-texto">Proyectos</span>
-                    </a>
-                </li>
-                <li class="menu-opcion" data-roles="admin">
-                    <a href="../bitacoras.html" class="nav-link">
-                        <div class="icono-menu">
-                            <i class="bi bi-clock-history text-white d-flex" style="font-size: 20px;"></i>
-                        </div>
-                        <span class="menu-texto">Bitácoras</span>
-                    </a>
-                </li>
-                <li class="menu-opcion" data-roles="admin, tecnico, usuario">
-                    <a href="../chatBot.html" class="nav-link">
-                        <div class="icono-menu">
-                            <img src="img/chatBot.svg" alt="Icono de Chatbot" class="d-flex">
-                        </div>
-                        <span class="menu-texto">ChatBot</span>
-                    </a>
-                </li>
-            </ul>
-        </div>
-
-        <div>
-            <ul class="nav flex-column gap-2 mt-3 p-0">
-                <li class="menu-opcion" id="btnNotificaciones" data-roles="admin, tecnico, usario">
-                    <a href="#" class="nav-link">
-                        <div class="icono-menu">
-                            <img src="img/notificaciones.svg" alt="" class="d-flex">
-                        </div>
-                        <span class="menu-texto">Notificaciones</span>
-                    </a>
-                </li>
-            </ul>
-        </div>
+    <div class="menu-body">
+        <div class="menu-section-title">Acciones</div>
+        <ul class="menu-list">
+            <li class="menu-opcion" data-roles="admin, tecnico, usuario">
+                <a href="dashboardAdmin.html" class="nav-link" data-tooltip="Inicio">
+                    <span class="icono-menu"><i class="bi bi-grid" aria-hidden="true"></i></span>
+                    <span class="menu-texto">Inicio</span>
+                </a>
+            </li>
+            <li class="menu-opcion" id="ticketsMenu" data-roles="admin, tecnico, usuario">
+                <a href="#" class="nav-link" id="btnTickets" data-tooltip="Tickets">
+                    <span class="icono-menu"><i class="bi bi-ticket-perforated" aria-hidden="true"></i></span>
+                    <span class="menu-texto">Tickets</span>
+                    <i class="bi bi-chevron-down icono-flecha" aria-hidden="true"></i>
+                </a>
+                <ul class="submenu">
+                    <li data-roles="admin, tecnico, usuario"><a href="misTickets.html">Mis tickets</a></li>
+                    <li data-roles="admin"><a href="gestionTickets.html">Gestionar tickets</a></li>
+                    <li data-roles="admin, tecnico"><a href="ticketsAsignados.html">Tickets asignados</a></li>
+                </ul>
+            </li>
+            <li class="menu-opcion" id="equiposMenu" data-roles="admin">
+                <a href="#" class="nav-link" id="btnEquipos" data-tooltip="Equipos">
+                    <span class="icono-menu"><i class="bi bi-pc-display" aria-hidden="true"></i></span>
+                    <span class="menu-texto">Artículos</span>
+                    <i class="bi bi-chevron-down icono-flecha" aria-hidden="true"></i>
+                </a>
+                <ul class="submenu">
+                    <li data-roles="admin"><a href="equiposMobiliarios.html">Equipo y mobiliario</a></li>
+                    <li data-roles="admin"><a href="ubicaciones.html">Ubicaciones</a></li>
+                </ul>
+            </li>
+            <li class="menu-opcion" data-roles="admin">
+                <a href="usuarios.html" class="nav-link" data-tooltip="Usuarios">
+                    <span class="icono-menu"><i class="bi bi-people" aria-hidden="true"></i></span>
+                    <span class="menu-texto">Usuarios</span>
+                </a>
+            </li>
+            <li class="menu-opcion" data-roles="admin">
+                <a href="estadisticas.html" class="nav-link" data-tooltip="Estadísticas">
+                    <span class="icono-menu"><i class="bi bi-bar-chart" aria-hidden="true"></i></span>
+                    <span class="menu-texto">Estadísticas</span>
+                </a>
+            </li>
+            <li class="menu-opcion" data-roles="admin, tecnico">
+                <a href="evaluaciones.html" class="nav-link" data-tooltip="Evaluaciones">
+                    <span class="icono-menu"><i class="bi bi-star" aria-hidden="true"></i></span>
+                    <span class="menu-texto">Evaluaciones</span>
+                </a>
+            </li>
+            <li class="menu-opcion" data-roles="admin">
+                <a href="proyectos.html" class="nav-link" data-tooltip="Proyectos">
+                    <span class="icono-menu"><i class="bi bi-kanban" aria-hidden="true"></i></span>
+                    <span class="menu-texto">Proyectos</span>
+                </a>
+            </li>
+            <li class="menu-opcion" data-roles="admin">
+                <a href="bitacoras.html" class="nav-link" data-tooltip="Bitácoras">
+                    <span class="icono-menu"><i class="bi bi-clock-history" aria-hidden="true"></i></span>
+                    <span class="menu-texto">Bitácoras</span>
+                </a>
+            </li>
+            <li class="menu-opcion" data-roles="admin, tecnico, usuario">
+                <a href="chatBot.html" class="nav-link" data-tooltip="ChatBot">
+                    <span class="icono-menu"><i class="bi bi-chat-dots" aria-hidden="true"></i></span>
+                    <span class="menu-texto">ChatBot</span>
+                </a>
+            </li>
+        </ul>
     </div>
 </nav>

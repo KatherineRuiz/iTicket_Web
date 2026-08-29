@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="css/common.css">
     <link rel="stylesheet" href="css/notificaciones.css">
     <link rel="stylesheet" href="css/equipos.css">
-    <script src="js/components/menu-cache.js"></script>
+    <script src="js/components/menu-cache.js?v=17"></script>
 </head>
  
 <body>
@@ -34,12 +34,11 @@
         </section>
  
         <div class="contenido-principal container-fluid">
-            <!-- Cards de metricas -->
- 
-            <div class="row g-4 mt-2 pb-4">
- 
-                <div class="col-12 col-sm-6 col-md-3">
-                    <div class="tarjeta-indicador text-center">
+            <!-- Barra superior: el indicador, el buscador y la acción principal comparten
+                 la misma fila para no desperdiciar el espacio horizontal disponible. -->
+            <div class="row g-3 align-items-stretch mb-4 equipos-barra-superior">
+                <div class="col-12 col-lg-3">
+                    <div class="tarjeta-indicador text-center h-100">
                         <span class="icono-tarjeta">
                             <i class="bi bi-box-seam text-white"></i>
                         </span>
@@ -47,7 +46,25 @@
                         <h2 class="fw-bold text-navy m-0" id="txtTotalRegistros">0</h2>
                     </div>
                 </div>
- 
+
+                <div class="col-12 col-lg-9 d-flex align-items-center">
+                    <div class="row g-3 align-items-center w-100 m-0">
+                        <div class="col-12 col-md-8 ps-md-0">
+                            <div class="buscador-contenedor">
+                                <i class="bi bi-search icono-busqueda"></i>
+                                <input type="text" class="form-control buscador-input" id="txtBuscarArticulo"
+                                    placeholder="Buscar por código de artículo">
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-4 pe-md-0">
+                            <a href="#"
+                                class="btn btn-azul-redondeado w-100 rounded-4 shadow-sm text-white fs-6 d-flex align-items-center justify-content-center"
+                                data-bs-toggle="modal" data-bs-target="#modalAgregarArticulos">
+                                <i class="bi bi-plus-lg me-2"></i> Gestionar artículo
+                            </a>
+                        </div>
+                    </div>
+                </div>
             </div>
  
             <div class="row g-4">
@@ -97,25 +114,6 @@
  
                 <!-- Tabla, buscador y boton agregar -->
                 <div class="col-12 col-lg-9">
- 
-                    <!-- Buscador y boton para agregar equipo -->
-                    <div class="row g-3 align-items-center mb-3">
-                        <div class="col-12 col-md-8">
-                            <div class="buscador-contenedor">
-                                <i class="bi bi-search icono-busqueda"></i>
-                                <input type="text" class="form-control buscador-input" id="txtBuscarArticulo"
-                                    placeholder="Buscar por código de artículo">
-                            </div>
-                        </div>
-                        <div class="col-12 col-md-4 text-md-end pt-3">
-                            <a href="#"
-                                class="btn btn-azul-redondeado w-100 rounded-4 mb-4 shadow-sm text-white fs-6 d-flex align-items-center justify-content-center"
-                                data-bs-toggle="modal" data-bs-target="#modalAgregarArticulos">
-                                <i class="bi bi-plus-lg me-2"></i> Gestionar artículo
-                            </a>
-                        </div>
-                    </div>
- 
                     <!-- Tabla principal -->
                     <div class="card-tabla p-4">
                         <div class="table-responsive">
@@ -396,7 +394,8 @@
                 <div class="modal-body p-4">
                     <div class="p-3 bg-light rounded-4">
                         <form id="formArticulo" novalidate>
-                            <h6 class="fw-bold text-navy mb-3 text-center">Agregar artículo</h6>
+                            <input type="hidden" id="articuloId">
+                            <h6 class="fw-bold text-navy mb-3 text-center" id="tituloFormArticulo">Agregar artículo</h6>
  
                             <div class="mb-3">
                                 <label for="txtCodigoArticulo" class="form-label small fw-bold text-navy">Código del
@@ -435,7 +434,11 @@
                             <div class="pt-2">
                                 <button type="submit"
                                     class="btn btn-azul-redondeado w-100 py-2 rounded-3 fw-bold text-white shadow-sm d-flex align-items-center justify-content-center">
-                                    <i class="bi bi-check-circle me-2"></i> Guardar artículo
+                                    <i class="bi bi-check-circle me-2"></i> <span id="btnTextoArticulo">Guardar artículo</span>
+                                </button>
+                                <button type="button" id="btnCancelarArticulo"
+                                    class="btn btn-outline-secondary w-100 py-2 rounded-3 fw-bold mt-2 d-none">
+                                    Cancelar edición
                                 </button>
                             </div>
                         </form>
@@ -461,8 +464,8 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="js/controllers/notificaciones.js"></script>
-    <script src="js/components/menu.js"></script>
-    <script type="module" src="js/controllers/equiposMobiliarios.js"></script>
+    <script src="js/components/menu.js?v=15"></script>
+    <script type="module" src="js/controllers/equiposMobiliarios.js?v=2"></script>
  
 </body>
  

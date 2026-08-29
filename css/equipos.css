@@ -90,16 +90,19 @@
 /* Panel de filtros */
 .panel-filtros {
     background: #ffffff;
-    border-radius: 20px;
-    box-shadow: 0 10px 25px rgba(30, 45, 90, 0.05);
+    border: 1px solid #e3eaf2;
+    border-radius: 18px;
+    box-shadow: none;
 }
 
 .titulo-filtros {
     color: #2d3748;
     font-weight: 700;
     font-size: 15px;
-    border-bottom: 1px solid #edf2f7;
-    padding-bottom: 10px;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #e3eaf2;
+    padding-bottom: 12px;
 }
 
 .filtro-subtitulo {
@@ -165,4 +168,43 @@
     background: #e1effe;
     color: #2b6cb0;
     border: 1px solid #bee3f8;
+}
+
+.panel-filtros .form-select {
+    min-height: 44px;
+    border: 1px solid #d8e2ee;
+    border-radius: 11px !important;
+    background-color: transparent;
+    color: #253858;
+    font-size: 14px;
+    box-shadow: none !important;
+}
+
+.panel-filtros .form-select:focus {
+    border-color: #78aef0;
+    box-shadow: 0 0 0 3px rgba(67, 147, 246, 0.11) !important;
+}
+
+html.tema-oscuro .panel-filtros {
+    border-color: #2f3e56 !important;
+    background: #182235 !important;
+}
+
+html.tema-oscuro .panel-filtros .form-select {
+    border-color: #3a4a64;
+    background-color: transparent !important;
+    color: #e2eaf5;
+    color-scheme: dark;
+}
+
+.equipos-barra-superior {
+    padding-top: 22px;
+}
+
+.equipos-barra-superior .tarjeta-indicador {
+    min-height: 110px;
+}
+
+@media (max-width: 991.98px) {
+    .equipos-barra-superior { padding-top: 18px; }
 }

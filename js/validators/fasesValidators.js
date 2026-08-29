@@ -1,7 +1,13 @@
-//Validaciones en para el formulario de Crear Fase. Se ejecutan antes de enviar cualquier dato a la API, siguiendo los límites definidos en la base de datos (tabla FASES).
+/*
+ * VALIDACIONES DE FASES
+ * Revisa los datos antes de llamar a la API y devuelve una lista de errores con
+ * el id del campo y su mensaje. Los límites coinciden con la tabla FASES.
+ */
 
 export function validarFormularioFase(datos) {
     const errores = [];
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0);
 
     //--- Nombre de la fase ---
     if (!datos.nombreFase || !datos.nombreFase.trim()) {
@@ -33,6 +39,16 @@ export function validarFormularioFase(datos) {
         if (fechaInicio > fechaFinal) {
             errores.push({ campo: "txtFechaInicioEstimada", mensaje: "La fecha de inicio estimada no puede ser mayor que la fecha final estimada." });
         }
+    }
+
+    // La API exige que el inicio estimado sea hoy o una fecha futura
+    if (datos.fechaInicioEstimada && new Date(`${datos.fechaInicioEstimada}T00:00:00`) < hoy) {
+        errores.push({ campo: "txtFechaInicioEstimada", mensaje: "La fecha de inicio estimada no puede ser pasada." });
+    }
+
+    // La fecha final estimada debe ser posterior al día actual
+    if (datos.fechaFinalEstimada && new Date(`${datos.fechaFinalEstimada}T00:00:00`) <= hoy) {
+        errores.push({ campo: "txtFechaFinalEstimada", mensaje: "La fecha final estimada debe ser futura." });
     }
 
     //Fecha final estimada no debe ser menor que la fecha de inicio estimada de la fase (fechaInicioEstimada)
@@ -80,9 +96,9 @@ export function validarFormularioFase(datos) {
     }
 
     //Total de la fase es opcional y no debe ser menor que 0
-    if (datos.totalFase !== "" && datos.totalFase !== null && datos.totalFase !== undefined) {
-        if (isNaN(Number(datos.totalFase)) || Number(datos.totalFase) < 0) {
-            errores.push({ campo: "numTotalFase", mensaje: "El total de la fase debe ser un número mayor o igual a 0." });
+    if (datos.gastoTotal !== "" && datos.gastoTotal !== null && datos.gastoTotal !== undefined) {
+        if (isNaN(Number(datos.gastoTotal)) || Number(datos.gastoTotal) < 0) {
+            errores.push({ campo: "numTotal", mensaje: "El total de la fase debe ser un número mayor o igual a 0." });
         }
     }
 

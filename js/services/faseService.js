@@ -1,5 +1,6 @@
 const API_URL = "http://localhost:8080/api/fases";
-//Obtener la lista completa de fases 
+
+// Obtiene la lista completa. Un 204 es válido y se normaliza a arreglo vacío.
 export async function getFases() {
     try {
         const respuesta = await fetch(API_URL);
@@ -22,10 +23,11 @@ export async function getFases() {
     }
 }
 
-//Metodo para obtener una fase por nombre
+// Busca por nombre; encodeURIComponent protege espacios y caracteres especiales.
+// Un 404 significa que no existe y se devuelve null, no un error de interfaz.
 export async function getNombreFase(name) {
     try {
-        const respuesta = await fetch(`${API_URL}/${name}`);
+        const respuesta = await fetch(`${API_URL}/nombreFase/${encodeURIComponent(name)}`);
 
         //404 Not Found -> no hay fase con ese nombre
         if (respuesta.status === 404) {
@@ -44,7 +46,7 @@ export async function getNombreFase(name) {
     }
 }
 
-//Crear una nueva fase
+// Crea una fase enviando el objeto recibido como JSON.
 export async function crearFase(fase) {
     try {
         const respuesta = await fetch(API_URL, {
@@ -55,19 +57,19 @@ export async function crearFase(fase) {
             body: JSON.stringify(fase)
         });
 
+        const resultado = await respuesta.json().catch(() => null);
         if (!respuesta.ok) {
-            throw new Error("Error al crear la fase");
+            throw new Error(resultado?.message || "Error al crear la fase");
         }
-
-        const resultado = await respuesta.json();
-        return resultado.data;
+        return resultado?.data;
     } catch (error) {
         console.error("Error al crear la fase:", error);
         throw error;
     }
 }
 
-//Actualizar una fase existente, y corrigiendo el error de actualización de la lista de fases en memoria local
+// Actualiza una fase existente y devuelve la representación nueva de la API.
+// Leer el mensaje de error del backend ayuda a explicar restricciones concretas.
 export async function actualizarFase(id, faseActualizada) {
     try {
         const respuesta = await fetch(`${API_URL}/${id}`, {
@@ -89,7 +91,7 @@ export async function actualizarFase(id, faseActualizada) {
     }
 }
 
-//Eliminar una fase
+// Elimina una fase. Un 204 confirma éxito aunque no exista cuerpo para leer.
 export async function eliminarFase(id) {
     try {
         const respuesta = await fetch(`${API_URL}/${id}`, {
@@ -114,7 +116,8 @@ export async function eliminarFase(id) {
     }
 }
 
-//Obtener todas las fases de un proyecto especifico
+// Obtiene únicamente las fases relacionadas con un proyecto. Tanto 204 como 404
+// se convierten en [] porque para la vista ambos significan "sin fases".
 export async function getFasesPorProyecto(idProyecto) {
     try {
         const respuesta = await fetch(`${API_URL}/proyecto/${idProyecto}`);

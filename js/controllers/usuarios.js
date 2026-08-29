@@ -18,7 +18,18 @@ const btnTextoUsuario = document.getElementById('btnTextoUsuario');
 const btnCancelarUsuario = document.getElementById('btnCancelarUsuario');
 const tablaUsuariosBody = document.getElementById('tablaUsuariosBody');
 
-//Nombres de roles tal como se guardan en BD (sin tilde por el CHECK de Oracle) vs. como se muestran en pantalla
+// Áreas, departamentos y usuarios comparten este evento de actualización.
+window.addEventListener('iticket:recargar-tablas-usuarios', () => {
+    cargarUsuarios();
+    llenarSelectDepartamentos();
+});
+
+function recargarGestionUsuarios() {
+    window.dispatchEvent(new CustomEvent('iticket:recargar-tablas-usuarios'));
+}
+
+// Nombres guardados en BD frente a su escritura visual. La base conserva
+// "Tecnico" sin tilde por su restricción CHECK, pero la interfaz sí la muestra.
 const NOMBRES_ROL_VISUAL = {
     Tecnico: 'Técnico'
 };
@@ -184,7 +195,7 @@ formUsuario.addEventListener('submit', async (evento) => {
             Swal.fire('Creado', 'El usuario se creó correctamente', 'success');
         }
         limpiarFormularioUsuario();
-        cargarUsuarios();
+        recargarGestionUsuarios();
     } catch (error) {
         console.error(error);
         Swal.fire('Error', error.message || 'No se pudo guardar el usuario', 'error');
@@ -204,7 +215,7 @@ function confirmarEliminarUsuario(id) {
             try {
                 await eliminarUsuario(id);
                 Swal.fire('Eliminado', 'El usuario se eliminó correctamente', 'success');
-                cargarUsuarios();
+                recargarGestionUsuarios();
             } catch (error) {
                 console.error(error);
                 Swal.fire('Error', error.message || 'No se pudo eliminar el usuario', 'error');

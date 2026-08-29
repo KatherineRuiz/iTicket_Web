@@ -3,7 +3,7 @@ import { getCategorias, crearCategoria, eliminarCategoria } from "../services/ca
 import { getMarcas, crearMarca, eliminarMarca } from "../services/marcasService.js";
 import { getModelos, crearModelo, eliminarModelo } from "../services/modelosService.js";
 import { getUbicaciones } from "../services/ubicacionesService.js";
-import { getArticulosPaginados, crearArticulo, eliminarArticulo } from "../services/articulosService.js";
+import { getArticulosPaginados, crearArticulo, actualizarArticulo, eliminarArticulo } from "../services/articulosService.js";
 
 document.addEventListener("DOMContentLoaded", async function () {
 
@@ -14,6 +14,19 @@ document.addEventListener("DOMContentLoaded", async function () {
     let filtroCategoria = "";
     let filtroUbicacion = "";
     let temporizadorBusqueda = null;
+
+    // Después de cualquier CRUD se actualizan en paralelo la tabla principal y todo lo que pudo haber cambiado
+    async function recargarTablasEquipos() {
+        await Promise.all([
+            cargarArticulos(),
+            cargarFiltros(),
+            cargarCategorias(),
+            cargarMarcas(),
+            cargarModelos(),
+            cargarSelectMarcas(),
+            cargarSelectsArticulo(),
+        ]);
+    }
 
     const tablaArticulos = document.querySelector("#tablaArticulos");
     const txtTotalRegistros = document.querySelector("#txtTotalRegistros");
@@ -26,9 +39,6 @@ document.addEventListener("DOMContentLoaded", async function () {
     // Carga inicial: solo la tabla principal y los selects de filtro.
     // Categorías, Marcas, Modelos "de gestión" NO se piden aquí -- se piden
     // solo cuando el usuario abre el modal correspondiente (carga bajo demanda real).
-    await cargarArticulos();
-    await cargarFiltros();
-
     // ===== TABLA PRINCIPAL DE ARTÍCULOS =====
 
     async function cargarArticulos() {
@@ -66,6 +76,9 @@ document.addEventListener("DOMContentLoaded", async function () {
                 <td>${articulo.nombreUbicacion}</td>
                 <td>${articulo.nombreMarca ?? "—"}</td>
                 <td class="text-center">
+                    <button class="btn btn-sm btn-outline-primary btn-editar-articulo" data-id="${articulo.idArticulo}">
+                        <i class="bi bi-pencil"></i>
+                    </button>
                     <button class="btn btn-link text-danger p-0 btn-eliminar-articulo" data-id="${articulo.idArticulo}">
                         <i class="bi bi-trash fs-5"></i>
                     </button>
@@ -73,6 +86,12 @@ document.addEventListener("DOMContentLoaded", async function () {
             </tr>
         `).join("");
 
+        document.querySelectorAll(".btn-editar-articulo").forEach(boton => {
+            boton.addEventListener("click", () => {
+                const articulo = articulos.find(item => item.idArticulo == boton.dataset.id);
+                if (articulo) abrirEdicionArticulo(articulo);
+            });
+        });
         document.querySelectorAll(".btn-eliminar-articulo").forEach(boton => {
             boton.addEventListener("click", () => confirmarEliminarArticulo(boton.dataset.id));
         });
@@ -134,7 +153,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         try {
             await eliminarArticulo(id);
             mostrarExitoSimple("¡Listo!", "Artículo eliminado.");
-            await cargarArticulos();
+            await recargarTablasEquipos();
         } catch (error) {
             mostrarError("No se pudo eliminar el artículo.", false);
         }
@@ -171,9 +190,15 @@ document.addEventListener("DOMContentLoaded", async function () {
 
             selectFiltroCategoria.innerHTML = '<option value="">Todas</option>' +
                 categorias.map(c => `<option value="${c.idCategoria}">${c.nombreCategoria}</option>`).join("");
+            if (categorias.some(c => c.idCategoria == filtroCategoria)) {
+                selectFiltroCategoria.value = filtroCategoria;
+            }
 
             selectFiltroUbicacion.innerHTML = '<option value="">Todas</option>' +
                 ubicaciones.map(u => `<option value="${u.id}">${u.nombreUbicacion}</option>`).join("");
+            if (ubicaciones.some(u => u.id == filtroUbicacion)) {
+                selectFiltroUbicacion.value = filtroUbicacion;
+            }
         } catch (error) {
             mostrarError("No se pudieron cargar los filtros.", false);
         }
@@ -219,8 +244,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                 try {
                     await eliminarCategoria(boton.dataset.id);
                     mostrarExitoSimple("¡Listo!", "Categoría eliminada.");
-                    await cargarCategorias();
-                    await cargarFiltros();
+                    await recargarTablasEquipos();
                 } catch (error) {
                     mostrarError("No se pudo eliminar. Puede que esté en uso por algún artículo.", false);
                 }
@@ -239,8 +263,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             await crearCategoria(nombre);
             mostrarExitoSimple("¡Listo!", "Categoría creada correctamente.");
             formCategoria.reset();
-            await cargarCategorias();
-            await cargarFiltros();
+            await recargarTablasEquipos();
         } catch (error) {
             mostrarError(error.message || "No se pudo crear la categoría.", false);
         }
@@ -286,7 +309,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                 try {
                     await eliminarMarca(boton.dataset.id);
                     mostrarExitoSimple("¡Listo!", "Marca eliminada.");
-                    await cargarMarcas();
+                    await recargarTablasEquipos();
                 } catch (error) {
                     mostrarError("No se pudo eliminar. Puede que esté en uso por algún modelo.", false);
                 }
@@ -305,7 +328,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             await crearMarca(nombre);
             mostrarExitoSimple("¡Listo!", "Marca creada correctamente.");
             formMarca.reset();
-            await cargarMarcas();
+            await recargarTablasEquipos();
         } catch (error) {
             mostrarError(error.message || "No se pudo crear la marca.", false);
         }
@@ -365,7 +388,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                 try {
                     await eliminarModelo(boton.dataset.id);
                     mostrarExitoSimple("¡Listo!", "Modelo eliminado.");
-                    await cargarModelos();
+                    await recargarTablasEquipos();
                 } catch (error) {
                     mostrarError("No se pudo eliminar. Puede que esté en uso por algún artículo.", false);
                 }
@@ -386,7 +409,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             await crearModelo(nombre, Number(idMarca));
             mostrarExitoSimple("¡Listo!", "Modelo creado correctamente.");
             formModelo.reset();
-            await cargarModelos();
+            await recargarTablasEquipos();
         } catch (error) {
             mostrarError(error.message || "No se pudo crear el modelo.", false);
         }
@@ -399,8 +422,49 @@ document.addEventListener("DOMContentLoaded", async function () {
     const selectCategoriaArticulo = document.querySelector("#selectCategoriaArticulo");
     const selectUbicacionArticulo = document.querySelector("#selectUbicacionArticulo");
     const selectModeloArticulo = document.querySelector("#selectModeloArticulo");
+    const articuloId = document.querySelector("#articuloId");
+    const txtCodigoArticulo = document.querySelector("#txtCodigoArticulo");
+    const tituloFormArticulo = document.querySelector("#tituloFormArticulo");
+    const btnTextoArticulo = document.querySelector("#btnTextoArticulo");
+    const btnCancelarArticulo = document.querySelector("#btnCancelarArticulo");
+    let articuloPendienteEdicion = null;
 
-    modalArticulo.addEventListener("shown.bs.modal", async () => {
+    // Guarda temporalmente el registro porque los selectores se cargan cuando
+    // Bootstrap termina de abrir el modal.
+    function abrirEdicionArticulo(articulo) {
+        articuloPendienteEdicion = articulo;
+        bootstrap.Modal.getOrCreateInstance(modalArticulo).show();
+    }
+
+    // Aplica el registro pendiente después de que existan todas sus opciones.
+    function cargarArticuloEnFormulario(articulo) {
+        articuloId.value = articulo.idArticulo;
+        txtCodigoArticulo.value = articulo.codigoArticulo;
+        selectCategoriaArticulo.value = articulo.idCategoria;
+        selectUbicacionArticulo.value = articulo.idUbicacion;
+        selectModeloArticulo.value = articulo.idModelo ?? "";
+        tituloFormArticulo.textContent = "Editar artículo";
+        btnTextoArticulo.textContent = "Actualizar artículo";
+        btnCancelarArticulo.classList.remove("d-none");
+        txtCodigoArticulo.focus();
+    }
+
+    // Devuelve el modal al modo creación y descarta cualquier edición pendiente.
+    function limpiarFormularioArticulo() {
+        formArticulo.reset();
+        articuloId.value = "";
+        articuloPendienteEdicion = null;
+        tituloFormArticulo.textContent = "Agregar artículo";
+        btnTextoArticulo.textContent = "Guardar artículo";
+        btnCancelarArticulo.classList.add("d-none");
+    }
+
+    btnCancelarArticulo.addEventListener("click", limpiarFormularioArticulo);
+    modalArticulo.addEventListener("hidden.bs.modal", limpiarFormularioArticulo);
+
+    // Consulta de nuevo los tres catálogos y reconstruye los dropdowns del
+    // artículo. Se usa tanto al abrir el modal como después de cualquier CRUD.
+    async function cargarSelectsArticulo() {
         try {
             const [categorias, ubicaciones, modelos] = await Promise.all([getCategorias(), getUbicaciones(), getModelos()]);
 
@@ -412,17 +476,24 @@ document.addEventListener("DOMContentLoaded", async function () {
 
             selectModeloArticulo.innerHTML = '<option selected value="">Sin modelo asignado</option>' +
                 modelos.map(m => `<option value="${m.idModelo}">${m.nombreMarca} - ${m.nombreModelo}</option>`).join("");
+
+            if (articuloPendienteEdicion) cargarArticuloEnFormulario(articuloPendienteEdicion);
         } catch (error) {
             mostrarError("No se pudieron cargar los datos del formulario.", false);
         }
+    }
+
+    modalArticulo.addEventListener("shown.bs.modal", async () => {
+        await cargarSelectsArticulo();
     });
 
     formArticulo.addEventListener("submit", async (evento) => {
         evento.preventDefault();
-        const codigo = document.querySelector("#txtCodigoArticulo").value.trim();
+        const codigo = txtCodigoArticulo.value.trim();
         const idCategoria = selectCategoriaArticulo.value;
         const idUbicacion = selectUbicacionArticulo.value;
         const idModelo = selectModeloArticulo.value;
+        const id = articuloId.value;
 
         if (!codigo) return mostrarError("El código del artículo es obligatorio.", false);
         if (codigo.length > 20) return mostrarError("El código no puede superar los 20 caracteres.", false);
@@ -430,16 +501,24 @@ document.addEventListener("DOMContentLoaded", async function () {
         if (!idUbicacion) return mostrarError("Selecciona una ubicación.", false);
 
         try {
-            await crearArticulo(codigo, Number(idCategoria), Number(idUbicacion), idModelo ? Number(idModelo) : null);
-            mostrarExitoSimple("¡Listo!", "Artículo creado correctamente.");
-            formArticulo.reset();
-            paginaActual = 1;
-            await cargarArticulos();
+            if (id) {
+                await actualizarArticulo(id, codigo, Number(idCategoria), Number(idUbicacion), idModelo ? Number(idModelo) : null);
+                mostrarExitoSimple("¡Listo!", "Artículo actualizado correctamente.");
+            } else {
+                await crearArticulo(codigo, Number(idCategoria), Number(idUbicacion), idModelo ? Number(idModelo) : null);
+                mostrarExitoSimple("¡Listo!", "Artículo creado correctamente.");
+                paginaActual = 1;
+            }
+            limpiarFormularioArticulo();
+            await recargarTablasEquipos();
 
             const instanciaModal = bootstrap.Modal.getInstance(modalArticulo);
             instanciaModal.hide();
         } catch (error) {
-            mostrarError(error.message || "No se pudo crear el artículo.", false);
+            mostrarError(error.message || "No se pudo guardar el artículo.", false);
         }
     });
+
+    await cargarArticulos();
+    await cargarFiltros();
 });

@@ -1,4 +1,5 @@
 import { login } from "../services/authService.js";
+import { getUsuarioById } from "../services/usuariosService.js";
 import { mostrarError, mostrarExitoRedireccion } from "../components/sweetAlerts.js";
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -36,8 +37,28 @@ document.addEventListener("DOMContentLoaded", function () {
                     return;
                 }
 
-                sessionStorage.setItem("usuarioLogueado", JSON.stringify(usuario));
-                mostrarExitoRedireccion("¡Sesión Iniciada!", "", "dashboardAdmin.html");
+                // El login puede devolver datos básicos. Esta segunda consulta
+                // completa nombre, departamento, correo y fotografía del perfil.
+                const detalleUsuario = await getUsuarioById(usuario.idUsuario).catch(() => null);
+                const sesion = { ...usuario, ...(detalleUsuario || {}) };
+                const nombreRol = String(sesion.nombreRol || '').toLowerCase();
+                const rol = nombreRol.includes('técnico') || nombreRol.includes('tecnico')
+                    ? 'tecnico'
+                    : nombreRol.includes('admin')
+                        ? 'admin'
+                        : 'usuario';
+                const destino = rol === 'tecnico'
+                    ? 'dashboardTecnicos.html'
+                    : rol === 'admin'
+                        ? 'dashboardAdmin.html'
+                        : 'dashboardUsuarios.html';
+
+                // sessionStorage conserva los datos del usuario mientras la
+                // pestaña está abierta; el dashboard reproduce su saludo cada
+                // vez que se visita, sin necesitar una marca adicional.
+                sessionStorage.setItem("usuarioLogueado", JSON.stringify(sesion));
+                localStorage.setItem("rolUsuario", rol);
+                mostrarExitoRedireccion("¡Sesión Iniciada!", "", destino);
             } catch (error) {
                 mostrarError("No se pudo conectar con el servidor. Intenta de nuevo.", false);
                 botonIniciarSesion.disabled = false;

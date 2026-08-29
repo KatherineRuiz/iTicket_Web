@@ -6,6 +6,7 @@ import { getDepartamentosAsignables } from "../services/departamentosService.js"
 import { formatearFecha12H } from "../utils/formateadores.js";
 import { obtenerIdUsuario } from "../utils/sesion.js";
 
+// Contadores del resumen superior
 const numNuevos = document.getElementById("numNuevos");
 const numResueltos = document.getElementById("numResueltos");
 const numAsignados = document.getElementById("numAsignados");
@@ -14,6 +15,7 @@ const numEnEspera = document.getElementById("numEnEspera");
 const numCerrados = document.getElementById("numCerrados");
 
 const scrollAprobaciones = document.getElementById("scrollAprobaciones");
+// Elementos del modal donde se revisa y aprueba un ticket nuevo
 const modalAprobacionesEl = document.getElementById("modalAprobaciones");
 const formAprobaciones = document.getElementById("formAprobaciones");
 const prioridadAprobaciones = document.getElementById("sltPrioridad");
@@ -32,6 +34,7 @@ const modalUbicacionTicket = document.getElementById("modalUbicacionTicket");
 const modalArticulosTicket = document.getElementById("modalArticulosTicket");
 const modalSoftwareVersionTicket = document.getElementById("modalSoftwareVersionTicket");
 
+// Controles del segundo modal, utilizado para enviar el ticket a otro departamento
 const modalReasignarEl = document.getElementById('modalReasignarDepartamento');
 const btnReasignarDepto = document.getElementById('btnReasignarDepto');
 const sltDepartamentoReasignar = document.getElementById('sltDepartamentoReasignar');
@@ -40,13 +43,16 @@ const btnConfirmarReasignar = document.getElementById('btnConfirmarReasignar');
 const formReasignarDepartamento = document.getElementById('formReasignarDepartamento');
 const btnEliminarTicket = document.getElementById('btnEliminarTicket');
 
+// Bootstrap conserva una sola instancia por modal para evitar fondos superpuestos
 const modalAprobaciones = bootstrap.Modal.getOrCreateInstance(modalAprobacionesEl);
 const modalReasignar = bootstrap.Modal.getOrCreateInstance(modalReasignarEl);
 
+// Galería y vista ampliada de las evidencias adjuntas al ticket
 const modalGaleriaEvidencias = document.getElementById("modalGaleriaEvidencias");
 const img = document.getElementById('imagenVista');
 const modalVistaPrevia = new bootstrap.Modal(document.getElementById('modalVistaPrevia'));
 
+// Tabla completa, paginación y filtros
 const tablaTickets = document.getElementById("tblTickets");
 const paginacionTickets = document.getElementById("paginacionTickets");
 const infoTickets = document.getElementById("infoTickets");
@@ -56,6 +62,7 @@ const sltBuscarPrioridad = document.getElementById("sltBuscarPrioridad");
 const sltBuscarEstado = document.getElementById("sltBuscarEstado");
 const dtBuscarFecha = document.getElementById("dtBuscarFecha");
 
+// Estado que debe sobrevivir mientras se abren modales o se cambian filtros
 let paginaActualTickets = 1;
 let idTicketSeleccionado = null;
 let filtrosActuales = {};
@@ -66,11 +73,18 @@ let listaDepartamentosDisponibles = [];
 const idUsuario = obtenerIdUsuario();
 
 document.addEventListener("DOMContentLoaded", () => {
-    cargarIndicadores();
-    cargarAprobacionesPendientes(idUsuario);
-    cargarTablaTickets(1)
-
+    recargarGestionTickets(1);
 });
+
+// Una sola recarga sincroniza indicadores, tarjetas pendientes y tabla. Se usa
+// después de aprobar, reasignar o eliminar para no dejar ninguna sección vieja.
+async function recargarGestionTickets(pagina = paginaActualTickets) {
+    await Promise.all([
+        cargarIndicadores(),
+        cargarAprobacionesPendientes(idUsuario),
+        cargarTablaTickets(pagina),
+    ]);
+}
 
 function limitarFechasPasadas() {
     if (!fechaVencimiento) return;
@@ -121,11 +135,13 @@ function renderizarAprobaciones(tickets) {
     }
 
     tickets.forEach((ticket) => {
+        const iconoPrioridad = window.obtenerClaseIconoTicket?.(ticket.prioridad)
+            || 'icono-ticket-prioridad-sin-asignar';
         scrollAprobaciones.innerHTML += `
             <div class="item-ticket-aprobacion bg-white p-3 mb-3 shadow-inner shadow-sm position-relative cursor-pointer"
                 data-id="${ticket.idTicket}" data-bs-toggle="modal" data-bs-target="#modalAprobaciones">
                 <h6 class="fw-bold mb-1 text-dark small d-flex align-items-center gap-2">
-                    <i class="bi bi-ticket-perforated text-primary me-2"></i>
+                    <i class="bi bi-ticket-perforated ${iconoPrioridad} me-2"></i>
                     ${ticket.asunto}
                 </h6>
                 <span class="text-muted-custom d-block text-mini">${ticket.codigo}</span>
@@ -273,8 +289,7 @@ formAprobaciones.addEventListener("submit", async (e) => {
         });
 
         mostrarExitoSimple("¡Ticket asignado!", "El ticket fue asignado correctamente.");
-        await cargarAprobacionesPendientes(idUsuario);
-        await cargarIndicadores();
+        await recargarGestionTickets();
         modalAprobaciones.hide();
     }
     catch (error) {
@@ -283,7 +298,7 @@ formAprobaciones.addEventListener("submit", async (e) => {
 });
 
 modalAprobacionesEl.addEventListener("show.bs.modal", async (e) => {
-
+    // relatedTarget es la tarjeta que abrió el modal y contiene el id del ticket.
     limitarFechasPasadas();
     const tarjeta = e.relatedTarget;
     if (tarjeta && tarjeta.dataset.id) {
@@ -430,8 +445,7 @@ formReasignarDepartamento.addEventListener("submit", async (e) => {
         });
 
         mostrarExitoSimple("¡Ticket reasignado!", "El ticket fue asignado a otro departamento.");
-        await cargarAprobacionesPendientes(idUsuario);
-        await cargarIndicadores();
+        await recargarGestionTickets();
         modalAprobaciones.hide();
         modalReasignar.hide();
     }
@@ -449,8 +463,7 @@ async function eliminarTicketSeleccionado() {
     try {
         await eliminarTicket(idTicketSeleccionado, idUsuario);
 
-        await cargarAprobacionesPendientes(idUsuario);
-        await cargarIndicadores();
+        await recargarGestionTickets();
 
         if (document.activeElement) {
             document.activeElement.blur();

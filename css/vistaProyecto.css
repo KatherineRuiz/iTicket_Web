@@ -101,3 +101,115 @@
     width: 100%;
   }
 }
+
+.modal-proyecto-estetico {
+  border: 0;
+  border-radius: 24px;
+  background: #f6f8fc;
+  box-shadow: 0 28px 70px rgba(20, 36, 84, 0.24);
+}
+
+.modal-iticket-encabezado {
+  min-height: 72px;
+  padding: 20px 24px;
+  background: var(--sidebar-bg, #142454) !important;
+  color: #ffffff;
+}
+
+.modal-iticket-encabezado .modal-title {
+  padding-inline: 40px;
+  font-size: 1.2rem;
+  letter-spacing: -0.01em;
+}
+
+.modal-iticket-encabezado .btn-close {
+  margin: 0 8px 0 0;
+  padding: 10px;
+  border-radius: 50%;
+  background-size: 12px;
+  opacity: 0.72;
+  transition: opacity 180ms ease, background-color 180ms ease, transform 180ms ease;
+}
+
+.modal-iticket-encabezado .btn-close:hover {
+  background-color: rgba(255, 255, 255, 0.12);
+  opacity: 1;
+  transform: rotate(5deg);
+}
+
+.modal-proyecto-cuerpo {
+  background: #f6f8fc;
+}
+
+.formulario-proyecto-modal {
+  border: 1px solid #e3e8f1;
+  border-radius: 18px;
+  background: #ffffff;
+  box-shadow: 0 10px 28px rgba(20, 36, 84, 0.07);
+}
+
+.titulo-formulario-modal {
+  color: #142454;
+  font-size: 1rem;
+}
+
+.formulario-proyecto-modal .form-label {
+  margin-bottom: 7px;
+  color: #36425a !important;
+  font-size: 0.83rem;
+}
+
+.formulario-proyecto-modal .form-control,
+.formulario-proyecto-modal .form-select,
+.formulario-proyecto-modal .input-group-text {
+  min-height: 44px;
+  border-color: #dce2ec;
+  border-radius: 11px;
+  background-color: #fbfcfe;
+}
+
+.formulario-proyecto-modal textarea.form-control {
+  min-height: 82px;
+}
+
+.formulario-proyecto-modal .form-control:focus,
+.formulario-proyecto-modal .form-select:focus {
+  border-color: #6d83b6;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(20, 36, 84, 0.1);
+}
+
+.lista-detalles-modal {
+  overflow: hidden;
+  border: 1px solid #e3e8f1;
+  border-radius: 15px;
+  box-shadow: 0 8px 20px rgba(20, 36, 84, 0.05);
+}
+
+.lista-detalles-modal:empty {
+  display: none;
+}
+
+html.tema-oscuro .modal-proyecto-estetico,
+html.tema-oscuro .modal-proyecto-cuerpo {
+  background: #111a2a !important;
+}
+
+html.tema-oscuro .formulario-proyecto-modal,
+html.tema-oscuro .lista-detalles-modal {
+  border-color: #2b374c;
+  background: #182235 !important;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.22);
+}
+
+html.tema-oscuro .titulo-formulario-modal,
+html.tema-oscuro .formulario-proyecto-modal .form-label {
+  color: #e4eaf3 !important;
+}
+
+@media (max-width: 767px) {
+  .modal-proyecto-cuerpo,
+  .formulario-proyecto-modal {
+    padding: 18px !important;
+  }
+}

@@ -22,7 +22,7 @@
     height: 35px;
     background-color: var(--accent-celeste);
     border-radius: 14px;
-    box-shadow: 0 6px 12px rgba(84, 156, 211, 0.25);
+    box-shadow: none;
     z-index: 10;
 }
 

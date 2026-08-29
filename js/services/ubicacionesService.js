@@ -27,3 +27,14 @@ export async function eliminarUbicacion(id) {
     const respuesta = await fetch(`${API_URL}/${id}`, { method: "DELETE" });
     if (!respuesta.ok) throw new Error("No se pudo eliminar la ubicación");
 }
+
+export async function actualizarUbicacion(id, nombreUbicacion, idTipoUbicacion) {
+    const respuesta = await fetch(`${API_URL}/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ nombreUbicacion, idTipoUbicacion })
+    });
+    const resultado = await respuesta.json();
+    if (!respuesta.ok) throw new Error(resultado.message || "No se pudo actualizar la ubicación");
+    return resultado.data;
+}

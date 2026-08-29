@@ -1,5 +1,4 @@
 import { getAreas, crearArea, actualizarArea, eliminarArea } from '../services/areasService.js';
-import { llenarSelectAreas } from './departamentos.js';
 import { validarFormularioArea } from '../validators/areasValidator.js';
 import { mostrarError } from '../components/sweetAlerts.js';
  
@@ -10,6 +9,14 @@ const tituloFormArea = document.getElementById('tituloFormArea');
 const btnTextoArea = document.getElementById('btnTextoArea');
 const btnCancelarArea = document.getElementById('btnCancelarArea');
 const tablaAreasBody = document.getElementById('tablaAreasBody');
+
+// Cualquier CRUD relacionado emite este evento para actualizar todas las
+// tablas de la pantalla sin que el usuario tenga que recargar el navegador
+window.addEventListener('iticket:recargar-tablas-usuarios', cargarAreas);
+
+function recargarGestionUsuarios() {
+    window.dispatchEvent(new CustomEvent('iticket:recargar-tablas-usuarios'));
+}
  
 document.addEventListener('DOMContentLoaded', cargarAreas);
  
@@ -24,7 +31,7 @@ export async function cargarAreas() {
         return [];
     }
 }
- 
+
 function pintarTablaAreas(areas) {
     tablaAreasBody.innerHTML = '';
     areas.forEach(area => {
@@ -50,7 +57,7 @@ function pintarTablaAreas(areas) {
         btn.addEventListener('click', () => confirmarEliminarArea(btn.dataset.id))
     );
 }
- 
+
 function cargarAreaEnFormulario(id, areas) {
     const area = areas.find(a => a.idArea == id);
     if (!area) return;
@@ -100,8 +107,7 @@ formArea.addEventListener('submit', async (evento) => {
             Swal.fire('Creada', 'El área se creó correctamente', 'success');
         }
         limpiarFormularioArea();
-        cargarAreas();
-        llenarSelectAreas();
+        recargarGestionUsuarios();
     } catch (error) {
         console.error(error);
         Swal.fire('Error', error.message || 'No se pudo guardar el área', 'error');
@@ -121,8 +127,7 @@ function confirmarEliminarArea(id) {
             try {
                 await eliminarArea(id);
                 Swal.fire('Eliminada', 'El área se eliminó correctamente', 'success');
-                cargarAreas();
-                llenarSelectAreas();
+                recargarGestionUsuarios();
             } catch (error) {
                 console.error(error);
                 Swal.fire('Error', error.message || 'No se pudo eliminar el área', 'error');

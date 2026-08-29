@@ -1,10 +1,3 @@
-:root {
-    --bg-oscuro: #121F48;
-    --accent-celeste: #539ECD;
-    --menu-width-full: 240px;
-    --menu-width-colapsado: 75px;
-}
-
 .contenido-principal {
     padding: 1px;
     padding-inline: 20px;
@@ -18,26 +11,41 @@
     border-radius: 30px;
     overflow: visible !important;
     text-align: left;
+    min-height: 116px;
 }
 
 .bienvenida img {
+    width: 60% !important;
+    max-width: 265px;
     height: auto;
     position: relative;
-    margin-bottom: -50px;
-    margin-top: -45px;
-    top: -6px;
+    margin-bottom: -58px;
+    top: -16px;
     flex-shrink: 0;
 }
 
 .btn-oscuro {
     background-color: #184E8C;
     color: #ffffff;
-    transition: all 0.3s ease;
+    box-shadow: 0 5px 12px rgba(24, 78, 140, 0.2);
+    transition: background-color 220ms ease, box-shadow 220ms ease, transform 220ms ease;
 }
 
 .btn-oscuro:hover {
-    background-color: var(--bg-oscuro) !important;;
+    /* El hover conserva la identidad azul; nunca cambia a negro. */
+    background-color: #246FB3 !important;
+    color: #ffffff !important;
+    box-shadow: 0 8px 18px rgba(36, 111, 179, 0.3);
     transform: translateY(-2px);
+}
+
+.btn-oscuro:active {
+    background-color: #174778 !important;
+    transform: translateY(0) scale(0.98);
+}
+
+.dashboard-resumen-mes-titulo {
+    color: #142454;
 }
 
 .resumen-tickets {
@@ -122,7 +130,8 @@
 }
 
 .cabecera {
-    background-color: #90BFDB;
+    /* Comparte el azul institucional de los títulos principales. */
+    background-color: #184E8C;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -252,4 +261,1332 @@
     position: relative;
     width: 100%;
     height: 300px;
-}   
+}
+
+.resumen-tickets img {
+    opacity: 1;
+    filter: saturate(1.12) contrast(1.06);
+    transition: filter 220ms ease, transform 220ms ease, box-shadow 220ms ease;
+}
+
+.resumen-tickets:hover img {
+    transform: scale(1.04);
+}
+
+.ticket-resumen-icono-oscuro {
+    display: none;
+}
+
+html.tema-oscuro .ticket-resumen-icono-claro {
+    display: none;
+}
+
+html.tema-oscuro .ticket-resumen-icono-oscuro {
+    display: block;
+}
+
+.tecnico-resueltos {
+    margin-top: 7px;
+    color: rgba(255, 255, 255, 0.78);
+    font-size: 0.76rem;
+    font-weight: 600;
+}
+
+.dashboard-evaluaciones,
+.dashboard-panel {
+    min-width: 0;
+}
+
+.dashboard-evaluaciones .mi-resumen {
+    min-height: 590px;
+}
+
+.contenedor-lista-tickets {
+    min-height: 360px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+@media (max-width: 1199.98px) {
+    .dashboard-evaluaciones .mi-resumen {
+        min-height: 520px;
+    }
+
+    .tecnicos {
+        min-height: 330px;
+    }
+
+    .contenedor-tickets-scroll {
+        height: min(560px, 62vh);
+        min-height: 360px;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .contenido-principal {
+        padding-inline: 8px;
+    }
+
+    .dashboard-admin-grid {
+        padding-inline: 0 !important;
+    }
+
+    .dashboard-evaluaciones .mi-resumen {
+        min-height: 0;
+        border-radius: 26px;
+    }
+
+    .dashboard-evaluaciones .mx-3 {
+        margin-inline: 0.5rem !important;
+    }
+
+    .contenedor-lista-tickets {
+        min-height: 300px;
+    }
+
+    .tecnicos {
+        flex-direction: column;
+        gap: 12px;
+        border-radius: 28px;
+    }
+
+    #carruselTecnicos {
+        width: 100% !important;
+        padding-inline: 2.5rem !important;
+    }
+
+    .bienvenida {
+        min-height: 220px;
+        padding-inline: 12px !important;
+    }
+
+    .bienvenida img {
+        width: 44% !important;
+        margin-block: -25px;
+    }
+
+    .resumen-tickets {
+        min-width: 0;
+    }
+}
+
+.dashboard-card-admin {
+    min-width: 0;
+    border: 1px solid #e5eaf0;
+    background: #fff;
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.07) !important;
+}
+
+.dashboard-card-admin > h4 {
+    margin: 0 0 18px;
+    color: #142454;
+    font-size: 1.2rem;
+    text-align: center;
+}
+
+.dashboard-tiempo-admin {
+    min-height: 190px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.dashboard-tiempo-admin-contenido {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+}
+
+.dashboard-tiempo-admin-contenido > i {
+    width: 58px;
+    height: 58px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: #edf5fc;
+    color: #184e8c;
+    font-size: 1.45rem;
+}
+
+.dashboard-tiempo-admin-contenido strong {
+    color: #142454;
+    font-size: 2rem;
+    line-height: 1;
+}
+
+.dashboard-tiempo-admin-contenido small {
+    color: #64748b;
+    font-size: 0.9rem;
+}
+
+.dashboard-grafica-principal {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.dashboard-grafica-principal .grafico {
+    width: 100%;
+    height: 420px;
+}
+
+.dashboard-kpi-boton {
+    width: 100%;
+    min-height: 82px;
+    border: 0;
+    color: #334155;
+    text-align: left;
+    cursor: pointer;
+    transition: background-color 200ms ease, transform 200ms ease, box-shadow 200ms ease;
+}
+
+.dashboard-kpi-boton:hover {
+    background: #f7fafc;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 18px rgba(15, 23, 42, 0.09) !important;
+}
+
+.dashboard-kpi-boton.activo {
+    background: #e2f1f8;
+}
+
+.dashboard-kpi-boton:focus-visible {
+    outline: 3px solid rgba(83, 158, 205, 0.35);
+    outline-offset: 2px;
+}
+
+.dashboard-kpi-boton .opcion-texto {
+    font-weight: 650;
+}
+
+.dashboard-kpi-boton .opcion-numero {
+    padding: 0;
+    color: #142454;
+    font-size: 1.7rem;
+}
+
+html.tema-oscuro .dashboard-card-admin {
+    border-color: #2d3b50;
+    background: #182235;
+    box-shadow: none !important;
+}
+
+html.tema-oscuro .dashboard-card-admin > h4,
+html.tema-oscuro .dashboard-tiempo-admin-contenido strong {
+    color: #edf3fb;
+}
+
+html.tema-oscuro .dashboard-tiempo-admin-contenido > i {
+    background: #21324a;
+    color: #9fcaff;
+}
+
+html.tema-oscuro .dashboard-tiempo-admin-contenido small {
+    color: #a8b5c8;
+}
+
+html.tema-oscuro .dashboard-kpi-boton {
+    background: #182235;
+    color: #dce5f1;
+}
+
+html.tema-oscuro .dashboard-kpi-boton:hover {
+    background: #1d2a3e;
+}
+
+html.tema-oscuro .dashboard-kpi-boton.activo {
+    background: #223750;
+}
+
+html.tema-oscuro .dashboard-kpi-boton .opcion-numero {
+    color: #edf3fb;
+}
+
+@media (max-width: 767.98px) {
+    .dashboard-card-admin {
+        border-radius: 28px !important;
+    }
+
+    .dashboard-grafica-principal .grafico {
+        height: 300px;
+    }
+
+    .dashboard-kpi-boton {
+        min-height: 70px;
+    }
+}
+
+@media (max-width: 479.98px) {
+    .bienvenida {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .bienvenida img {
+        width: min(230px, 75%) !important;
+        margin: -30px 0 -18px;
+    }
+
+    .tecnico-targeta {
+        width: min(180px, 72vw);
+    }
+
+    .ticket-item {
+        flex-direction: column;
+        gap: 12px;
+    }
+}
+
+.dashboard-personal {
+    padding: 4px 20px 28px;
+}
+
+.dashboard-hero {
+    position: relative;
+    min-height: 210px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    border: 1px solid #aacfe3;
+    border-radius: 28px;
+    background: #90bfdb;
+    color: #142454;
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
+}
+
+.dashboard-hero-usuario {
+    min-height: 238px;
+    padding-left: min(42%, 430px);
+}
+
+.dashboard-hero-tecnico {
+    min-height: 220px;
+    padding-left: 43%;
+}
+
+.dashboard-hero-tecnico .dashboard-hero-contenido {
+    padding: 24px 18px 24px 6px;
+}
+
+.dashboard-hero-tecnico .dashboard-hero-contenido h1 {
+    font-size: clamp(1.65rem, 2.2vw, 2rem);
+}
+
+.dashboard-hero-tecnico .dashboard-hero-contenido p {
+    font-size: 0.88rem;
+}
+
+.dashboard-hero-tecnico .dashboard-accion-principal {
+    padding-inline: 14px;
+    font-size: 0.88rem;
+}
+
+.dashboard-hero-imagen {
+    position: absolute;
+    left: 0;
+    bottom: -34px;
+    width: min(43%, 430px);
+    max-height: 285px;
+    object-fit: contain;
+    object-position: left bottom;
+}
+
+.dashboard-hero-tecnico .dashboard-hero-imagen {
+    width: 46%;
+    bottom: -18px;
+}
+
+.dashboard-hero-contenido {
+    position: relative;
+    z-index: 1;
+    max-width: 650px;
+    padding: 28px 34px;
+}
+
+.dashboard-hero-contenido h1 {
+    margin: 9px 0 6px;
+    font-size: clamp(1.7rem, 3vw, 2.35rem);
+    font-weight: 800;
+    letter-spacing: -0.035em;
+}
+
+.dashboard-hero-contenido p {
+    max-width: 520px;
+    margin-bottom: 18px;
+    color: #294769;
+    font-size: 0.98rem;
+}
+
+.dashboard-etiqueta {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 6px 10px;
+    border: 1px solid rgba(20, 36, 84, 0.15);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.44);
+    color: #184e8c;
+    font-size: 0.76rem;
+    font-weight: 750;
+    letter-spacing: 0.02em;
+}
+
+.dashboard-accion-principal {
+    min-height: 44px;
+    padding: 10px 18px;
+    border-radius: 13px !important;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: none !important;
+}
+
+.dashboard-accion-principal:hover {
+    box-shadow: none !important;
+    transform: translateY(-1px);
+}
+
+.dashboard-kpi-tiempo {
+    min-height: 112px;
+    margin-top: 22px;
+    padding: 20px 24px;
+    display: grid;
+    grid-template-columns: auto auto 1fr;
+    align-items: center;
+    gap: 16px;
+    border: 1px solid #e2e8f0;
+    border-radius: 22px;
+    background: #fff;
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+}
+
+.dashboard-kpi-icono,
+.dashboard-card-icono,
+.dashboard-resumen-icono {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #cfe0f1;
+    background: #edf5fc;
+    color: #184e8c;
+    box-shadow: none;
+}
+
+.dashboard-kpi-icono {
+    width: 52px;
+    height: 52px;
+    border-radius: 16px;
+    font-size: 1.35rem;
+}
+
+.dashboard-kpi-tiempo span {
+    display: block;
+    color: #64748b;
+    font-size: 0.82rem;
+    font-weight: 650;
+}
+
+.dashboard-kpi-tiempo strong {
+    display: block;
+    color: #142454;
+    font-size: 1.75rem;
+    line-height: 1.1;
+}
+
+.dashboard-kpi-tiempo strong span {
+    display: inline;
+    color: inherit;
+    font-size: inherit;
+}
+
+.dashboard-kpi-tiempo strong small {
+    color: #64748b;
+    font-size: 0.85rem;
+}
+
+.dashboard-kpi-tiempo p {
+    justify-self: end;
+    margin: 0;
+    color: #64748b;
+    font-size: 0.86rem;
+}
+
+.dashboard-grafica-card,
+.dashboard-resumen-tecnico {
+    border: 1px solid #e2e8f0;
+    border-radius: 24px;
+    background: #fff;
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.06);
+}
+
+.dashboard-grafica-card {
+    min-height: 390px;
+    padding: 22px;
+}
+
+.dashboard-card-encabezado,
+.dashboard-resumen-encabezado {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 18px;
+}
+
+.dashboard-card-encabezado h2,
+.dashboard-resumen-encabezado h2 {
+    margin: 3px 0 0;
+    color: #172033;
+    font-size: 1.18rem;
+    font-weight: 780;
+}
+
+.dashboard-card-kicker {
+    color: #5c7da1;
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+}
+
+.dashboard-card-icono,
+.dashboard-resumen-icono {
+    width: 42px;
+    min-width: 42px;
+    height: 42px;
+    border-radius: 14px;
+    font-size: 1.05rem;
+}
+
+.dashboard-grafico {
+    height: 300px;
+    margin-top: 12px;
+}
+
+.dashboard-resumen-tecnico {
+    min-height: 100%;
+    padding: 26px;
+}
+
+.dashboard-resumen-encabezado p {
+    margin: 6px 0 0;
+    color: #64748b;
+    font-size: 0.86rem;
+}
+
+.dashboard-resumen-opciones {
+    margin-top: 20px;
+}
+
+.dashboard-resumen-tecnico .btn-resumen {
+    min-height: 72px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px !important;
+    background: #f8fafc;
+    color: #334155;
+    box-shadow: none !important;
+    transition: border-color 220ms ease, background-color 220ms ease, transform 220ms ease;
+}
+
+.dashboard-resumen-tecnico .btn-resumen:hover {
+    border-color: #cbd8e7;
+    background: #f1f5f9;
+    color: #172033;
+    transform: translateY(-1px);
+}
+
+.dashboard-resumen-tecnico .btn-resumen.activo {
+    border-color: #b9d1ea;
+    background: #eaf3fb !important;
+    color: #184e8c !important;
+}
+
+.dashboard-resumen-tecnico .opcion-numero {
+    min-width: 36px;
+    height: 36px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    background: #fff;
+    color: #142454;
+    font-size: 1rem;
+}
+
+.dashboard-lista-asignaciones {
+    height: 650px;
+    margin-top: 20px;
+    padding: 4px 8px 4px 2px;
+}
+
+.dashboard-lista-asignaciones .ticket-item {
+    border: 1px solid #e7edf4;
+    border-radius: 16px !important;
+    box-shadow: none !important;
+    transition: border-color 240ms ease, background-color 240ms ease, transform 240ms ease;
+}
+
+.dashboard-lista-asignaciones .ticket-item:hover {
+    border-color: #d2deeb;
+    background: #fbfcfe;
+    box-shadow: none !important;
+    transform: translateY(-1px);
+}
+
+.dashboard-cargando {
+    min-height: 320px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    color: #8492a6;
+}
+
+.dashboard-cargando i {
+    font-size: 1.5rem;
+}
+
+html.tema-oscuro .dashboard-hero {
+    border-color: #7aadc9;
+    background: #90bfdb;
+    color: #142454;
+    box-shadow: none;
+}
+
+html.tema-oscuro .dashboard-hero-contenido p {
+    color: #294769;
+}
+
+html.tema-oscuro .dashboard-kpi-tiempo,
+html.tema-oscuro .dashboard-grafica-card,
+html.tema-oscuro .dashboard-resumen-tecnico {
+    border-color: #2d3b50;
+    background: #182235;
+    box-shadow: none;
+}
+
+html.tema-oscuro .dashboard-card-encabezado h2,
+html.tema-oscuro .dashboard-resumen-encabezado h2,
+html.tema-oscuro .dashboard-kpi-tiempo strong {
+    color: #edf3fb;
+}
+
+html.tema-oscuro .dashboard-card-kicker {
+    color: #8caacb;
+}
+
+html.tema-oscuro .dashboard-kpi-tiempo p,
+html.tema-oscuro .dashboard-kpi-tiempo span,
+html.tema-oscuro .dashboard-kpi-tiempo strong small,
+html.tema-oscuro .dashboard-resumen-encabezado p {
+    color: #a8b5c8;
+}
+
+html.tema-oscuro .dashboard-kpi-tiempo strong span {
+    color: #edf3fb;
+}
+
+html.tema-oscuro .dashboard-kpi-icono,
+html.tema-oscuro .dashboard-card-icono,
+html.tema-oscuro .dashboard-resumen-icono {
+    border-color: #38506d;
+    background: #21324a;
+    color: #9fcaff;
+}
+
+html.tema-oscuro .dashboard-resumen-tecnico .btn-resumen {
+    border-color: #30405a;
+    background: #131d2e;
+    color: #cbd5e1;
+}
+
+html.tema-oscuro .dashboard-resumen-tecnico .btn-resumen:hover {
+    border-color: #40536f;
+    background: #1d2a3e;
+    color: #edf3fb;
+}
+
+html.tema-oscuro .dashboard-resumen-tecnico .btn-resumen.activo {
+    border-color: #496989;
+    background: #223750 !important;
+    color: #b9d9fb !important;
+}
+
+html.tema-oscuro .dashboard-resumen-tecnico .opcion-numero {
+    background: #0f1827;
+    color: #dcecff;
+}
+
+html.tema-oscuro .dashboard-lista-asignaciones .ticket-item {
+    border-color: #2e3c51;
+    background: #141f31;
+}
+
+html.tema-oscuro .dashboard-lista-asignaciones .ticket-item:hover {
+    border-color: #3b4d67;
+    background: #1a273a;
+}
+
+@media (max-width: 991.98px) {
+    .dashboard-personal {
+        padding-inline: 8px;
+    }
+
+    .dashboard-kpi-tiempo {
+        grid-template-columns: auto 1fr;
+    }
+
+    .dashboard-kpi-tiempo p {
+        grid-column: 1 / -1;
+        justify-self: start;
+    }
+
+    .dashboard-lista-asignaciones {
+        height: min(620px, 65vh);
+    }
+}
+
+@media (max-width: 575.98px) {
+    .dashboard-hero,
+    .dashboard-hero-usuario,
+    .dashboard-hero-tecnico {
+        min-height: 390px;
+        padding: 0;
+        align-items: flex-start;
+    }
+
+    .dashboard-hero-imagen,
+    .dashboard-hero-tecnico .dashboard-hero-imagen {
+        right: 0;
+        bottom: -24px;
+        width: min(92%, 360px);
+        margin-inline: auto;
+    }
+
+    .dashboard-hero-contenido {
+        padding: 24px;
+    }
+
+    .dashboard-hero-contenido p {
+        max-width: 92%;
+    }
+
+    .dashboard-kpi-tiempo {
+        padding: 18px;
+    }
+
+    .dashboard-grafica-card,
+    .dashboard-resumen-tecnico {
+        padding: 18px;
+        border-radius: 20px;
+    }
+
+    .dashboard-grafica-card {
+        min-height: 350px;
+    }
+
+    .dashboard-grafico {
+        height: 260px;
+    }
+}
+
+.dashboard-personal {
+    padding: 4px 12px 32px;
+}
+
+.dashboard-personal-superior,
+.dashboard-personal-grid,
+.dashboard-personal-graficas {
+    --bs-gutter-x: 1.5rem;
+}
+
+.dashboard-bienvenida-personal {
+    min-height: 168px;
+    height: 100%;
+    overflow: hidden !important;
+    border: 0;
+    border-radius: 30px;
+    background: #90bfdb;
+    color: #fff;
+    box-shadow: none !important;
+}
+
+.dashboard-bienvenida-personal img {
+    position: relative;
+    top: 4px;
+    width: min(56%, 300px) !important;
+    max-width: none;
+    margin: -24px 0 -54px;
+    object-fit: contain;
+}
+
+.dashboard-bienvenida-texto {
+    position: relative;
+    z-index: 1;
+    min-width: 170px;
+}
+
+.dashboard-bienvenida-texto h4 {
+    margin-bottom: 5px;
+}
+
+.dashboard-bienvenida-texto h6 {
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.dashboard-tiempo-panel,
+.dashboard-panel-simple {
+    overflow: hidden;
+    border: 1px solid #e3e8ef;
+    border-radius: 30px;
+    background: #fff;
+    box-shadow: none !important;
+}
+
+.dashboard-titulo-barra {
+    min-height: 52px;
+    margin: 0 !important;
+    padding: 14px 20px !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0 !important;
+    background: #142454 !important;
+    color: #fff !important;
+    font-size: 1rem;
+    font-weight: 750;
+    text-align: center;
+}
+
+.dashboard-tiempo-contenido {
+    min-height: 116px;
+    padding: 20px 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+}
+
+.dashboard-tiempo-icono {
+    width: 54px;
+    min-width: 54px;
+    height: 54px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #d9e4ef;
+    border-radius: 50%;
+    background: #edf5fc;
+    color: #184e8c;
+    font-size: 1.35rem;
+}
+
+.dashboard-tiempo-contenido strong {
+    display: block;
+    color: #142454;
+    font-size: 1.8rem;
+    line-height: 1.05;
+}
+
+.dashboard-tiempo-contenido strong span {
+    color: inherit;
+}
+
+.dashboard-tiempo-contenido small,
+.dashboard-tiempo-contenido p {
+    color: #64748b;
+    font-size: 0.84rem;
+}
+
+.dashboard-tiempo-contenido p {
+    margin: 6px 0 0;
+}
+
+.dashboard-panel-simple.dashboard-grafica-card {
+    min-height: 380px;
+    padding: 0 20px 18px;
+}
+
+.dashboard-panel-simple .dashboard-grafico {
+    height: 300px;
+    margin-top: 12px;
+}
+
+.dashboard-tecnico .dashboard-bienvenida-personal {
+    height: auto;
+    min-height: 186px;
+}
+
+.dashboard-tecnico .dashboard-resumen-tecnico {
+    min-height: 100%;
+    padding: 0 22px 22px;
+}
+
+.dashboard-tecnico .dashboard-resumen-opciones {
+    margin-top: 20px;
+}
+
+.dashboard-tecnico .dashboard-lista-asignaciones {
+    height: 650px;
+    margin-top: 18px;
+}
+
+html.tema-oscuro .dashboard-tiempo-panel,
+html.tema-oscuro .dashboard-panel-simple {
+    border-color: #2d3b50;
+    background: #182235;
+}
+
+html.tema-oscuro .dashboard-titulo-barra {
+    background: #142454 !important;
+    color: #fff !important;
+}
+
+html.tema-oscuro .dashboard-tiempo-icono {
+    border-color: #38506d;
+    background: #21324a;
+    color: #9fcaff;
+}
+
+html.tema-oscuro .dashboard-tiempo-contenido strong {
+    color: #edf3fb;
+}
+
+html.tema-oscuro .dashboard-tiempo-contenido small,
+html.tema-oscuro .dashboard-tiempo-contenido p {
+    color: #a8b5c8;
+}
+
+@media (max-width: 991.98px) {
+    .dashboard-personal {
+        padding-inline: 4px;
+    }
+
+    .dashboard-bienvenida-personal {
+        min-height: 190px;
+    }
+
+    .dashboard-tecnico .dashboard-lista-asignaciones {
+        height: min(620px, 65vh);
+    }
+}
+
+@media (max-width: 575.98px) {
+    .dashboard-personal-superior,
+    .dashboard-personal-grid,
+    .dashboard-personal-graficas {
+        --bs-gutter-x: 0.75rem;
+    }
+
+    .dashboard-bienvenida-personal,
+    .dashboard-tecnico .dashboard-bienvenida-personal {
+        min-height: 330px;
+        flex-direction: column-reverse;
+        justify-content: flex-start !important;
+        padding-top: 24px !important;
+    }
+
+    .dashboard-bienvenida-personal img {
+        top: 0;
+        width: min(300px, 88%) !important;
+        margin: -20px 0 -52px;
+    }
+
+    .dashboard-tiempo-panel,
+    .dashboard-panel-simple {
+        border-radius: 24px;
+    }
+
+    .dashboard-tiempo-contenido {
+        padding: 18px;
+    }
+
+    .dashboard-panel-simple.dashboard-grafica-card {
+        min-height: 350px;
+        padding-inline: 12px;
+    }
+
+    .dashboard-panel-simple .dashboard-grafico {
+        height: 265px;
+    }
+
+    .dashboard-tecnico .dashboard-resumen-tecnico {
+        padding-inline: 12px;
+    }
+}
+
+.dashboard-resumen-personal {
+    min-height: 76px;
+    padding: 9px 12px 9px 22px;
+    gap: 18px;
+}
+
+.dashboard-resumen-personal h6 {
+    flex: 1 1 auto;
+    color: #334155;
+    line-height: 1.15;
+}
+
+.dashboard-resumen-personal strong {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 5px;
+    color: #142454;
+    font-size: 1.75rem;
+}
+
+.dashboard-resumen-personal strong span {
+    color: inherit;
+}
+
+.dashboard-resumen-personal strong small {
+    color: #64748b;
+    font-size: 0.78rem;
+}
+
+.dashboard-resumen-personal-icono {
+    width: 58px;
+    min-width: 58px;
+    height: 58px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #d7e3ee;
+    border-radius: 50%;
+    background: #edf5fc;
+    color: #184e8c;
+    font-size: 1.35rem;
+}
+
+.dashboard-grafica-admin {
+    min-height: 420px;
+    border: 0;
+}
+
+.dashboard-grafica-admin > h4 {
+    margin-bottom: 4px;
+    color: #142454;
+    font-size: 1.22rem;
+}
+
+.dashboard-grafica-admin .grafico {
+    height: 315px;
+}
+
+.dashboard-personal-superior {
+    padding-top: 4px !important;
+}
+
+.dashboard-bienvenida-admin {
+    min-height: 168px;
+}
+
+.dashboard-kpis-personales .dashboard-resumen-personal {
+    min-height: 82px;
+    height: 100%;
+}
+
+.dashboard-tiempo-destacado {
+    min-height: 190px;
+    padding: 26px 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 22px;
+    border-radius: 40px;
+    background: #142454;
+    color: #fff;
+    box-shadow: 0 10px 24px rgba(20, 36, 84, 0.14);
+}
+
+.dashboard-tiempo-destacado-icono {
+    width: 68px;
+    min-width: 68px;
+    height: 68px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    border-radius: 50%;
+    color: #bfe1f5;
+    font-size: 1.7rem;
+}
+
+.dashboard-tiempo-destacado span {
+    color: #dbe9f5;
+    font-size: 0.82rem;
+    font-weight: 650;
+}
+
+.dashboard-tiempo-destacado strong {
+    margin-top: 5px;
+    display: block;
+    color: #fff;
+    font-size: 2rem;
+    line-height: 1;
+}
+
+.dashboard-tiempo-destacado strong span {
+    color: inherit;
+    font-size: inherit;
+}
+
+.dashboard-tiempo-destacado strong small {
+    font-size: 0.8rem;
+    font-weight: 650;
+}
+
+.dashboard-tiempo-destacado p {
+    max-width: 280px;
+    margin: 9px 0 0;
+    color: #9fb3cc;
+    font-size: 0.76rem;
+}
+
+.dashboard-grafica-personal {
+    overflow: hidden;
+    border: 1px solid #e5eaf0;
+    box-shadow: 0 8px 22px rgba(15, 23, 42, 0.07) !important;
+}
+
+.dashboard-grafica-personal.mi-resumen {
+    flex-direction: column;
+}
+
+.dashboard-card-cabecera {
+    min-height: 68px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    text-align: left;
+}
+
+.dashboard-card-cabecera-centrada {
+    justify-content: center;
+}
+
+.dashboard-card-icono {
+    width: 42px;
+    min-width: 42px;
+    height: 42px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #d8e5f1;
+    border-radius: 14px;
+    background: #edf5fc;
+    color: #184e8c;
+    font-size: 1.08rem;
+}
+
+.dashboard-card-cabecera h4 {
+    margin: 0;
+    color: #142454;
+    font-size: 1.05rem;
+    font-weight: 750;
+}
+
+.dashboard-card-cabecera p {
+    margin: 3px 0 0;
+    color: #7a8798;
+    font-size: 0.75rem;
+}
+
+.dashboard-usuario .dashboard-evaluaciones .mi-resumen {
+    min-height: 634px;
+}
+
+.dashboard-panel-asignaciones {
+    overflow: hidden;
+    border: 1px solid #e5eaf0;
+    box-shadow: 0 8px 22px rgba(15, 23, 42, 0.07) !important;
+}
+
+.dashboard-panel-asignaciones .ticket-item {
+    border-radius: 16px !important;
+}
+
+html.tema-oscuro .dashboard-grafica-personal,
+html.tema-oscuro .dashboard-panel-asignaciones {
+    border-color: #2d3b50 !important;
+    background: #182235 !important;
+    box-shadow: none !important;
+}
+
+html.tema-oscuro .dashboard-card-icono {
+    border-color: #38506d;
+    background: #21324a;
+    color: #9fcaff;
+}
+
+html.tema-oscuro .dashboard-card-cabecera h4 {
+    color: #edf3fb;
+}
+
+html.tema-oscuro .dashboard-card-cabecera p {
+    color: #9eacbf;
+}
+
+html.tema-oscuro .dashboard-tiempo-destacado {
+    background: #142454;
+    box-shadow: none;
+}
+
+.dashboard-usuario .dashboard-evaluaciones .mi-resumen {
+    min-height: 634px;
+}
+
+.dashboard-contador-tecnico {
+    width: 100%;
+    min-height: 68px;
+    padding: 10px 14px 10px 18px !important;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border: 1px solid #e5eaf0 !important;
+    border-radius: 35px !important;
+    background: #fff !important;
+    color: #26364a !important;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05) !important;
+    transition: border-color 200ms ease, background-color 200ms ease, transform 220ms ease;
+}
+
+.dashboard-contador-tecnico:hover {
+    border-color: #c9d8e8 !important;
+    background: #f7fafc !important;
+    transform: translateY(-1px);
+}
+
+.dashboard-contador-tecnico.activo {
+    border-color: #bad4e8 !important;
+    background: #e2f1f8 !important;
+    color: #142454 !important;
+}
+
+.dashboard-contador-tecnico .opcion-numero {
+    width: 38px;
+    min-width: 38px;
+    height: 38px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: #edf3f8;
+    color: #142454;
+    font-size: 1rem;
+}
+
+.dashboard-tecnico .dashboard-resumen-tecnico {
+    min-height: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 40px;
+    background: #fff;
+}
+
+.dashboard-tecnico .dashboard-lista-asignaciones {
+    height: 780px;
+    margin-top: 0;
+}
+
+html.tema-oscuro .dashboard-resumen-personal,
+html.tema-oscuro .dashboard-contador-tecnico,
+html.tema-oscuro .dashboard-grafica-admin,
+html.tema-oscuro .dashboard-tecnico .dashboard-resumen-tecnico {
+    border-color: #2d3b50 !important;
+    background: #182235 !important;
+    color: #dce5f1 !important;
+}
+
+html.tema-oscuro .dashboard-resumen-personal h6,
+html.tema-oscuro .dashboard-resumen-personal strong,
+html.tema-oscuro .dashboard-grafica-admin > h4 {
+    color: #edf3fb;
+}
+
+html.tema-oscuro .dashboard-resumen-personal strong small {
+    color: #a8b5c8;
+}
+
+html.tema-oscuro .dashboard-resumen-personal-icono {
+    border-color: #38506d;
+    background: #21324a;
+    color: #9fcaff;
+}
+
+html.tema-oscuro .dashboard-contador-tecnico:hover {
+    border-color: #40536f !important;
+    background: #1d2a3e !important;
+}
+
+html.tema-oscuro .dashboard-contador-tecnico.activo {
+    border-color: #496989 !important;
+    background: #223750 !important;
+    color: #dcecff !important;
+}
+
+html.tema-oscuro .dashboard-contador-tecnico .opcion-numero {
+    background: #101a2a;
+    color: #dcecff;
+}
+
+@media (max-width: 1199.98px) {
+    .dashboard-tecnico .dashboard-lista-asignaciones {
+        height: min(620px, 65vh);
+    }
+
+    .dashboard-usuario .dashboard-evaluaciones .mi-resumen {
+        min-height: 440px;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .dashboard-personal > .row,
+    .dashboard-personal .dashboard-admin-grid {
+        padding-inline: 0 !important;
+    }
+
+    .dashboard-resumen-personal {
+        min-height: 72px;
+    }
+
+    .dashboard-grafica-admin,
+    .dashboard-usuario .dashboard-evaluaciones .mi-resumen {
+        min-height: 370px;
+        border-radius: 28px !important;
+    }
+
+    .dashboard-bienvenida-admin {
+        min-height: 220px;
+    }
+
+    .dashboard-tiempo-destacado {
+        min-height: 170px;
+        padding: 22px;
+        border-radius: 28px;
+    }
+
+    .dashboard-card-cabecera,
+    .dashboard-card-cabecera-centrada {
+        justify-content: flex-start;
+    }
+
+    .dashboard-grafica-admin .grafico {
+        height: 275px;
+    }
+
+    .dashboard-tecnico .dashboard-resumen-tecnico {
+        border-radius: 28px;
+    }
+}

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
 <head>
     <meta charset="UTF-8">
@@ -8,8 +8,9 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" href="css/common.css">
-    <link rel="stylesheet" href="css/dashboard.css">
-    <script src="js/components/menu-cache.js"></script>
+    <link rel="stylesheet" href="css/dashboard.css?v=4">
+    <link rel="stylesheet" href="css/notificaciones.css?v=2">
+    <script src="js/components/menu-cache.js?v=17"></script>
 </head>
 
 <body>
@@ -28,234 +29,75 @@
             </div>
         </section>
 
-        <div class="contenido-principal container-fluid">
-            <div class="row g-4 m-0 p-0">
-
-                <div class="col-lg-5 col-md-6 col-sm-12 ps-3">
-                    <!--Bienvenida-->
-                    <section class="row ps-2 pe-3">
-                        <div class="bienvenida d-flex justify-content-evenly align-items-center text-center p-3 shadow">
-                            <img class="w-50" src="img/crearTicket.png" alt="Imagen de crear Ticket">
-                            <div>
-                                <h3 class="fw-bold">¡Bienvenido!</h3>
-                                <h6 class="mb-3">¿Quieres crear un nuevo ticket?</h6>
-                                <button class="btn-oscuro border-0 px-4 py-2 fw-bold rounded-pill">Crear</button>
-                            </div>
+        <div class="contenido-principal container-fluid dashboard-personal dashboard-tecnico">
+            <div class="row g-4 m-0 p-0 align-items-center dashboard-personal-superior">
+                <section class="col-lg-5 col-12">
+                    <div class="bienvenida dashboard-bienvenida-admin d-flex justify-content-evenly align-items-center text-center p-3 shadow">
+                        <img class="w-50" src="img/crearTicket.png" alt="Persona gestionando tickets">
+                        <div>
+                            <h4 class="fw-bold">¡Bienvenido!</h4>
+                            <h6 class="mb-3">¿Algún problema? Crea un ticket</h6>
+                            <button class="btn-oscuro border-0 px-4 py-2 fw-bold rounded-pill">Crear</button>
                         </div>
-                    </section>
+                    </div>
+                </section>
 
-                    <!--Grafico del calificaciones porcentuales de los tickets evaluados-->
-                    <section class="row mt-4 px-2">
-                        <div class="d-flex flex-column align-items-center text-center bg-white rounded-5 p-4 shadow">
-                            <h4>Tus calificaciones</h4>
-                            <div class="grafico">
-                                <canvas id="graficoCalificacion"></canvas>
-                            </div>
+                <section class="col-lg-7 col-12 px-3 px-lg-4">
+                    <h2 class="text-center bold dashboard-resumen-mes-titulo mb-3">Asignaciones</h2>
+                    <div class="row g-3" id="botones-resumen">
+                        <div class="col-lg-4 col-12">
+                            <button type="button" class="resumen-tickets dashboard-resumen-personal dashboard-kpi-boton activo" data-opcion="pendientes">
+                                <span class="opcion-texto">Pendientes</span><strong class="opcion-numero" id="num-pendientes">0</strong>
+                            </button>
                         </div>
-                    </section>
-
-                    <!--Gráfico del tiempo de resolucion promedio-->
-                    <section class="row mt-4 px-2">
-                        <div class="d-flex flex-column align-items-center text-center bg-white rounded-5 p-4 shadow">
-                            <h4>Tu tiempo de resolución</h4>
-                            <div class="grafico">
-                                <canvas id="graficoResolucion"></canvas>
-                            </div>
+                        <div class="col-lg-4 col-12">
+                            <button type="button" class="resumen-tickets dashboard-resumen-personal dashboard-kpi-boton" data-opcion="vencidos">
+                                <span class="opcion-texto">Vencidos</span><strong class="opcion-numero" id="num-vencidas">0</strong>
+                            </button>
                         </div>
-                    </section>
-                </div>
-
-                <div class="col-lg-7 col-md-6 d-flex flex-column">
-                    <!--Sección de "Mi resumen"-->
-                    <section class="ps-md-4 ps-sm-0 w-100 h-100">
-                        <div class="mi-resumen d-flex flex-column h-100 w-100 shadow">
-                            <div class="cabecera">
-                                <img src="img/mi-resumen.png" alt="Resumen">
-                                <h3 class="pt-1">Mi resumen</h3>
-                            </div>
-                            <!--Botones de la sección de "Mi resumen"-->
-                            <div class="p-3">
-                                <div class="row g-3 justify-content-center" id="botones-resumen">
-                                    <div class="col-lg-4 col-md-12 col-sm-12">
-                                        <button type="button"
-                                            class="btn btn-resumen d-flex align-items-center justify-content-between px-3 py-2 rounded-4 activo"
-                                            data-opcion="pendientes">
-                                            <span class="opcion-texto text-start">Pendientes</span>
-                                            <span class="opcion-numero" id="num-pendientes">7</span>
-                                        </button>
-                                    </div>
-
-                                    <div class="col-lg-4 col-md-12 col-sm-12">
-                                        <button type="button"
-                                            class="btn btn-resumen d-flex align-items-center justify-content-between px-3 py-2 rounded-4"
-                                            data-opcion="vencidos">
-                                            <span class="opcion-texto text-start">Vencidos</span>
-                                            <span class="opcion-numero" id="num-vencidas">2</span>
-                                        </button>
-                                    </div>
-
-                                    <div class="col-lg-4 col-md-12 col-sm-12">
-                                        <button type="button"
-                                            class="btn btn-resumen d-flex align-items-center justify-content-between px-3 py-2 rounded-4"
-                                            data-opcion="hoy">
-                                            <span class="opcion-texto text-start">Vencen hoy</span>
-                                            <span class="opcion-numero" id="num-hoy">5</span>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                            <!--Sección de Tickets-->
-                            <div class="contenedor-tickets-scroll p-3 mx-3 flex-grow-1">
-                                <!-- Ticket 1 -->
-                                <div
-                                    class="ticket-item border-start-critical p-3 mb-3 rounded-3 shadow-sm d-flex justify-content-between align-items-start">
-                                    <div>
-                                        <h6 class="fw-bold mb-1"><i
-                                                class="bi bi-ticket-perforated text-danger me-2"></i>Computadora no
-                                            enciende</h6>
-                                        <small class="text-muted d-block">#274261</small>
-                                        <small class="text-muted d-block mt-1"><b>Estado:</b> Pendiente</small>
-                                        <small class="text-muted d-block"><b>Vence:</b> 10/5/2026 12:30</small>
-                                        <small class="text-muted d-block mt-1"><b>Descripción:</b> Es la computadora del
-                                            docente, se encuentra conectada...</small>
-                                    </div>
-                                    <span
-                                        class="badge bg-danger-light text-danger rounded-pill px-3 py-2">Crítica</span>
-                                </div>
-
-                                <!-- Ticket 2 -->
-                                <div
-                                    class="ticket-item border-start-high p-3 mb-3 rounded-3 shadow-sm d-flex justify-content-between align-items-start">
-                                    <div>
-                                        <h6 class="fw-bold mb-1"><i
-                                                class="bi bi-ticket-perforated text-warning me-2"></i>Extintor
-                                            descargado
-                                        </h6>
-                                        <small class="text-muted d-block">#274261</small>
-                                        <small class="text-muted d-block mt-1"><b>Estado:</b> Pendiente</small>
-                                        <small class="text-muted d-block"><b>Vence:</b> 10/5/2026 12:30</small>
-                                        <small class="text-muted d-block mt-1"><b>Descripción:</b> El extintor fue usado
-                                            y
-                                            se
-                                            vació todo...</small>
-                                    </div>
-                                    <span class="badge bg-warning-light text-warning rounded-pill px-3 py-2">Alta</span>
-                                </div>
-
-                                <!-- Ticket 3 -->
-                                <div
-                                    class="ticket-item border-start-medium p-3 mb-3 rounded-3 shadow-sm d-flex justify-content-between align-items-start">
-                                    <div>
-                                        <h6 class="fw-bold mb-1"><i
-                                                class="bi bi-ticket-perforated text-warning me-2"></i>Impresora
-                                            del
-                                            librero fallando</h6>
-                                        <small class="text-muted d-block">#274261</small>
-                                        <small class="text-muted d-block mt-1"><b>Estado:</b> Pendiente</small>
-                                        <small class="text-muted d-block"><b>Vence:</b> 10/5/2026 12:30</small>
-                                        <small class="text-muted d-block mt-1"><b>Descripción:</b> La impresora no
-                                            imprime
-                                            correctamente...</small>
-                                    </div>
-                                    <span
-                                        class="badge bg-warning-light-2 text-warning-dark rounded-pill px-3 py-2">Media</span>
-                                </div>
-
-                                <!-- Ticket 4 -->
-                                <div
-                                    class="ticket-item border-start-low p-3 mb-3 rounded-3 shadow-sm d-flex justify-content-between align-items-start">
-                                    <div>
-                                        <h6 class="fw-bold mb-1"><i
-                                                class="bi bi-ticket-perforated text-success me-2"></i>Lampara de
-                                            pasillo quemada</h6>
-                                        <small class="text-muted d-block">#274261</small>
-                                        <small class="text-muted d-block mt-1"><b>Estado:</b> Pendiente</small>
-                                        <small class="text-muted d-block"><b>Vence:</b> 10/5/2026 12:30</small>
-                                        <small class="text-muted d-block mt-1"><b>Descripción:</b> La lampara del
-                                            pasillo se
-                                            fundió...</small>
-                                    </div>
-                                    <span class="badge bg-success-light text-success rounded-pill px-3 py-2">Baja</span>
-                                </div>
-
-                                <!-- Ticket 5 -->
-                                <div
-                                    class="ticket-item border-start-critical p-3 mb-3 rounded-3 shadow-sm d-flex justify-content-between align-items-start">
-                                    <div>
-                                        <h6 class="fw-bold mb-1"><i
-                                                class="bi bi-ticket-perforated text-danger me-2"></i>Computadora no
-                                            enciende</h6>
-                                        <small class="text-muted d-block">#274261</small>
-                                        <small class="text-muted d-block mt-1"><b>Estado:</b> Pendiente</small>
-                                        <small class="text-muted d-block"><b>Vence:</b> 10/5/2026 12:30</small>
-                                        <small class="text-muted d-block mt-1"><b>Descripción:</b> Es la computadora del
-                                            docente, se encuentra conectada...</small>
-                                    </div>
-                                    <span
-                                        class="badge bg-danger-light text-danger rounded-pill px-3 py-2">Crítica</span>
-                                </div>
-
-                                <!-- Ticket 6 -->
-                                <div
-                                    class="ticket-item border-start-high p-3 mb-3 rounded-3 shadow-sm d-flex justify-content-between align-items-start">
-                                    <div>
-                                        <h6 class="fw-bold mb-1"><i
-                                                class="bi bi-ticket-perforated text-warning me-2"></i>Extintor
-                                            descargado
-                                        </h6>
-                                        <small class="text-muted d-block">#274261</small>
-                                        <small class="text-muted d-block mt-1"><b>Estado:</b> Pendiente</small>
-                                        <small class="text-muted d-block"><b>Vence:</b> 10/5/2026 12:30</small>
-                                        <small class="text-muted d-block mt-1"><b>Descripción:</b> El extintor fue usado
-                                            y
-                                            se
-                                            vació todo...</small>
-                                    </div>
-                                    <span class="badge bg-warning-light text-warning rounded-pill px-3 py-2">Alta</span>
-                                </div>
-
-                                <!-- Ticket 7 -->
-                                <div
-                                    class="ticket-item border-start-medium p-3 mb-3 rounded-3 shadow-sm d-flex justify-content-between align-items-start">
-                                    <div>
-                                        <h6 class="fw-bold mb-1"><i
-                                                class="bi bi-ticket-perforated text-warning me-2"></i>Impresora
-                                            del
-                                            librero fallando</h6>
-                                        <small class="text-muted d-block">#274261</small>
-                                        <small class="text-muted d-block mt-1"><b>Estado:</b> Pendiente</small>
-                                        <small class="text-muted d-block"><b>Vence:</b> 10/5/2026 12:30</small>
-                                        <small class="text-muted d-block mt-1"><b>Descripción:</b> La impresora no
-                                            imprime
-                                            correctamente...</small>
-                                    </div>
-                                    <span
-                                        class="badge bg-warning-light-2 text-warning-dark rounded-pill px-3 py-2">Media</span>
-                                </div>
-
-                                <!-- Ticket 8 -->
-                                <div
-                                    class="ticket-item border-start-low p-3 mb-0 rounded-3 shadow-sm d-flex justify-content-between align-items-start">
-                                    <div>
-                                        <h6 class="fw-bold mb-1"><i
-                                                class="bi bi-ticket-perforated text-success me-2"></i>Lampara de
-                                            pasillo quemada</h6>
-                                        <small class="text-muted d-block">#274261</small>
-                                        <small class="text-muted d-block mt-1"><b>Estado:</b> Pendiente</small>
-                                        <small class="text-muted d-block"><b>Vence:</b> 10/5/2026 12:30</small>
-                                        <small class="text-muted d-block mt-1"><b>Descripción:</b> La lampara del
-                                            pasillo se
-                                            fundió...</small>
-                                    </div>
-                                    <span class="badge bg-success-light text-success rounded-pill px-3 py-2">Baja</span>
-                                </div>
-                            </div>
+                        <div class="col-lg-4 col-12">
+                            <button type="button" class="resumen-tickets dashboard-resumen-personal dashboard-kpi-boton" data-opcion="hoy">
+                                <span class="opcion-texto">Vencen hoy</span><strong class="opcion-numero" id="num-hoy">0</strong>
+                            </button>
                         </div>
+                    </div>
+                </section>
+            </div>
+
+            <div class="row px-3 pb-3 mt-1 g-4 align-items-stretch dashboard-admin-grid">
+                <div class="col-xl-5 col-12">
+
+                    <section class="dashboard-card-admin dashboard-grafica-admin bg-white rounded-5 p-4 shadow mt-4">
+                        <h4 class="bold">Tiempo de resolución</h4>
+                        <div class="grafico"><canvas id="graficoResolucion"></canvas></div>
                     </section>
                 </div>
+
+                <section class="col-xl-7 col-12 d-flex px-xl-4 dashboard-evaluaciones">
+                    <div class="w-100 d-flex flex-column dashboard-panel">
+                        <div class="mi-resumen dashboard-resumen-tecnico dashboard-panel-asignaciones flex-column flex-grow-1 w-100 shadow">
+                            <div class="contenedor-tickets-scroll dashboard-lista-asignaciones p-3">
+                                <div class="dashboard-cargando"><i class="bi bi-arrow-repeat"></i><span>Cargando tus tickets...</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
             </div>
         </div>
     </main>
+
+    <div class="notificaciones-overlay" id="notificacionesOverlay">
+        <aside class="panel-notificaciones" id="panelNotificaciones" aria-label="Notificaciones">
+            <div class="p-4"><h6 class="titulo-notificaciones mb-0">Notificaciones</h6></div>
+            <div class="notificaciones-body px-4 pb-4">
+                <div class="notificaciones-vacio">
+                    <i class="bi bi-bell-slash" aria-hidden="true"></i>
+                    <h6>Sin notificaciones nuevas</h6>
+                    <p>Las asignaciones y cambios importantes aparecerán aquí.</p>
+                </div>
+            </div>
+        </aside>
+    </div>
 
 
     <!--Bootstrap-->
@@ -263,8 +105,8 @@
 <!--Libreria para los graficos-->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <!--Links del script-->
-<script src="js/components/menu.js"></script>
-<script type="module" src="js/controllers/dashboardTecnico.js"></script>
+<script src="js/components/menu.js?v=15"></script>
+<script type="module" src="js/controllers/dashboardTecnico.js?v=7"></script>
 
 </body>
 

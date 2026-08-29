@@ -7,21 +7,88 @@
 .titulo-barra-superior { font-size: 1.15rem; letter-spacing: -0.2px; color: var(--bg-oscuro); }
 .text-dark-blue { color: var(--bg-oscuro) !important; }
 
-/* Avatar de perfil */
-.perfil-avatar {
-    width: 40px; height: 40px;
-    border: 2px solid var(--bg-oscuro);
-    cursor: pointer;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-.perfil-avatar:hover {
-    transform: scale(1.05);
-    box-shadow: 0 6px 12px rgba(18, 31, 72, 0.15) !important;
-}
-.perfil-avatar img { width: 100%; height: 100%; object-fit: cover; }
-
 /* Controles Superiores */
-.contenedor-filtro-fecha { display: inline-block; }
+.contenedor-filtro-fecha {
+    display: inline-flex;
+    padding: 7px;
+    border: 1px solid #dce5ef;
+    border-radius: 18px;
+    background: transparent;
+}
+
+.campo-fecha-estadisticas {
+    min-height: 42px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 12px;
+    border: 1px solid #dce5ef;
+    border-radius: 12px;
+    background: transparent;
+}
+
+.campo-fecha-estadisticas input {
+    min-width: 132px;
+    padding-inline: 3px !important;
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+.btn-filtrar-fechas,
+.btn-limpiar-fechas {
+    min-height: 42px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    padding: 0 16px;
+    border-radius: 12px !important;
+    box-shadow: none !important;
+}
+
+.btn-filtrar-fechas {
+    border-color: #4393f6 !important;
+    background: #4393f6 !important;
+}
+
+.btn-filtrar-fechas:hover { background: #2b7ee2 !important; }
+
+.btn-limpiar-fechas {
+    border: 1px solid #cbd5e1 !important;
+    background: transparent !important;
+    color: #64748b !important;
+}
+
+.btn-limpiar-fechas:hover {
+    border-color: #9dbde0 !important;
+    background: #edf6ff !important;
+    color: #2466a8 !important;
+}
+
+.btn-limpiar-fechas[hidden] { display: none !important; }
+
+html.tema-oscuro .contenedor-filtro-fecha,
+html.tema-oscuro .campo-fecha-estadisticas {
+    border-color: #30405a;
+    background: transparent !important;
+}
+
+html.tema-oscuro .campo-fecha-estadisticas input {
+    color: #dce8f8 !important;
+    color-scheme: dark;
+}
+
+html.tema-oscuro .btn-limpiar-fechas {
+    border-color: #40516d !important;
+    background: transparent !important;
+    color: #aebbd0 !important;
+}
+
+@media (max-width: 767.98px) {
+    .contenedor-filtro-fecha { width: 100%; }
+    .campo-fecha-estadisticas { flex: 1 1 100%; }
+    .campo-fecha-estadisticas input { width: 100%; }
+}
 .filtro-fecha-input {
     font-size: 0.85rem; color: #64748b; font-weight: 600;
     border: 1px solid #cbd5e1; background-color: #ffffff;

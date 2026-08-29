@@ -1,10 +1,10 @@
 import { getProyecto, actualizarProyecto, eliminarProyecto } from "../services/proyectosService.js";
-import { getFases, getFasesPorProyecto, getNombreFase, crearFase, actualizarFase, eliminarFase } from "../services/faseService.js";
+import { getFases, getFasesPorProyecto, getNombreFase, crearFase, actualizarFase, eliminarFase } from "../services/faseService.js?v=2";
 import { getDetallesFase, getDetallesFasePorFase, crearDetalleFase, actualizarDetalleFase, eliminarDetalleFase } from "../services/detalleFaseService.js";
 import { mostrarError, mostrarExitoSimple, mostrarConfirmacion } from "../components/sweetAlerts.js";
 import { getUsuarios } from "../services/usuariosService.js";
 import { validarFormularioProyecto } from "../validators/proyectosValidator.js";
-import { validarFormularioFase } from "../validators/fasesValidators.js";
+import { validarFormularioFase } from "../validators/fasesValidators.js?v=2";
 import { validarFormularioDetalleFase } from "../validators/detalleFaseValidator.js";
 
 
@@ -368,10 +368,10 @@ async function inicializarVistaProyecto(id) {
         };
 
         try {
-            //Se reemplaza el "proyecto" con la version que devuelve la API
-            proyecto = await actualizarProyecto(proyecto.idProyecto, proyectoActualizado);
+            await actualizarProyecto(proyecto.idProyecto, proyectoActualizado);
+            // El GET posterior evita depender de una respuesta PUT parcial.
+            await refrescarProyecto();
             mostrarExitoSimple("¡Listo!", "El proyecto se actualizó correctamente");
-            pintarDatosProyecto();
             activarModoEdicionProyecto(false);
         } catch (error) {
             mostrarError(error.message);
@@ -386,6 +386,22 @@ async function inicializarVistaProyecto(id) {
             pintarDatosProyecto();
         } catch (error) {
             console.error("No se pudo refrescar el total del proyecto:", error);
+        }
+    }
+
+    async function recargarFasesProyecto(idPreferido = faseSeleccionadaId) {
+        const fasesApi = await getFasesPorProyecto(proyecto.idProyecto);
+        fases = fasesApi.map((fase) => ({ id: fase.idFase, detalles: [], ...fase }));
+
+        const seleccionExiste = fases.some((fase) => Number(fase.id) === Number(idPreferido));
+        faseSeleccionadaId = seleccionExiste ? Number(idPreferido) : null;
+        renderSelectFases();
+        renderTarjetaFase();
+
+        if (faseSeleccionadaId) {
+            await cargarDetallesDeFase(faseSeleccionadaId);
+        } else {
+            renderListaDetalles();
         }
     }
 
@@ -450,11 +466,7 @@ async function inicializarVistaProyecto(id) {
 
         try {
             await eliminarFase(fase.id);
-            fases = fases.filter((f) => f.id !== faseSeleccionadaId);
-            faseSeleccionadaId = null;
-            renderSelectFases();
-            renderTarjetaFase();
-            renderListaDetalles();
+            await recargarFasesProyecto(null);
             await refrescarProyecto();
             mostrarExitoSimple("¡Listo!", "La fase se eliminó correctamente");
         } catch (error) {
@@ -511,25 +523,16 @@ async function inicializarVistaProyecto(id) {
 
         try {
             if (faseEnEdicionId) {
-                const faseActualizada = await actualizarFase(faseEnEdicionId, datosFase);
-                const fase = obtenerFasePorId(faseEnEdicionId);
-                Object.assign(fase, faseActualizada, {
-                    id: faseActualizada.idFase ?? faseEnEdicionId,
-                    fechaInicioReal: faseActualizada.fechaInicioReal ?? datosFase.fechaInicioReal,
-                    fechaFinalReal: faseActualizada.fechaFinalReal ?? datosFase.fechaFinalReal
-                });
+                const idFaseGuardada = faseEnEdicionId;
+                await actualizarFase(idFaseGuardada, datosFase);
+                await recargarFasesProyecto(idFaseGuardada);
                 mostrarExitoSimple("¡Listo!", "La fase se actualizó correctamente");
             } else {
                 const nuevaFaseApi = await crearFase(datosFase);
-                const nuevaFase = { id: nuevaFaseApi.idFase, detalles: [], ...nuevaFaseApi };
-                fases.push(nuevaFase);
-                faseSeleccionadaId = nuevaFase.id;
+                const idNuevaFase = nuevaFaseApi.idFase ?? nuevaFaseApi.id;
+                await recargarFasesProyecto(idNuevaFase);
                 mostrarExitoSimple("¡Listo!", "La fase se creó correctamente");
             }
-
-            renderSelectFases();
-            renderTarjetaFase();
-            renderListaDetalles();
             await refrescarProyecto();
             formAgregarFase.reset();
             faseEnEdicionId = null;
@@ -573,21 +576,12 @@ async function inicializarVistaProyecto(id) {
         }
 
         try {
-            const nuevoDetalleApi = await crearDetalleFase({
+            await crearDetalleFase({
                 descripcionDetalle: textoDetalle,
                 completado: false,
                 fase: fase.id
             });
-
-            const detalleNormalizado = normalizarDetalle({
-                ...nuevoDetalleApi,
-                descripcionDetalle: nuevoDetalleApi.descripcionDetalle ?? textoDetalle,
-                texto: nuevoDetalleApi.texto ?? textoDetalle,
-                completado: Boolean(nuevoDetalleApi.completado ?? false)
-            });
-
-            fase.detalles.push(detalleNormalizado);
-            renderListaDetalles();
+            await cargarDetallesDeFase(fase.id);
             mostrarExitoSimple("¡Listo!", "El detalle se agregó correctamente");
             formAgregarDetalle.reset();
             const instancia = bootstrap.Modal.getInstance(modalDetalleFase);
@@ -626,8 +620,7 @@ async function inicializarVistaProyecto(id) {
 
             try {
                 await eliminarDetalleFase(detalle.id);
-                fase.detalles = fase.detalles.filter((d) => d.id !== idDetalle);
-                renderListaDetalles();
+                await cargarDetallesDeFase(fase.id);
                 mostrarExitoSimple("¡Listo!", "El detalle se eliminó correctamente");
             } catch (error) {
                 mostrarError(error.message);
@@ -656,22 +649,21 @@ async function inicializarVistaProyecto(id) {
 
             //Se intenta actualizar el detalle en la API y si hay un error, se revierte el cambio en el checkbox y se muestra un mensaje de error.
             try {
-                const respuestaApi = await actualizarDetalleFase(detalle.id, detalleActualizado);
-                detalle.completado = respuestaApi.completado;
+                await actualizarDetalleFase(detalle.id, detalleActualizado);
+                await cargarDetallesDeFase(fase.id);
             }
             catch (error) {
                 e.target.checked = !nuevoEstado;
+                renderListaDetalles();
                 mostrarError(error.message);
             }
-            renderListaDetalles();
         }
     });
 
     //Se cargan las fases del proyecto desde la API
     //en caso de que existan; si no, se deja la lista vacía y se puede crear una nueva fase.
     try {
-        const fasesApi = await (getFasesPorProyecto(proyecto.idProyecto));
-        fases = fasesApi.map((f) => ({ id: f.idFase, detalles: [], ...f }));
+        await recargarFasesProyecto(null);
 
         //El contador local sigue usándose solo para fases que se creen sin recargar la página
         //(mientras el POST/PUT de Fases no esté conectado); evita que choque con ids reales.
@@ -680,9 +672,6 @@ async function inicializarVistaProyecto(id) {
     } catch (error) {
         mostrarError("No se pudieron cargar las fases de este proyecto.");
     }
-
-    renderSelectFases();
-    seleccionarFase(null);
 
     pintarDatosProyecto();
 }

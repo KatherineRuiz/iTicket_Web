@@ -11,7 +11,7 @@
   <link rel="stylesheet" href="css/notificaciones.css">
   <link rel="stylesheet" href="css/common.css" />
   <link rel="shortcut icon" href="/img/logo.png" type="image/x-icon" />
-  <script src="js/components/menu-cache.js"></script>
+  <script src="js/components/menu-cache.js?v=17"></script>
 </head>
 
 <body>
@@ -181,20 +181,18 @@
 
   <div class="modal fade" tabindex="-1" id="evaluacionModal">
     <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content rounded-5 overflow-hidden">
-        <div class="modal-header border-0 p-3 pb-0">
-          <div
-            class="titulo-seccion bg-primary text-white w-100 rounded-pill p-3 d-flex align-items-center justify-content-between position-relative">
-            <h5 class="fw-bold mb-0 flex-grow-1 text-center text-white">¡Evalua nuestro servicio!</h5>
-            <button type="button" class="btn-close btn-close-white position-absolute end-0 me-3" data-bs-dismiss="modal"
-              aria-label="Cerrar">
-            </button>
-          </div>
+      <div class="modal-content modal-evaluacion-pendiente overflow-hidden">
+        <div class="modal-header modal-iticket-encabezado border-0 position-relative">
+          <h5 class="fw-bold mb-0 w-100 text-center text-white">¡Evalúa nuestro servicio!</h5>
+          <button type="button" class="btn-close btn-close-white position-absolute end-0 me-3"
+            data-bs-dismiss="modal" aria-label="Cerrar"></button>
         </div>
-        <div class="modal-body p-4 pt-2">
-          <p class="fw-bold text-navy mb-2">Tu Ticket</p>
+        <div class="modal-body cuerpo-evaluacion-pendiente p-4">
+          <p class="titulo-ticket-evaluacion fw-bold mb-2">
+            <i class="bi bi-ticket-perforated me-2" aria-hidden="true"></i>Tu ticket
+          </p>
           <div
-            class="elemento-ticket p-3 mb-0 rounded-3 shadow-sm bg-white d-flex justify-content-between align-items-start" id="divTicket">
+            class="ticket-evaluacion-resumen p-3 mb-0 d-flex justify-content-between align-items-start gap-3" id="divTicket">
             <div>
               <h6 class="fw-bold mb-1 texto-limitado-1"><i class="bi bi-ticket-perforated me-2" id="iconoTicket"></i><span id="evalAsunto"></span>
               </h6>
@@ -212,8 +210,8 @@
           <p class="text-center text-muted small mt-3 mb-0" id="evalProgreso"></p>
 
           <form id="formEvaluacion">
-            <div class="d-flex align-items-center justify-content-between mb-4 mt-2 px-1">
-              <span class="fw-bold fs-5 text-dark">Calificación:</span>
+            <div class="bloque-calificacion d-flex align-items-center justify-content-between mb-4 mt-3 p-3">
+              <span class="fw-bold">Calificación</span>
               <div class="estrellas-rating d-flex flex-row-reverse">
                 <input type="radio" id="star5" name="calificacion" value="5" />
                 <label for="star5" class="bi bi-star-fill"></label>
@@ -232,8 +230,8 @@
               </div>
             </div>
             <div class="mb-4 px-1">
-              <label for="comentario-evaluacion" class="form-label fw-bold fs-5 text-dark mb-1">
-                Dejanos un comentario: <span class="text-danger">*</span>
+              <label for="comentario-evaluacion" class="form-label fw-bold mb-2">
+                Déjanos un comentario <span class="text-danger">*</span>
               </label>
               <input type="text" id="comentario-evaluacion"
                 class="form-control input-comentario bg-transparent px-0 ps-3" placeholder="Escribe aquí..." required />
@@ -241,7 +239,7 @@
 
             <div class="text-center mt-4">
               <button type="submit" id="btn-enviar-evaluacion"
-                class="btn btn-primary rounded-pill px-5 py-2.5 fw-bold shadow d-inline-flex align-items-center gap-2">
+                class="btn btn-evaluacion-enviar rounded-pill px-5 py-2 fw-bold d-inline-flex align-items-center gap-2">
                 <i class="bi bi-send-fill"></i> Enviar
               </button>
             </div>
@@ -362,10 +360,10 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <!-- Mi JS personalizado -->
-    <script src="js/components/menu.js"></script>
+  <script src="js/components/menu.js?v=15"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="js/controllers/notificaciones.js"></script>
-    <script type="module" src="js/controllers/misTickets.js"></script>
+    <script type="module" src="js/controllers/misTickets.js?v=2"></script>
 
 </body>
 

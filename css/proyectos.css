@@ -4,6 +4,22 @@
     height: 300px;
 }
 
+.accion-crear-proyecto {
+    width: 100%;
+}
+
+.btn-crear-proyecto {
+    min-height: 58px;
+    padding: 14px 22px !important;
+    border-radius: 16px !important;
+    font-size: 1.05rem;
+    font-weight: 700;
+}
+
+.btn-crear-proyecto .bi {
+    font-size: 1.2rem;
+}
+
 .contenedor-proyectos {
     max-height: 94vh;
     overflow-y: auto;

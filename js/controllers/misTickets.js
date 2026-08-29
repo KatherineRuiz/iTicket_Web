@@ -4,6 +4,7 @@ import { crearEvaluacion } from "../services/evaluacionesService.js";
 import { formatearFecha12H } from "../utils/formateadores.js";
 import { obtenerIdUsuario } from "../utils/sesion.js";
 
+// Contadores superiores agrupados por estado.
 const numNuevos = document.getElementById("numNuevos");
 const numResueltos = document.getElementById("numResueltos");
 const numAsignados = document.getElementById("numAsignados");
@@ -12,6 +13,7 @@ const numEnEspera = document.getElementById("numEnEspera");
 const numCerrados = document.getElementById("numCerrados");
 const numVencidos = document.getElementById("numVencidos");
 
+// Elementos de la lista paginada y sus filtros.
 const divTickets = document.getElementById("divTickets");
 const paginacionTickets = document.getElementById("paginacionTickets");
 const infoTickets = document.getElementById("infoTickets");
@@ -21,6 +23,7 @@ const sltBuscarPrioridad = document.getElementById("sltBuscarPrioridad");
 const sltBuscarEstado = document.getElementById("sltBuscarEstado");
 const dtBuscarFecha = document.getElementById("dtBuscarFecha");
 
+// Elementos del modal que permite evaluar uno o varios tickets resueltos.
 const btnAbrirEvaluacion = document.getElementById("btnAbrirEvaluacion");
 const evaluacionModalEl = document.getElementById("evaluacionModal");
 const evaluacionModal = new bootstrap.Modal(evaluacionModalEl);
@@ -37,6 +40,7 @@ const evalDescripcion = document.getElementById("evalDescripcion");
 const evalPrioridad = document.getElementById("evalPrioridad");
 const evalProgreso = document.getElementById("evalProgreso");
 
+// Estado de paginación, filtros y recorrido de evaluaciones pendientes.
 let paginaActualTickets = 1;
 let idTicketSeleccionado = null;
 let filtrosActuales = {};
@@ -100,6 +104,8 @@ function renderizarTickets(tickets) {
     tickets.forEach((ticket) => {
 
         const prio = ticket.prioridad || '';
+        const iconoPrioridad = window.obtenerClaseIconoTicket?.(prio)
+            || 'icono-ticket-prioridad-sin-asignar';
         const fechaVencimiento = ticket.fechaVencimiento || '';
         let existe = "noExiste";
         if (fechaVencimiento != '') {
@@ -110,7 +116,7 @@ function renderizarTickets(tickets) {
             <article data-id="${ticket.idTicket}" class="lista-tickets position-relative shadow-sm bg-white borde-lateral-${prio} rounded-3 p-3 mb-3 d-flex justify-content-between align-items-start">
                 <div class="elemento-ticket-asignado pe-1">
                   <h6 class="fw-bold mb-1 fs-5 d-flex align-items-start texto-limitado-1">
-                    <i class="bi bi-ticket-perforated bi-${prio} me-2"></i>${ticket.asunto}</h6>
+                    <i class="bi bi-ticket-perforated ${iconoPrioridad} me-2"></i>${ticket.asunto}</h6>
                   <small class="text-muted d-block mb-2">${ticket.codigo}</small>
                   <small class="text-muted d-block"><b>Creador: </b>${ticket.correoCreador}</small>
                   <small class="text-muted d-block"><b>Estado: </b>${ticket.estado}</small>
@@ -185,6 +191,7 @@ dtBuscarFecha.addEventListener("change", () => {
 });
 
 btnAbrirEvaluacion.addEventListener("click", async () => {
+    // La cola solo se consulta cuando está vacía; después se recorre en memoria.
     if (colaEvaluaciones.length === 0) {
         try {
             const resultado = await getTicketsPendientesEvaluacion(idUsuario);
@@ -218,7 +225,14 @@ function pintarTicketEvaluacion() {
     evalPrioridad.textContent = ticket.prioridad;
     evalProgreso.textContent = `Evaluación ${indiceActual + 1} de ${colaEvaluaciones.length}`;
 
-    iconoTicket.classList.add(`bi-${ticket.prioridad}`);
+    // Se retiran colores anteriores porque el mismo modal puede mostrar varios
+    // tickets consecutivos con prioridades diferentes.
+    Array.from(iconoTicket.classList)
+        .filter((clase) => clase.startsWith('icono-ticket-prioridad-'))
+        .forEach((clase) => iconoTicket.classList.remove(clase));
+    iconoTicket.classList.add(
+        window.obtenerClaseIconoTicket?.(ticket.prioridad) || 'icono-ticket-prioridad-sin-asignar'
+    );
     itemTicket.classList.add(`borde-lateral-${ticket.prioridad}`);
     evalPrioridad.classList.add(`prio-${ticket.prioridad}`);
     evalPrioridad.classList.add("sin-absolute"); 

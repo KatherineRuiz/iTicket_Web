@@ -3,15 +3,18 @@ import { getTicketsAsignados } from "../services/ticketsService.js";
 import { formatearFecha12H } from "../utils/formateadores.js";
 import { obtenerIdUsuario } from "../utils/sesion.js";
 
+// Referencias de la lista, su paginación y el texto que indica cuántos registros hay.
 const divTickets = document.getElementById("divTickets");
 const paginacionTickets = document.getElementById("paginacionTickets"); 
 const infoTickets = document.getElementById("infoTickets");
 
+// Controles que forman los filtros enviados al servicio de tickets.
 const txtBuscar = document.getElementById("txtBuscar");
 const sltBuscarPrioridad = document.getElementById("sltBuscarPrioridad");
 const sltBuscarEstado = document.getElementById("sltBuscarEstado");
 const dtBuscarFecha = document.getElementById("dtBuscarFecha");
 
+// Estado temporal de la pantalla. Se conserva entre recargas y cambios de filtro.
 let paginaActualTickets = 1;
 let idTicketSeleccionado = null;
 let filtrosActuales = {};
@@ -40,11 +43,13 @@ function renderizarTickets(tickets){
     divTickets.innerHTML = "";
 
     tickets.forEach((ticket) =>{
+        const iconoPrioridad = window.obtenerClaseIconoTicket?.(ticket.prioridad)
+            || 'icono-ticket-prioridad-sin-asignar';
         divTickets.innerHTML += `
             <article data-id="${ticket.idTicket}" class="lista-tickets-asignados position-relative shadow-sm bg-white borde-lateral-${ticket.prioridad} rounded-3 p-3 mb-3 d-flex justify-content-between align-items-start">
                 <div class="elemento-ticket-asignado pe-1">
                   <h6 class="fw-bold mb-1 fs-5 d-flex align-items-start texto-limitado-1">
-                    <i class="bi bi-ticket-perforated bi-${ticket.prioridad} me-2"></i>${ticket.asunto}</h6>
+                    <i class="bi bi-ticket-perforated ${iconoPrioridad} me-2"></i>${ticket.asunto}</h6>
                   <small class="text-muted d-block mb-2">${ticket.codigo}</small>
                   <small class="text-muted d-block"><b>Creador:</b>${ticket.correoCreador}</small>
                   <small class="text-muted d-block"><b>Estado:</b>${ticket.estado}</small>

@@ -2,6 +2,17 @@
     --bg-oscuro-bitacoras: #121F48;
 }
 
+.bitacoras-pagina {
+    padding-inline: 24px !important;
+}
+
+.contenido-tabs-bitacoras {
+    border: 1px solid #e6eaf0;
+    border-radius: 0 20px 20px 20px;
+    background: rgba(255, 255, 255, 0.38);
+    padding: 0 20px 20px;
+}
+
 .truncate-celda {
     max-width: 220px;
 }
@@ -39,4 +50,9 @@
 
 .contenido-tabs-bitacoras .card-tabla {
     border-top-left-radius: 0;
+}
+
+@media (max-width: 767.98px) {
+    .bitacoras-pagina { padding-inline: 12px !important; }
+    .contenido-tabs-bitacoras { padding-inline: 12px; border-radius: 0 16px 16px 16px; }
 }

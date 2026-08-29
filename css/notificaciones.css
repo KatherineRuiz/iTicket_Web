@@ -5,8 +5,9 @@
     left: 0;
     width: 100vw;
     height: 100vh;
-    background-color: rgba(10, 18, 38, 0.45); 
-    backdrop-filter: blur(3px); /* Esto hace que se vea difuminado todo lo que no es la parte de notificación */
+    background-color: rgba(10, 18, 38, 0.45);
+    backdrop-filter: blur(3px);
+    /* Esto hace que se vea difuminado todo lo que no es la parte de notificación */
     z-index: 1500;
     opacity: 0;
     pointer-events: none;
@@ -22,14 +23,15 @@
 .panel-notificaciones {
     position: fixed;
     top: 0;
-    right: -525px; /* Para que al principio este completamente escondido */
+    right: -525px;
+    /* Para que al principio este completamente escondido */
     width: 525px;
     height: 100vh;
     background-color: #f3f8fe;
     box-shadow: -10px 0 35px rgba(0, 0, 0, 0.12);
-    z-index: 1510; 
+    z-index: 1510;
     overflow-y: auto;
-    
+
     /* Esta es la animación de cuando se abre el panel */
     transition: right 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
@@ -52,6 +54,85 @@
     width: 100%;
 }
 
+.notificaciones-vacio {
+    min-height: 58vh;
+    padding: 34px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #68778b;
+    text-align: center;
+}
+
+.notificaciones-vacio i {
+    width: 64px;
+    height: 64px;
+    margin-bottom: 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #d8e5f1;
+    border-radius: 50%;
+    background: #eaf3fb;
+    color: #184e8c;
+    font-size: 1.45rem;
+}
+
+.notificaciones-vacio h6 {
+    margin-bottom: 6px;
+    color: #1f2d43;
+    font-weight: 750;
+}
+
+.notificaciones-vacio p {
+    max-width: 270px;
+    margin: 0;
+    font-size: 0.82rem;
+    line-height: 1.5;
+}
+
+html.tema-oscuro .panel-notificaciones {
+    background: #121b2b;
+    box-shadow: none;
+}
+
+html.tema-oscuro .titulo-notificaciones,
+html.tema-oscuro .notificaciones-vacio h6 {
+    color: #edf3fb;
+}
+
+html.tema-oscuro .notificaciones-vacio {
+    color: #9dacbf;
+}
+
+html.tema-oscuro .notificaciones-vacio i {
+    border-color: #38506d;
+    background: #21324a;
+    color: #9fcaff;
+}
+
+html.tema-oscuro .notificacion-item {
+    border-color: #3a4a61;
+    background: #182235;
+    box-shadow: none;
+}
+
+html.tema-oscuro .notificacion-titulo,
+html.tema-oscuro .notificacion-titulo-visto {
+    color: #e4ebf5;
+}
+
+html.tema-oscuro .notificacion-texto,
+html.tema-oscuro .notificacion-tiempo {
+    color: #9dacbf;
+}
+
+html.tema-oscuro .panel-notificaciones.activo .notificacion-item:hover {
+    background: #1d2a3e;
+    box-shadow: none;
+}
+
 /* Tarjetas de notificación */
 .notificacion-item {
     background: #ffffff;
@@ -62,8 +143,8 @@
     align-items: center;
     box-shadow: 0 6px 18px rgba(18, 31, 72, 0.07);
     margin-bottom: 12px;
-    border-left: 4px solid #cbd5e0; 
-    
+    border-left: 4px solid #cbd5e0;
+
     /* Animación de salida de las notificaciones */
     opacity: 0;
     transform: translateY(35px);
@@ -71,7 +152,7 @@
 }
 
 .notificacion-item.no-leida {
-    border-left-color: #1e2d5a; 
+    border-left-color: #1e2d5a;
 }
 
 /* Punto indicador de que no se ha leido aún */
@@ -90,7 +171,8 @@
     height: 45px;
     border-radius: 50%;
     background-color: #e2e8f0;
-    color: #a0aec0;
+    /* Contraste suficiente sin perder el aspecto secundario del avatar. */
+    color: #5f6f84;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -101,7 +183,8 @@
 
 .contenido-notificacion {
     flex-grow: 1;
-    min-width: 0; /* Evita que textos largos rompan el flex */
+    min-width: 0;
+    /* Evita que textos largos rompan el flex */
 }
 
 .notificacion-titulo {
@@ -110,7 +193,7 @@
     color: #1a202c;
 }
 
-.notificacion-titulo-visto{
+.notificacion-titulo-visto {
     font-weight: 700;
     font-size: 14px;
     color: #4b5260;
@@ -118,7 +201,7 @@
 
 .notificacion-tiempo {
     font-size: 11px;
-    color: #a0aec0;
+    color: #66758a;
 }
 
 .notificacion-texto {
@@ -127,12 +210,14 @@
     margin: 4px 0 0 0;
     white-space: nowrap;
     overflow: hidden;
-    text-overflow: ellipsis; /* Pone puntos suspensivos si es demasiado largo */
+    text-overflow: ellipsis;
+    /* Pone puntos suspensivos si es demasiado largo */
 }
 
 .panel-notificaciones.activo .notificacion-item {
     opacity: 1;
-    transform: translateY(0); /* Sube suavemente a su posición original */
+    transform: translateY(0);
+    /* Sube suavemente a su posición original */
     transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease, background-color 0.3s ease;
 }
 
@@ -144,17 +229,33 @@
 }
 
 /* Escalonamiento controlado: Retardos sutiles acumulativos para cada notificación */
-.panel-notificaciones.activo .notificacion-item:nth-child(1) { transition-delay: 0.25s; }
-.panel-notificaciones.activo .notificacion-item:nth-child(2) { transition-delay: 0.33s; }
-.panel-notificaciones.activo .notificacion-item:nth-child(3) { transition-delay: 0.41s; }
-.panel-notificaciones.activo .notificacion-item:nth-child(4) { transition-delay: 0.49s; }
-.panel-notificaciones.activo .notificacion-item:nth-child(5) { transition-delay: 0.57s; }
+.panel-notificaciones.activo .notificacion-item:nth-child(1) {
+    transition-delay: 0.25s;
+}
+
+.panel-notificaciones.activo .notificacion-item:nth-child(2) {
+    transition-delay: 0.33s;
+}
+
+.panel-notificaciones.activo .notificacion-item:nth-child(3) {
+    transition-delay: 0.41s;
+}
+
+.panel-notificaciones.activo .notificacion-item:nth-child(4) {
+    transition-delay: 0.49s;
+}
+
+.panel-notificaciones.activo .notificacion-item:nth-child(5) {
+    transition-delay: 0.57s;
+}
 
 /* --- Adaptación Responsiva para Celulares --- */
 @media (max-width: 576px) {
     .panel-notificaciones {
-        width: 100%;            /* Ocupa todo el ancho en móviles */
-        right: -100%;           /* Oculta completamente hacia la derecha */
+        width: 100%;
+        /* Ocupa todo el ancho en móviles */
+        right: -100%;
+        /* Oculta completamente hacia la derecha */
     }
 
     .notificaciones-body {

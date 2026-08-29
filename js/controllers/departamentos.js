@@ -1,6 +1,5 @@
 import { getDepartamentos, crearDepartamento, actualizarDepartamento, eliminarDepartamento } from '../services/departamentosService.js';
 import { getAreas } from '../services/areasService.js';
-import { llenarSelectDepartamentos } from './usuarios.js';
 import { validarFormularioDepartamento } from '../validators/departamentosValidator.js';
 import { mostrarError } from '../components/sweetAlerts.js';
  
@@ -13,6 +12,15 @@ const tituloFormDepartamento = document.getElementById('tituloFormDepartamento')
 const btnTextoDepartamento = document.getElementById('btnTextoDepartamento');
 const btnCancelarDepartamento = document.getElementById('btnCancelarDepartamento');
 const tablaDepartamentosBody = document.getElementById('tablaDepartamentosBody');
+
+window.addEventListener('iticket:recargar-tablas-usuarios', () => {
+    cargarDepartamentos();
+    llenarSelectAreas();
+});
+
+function recargarGestionUsuarios() {
+    window.dispatchEvent(new CustomEvent('iticket:recargar-tablas-usuarios'));
+}
  
 document.addEventListener('DOMContentLoaded', async () => {
     await llenarSelectAreas();
@@ -131,8 +139,7 @@ formDepartamento.addEventListener('submit', async (evento) => {
             Swal.fire('Creado', 'El departamento se creó correctamente', 'success');
         }
         limpiarFormularioDepartamento();
-        cargarDepartamentos();
-        llenarSelectDepartamentos();
+        recargarGestionUsuarios();
     } catch (error) {
         console.error(error);
         Swal.fire('Error', error.message || 'No se pudo guardar el departamento', 'error');
@@ -152,8 +159,7 @@ function confirmarEliminarDepartamento(id) {
             try {
                 await eliminarDepartamento(id);
                 Swal.fire('Eliminado', 'El departamento se eliminó correctamente', 'success');
-                cargarDepartamentos();
-                llenarSelectDepartamentos();
+                recargarGestionUsuarios();
             } catch (error) {
                 console.error(error);
                 Swal.fire('Error', error.message || 'No se pudo eliminar el departamento', 'error');

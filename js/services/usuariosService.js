@@ -7,7 +7,7 @@ export async function getUsuarioById(idUsuario) {
     return manejarRespuesta(respuesta);
 }
 
-// Este nombre lo utiliza actualmente authService.js
+// Alias conservado porque authService.js todavía importa este nombre.
 export async function getUsuarioPorId(idUsuario) {
     return getUsuarioById(idUsuario);
 }
@@ -32,6 +32,29 @@ export async function actualizarUsuario(idUsuario, usuario) {
     return manejarRespuesta(respuesta);
 }
 
+export async function actualizarFotoPerfil(idUsuario, archivo) {
+    const formulario = new FormData();
+    formulario.append("archivo", archivo);
+    const controlador = new AbortController();
+    const limiteEspera = window.setTimeout(() => controlador.abort(), 30000);
+
+    try {
+        const respuesta = await fetch(`${URL_USUARIOS}/${idUsuario}/imagen`, {
+            method: "POST",
+            body: formulario,
+            signal: controlador.signal
+        });
+        return await manejarRespuesta(respuesta);
+    } catch (error) {
+        if (error?.name === "AbortError") {
+            throw new Error("La subida tardó demasiado. Intenta nuevamente.");
+        }
+        throw error;
+    } finally {
+        window.clearTimeout(limiteEspera);
+    }
+}
+
 export async function eliminarUsuario(idUsuario) {
     const respuesta = await fetch(`${URL_USUARIOS}/${idUsuario}`, {
         method: "DELETE"
@@ -40,7 +63,7 @@ export async function eliminarUsuario(idUsuario) {
     return manejarRespuesta(respuesta);
 }
 
-//Obtener la lista completa de usuarios
+// Obtiene la lista completa que alimenta la tabla de administración.
 export async function getUsuarios() {
     const respuesta = await fetch(URL_USUARIOS);
     return manejarRespuesta(respuesta);

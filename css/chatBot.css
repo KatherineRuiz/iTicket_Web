@@ -6,9 +6,15 @@
 }
 
 main {
-    height: 100vh;
     display: flex;
     flex-direction: column;
+}
+
+body.layout-global-activo .contenido-scroll {
+    display: flex;
+    min-height: 0;
+    padding: 18px 20px 20px;
+    overflow: hidden;
 }
 
 .chat {
@@ -16,7 +22,8 @@ main {
     border-radius: 30px;
     overflow: hidden;
     flex-grow: 1;
-    height: 0;
+    height: auto;
+    min-height: 0;
 }
 
 .encabezado {
@@ -47,12 +54,36 @@ textarea:focus {
 }
 
 .btn-enviar {
-    background-color: var(--bg-oscuro);
+    background-color: #4393f6 !important;
+    box-shadow: none !important;
 }
 
 .btn-enviar:hover {
-    background-color: var(--bg-oscuro);
+    background-color: #2b7ee2 !important;
     transform: translateY(-2px);
+    box-shadow: none !important;
+}
+
+/* El área de escritura no tiene relleno propio. De esta forma el micrófono,
+   el input y el contenedor se ven mejor en ambos temas */
+.chat-input-wrapper,
+.chat-input-wrapper .input-group-text,
+.chat-input-wrapper #txtChat {
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+.chat-input-wrapper {
+    border: 1px solid rgba(20, 36, 84, 0.18);
+}
+
+html.tema-oscuro .chat-input-wrapper {
+    border-color: #2b374c;
+}
+
+html.tema-oscuro .chat-input-wrapper #txtChat,
+html.tema-oscuro .chat-input-wrapper .input-group-text {
+    background: transparent !important;
 }
 
 /*Para que el input del chat crezca junto al texto*/
@@ -95,12 +126,32 @@ textarea:focus {
 
 .perfil-bot {
     background-color: #539ECD;
+    width: 38px;
+    min-width: 38px;
+    height: 38px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    font-size: 18px;
 }
 
 .perfil-usuario {
     width: 35px;
     height: 35px;
     border-radius: 50px;
+    flex-shrink: 0;
+    object-fit: cover;
+}
+
+.perfil-usuario-inicial {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #142454;
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 700;
 }
 
 .mensaje {
@@ -171,4 +222,38 @@ textarea:focus {
     flex-shrink: 0 !important;
     min-width: 2rem;
     min-height: 2rem;
+}
+
+.puntos-escritura {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 12px 14px;
+    border-radius: 14px;
+    background: #ffffff;
+}
+
+.puntos-escritura i {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #7c8da8;
+    animation: pulsoEscritura 900ms ease-in-out infinite alternate;
+}
+.puntos-escritura i:nth-child(2) { animation-delay: 150ms; }
+.puntos-escritura i:nth-child(3) { animation-delay: 300ms; }
+
+@keyframes pulsoEscritura {
+    to { opacity: 0.35; transform: translateY(-3px); }
+}
+
+@media (max-width: 767.98px) {
+    body.layout-global-activo .contenido-scroll { padding: 10px; }
+    .chat { border-radius: 20px; }
+    .encabezado { border-radius: 20px 20px 0 0; }
+    .mensaje { max-width: 88%; }
+    .chat > .px-md-5 { width: 100% !important; padding-inline: 10px !important; }
+    .chat-input-wrapper { border-radius: 18px !important; }
+    #btnEnviar { font-size: 0; width: 42px; height: 42px; padding: 0 !important; justify-content: center; }
+    #btnEnviar i { font-size: 15px; }
 }

@@ -6,8 +6,9 @@ import {
     obtenerTickets,
     obtenerMetricasDashboard,
     obtenerResumenMensual,
-    obtenerResolucionPorDia
-} from '../services/dashboardAdminService.js';
+    obtenerResolucionPorDia,
+    obtenerTopTecnicosPorCalificacion
+} from '../services/dashboardAdminService.js?v=3';
 
 // ============================================================
 // VARIABLES GLOBALES
@@ -47,24 +48,32 @@ if (btnCrear) {
     });
 }
 
-Promise.all([
-    new Promise(resolve => window.addEventListener('load', resolve)),
-    document.fonts.ready
-]).then(() => {
-    cargarDashboard();
-});
+const paginaLista = document.readyState === 'complete'
+    ? Promise.resolve()
+    : new Promise(resolve => window.addEventListener('load', resolve, { once: true }));
+
+Promise.all([paginaLista, document.fonts?.ready || Promise.resolve()]).then(cargarDashboard);
 
 // ============================================================
 // CARGA PRINCIPAL (en paralelo)
 // ============================================================
 async function cargarDashboard() {
-    try {
-        const [metricas, tickets, resumenMensual, resolucionDia] = await Promise.all([
-            obtenerMetricasDashboard(),
-            obtenerTickets(),
-            obtenerResumenMensual(),
-            obtenerResolucionPorDia() // si no existe, fallará pero no interrumpe
-        ]);
+    const [ticketsResult, resumenResult, resolucionResult, metricasResult] = await Promise.allSettled([
+        obtenerTickets(),
+        obtenerResumenMensual(),
+        obtenerResolucionPorDia(),
+        obtenerMetricasDashboard()
+    ]);
+
+    const tickets = ticketsResult.status === 'fulfilled' ? ticketsResult.value : [];
+    const resumenMensual = resumenResult.status === 'fulfilled' ? resumenResult.value : null;
+    const resolucionDia = resolucionResult.status === 'fulfilled' ? resolucionResult.value : [];
+    const metricas = metricasResult.status === 'fulfilled' ? metricasResult.value : null;
+
+    if (ticketsResult.status === 'rejected') console.error('[Dashboard] Tickets:', ticketsResult.reason);
+    if (resumenResult.status === 'rejected') console.error('[Dashboard] Resumen mensual:', resumenResult.reason);
+    if (resolucionResult.status === 'rejected') console.error('[Dashboard] Resolución diaria:', resolucionResult.reason);
+    if (metricasResult.status === 'rejected') console.error('[Dashboard] Calificaciones por técnico:', metricasResult.reason);
 
         // 1. Contadores de abiertos/cerrados desde el backend
         if (resumenMensual) {
@@ -78,10 +87,9 @@ async function cargarDashboard() {
             poblarPanelEvaluaciones(tickets);
         }
 
-        // 3. Mejores técnicos desde métricas
-        if (metricas && metricas.satisfaccionPorTecnico) {
-            poblarMejoresTecnicos(metricas.satisfaccionPorTecnico);
-        }
+        // 3. Técnicos ordenados por el promedio real de sus evaluaciones.
+        const calificaciones = metricas?.satisfaccionPorTecnico || [];
+        poblarMejoresTecnicos(obtenerTopTecnicosPorCalificacion(calificaciones));
 
         // 4. Gráfico de resolución por día (si el endpoint existe)
         if (resolucionDia) {
@@ -95,9 +103,6 @@ async function cargarDashboard() {
             crearGraficoResolucion([]);
         }
 
-    } catch (error) {
-        console.error('[Dashboard] Error al cargar:', error);
-    }
 }
 
 // ============================================================
@@ -112,26 +117,49 @@ function poblarContadoresDesdeResumen(resumen) {
 // ============================================================
 // 2. NUESTROS MEJORES TÉCNICOS (Top 3 del carrusel)
 // ============================================================
-function poblarMejoresTecnicos(satisfaccionPorTecnico) {
-    if (!Array.isArray(satisfaccionPorTecnico) || satisfaccionPorTecnico.length === 0) return;
+function poblarMejoresTecnicos(top3) {
+    const tecnicos = Array.isArray(top3) ? top3.slice(0, 3) : [];
+    const items = Array.from(document.querySelectorAll('#carruselTecnicos .carousel-item'));
 
-    const top3 = satisfaccionPorTecnico.slice(0, 3);
+    if (tecnicos.length === 0 && items[0]) {
+        items.forEach((item, indice) => {
+            item.classList.toggle('d-none', indice !== 0);
+            item.classList.toggle('active', indice === 0);
+        });
+        const nombre = document.getElementById('txtNombreTecnico1');
+        const total = document.getElementById('txtTicketsTecnico1');
+        if (nombre) nombre.textContent = 'Sin datos disponibles';
+        if (total) total.textContent = 'Aún no hay evaluaciones';
+        document.querySelectorAll('#carruselTecnicos .carousel-control-prev, #carruselTecnicos .carousel-control-next')
+            .forEach((control) => control.classList.add('d-none'));
+        return;
+    }
 
-    const el1 = document.getElementById('txtNombreTecnico1');
-    const el2 = document.getElementById('txtNombreTecnico2');
-    const el3 = document.getElementById('txtNombreTecnico3');
+    items.forEach((item, indice) => {
+        const tecnico = tecnicos[indice];
+        const nombre = document.getElementById(`txtNombreTecnico${indice + 1}`);
+        const total = document.getElementById(`txtTicketsTecnico${indice + 1}`);
 
-    if (el1 && top3[0]) el1.textContent = top3[0].tecnico || 'Sin datos';
-    if (el2 && top3[1]) el2.textContent = top3[1].tecnico || 'Sin datos';
-    if (el3 && top3[2]) el3.textContent = top3[2].tecnico || 'Sin datos';
+        item.classList.toggle('d-none', !tecnico);
+        item.classList.remove('active');
+        if (!tecnico) {
+            if (nombre) nombre.textContent = 'Sin datos';
+            if (total) total.textContent = 'Sin calificación';
+            return;
+        }
 
-    // Si hay menos de 3 técnicos, ocultar los items sobrantes del carrusel
-    const items = document.querySelectorAll('#carruselTecnicos .carousel-item');
-    items.forEach((item, i) => {
-        if (i >= top3.length) {
-            item.remove();
+        if (nombre) nombre.textContent = tecnico.tecnico;
+        if (total) {
+            const promedio = Number(tecnico.promedio || 0).toFixed(1);
+            total.textContent = `Calificación ${promedio} de 5`;
         }
     });
+
+    const primerItemVisible = items.find((item) => !item.classList.contains('d-none'));
+    if (primerItemVisible) primerItemVisible.classList.add('active');
+
+    const controles = document.querySelectorAll('#carruselTecnicos .carousel-control-prev, #carruselTecnicos .carousel-control-next');
+    controles.forEach((control) => control.classList.toggle('d-none', tecnicos.length <= 1));
 }
 
 // ============================================================
@@ -143,8 +171,6 @@ function poblarPanelEvaluaciones(tickets) {
     todosLosTickets = tickets;
 
     const ahora = new Date();
-    const hoy = new Date(ahora.getFullYear(), ahora.getMonth(), ahora.getDate());
-
     const estadosFinalizados = ['resuelto', 'cerrado', 'cancelado'];
 
     const pendientes = [];
@@ -152,24 +178,28 @@ function poblarPanelEvaluaciones(tickets) {
     const vencenHoy = [];
 
     tickets.forEach(t => {
-        const estado = (t.estado || '').toLowerCase();
+        const estado = String(t.estado || '').trim().toLowerCase();
         const esNoFinalizado = !estadosFinalizados.includes(estado);
 
-        if (esNoFinalizado) {
-            pendientes.push(t);
-        }
+        // Las tres categorías describen trabajo todavía activo. Un ticket que
+        // ya fue resuelto, cerrado o cancelado no debe reaparecer únicamente
+        // porque su fecha de vencimiento quedó en el pasado.
+        if (!esNoFinalizado) return;
+        pendientes.push(t);
 
         if (t.fechaVencimiento) {
             const fechaVenc = parseFecha(t.fechaVencimiento);
             if (!fechaVenc) return;
 
-            const fechaVencSinHora = new Date(fechaVenc.getFullYear(), fechaVenc.getMonth(), fechaVenc.getDate());
-
-            if (fechaVencSinHora < hoy && esNoFinalizado) {
+            // La hora forma parte del vencimiento: si pasó hace un minuto ya
+            // cuenta como vencido, aunque todavía sea el mismo día.
+            if (fechaVenc.getTime() < ahora.getTime()) {
                 vencidos.push(t);
-            }
-
-            if (fechaVencSinHora.getTime() === hoy.getTime()) {
+            } else if (
+                fechaVenc.getFullYear() === ahora.getFullYear()
+                && fechaVenc.getMonth() === ahora.getMonth()
+                && fechaVenc.getDate() === ahora.getDate()
+            ) {
                 vencenHoy.push(t);
             }
         }
@@ -200,13 +230,15 @@ function renderizarListaTickets(lista) {
     lista.forEach((t, index) => {
         const prioridad = (t.prioridad || 'Media').toLowerCase();
         const config = {
-            'crítica':  { borde: 'border-start-critical',  badge: 'bg-danger-light text-danger',     icono: 'text-danger' },
-            'critica':  { borde: 'border-start-critical',  badge: 'bg-danger-light text-danger',     icono: 'text-danger' },
-            'alta':     { borde: 'border-start-high',      badge: 'bg-warning-light text-warning',   icono: '' },
-            'media':    { borde: 'border-start-medium',    badge: 'bg-warning-light-2 text-warning-oscuro', icono: '' },
-            'baja':     { borde: 'border-start-low',       badge: 'bg-success-light text-success',   icono: 'text-success' }
+            'crítica':  { borde: 'border-start-critical',  badge: 'bg-danger-light text-danger' },
+            'critica':  { borde: 'border-start-critical',  badge: 'bg-danger-light text-danger' },
+            'alta':     { borde: 'border-start-high',      badge: 'bg-warning-light text-warning' },
+            'media':    { borde: 'border-start-medium',    badge: 'bg-warning-light-2 text-warning-oscuro' },
+            'baja':     { borde: 'border-start-low',       badge: 'bg-success-light text-success' }
         };
         const c = config[prioridad] || config['media'];
+        const iconoPrioridad = window.obtenerClaseIconoTicket?.(t.prioridad)
+            || 'icono-ticket-prioridad-sin-asignar';
 
         const fechaVenc = t.fechaVencimiento || 'Sin fecha';
         const desc = t.descripcion
@@ -218,7 +250,7 @@ function renderizarListaTickets(lista) {
         div.innerHTML = `
             <div>
                 <h6 class="fw-bold mb-1">
-                    <i class="bi bi-ticket-perforated ${c.icono} me-2"></i>${t.asunto || 'Sin asunto'}
+                    <i class="bi bi-ticket-perforated ${iconoPrioridad} me-2"></i>${t.asunto || 'Sin asunto'}
                 </h6>
                 <small class="text-muted d-block">#${t.codigo || '—'}</small>
                 <small class="text-muted d-block mt-1"><b>Estado:</b> ${t.estado || '—'}</small>
@@ -235,6 +267,10 @@ function renderizarListaTickets(lista) {
 // 4. GRÁFICA DE TIEMPO DE RESOLUCIÓN POR DÍA DE SEMANA
 // ============================================================
 function crearGraficoResolucion(data) {
+    if (typeof Chart === 'undefined') {
+        console.error('[Dashboard] Chart.js no terminó de cargar.');
+        return;
+    }
     const canvas = document.getElementById('graficoResolucion');
     if (!canvas) return;
 

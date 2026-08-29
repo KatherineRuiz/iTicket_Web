@@ -12,15 +12,15 @@
     <link rel="stylesheet" href="css/dashboard.css">
     <link rel="stylesheet" href="css/tickets.css">
     <link rel="stylesheet" href="css/notificaciones.css">
-    <link rel="stylesheet" href="css/estadisticas.css">
-    <script src="js/components/menu-cache.js"></script>
+    <link rel="stylesheet" href="css/estadisticas.css?v=2">
+    <script src="js/components/menu-cache.js?v=17"></script>
 </head>
 
 <body>
     <header id="contenedorMenuLateral"></header>
     <div class="menu-lateral-overlay" id="overlay"></div>
 
-    <main class="main expandido px-md-4 pt-3">
+    <main class="main px-md-4 pt-3">
         <section class="superior rounded-5 ps-4 d-none d-md-flex">
             <h6 class="mb-0 bold">Estadísticas</h6>
             <div class="position-relative">
@@ -38,18 +38,18 @@
             <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
                 <!-- FILTROS DE FECHA -->
                 <div class="contenedor-filtro-fecha d-flex gap-2 align-items-center flex-wrap">
-                    <div class="d-flex align-items-center gap-2 bg-white rounded-pill px-3 py-1 border shadow-sm">
+                    <div class="campo-fecha-estadisticas">
                         <label for="fechaInicio" class="text-secondary fw-semibold mb-0 small">Desde:</label>
                         <input type="date" id="fechaInicio" class="form-control form-control-sm border-0 bg-transparent text-secondary" style="outline: none; box-shadow: none;">
                     </div>
-                    <div class="d-flex align-items-center gap-2 bg-white rounded-pill px-3 py-1 border shadow-sm">
+                    <div class="campo-fecha-estadisticas">
                         <label for="fechaFin" class="text-secondary fw-semibold mb-0 small">Hasta:</label>
                         <input type="date" id="fechaFin" class="form-control form-control-sm border-0 bg-transparent text-secondary" style="outline: none; box-shadow: none;">
                     </div>
-                    <button type="button" id="btnFiltrarFechas" class="btn btn-primary rounded-pill px-3 shadow-sm d-flex align-items-center gap-2">
+                    <button type="button" id="btnFiltrarFechas" class="btn btn-primary btn-filtrar-fechas">
                         <i class="bi bi-search"></i>
                     </button>
-                    <button type="button" id="btnLimpiarFechas" class="btn btn-outline-secondary rounded-pill px-3 shadow-sm d-flex align-items-center gap-2">
+                    <button type="button" id="btnLimpiarFechas" class="btn btn-limpiar-fechas" hidden>
                         <i class="bi bi-x-circle"></i> Limpiar
                     </button>
                 </div>
@@ -208,8 +208,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="js/components/menu.js"></script>
-    <script type="module" src="js/controllers/estadisticas.js"></script>
+    <script src="js/components/menu.js?v=15"></script>
+    <script type="module" src="js/controllers/estadisticas.js?v=2"></script>
     <!-- SweetAlert2 -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
