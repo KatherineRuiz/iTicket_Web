@@ -52,7 +52,7 @@ function validarCategoriaGeneral(ubicacion) {
 }
 
 //Valida los campos propios de la categoría "Instalación de Software"
-function validarCategoriaSoftware(listaSoftware, idUbicacionSoftware) {
+function validarCategoriaSoftware(listaSoftware, ubicacionesSoftware) {
     const errores = [];
 
     if (listaSoftware.length === 0) {
@@ -68,8 +68,10 @@ function validarCategoriaSoftware(listaSoftware, idUbicacionSoftware) {
         }
     });
 
-    if (!idUbicacionSoftware) {
-        errores.push({ campo: "sltUbicacionSoftware", mensaje: "Debes seleccionar la ubicación." });
+    if (!ubicacionesSoftware || !ubicacionesSoftware.trim()) {
+        errores.push({ campo: "txtUbicacionSoftware", mensaje: "Debes indicar las ubicaciones donde se instalará el software." });
+    } else if (ubicacionesSoftware.length > 500) {
+        errores.push({ campo: "txtUbicacionSoftware", mensaje: "La descripción de las ubicaciones no puede superar los 500 caracteres." });
     }
 
     return errores;
@@ -106,7 +108,7 @@ export function validarFormularioTicket(categoria, datos) {
   } else if (cat === "general") {
     errores = errores.concat(validarCategoriaGeneral(datos.ubicacion));
   } else if (cat === "software") {
-    errores = errores.concat(validarCategoriaSoftware(datos.listaSoftware, datos.idUbicacionSoftware));
+    errores = errores.concat(validarCategoriaSoftware(datos.listaSoftware, datos.ubicacionesSoftware));
   }
 
   return errores;

@@ -1,6 +1,5 @@
 import { crearTicket } from "../services/ticketsService.js";
 import { getDepartamentosAsignables } from "../services/departamentosService.js";
-import { getUbicaciones } from "../services/ubicacionesService.js";
 import { mostrarError, mostrarExitoSimple, mostrarConfirmacion } from "../components/sweetAlerts.js";
 import { validarFormularioTicket } from "../validators/ticketsValidator.js";
 import { buscarArticulosPorCodigoParcial } from "../services/articulosService.js";
@@ -27,7 +26,7 @@ const txtUbicacion = document.getElementById("txtUbicacion");
 const txtNombreSoftware = document.getElementById("txtNombreSoftware");
 const txtVersion = document.getElementById("txtVersion");
 const sltDepartamento = document.getElementById("sltDepartamento");
-const sltUbicacionSoftware = document.getElementById("sltUbicacionSoftware");
+const txtUbicacionSoftware = document.getElementById("txtUbicacionSoftware");
 
 let listaCodigosEquipos = [];
 const btnAgregarCodigo = document.getElementById("btnAgregarCodigo");
@@ -39,7 +38,6 @@ const listaSoftware = document.getElementById("listaSoftware");
 
 //Para no cargar los departamentos y las ubicaciones más de una vez
 let departamentosCargados = false;
-let ubicacionesCargadas = false;
 let listaDepartamentosDisponibles = [];
 
 let categoriaActual = "equipos";
@@ -64,7 +62,7 @@ function cambiarCategoria(categoria) {
   if (txtUbicacion) txtUbicacion.required = false;
   if (txtNombreSoftware) txtNombreSoftware.required = false;
   if (txtVersion) txtVersion.required = false;
-  if (sltUbicacionSoftware) sltUbicacionSoftware.required = false;
+  if (txtUbicacionSoftware) txtUbicacionSoftware.required = false;
 
   if (categoria === "equipos") {
     if (btnEquipos) btnEquipos.classList.add("active-card");
@@ -79,7 +77,7 @@ function cambiarCategoria(categoria) {
     if (btnSoftware) btnSoftware.classList.add("active-card");
     if (camposSoftware) camposSoftware.classList.add("mostrar");
     if (txtDescripcion) txtDescripcion.placeholder = "Describe la instalación de software que necesitas";
-    if (sltUbicacionSoftware) sltUbicacionSoftware.required = true;
+    if (txtUbicacionSoftware) txtUbicacionSoftware.required = true;
     forzarDepartamentoIT();
   }
 }
@@ -319,28 +317,6 @@ async function cargarDepartamentos() {
   }
 }
 
-//Cargar y mostrar las ubicaciones
-async function cargarUbicaciones() {
-  if (!sltUbicacionSoftware || ubicacionesCargadas) return;
-
-  try {
-    const ubicaciones = await getUbicaciones();
-    sltUbicacionSoftware.innerHTML = '<option selected disabled value="">Selecciona la ubicación</option>';
-
-    ubicaciones.forEach((ubicacion) => {
-      const opcion = document.createElement("option");
-      opcion.value = ubicacion.id;
-      opcion.textContent = ubicacion.nombreUbicacion;
-      sltUbicacionSoftware.appendChild(opcion);
-    });
-
-    ubicacionesCargadas = true;
-  } catch (error) {
-    console.error("Error al cargar las ubicaciones: ", error);
-    mostrarError("No se pudieron cargar las ubicaciones.");
-  }
-}
-
 function agregarCodigoArticulo(codigo) {
   if (!codigo) return;
 
@@ -450,7 +426,7 @@ frmTicket.addEventListener("submit", async function (e) {
     ubicacion: txtUbicacion.value,
     listaCodigos: listaCodigosEquipos,
     listaSoftware: listaSoftwareVersion,
-    idUbicacionSoftware: sltUbicacionSoftware.value
+    ubicacionesSoftware: txtUbicacionSoftware.value
   };
 
   //Validar
@@ -497,7 +473,7 @@ frmTicket.addEventListener("submit", async function (e) {
     nuevoTicket.detallesSoftware = listaSoftwareVersion.map((item) => ({
       nombreSoftware: item.nombreSoftware,
       version: item.version,
-      ubicacion: Number(datosFormulario.idUbicacionSoftware)
+      descripcionUbicaciones: datosFormulario.ubicacionesSoftware.trim()
     }));
   }
 
@@ -524,16 +500,13 @@ frmTicket.addEventListener("submit", async function (e) {
   }
 })
 
-//Eventos para cargar los departamentos y las ubicaciones
+//Evento para cargar los departamentos
 if (sltDepartamento) {
   sltDepartamento.addEventListener("focus", cargarDepartamentos);
 }
-if (sltUbicacionSoftware) {
-  sltUbicacionSoftware.addEventListener("focus", cargarUbicaciones);
-}
 
 //Para que los campos dejen de marcarse como inválidos
-[txtAsunto, txtDescripcion, txtUbicacion, sltDepartamento, sltUbicacionSoftware, txtNombreSoftware, txtVersion].filter(Boolean).forEach((campo) => {
+[txtAsunto, txtDescripcion, txtUbicacion, sltDepartamento, txtUbicacionSoftware, txtNombreSoftware, txtVersion].filter(Boolean).forEach((campo) => {
   const evento = campo.tagName === "SELECT" ? "change" : "input";
   campo.addEventListener(evento, function () {
     campo.classList.remove("is-invalid");

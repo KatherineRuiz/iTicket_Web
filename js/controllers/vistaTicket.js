@@ -1,7 +1,6 @@
 import { getTicket, editarComoCreador, editarComoGestor, editarEstadoAsignado, reportarTicket } from "../services/ticketsService.js";
 import { obtenerEvidenciasPorTicket, eliminarEvidencia, subirEvidencia } from "../services/evidenciasService.js";
 import { getDepartamentosAsignables } from "../services/departamentosService.js";
-import { getUbicaciones } from "../services/ubicacionesService.js";
 import { buscarArticulosPorCodigoParcial } from "../services/articulosService.js";
 import { getTecnicosPorDepartamento, getUsuarioById } from "../services/usuariosService.js";
 import { mostrarError, mostrarExitoSimple, mostrarConfirmacion } from "../components/sweetAlerts.js";
@@ -60,7 +59,7 @@ const txtNombreSoftwareEdicion = document.getElementById("txtNombreSoftwareEdici
 const txtVersionEdicion = document.getElementById("txtVersionEdicion");
 const btnAgregarSoftwareEdicion = document.getElementById("btnAgregarSoftwareEdicion");
 const listaSoftwareEdicion = document.getElementById("listaSoftwareEdicion");
-const sltUbicacionSoftwareEdicion = document.getElementById("sltUbicacionSoftwareEdicion");
+const txtUbicacionSoftwareEdicion = document.getElementById("txtUbicacionSoftwareEdicion");
 const btnAgregarEvidenciaEdicion = document.getElementById("btnAgregarEvidenciaEdicion");
 const galeriaMultimediaEdicion = document.getElementById("galeriaMultimediaEdicion");
 const inputEvidenciaEdicion = document.getElementById("inputEvidenciaEdicion");
@@ -108,7 +107,6 @@ let listaCodigosEquipos = [];
 let listaSoftwareVersion = [];
 let departamentosCargados = false;
 let listaDepartamentosDisponibles = [];
-let ubicacionesCargadas = false;
 let temporizadorBusqueda = null;
 let comentariosActuales = [];
 let archivosComentarioSeleccionados = [];
@@ -196,7 +194,9 @@ function renderizarVista() {
     }
 
     if (t.tipoTicket === "Software" && t.detallesSoftware?.length) {
-        txtSoftwareTicket.textContent = 
+        txtSoftwareTicket.textContent = t.detallesSoftware
+            .map((sw) => `${sw.nombreSoftware} ${sw.version}`)
+            .join(", ");
         filaSoftware.classList.remove("d-none");
     } else {
         filaSoftware.classList.add("d-none");
@@ -277,8 +277,7 @@ async function cargarEdicionCreador() {
         campoSoftwareEdicion.classList.remove("d-none");
         listaSoftwareVersion = (t.detallesSoftware ?? []).map((sw) => ({ nombreSoftware: sw.nombreSoftware, version: sw.version }));
         renderizarSoftwareEdicion();
-        await cargarUbicacionesEdicion();
-        preseleccionarUbicacionSoftware(t.ubicacion);
+        txtUbicacionSoftwareEdicion.value = t.ubicacion ?? "";
         forzarDepartamentoIT();
     }
 
@@ -322,31 +321,6 @@ async function cargarDepartamentosEdicion() {
         console.error("Error al cargar departamentos:", error);
         mostrarError("No se pudieron cargar los departamentos.");
     }
-}
-
-async function cargarUbicacionesEdicion() {
-    if (ubicacionesCargadas) return;
-    try {
-        const ubicaciones = await getUbicaciones();
-        sltUbicacionSoftwareEdicion.innerHTML = '<option value="" selected disabled>Selecciona la ubicación...</option>';
-        ubicaciones.forEach((ubicacion) => {
-            const opcion = document.createElement("option");
-            opcion.value = ubicacion.id;
-            opcion.textContent = ubicacion.nombreUbicacion;
-            sltUbicacionSoftwareEdicion.appendChild(opcion);
-        });
-        ubicacionesCargadas = true;
-    } catch (error) {
-        console.error("Error al cargar ubicaciones:", error);
-        mostrarError("No se pudieron cargar las ubicaciones.");
-    }
-}
-
-//Buscar por el nombre la ubicacion que se debe preseleccionar
-function preseleccionarUbicacionSoftware(nombreUbicacion) {
-    if (!nombreUbicacion) return;
-    const opcion = Array.from(sltUbicacionSoftwareEdicion.options).find((option) => option.textContent === nombreUbicacion);
-    if (opcion) sltUbicacionSoftwareEdicion.value = opcion.value;
 }
 
 function renderizarCodigosEdicion() {
@@ -580,7 +554,7 @@ const mapeoCamposEdicionCreador = {
     txtUbicacion: "txtUbicacionEdicion",
     txtNombreSoftware: "txtNombreSoftwareEdicion",
     txtVersion: "txtVersionEdicion",
-    sltUbicacionSoftware: "sltUbicacionSoftwareEdicion"
+    txtUbicacionSoftware: "txtUbicacionSoftwareEdicion"
 };
 
 frmEdicionCreador?.addEventListener("submit", async (e) => {
@@ -595,7 +569,7 @@ frmEdicionCreador?.addEventListener("submit", async (e) => {
         ubicacion: txtUbicacionEdicion.value,
         listaCodigos: listaCodigosEquipos,
         listaSoftware: listaSoftwareVersion,
-        idUbicacionSoftware: sltUbicacionSoftwareEdicion.value
+        ubicacionesSoftware: txtUbicacionSoftwareEdicion.value
     };
 
     const errores = validarFormularioTicket(categoria, datosFormulario);
@@ -623,7 +597,7 @@ frmEdicionCreador?.addEventListener("submit", async (e) => {
         dto.detallesSoftware = listaSoftwareVersion.map((item) => ({
             nombreSoftware: item.nombreSoftware,
             version: item.version,
-            ubicacion: Number(datosFormulario.idUbicacionSoftware)
+            descripcionUbicaciones: datosFormulario.ubicacionesSoftware.trim()
         }));
     }
 
