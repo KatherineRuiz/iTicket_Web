@@ -1,20 +1,31 @@
-// ============================================================
-// DASHBOARD ADMIN — CONTROLADOR PRINCIPAL
-// ============================================================
 
 import {
-    obtenerTickets,
     obtenerMetricasDashboard,
     obtenerResumenMensual,
     obtenerResolucionPorDia,
-    obtenerTopTecnicosPorCalificacion
-} from '../services/dashboardAdminService.js?v=3';
+    obtenerTopTecnicosPorCalificacion,
+    obtenerResumenPanelAdmin,
+    obtenerContadoresPanelAdmin
+} from '../services/dashboardAdminService.js?v=5';
+
+import { formatearFecha12H } from '../utils/formateadores.js'; 
 
 // ============================================================
 // VARIABLES GLOBALES
 // ============================================================
-let todosLosTickets = [];
 let graficoResolucionChart = null;
+let categoriaActual = 'pendientes';
+let paginaActualResumen = 1;
+const TAMANO_PAGINA_RESUMEN = 5;
+
+function obtenerIdUsuarioLogueado() {
+    try {
+        const sesion = JSON.parse(sessionStorage.getItem("usuarioLogueado"));
+        return sesion?.idUsuario ?? null;
+    } catch {
+        return null;
+    }
+}
 
 // ============================================================
 // UTILIDAD: Parsear fecha en formato ISO o "dd/MM/yyyy HH:mm"
@@ -58,40 +69,47 @@ Promise.all([paginaLista, document.fonts?.ready || Promise.resolve()]).then(carg
 // CARGA PRINCIPAL (en paralelo)
 // ============================================================
 async function cargarDashboard() {
-    const [ticketsResult, resumenResult, resolucionResult, metricasResult] = await Promise.allSettled([
-        obtenerTickets(),
-        obtenerResumenMensual(),
-        obtenerResolucionPorDia(),
-        obtenerMetricasDashboard()
+    const idUsuario = obtenerIdUsuarioLogueado();
+
+    const [contadoresResult, resumenResult, resolucionResult, metricasResult] = await Promise.allSettled([
+        obtenerContadoresPanelAdmin(idUsuario),
+        obtenerResumenMensual(idUsuario),
+        obtenerResolucionPorDia(idUsuario),
+        obtenerMetricasDashboard(idUsuario)
     ]);
 
-    const tickets = ticketsResult.status === 'fulfilled' ? ticketsResult.value : [];
+    const contadoresPanel = contadoresResult.status === 'fulfilled' ? contadoresResult.value : null;
     const resumenMensual = resumenResult.status === 'fulfilled' ? resumenResult.value : null;
     const resolucionDia = resolucionResult.status === 'fulfilled' ? resolucionResult.value : [];
     const metricas = metricasResult.status === 'fulfilled' ? metricasResult.value : null;
 
-    if (ticketsResult.status === 'rejected') console.error('[Dashboard] Tickets:', ticketsResult.reason);
+    if (contadoresResult.status === 'rejected') console.error('[Dashboard] Contadores del panel:', contadoresResult.reason);
     if (resumenResult.status === 'rejected') console.error('[Dashboard] Resumen mensual:', resumenResult.reason);
     if (resolucionResult.status === 'rejected') console.error('[Dashboard] Resolución diaria:', resolucionResult.reason);
     if (metricasResult.status === 'rejected') console.error('[Dashboard] Calificaciones por técnico:', metricasResult.reason);
 
-        // 1. Contadores de abiertos/cerrados desde el backend
+        // 1. Contadores de abiertos/cerrados desde el backend (ya filtrados por el departamento del admin)
         if (resumenMensual) {
             poblarContadoresDesdeResumen(resumenMensual);
         } else {
             console.warn('No se pudo obtener el resumen mensual, los contadores quedarán en 0');
         }
 
-        // 2. Panel de evaluaciones (pendientes/vencidos/hoy) usa todos los tickets
-        if (tickets && Array.isArray(tickets)) {
-            poblarPanelEvaluaciones(tickets);
+        // 2. Tarjetas Pendientes/Vencidos/Vencen hoy (contadores ya filtrados por departamento)
+        if (contadoresPanel) {
+            document.getElementById('num-pendientes').textContent = contadoresPanel.pendientes ?? 0;
+            document.getElementById('num-vencidas').textContent = contadoresPanel.vencidos ?? 0;
+            document.getElementById('num-hoy').textContent = contadoresPanel.hoy ?? 0;
         }
 
-        // 3. Técnicos ordenados por el promedio real de sus evaluaciones.
+        // 3. Panel de tickets del "Mi resumen": paginado y filtrado por el departamento del admin
+        cargarPanelResumen('pendientes', 1);
+
+        // 4. Técnicos ordenados por el promedio real de sus evaluaciones.
         const calificaciones = metricas?.satisfaccionPorTecnico || [];
         poblarMejoresTecnicos(obtenerTopTecnicosPorCalificacion(calificaciones));
 
-        // 4. Gráfico de resolución por día (si el endpoint existe)
+        // 5. Gráfico de resolución por día (si el endpoint existe)
         if (resolucionDia) {
             requestAnimationFrame(() => {
                 requestAnimationFrame(() => {
@@ -163,55 +181,25 @@ function poblarMejoresTecnicos(top3) {
 }
 
 // ============================================================
-// 3. PANEL DE EVALUACIONES (Pendientes / Vencidos / Vencen hoy)
+// 3. PANEL "MI RESUMEN" (Pendientes / Vencidos / Vencen hoy)
+// Paginado y filtrado por el departamento del admin, viene ya resuelto del backend.
 // ============================================================
-function poblarPanelEvaluaciones(tickets) {
-    if (!Array.isArray(tickets)) return;
+async function cargarPanelResumen(categoria, pagina) {
+    categoriaActual = categoria;
+    paginaActualResumen = pagina;
 
-    todosLosTickets = tickets;
+    const contenedor = document.getElementById('listaTicketsDashboard');
+    if (contenedor) contenedor.innerHTML = '<p class="text-muted text-center py-4">Cargando tickets...</p>';
 
-    const ahora = new Date();
-    const estadosFinalizados = ['resuelto', 'cerrado', 'cancelado'];
-
-    const pendientes = [];
-    const vencidos = [];
-    const vencenHoy = [];
-
-    tickets.forEach(t => {
-        const estado = String(t.estado || '').trim().toLowerCase();
-        const esNoFinalizado = !estadosFinalizados.includes(estado);
-
-        // Las tres categorías describen trabajo todavía activo. Un ticket que
-        // ya fue resuelto, cerrado o cancelado no debe reaparecer únicamente
-        // porque su fecha de vencimiento quedó en el pasado.
-        if (!esNoFinalizado) return;
-        pendientes.push(t);
-
-        if (t.fechaVencimiento) {
-            const fechaVenc = parseFecha(t.fechaVencimiento);
-            if (!fechaVenc) return;
-
-            // La hora forma parte del vencimiento: si pasó hace un minuto ya
-            // cuenta como vencido, aunque todavía sea el mismo día.
-            if (fechaVenc.getTime() < ahora.getTime()) {
-                vencidos.push(t);
-            } else if (
-                fechaVenc.getFullYear() === ahora.getFullYear()
-                && fechaVenc.getMonth() === ahora.getMonth()
-                && fechaVenc.getDate() === ahora.getDate()
-            ) {
-                vencenHoy.push(t);
-            }
-        }
-    });
-
-    document.getElementById('num-pendientes').textContent = pendientes.length;
-    document.getElementById('num-vencidas').textContent = vencidos.length;
-    document.getElementById('num-hoy').textContent = vencenHoy.length;
-
-    window._categorias = { pendientes, vencidos, hoy: vencenHoy };
-
-    renderizarListaTickets(pendientes);
+    try {
+        const idUsuario = obtenerIdUsuarioLogueado();
+        const resultado = await obtenerResumenPanelAdmin(idUsuario, categoria, pagina, TAMANO_PAGINA_RESUMEN);
+        renderizarListaTickets(resultado.tickets);
+        renderizarPaginacionResumen(resultado.totalPaginas, resultado.paginaActual);
+    } catch (error) {
+        console.error('[Dashboard] Error al cargar el panel de resumen:', error);
+        if (contenedor) contenedor.innerHTML = '<p class="text-muted text-center py-4">No se pudieron cargar los tickets</p>';
+    }
 }
 
 // ============================================================
@@ -227,41 +215,57 @@ function renderizarListaTickets(lista) {
         return;
     }
 
-    lista.forEach((t, index) => {
-        const prioridad = (t.prioridad || 'Media').toLowerCase();
-        const config = {
-            'crítica':  { borde: 'border-start-critical',  badge: 'bg-danger-light text-danger' },
-            'critica':  { borde: 'border-start-critical',  badge: 'bg-danger-light text-danger' },
-            'alta':     { borde: 'border-start-high',      badge: 'bg-warning-light text-warning' },
-            'media':    { borde: 'border-start-medium',    badge: 'bg-warning-light-2 text-warning-oscuro' },
-            'baja':     { borde: 'border-start-low',       badge: 'bg-success-light text-success' }
-        };
-        const c = config[prioridad] || config['media'];
+    lista.forEach((t) => {
         const iconoPrioridad = window.obtenerClaseIconoTicket?.(t.prioridad)
             || 'icono-ticket-prioridad-sin-asignar';
 
-        const fechaVenc = t.fechaVencimiento || 'Sin fecha';
         const desc = t.descripcion
             ? (t.descripcion.length > 60 ? t.descripcion.substring(0, 60) + '...' : t.descripcion)
             : 'Sin descripción';
 
-        const div = document.createElement('div');
-        div.className = `elemento-ticket ${c.borde} p-3 ${index === lista.length - 1 ? 'mb-0' : 'mb-3'} rounded-3 shadow-sm d-flex justify-content-between align-items-start`;
+        const div = document.createElement('article');
+        div.dataset.id = t.idTicket;
+        div.className = `lista-tickets position-relative shadow-sm bg-white borde-lateral-${t.prioridad || ''} rounded-3 p-3 mb-3 d-flex justify-content-between align-items-start`;
         div.innerHTML = `
-            <div>
-                <h6 class="fw-bold mb-1">
+            <div class="elemento-ticket-asignado pe-1">
+                <h6 class="fw-bold mb-1 fs-5 d-flex align-items-start texto-limitado-1">
                     <i class="bi bi-ticket-perforated ${iconoPrioridad} me-2"></i>${t.asunto || 'Sin asunto'}
                 </h6>
-                <small class="text-muted d-block">#${t.codigo || '—'}</small>
-                <small class="text-muted d-block mt-1"><b>Estado:</b> ${t.estado || '—'}</small>
-                <small class="text-muted d-block"><b>Vence:</b> ${fechaVenc}</small>
-                <small class="text-muted d-block mt-1"><b>Descripción:</b> ${desc}</small>
+                <small class="text-muted d-block mb-2">${t.codigo || '—'}</small>
+                <small class="text-muted d-block"><b>Estado: </b>${t.estado || '—'}</small>
+                ${t.fechaVencimiento ? `<small class="text-muted d-block"><b>Vence: </b>${formatearFecha12H(t.fechaVencimiento)}</small>` : ''}
+                <small class="text-muted d-block texto-limitado"><b>Descripción:</b> ${desc}</small>
             </div>
-            <span class="badge ${c.badge} rounded-pill px-3 py-2">${t.prioridad || 'Media'}</span>
+            ${t.prioridad ? `<span class="flex-shrink-0 position-absolute rounded-pill badge prioridad-${t.prioridad} px-3 py-2">${t.prioridad}</span>` : ''}
         `;
         contenedor.appendChild(div);
     });
 }
+
+// ============================================================
+// PAGINACIÓN DEL PANEL "MI RESUMEN"
+// ============================================================
+function renderizarPaginacionResumen(totalPaginas, paginaActual) {
+    const contenedor = document.getElementById('paginacionResumenDashboard');
+    if (!contenedor) return;
+    contenedor.innerHTML = '';
+
+    for (let i = 1; i <= totalPaginas; i++) {
+        const activo = i === paginaActual ? 'active' : '';
+        contenedor.innerHTML += `
+            <li class="page-item ${activo}">
+                <a class="page-link border-0 bg-transparent text-dark" href="#" data-pagina="${i}">${i}</a>
+            </li>
+        `;
+    }
+}
+
+document.getElementById('paginacionResumenDashboard')?.addEventListener('click', (evento) => {
+    const link = evento.target.closest('[data-pagina]');
+    if (!link) return;
+    evento.preventDefault();
+    cargarPanelResumen(categoriaActual, Number(link.dataset.pagina));
+});
 
 // ============================================================
 // 4. GRÁFICA DE TIEMPO DE RESOLUCIÓN POR DÍA DE SEMANA
@@ -335,22 +339,24 @@ botonesResumen.forEach(boton => {
         botonesResumen.forEach(b => b.classList.remove('activo'));
         this.classList.add('activo');
 
-        const opcion = this.getAttribute('data-opcion');
-        const categorias = window._categorias || {};
-
-        switch (opcion) {
-            case 'pendientes':
-                renderizarListaTickets(categorias.pendientes || []);
-                break;
-            case 'vencidos':
-                renderizarListaTickets(categorias.vencidos || []);
-                break;
-            case 'hoy':
-                renderizarListaTickets(categorias.hoy || []);
-                break;
-            default:
-                renderizarListaTickets(categorias.pendientes || []);
-                break;
-        }
+        const opcion = this.getAttribute('data-opcion') || 'pendientes';
+        cargarPanelResumen(opcion, 1);
     });
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    document.addEventListener("click", function (e) {
+
+    const tarjetaTicket = e.target.closest(".lista-tickets");
+
+    if (!tarjetaTicket) return;
+      
+    if (e.target.closest(".badge")) {
+      return; 
+    }
+
+    const idTicket = tarjetaTicket.dataset.id;
+    window.location.href = `vistaTicket.html?id=${idTicket}`;
+  });
 });

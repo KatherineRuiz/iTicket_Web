@@ -8,7 +8,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" href="css/common.css">
-    <link rel="stylesheet" href="css/dashboard.css?v=4">
+    <link rel="stylesheet" href="css/dashboard.css?v=6">
     <link rel="stylesheet" href="css/notificaciones.css?v=2">
     <script src="js/components/menu-cache.js?v=17"></script>
 </head>
@@ -32,7 +32,8 @@
         <div class="contenido-principal container-fluid dashboard-personal dashboard-tecnico">
             <div class="row g-4 m-0 p-0 align-items-center dashboard-personal-superior">
                 <section class="col-lg-5 col-12">
-                    <div class="bienvenida dashboard-bienvenida-admin d-flex justify-content-evenly align-items-center text-center p-3 shadow">
+                    <div
+                        class="bienvenida dashboard-bienvenida-admin d-flex justify-content-evenly align-items-center text-center p-3 shadow">
                         <img class="w-50" src="img/crearTicket.png" alt="Persona gestionando tickets">
                         <div>
                             <h4 class="fw-bold">¡Bienvenido!</h4>
@@ -46,18 +47,25 @@
                     <h2 class="text-center bold dashboard-resumen-mes-titulo mb-3">Asignaciones</h2>
                     <div class="row g-3" id="botones-resumen">
                         <div class="col-lg-4 col-12">
-                            <button type="button" class="resumen-tickets dashboard-resumen-personal dashboard-kpi-boton activo" data-opcion="pendientes">
-                                <span class="opcion-texto">Pendientes</span><strong class="opcion-numero" id="num-pendientes">0</strong>
+                            <button type="button"
+                                class="btn btn-resumen d-flex align-items-center justify-content-between px-3 py-2 rounded-4 activo"
+                                data-opcion="pendientes">
+                                <span class="opcion-texto">Pendientes</span><strong class="opcion-numero"
+                                    id="num-pendientes">0</strong>
                             </button>
                         </div>
                         <div class="col-lg-4 col-12">
-                            <button type="button" class="resumen-tickets dashboard-resumen-personal dashboard-kpi-boton" data-opcion="vencidos">
-                                <span class="opcion-texto">Vencidos</span><strong class="opcion-numero" id="num-vencidas">0</strong>
+                            <button type="button" class="btn btn-resumen d-flex align-items-center justify-content-between px-3 py-2 rounded-4"
+                                data-opcion="vencidos">
+                                <span class="opcion-texto">Vencidos</span><strong class="opcion-numero"
+                                    id="num-vencidas">0</strong>
                             </button>
                         </div>
                         <div class="col-lg-4 col-12">
-                            <button type="button" class="resumen-tickets dashboard-resumen-personal dashboard-kpi-boton" data-opcion="hoy">
-                                <span class="opcion-texto">Vencen hoy</span><strong class="opcion-numero" id="num-hoy">0</strong>
+                            <button type="button" class="btn btn-resumen d-flex align-items-center justify-content-between px-3 py-2 rounded-4"
+                                data-opcion="hoy">
+                                <span class="opcion-texto">Vencen hoy</span><strong class="opcion-numero"
+                                    id="num-hoy">0</strong>
                             </button>
                         </div>
                     </div>
@@ -68,17 +76,28 @@
                 <div class="col-xl-5 col-12">
 
                     <section class="dashboard-card-admin dashboard-grafica-admin bg-white rounded-5 p-4 shadow mt-4">
+                        <h4 class="bold">Tus calificaciones</h4>
+                        <div class="grafico"><canvas id="graficoCalificacion"></canvas></div>
+                    </section>
+
+                    <section class="dashboard-card-admin dashboard-grafica-admin bg-white rounded-5 p-4 shadow mt-4">
                         <h4 class="bold">Tiempo de resolución</h4>
+                        <p class="text-muted small text-center mb-2">Promedio de la última semana</p>
                         <div class="grafico"><canvas id="graficoResolucion"></canvas></div>
                     </section>
                 </div>
 
                 <section class="col-xl-7 col-12 d-flex px-xl-4 dashboard-evaluaciones">
                     <div class="w-100 d-flex flex-column dashboard-panel">
-                        <div class="mi-resumen dashboard-resumen-tecnico dashboard-panel-asignaciones flex-column flex-grow-1 w-100 shadow">
+                        <div
+                            class="mi-resumen dashboard-resumen-tecnico dashboard-panel-asignaciones flex-column flex-grow-1 w-100 shadow">
                             <div class="contenedor-tickets-scroll dashboard-lista-asignaciones p-3">
-                                <div class="dashboard-cargando"><i class="bi bi-arrow-repeat"></i><span>Cargando tus tickets...</span></div>
+                                <div class="dashboard-cargando"><i class="bi bi-arrow-repeat"></i><span>Cargando tus
+                                        tickets...</span></div>
                             </div>
+                            <nav aria-label="Paginacion de asignaciones" class="d-flex justify-content-end mt-2 px-3 pb-3">
+                                <ul class="pagination pagination-sm mb-0 align-items-center gap-1" id="paginacionAsignaciones"></ul>
+                            </nav>
                         </div>
                     </div>
                 </section>
@@ -88,25 +107,24 @@
 
     <div class="notificaciones-overlay" id="notificacionesOverlay">
         <aside class="panel-notificaciones" id="panelNotificaciones" aria-label="Notificaciones">
-            <div class="p-4"><h6 class="titulo-notificaciones mb-0">Notificaciones</h6></div>
+            <div class="p-4">
+                <h6 class="titulo-notificaciones mb-0">Notificaciones</h6>
+            </div>
             <div class="notificaciones-body px-4 pb-4">
-                <div class="notificaciones-vacio">
-                    <i class="bi bi-bell-slash" aria-hidden="true"></i>
-                    <h6>Sin notificaciones nuevas</h6>
-                    <p>Las asignaciones y cambios importantes aparecerán aquí.</p>
-                </div>
+                <!-- Contenido generado dinámicamente por js/controllers/notificaciones.js -->
             </div>
         </aside>
     </div>
 
 
     <!--Bootstrap-->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<!--Libreria para los graficos-->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<!--Links del script-->
-<script src="js/components/menu.js?v=15"></script>
-<script type="module" src="js/controllers/dashboardTecnico.js?v=7"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!--Libreria para los graficos-->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!--Links del script-->
+    <script src="js/components/menu.js?v=15"></script>
+    <script type="module" src="js/controllers/notificaciones.js"></script>
+    <script type="module" src="js/controllers/dashboardTecnico.js?v=9"></script>
 
 </body>
 

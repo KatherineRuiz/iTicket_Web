@@ -2,6 +2,15 @@
 import { obtenerMetricas, obtenerAlertas, obtenerEquiposMasReportados } from "../services/estadisticasService.js";
 import { mostrarError } from "../components/sweetAlerts.js";
 
+function obtenerIdUsuarioLogueado() {
+    try {
+        const sesion = JSON.parse(sessionStorage.getItem("usuarioLogueado"));
+        return sesion?.idUsuario ?? null;
+    } catch {
+        return null;
+    }
+}
+
 let graficos = [];
 
 // Paginación Alertas
@@ -61,15 +70,16 @@ function destruirGraficos() {
 // ============================================================
 
 async function cargarMetricas() {
+    const idUsuarioAdmin = obtenerIdUsuarioLogueado();
     const fechaInicio = document.getElementById('fechaInicio')?.value || '';
     const fechaFin = document.getElementById('fechaFin')?.value || '';
 
     // Cada bloque se resuelve por separado: si una tabla falla, las gráficas y
     // la otra tabla siguen mostrando los datos que sí respondió la API.
     const [metricasResult, alertasResult, equiposResult] = await Promise.allSettled([
-            obtenerMetricas(fechaInicio, fechaFin, paginaAlertas, TAMANO_PAGINA_ALERTAS),
-            obtenerAlertas(fechaInicio, fechaFin, paginaAlertas, TAMANO_PAGINA_ALERTAS),
-            obtenerEquiposMasReportados(fechaInicio, fechaFin, paginaEquipos, TAMANO_PAGINA_EQUIPOS)
+            obtenerMetricas(idUsuarioAdmin, fechaInicio, fechaFin, paginaAlertas, TAMANO_PAGINA_ALERTAS),
+            obtenerAlertas(idUsuarioAdmin, fechaInicio, fechaFin, paginaAlertas, TAMANO_PAGINA_ALERTAS),
+            obtenerEquiposMasReportados(idUsuarioAdmin, fechaInicio, fechaFin, paginaEquipos, TAMANO_PAGINA_EQUIPOS)
     ]);
 
     if (metricasResult.status === 'fulfilled' && metricasResult.value) {

@@ -24,6 +24,7 @@ export async function crearEvaluacion(evaluacion) {
 
 // 2. Obtener evaluaciones paginadas con filtros opcionales (búsqueda, calificación y fecha)
 export async function obtenerEvaluaciones(
+    idUsuarioAdmin,
     page = 0, 
     size = 10, 
     busqueda = "", 
@@ -32,6 +33,7 @@ export async function obtenerEvaluaciones(
 ) {
     try {
         const params = new URLSearchParams({
+            idUsuarioAdmin: idUsuarioAdmin,
             page: page.toString(),
             size: size.toString()
         });
@@ -63,9 +65,10 @@ export async function obtenerEvaluaciones(
 }
 
 // 3. Obtener métricas / KPIs de evaluaciones (Promedio, Total, Satisfechos, Insatisfechos, Porcentaje)
-export async function obtenerMetricasEvaluaciones(busqueda = "", calificacion = "", fecha = "") {
+export async function obtenerMetricasEvaluaciones(idUsuarioAdmin, busqueda = "", calificacion = "", fecha = "") {
     try {
         const params = new URLSearchParams();
+        params.append("idUsuarioAdmin", idUsuarioAdmin);
 
         if (busqueda && busqueda.trim() !== "") {
             params.append("busqueda", busqueda.trim());

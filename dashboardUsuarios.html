@@ -8,8 +8,9 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" href="css/common.css">
-    <link rel="stylesheet" href="css/dashboard.css?v=4">
+    <link rel="stylesheet" href="css/dashboard.css?v=5">
     <link rel="stylesheet" href="css/notificaciones.css?v=2">
+    <link rel="stylesheet" href="css/tickets.css">
     <script src="js/components/menu-cache.js?v=17"></script>
 </head>
 
@@ -30,8 +31,8 @@
         </section>
 
         <div class="contenido-principal container-fluid dashboard-personal dashboard-usuario">
-            <div class="row g-4 m-0 p-0 align-items-center dashboard-personal-superior">
-                <section class="col-lg-5 col-12">
+            <div class="row px-3 pb-3 mt-1 g-4 align-items-start dashboard-admin-grid">
+                <section class="col-xl-4 col-12">
                     <div class="bienvenida dashboard-bienvenida-admin d-flex justify-content-evenly align-items-center text-center p-3 shadow">
                         <img class="w-50" src="img/crearTicket.png" alt="Persona creando un ticket">
                         <div>
@@ -40,37 +41,41 @@
                             <button class="btn-oscuro border-0 px-4 py-2 fw-bold rounded-pill">Crear</button>
                         </div>
                     </div>
-                </section>
 
-                <section class="col-lg-7 col-12 px-3 px-lg-5">
-                    <h2 class="text-center bold dashboard-resumen-mes-titulo mb-3">Durante este mes:</h2>
-                    <div class="row g-3 dashboard-kpis-personales">
-                        <div class="col-md-6 col-12">
-                            <div class="resumen-tickets dashboard-resumen-personal shadow-sm">
-                                <h6 class="mb-0">Tickets<br>activos</h6>
-                                <strong id="ticketsActivosUsuario">0</strong>
-                                <span class="dashboard-resumen-personal-icono"><i class="bi bi-ticket-perforated"></i></span>
-                            </div>
-                        </div>
-                        <div class="col-md-6 col-12">
-                            <div class="resumen-tickets dashboard-resumen-personal shadow-sm">
-                                <h6 class="mb-0">Tickets<br>finalizados</h6>
-                                <strong id="ticketsFinalizadosUsuario">0</strong>
-                                <span class="dashboard-resumen-personal-icono"><i class="bi bi-check2-circle"></i></span>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-            </div>
-
-            <div class="row px-3 pb-3 mt-1 g-4 align-items-stretch dashboard-admin-grid">
-                <section class="col-xl-5 col-12">
                     <div class="dashboard-card-admin dashboard-grafica-admin bg-white rounded-5 p-4 shadow mt-4">
                         <h4 class="bold">Prioridades</h4>
                         <div class="grafico"><canvas id="graficoTickets"></canvas></div>
                     </div>
                 </section>
 
+                <section class="col-xl-4 col-12">
+                    <div class="dashboard-card-admin dashboard-grafica-admin bg-white rounded-5 p-4 shadow">
+                        <h4 class="bold">Tus evaluaciones</h4>
+                        <div class="grafico"><canvas id="graficoEvaluacion"></canvas></div>
+                    </div>
+
+                    <div class="dashboard-card-admin bg-white rounded-5 p-4 shadow mt-3">
+                        <h4 class="bold">Tiempo de respuesta</h4>
+                        <div class="dashboard-tiempo-admin">
+                            <div class="dashboard-tiempo-admin-contenido">
+                                <i class="bi bi-clock-history"></i>
+                                <div class="text-start">
+                                    <strong><span id="tiempoPromedio">0</span> h</strong>
+                                    <small class="d-block">Promedio de resolución</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="col-xl-4 col-12">
+                    <div class="dashboard-card-admin dashboard-grafica-admin bg-white rounded-5 p-4 shadow">
+                        <h4 class="bold">Últimos tickets</h4>
+                        <div class="contenedor-lista-tickets" id="listaUltimosTickets">
+                            <p class="text-muted text-center py-4 mb-0">Cargando tickets...</p>
+                        </div>
+                    </div>
+                </section>
             </div>
         </div>
     </main>
@@ -79,11 +84,7 @@
         <aside class="panel-notificaciones" id="panelNotificaciones" aria-label="Notificaciones">
             <div class="p-4"><h6 class="titulo-notificaciones mb-0">Notificaciones</h6></div>
             <div class="notificaciones-body px-4 pb-4">
-                <div class="notificaciones-vacio">
-                    <i class="bi bi-bell-slash" aria-hidden="true"></i>
-                    <h6>Sin notificaciones nuevas</h6>
-                    <p>Cuando tengas una actualización importante aparecerá aquí.</p>
-                </div>
+                <!-- Contenido generado dinámicamente por js/controllers/notificaciones.js -->
             </div>
         </aside>
     </div>
@@ -95,7 +96,8 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!--Links del script-->
     <script src="js/components/menu.js?v=15"></script>
-    <script type="module" src="js/controllers/dashboardUsuario.js?v=3"></script>
+<script type="module" src="js/controllers/notificaciones.js"></script>
+    <script type="module" src="js/controllers/dashboardUsuario.js?v=5"></script>
 
 </body>
 
