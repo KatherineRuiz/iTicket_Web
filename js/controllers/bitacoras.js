@@ -28,9 +28,18 @@ document.addEventListener("DOMContentLoaded", () => {
     cargarBitacoras();
 });
 
+function obtenerIdUsuarioLogueado() {
+    try {
+        const sesion = JSON.parse(sessionStorage.getItem("usuarioLogueado"));
+        return sesion?.idUsuario ?? null;
+    } catch {
+        return null;
+    }
+}
+
 async function cargarBitacoras() {
     try {
-        const bitacoras = await getBitacoras();
+        const bitacoras = await getBitacoras(obtenerIdUsuarioLogueado());
         bitacorasCompletas = Array.isArray(bitacoras) ? bitacoras : [];
 
         //Ordena del registro mas reciente al mas antiguo

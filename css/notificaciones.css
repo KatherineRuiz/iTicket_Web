@@ -155,17 +155,6 @@ html.tema-oscuro .panel-notificaciones.activo .notificacion-item:hover {
     border-left-color: #1e2d5a;
 }
 
-/* Punto indicador de que no se ha leido aún */
-.notificacion-item.no-leida::after {
-    content: '';
-    width: 8px;
-    height: 8px;
-    background-color: #4092ff;
-    border-radius: 50%;
-    align-self: center;
-    flex-shrink: 0;
-}
-
 .avatar-notificacion {
     width: 45px;
     height: 45px;

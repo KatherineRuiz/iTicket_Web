@@ -1,9 +1,9 @@
 const API_URL = "http://localhost:8080/api/bitacoras"
 
 //Obtener la bitácora completa (todos los tickets, incluidos los eliminados)
-export async function getBitacoras() {
+export async function getBitacoras(idUsuarioAdmin) {
     try {
-        const respuesta = await fetch(API_URL);
+        const respuesta = await fetch(`${API_URL}?idUsuarioAdmin=${idUsuarioAdmin}`);
 
         //204 No Content -> no hay bitacoras registradas todavia
         if (respuesta.status === 204) {

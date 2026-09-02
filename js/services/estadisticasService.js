@@ -14,6 +14,7 @@ const ENDPOINTS = {
 // ============================================================
 
 export async function obtenerMetricas(
+    idUsuarioAdmin,
     fechaInicio = '',
     fechaFin = '',
     pageAlertas = 0,
@@ -21,6 +22,7 @@ export async function obtenerMetricas(
 ) {
     try {
         const params = new URLSearchParams();
+        params.append('idUsuarioAdmin', idUsuarioAdmin);
         if (fechaInicio) params.append('fechaInicio', fechaInicio);
         if (fechaFin) params.append('fechaFin', fechaFin);
         params.append('pageAlertas', pageAlertas);
@@ -41,12 +43,15 @@ export async function obtenerMetricas(
     }
 }
 
-export async function obtenerAlertas(fechaInicio = '', fechaFin = '', page = 0, size = 5) {
+export async function obtenerAlertas(idUsuarioAdmin, fechaInicio = '', fechaFin = '', page = 0, size = 5) {
     try {
         const params = new URLSearchParams();
+        params.append('idUsuarioAdmin', idUsuarioAdmin);
         // El backend acepta LocalDate (YYYY-MM-DD), NO LocalDateTime
         if (fechaInicio) params.append('fechaInicio', fechaInicio);
         if (fechaFin) params.append('fechaFin', fechaFin);
+        params.append('page', page);
+        params.append('size', size);
 
         const url = `${ENDPOINTS.ALERTAS_INSATISFACCION}?${params.toString()}`;
         const respuesta = await fetch(url);
@@ -57,17 +62,11 @@ export async function obtenerAlertas(fechaInicio = '', fechaFin = '', page = 0, 
 
         const json = await respuesta.json();
         if (json.success || json.exito) {
-            // El backend devuelve una lista plana en json.data.
-            // Paginamos del lado del cliente para mantener la tabla limpia.
-            const listaCompleta = json.data || [];
-            const inicio = page * size;
-            const fin = inicio + size;
-            const paginada = listaCompleta.slice(inicio, fin);
-
+            const pagina = json.data || {};
             return {
-                content: paginada,
-                totalPages: Math.ceil(listaCompleta.length / size),
-                totalElements: listaCompleta.length
+                content: pagina.content || [],
+                totalPages: pagina.totalPages || 0,
+                totalElements: pagina.totalElements || 0
             };
         }
         return null;
@@ -77,11 +76,14 @@ export async function obtenerAlertas(fechaInicio = '', fechaFin = '', page = 0, 
     }
 }
 
-export async function obtenerEquiposMasReportados(fechaInicio = '', fechaFin = '', page = 0, size = 5) {
+export async function obtenerEquiposMasReportados(idUsuarioAdmin, fechaInicio = '', fechaFin = '', page = 0, size = 5) {
     try {
         const params = new URLSearchParams();
+        params.append('idUsuarioAdmin', idUsuarioAdmin);
         if (fechaInicio) params.append('fechaInicio', fechaInicio);
         if (fechaFin) params.append('fechaFin', fechaFin);
+        params.append('page', page);
+        params.append('size', size);
 
         const url = `${ENDPOINTS.EQUIPOS_MAS_REPORTADOS}?${params.toString()}`;
         const respuesta = await fetch(url);
@@ -92,16 +94,11 @@ export async function obtenerEquiposMasReportados(fechaInicio = '', fechaFin = '
 
         const json = await respuesta.json();
         if (json.success || json.exito) {
-            // Paginación del lado del cliente
-            const listaCompleta = json.data || [];
-            const inicio = page * size;
-            const fin = inicio + size;
-            const paginada = listaCompleta.slice(inicio, fin);
-
+            const pagina = json.data || {};
             return {
-                content: paginada,
-                totalPages: Math.ceil(listaCompleta.length / size),
-                totalElements: listaCompleta.length
+                content: pagina.content || [],
+                totalPages: pagina.totalPages || 0,
+                totalElements: pagina.totalElements || 0
             };
         }
         return null;

@@ -2,13 +2,11 @@
    transforma esos datos en indicadores, listas y gráficas del técnico activo. */
 
 import {
-    getTodosTicketsAsignados,
-    getEvaluacionesDashboard,
-    getBitacorasDashboard,
-    procesarDatosGraficos,
-    obtenerContadoresPorEstado,
-    obtenerCategoriaVencimiento
-} from "../services/dashboardTecnicosService.js?v=4";
+    obtenerResumenPanelTecnico,
+    obtenerContadoresPanelTecnico,
+    getCalificacionesTecnico,
+    getResolucionPorDiaTecnico
+} from "../services/dashboardTecnicosService.js?v=6";
 import { obtenerUsuarioLogueado } from "../utils/sesion.js";
 
 // Elementos del DOM
@@ -22,7 +20,9 @@ const numVencidas = document.getElementById('num-vencidas');
 const numHoy = document.getElementById('num-hoy');
 
 // Variables globales
-let ticketsPropios = [];
+const TAMANO_PAGINA_ASIGNACIONES = 5;
+let categoriaActual = 'pendientes';
+let paginaActualAsignaciones = 1;
 let graficoCalificacionesInstance = null;
 let graficoTiempoInstance = null;
 
@@ -45,26 +45,25 @@ async function cargarDatos() {
     try {
         mostrarLoading(true);
 
-        const [ticketsResult, evaluacionesResult, bitacorasResult] = await Promise.allSettled([
-            getTodosTicketsAsignados(idUsuario),
-            getEvaluacionesDashboard(),
-            getBitacorasDashboard()
+        const [contadoresResult, calificacionesResult, resolucionResult] = await Promise.allSettled([
+            obtenerContadoresPanelTecnico(idUsuario),
+            getCalificacionesTecnico(idUsuario),
+            getResolucionPorDiaTecnico(idUsuario)
         ]);
 
-        if (ticketsResult.status === 'rejected') throw ticketsResult.reason;
-        ticketsPropios = ticketsResult.value;
-        const evaluaciones = evaluacionesResult.status === 'fulfilled' ? evaluacionesResult.value : [];
-        const bitacoras = bitacorasResult.status === 'fulfilled' ? bitacorasResult.value : [];
-        if (evaluacionesResult.status === 'rejected') console.error('No se cargaron evaluaciones:', evaluacionesResult.reason);
-        if (bitacorasResult.status === 'rejected') console.error('No se cargaron bitácoras:', bitacorasResult.reason);
+        const contadores = contadoresResult.status === 'fulfilled' ? contadoresResult.value : null;
+        const calificaciones = calificacionesResult.status === 'fulfilled' ? calificacionesResult.value : [0, 0, 0, 0, 0];
+        const filasResolucion = resolucionResult.status === 'fulfilled' ? resolucionResult.value : [];
+        if (contadoresResult.status === 'rejected') console.error('No se cargaron los contadores del panel:', contadoresResult.reason);
+        if (calificacionesResult.status === 'rejected') console.error('No se cargaron las calificaciones:', calificacionesResult.reason);
+        if (resolucionResult.status === 'rejected') console.error('No se cargó el tiempo de resolución:', resolucionResult.reason);
 
-        // Actualizar UI
-        actualizarContadores(obtenerContadoresPorEstado(ticketsPropios));
-        renderizarTickets(ticketsPropios);
-        
+        // Actualizar UI: tarjetas de contadores y lista paginada (respeta "Pendientes" activo por defecto)
+        actualizarContadores(contadores || { pendientes: 0, vencidos: 0, hoy: 0 });
+        cargarPanelAsignaciones('pendientes', 1);
+
         // Procesar y actualizar gráficos
-        const datosGraficos = procesarDatosGraficos(ticketsPropios, evaluaciones, bitacoras);
-        crearGraficos(datosGraficos.calificaciones, datosGraficos.tiempos);
+        crearGraficos(calificaciones, mapearResolucionPorDia(filasResolucion));
 
         mostrarLoading(false);
     } catch (error) {
@@ -83,7 +82,30 @@ function actualizarContadores(data) {
         numVencidas.textContent = data.vencidos || 0;
     }
     if (numHoy) {
-        numHoy.textContent = data.vencenHoy || 0;
+        numHoy.textContent = data.hoy || 0;
+    }
+}
+
+// ---------- PANEL "ASIGNACIONES" (Pendientes / Vencidos / Vencen hoy) ----------
+// Paginado y filtrado por el técnico logueado, viene ya resuelto del backend.
+async function cargarPanelAsignaciones(categoria, pagina) {
+    categoriaActual = categoria;
+    paginaActualAsignaciones = pagina;
+
+    if (contenedorTickets) {
+        contenedorTickets.innerHTML = '<p class="text-muted text-center py-4">Cargando tickets...</p>';
+    }
+
+    try {
+        const resultado = await obtenerResumenPanelTecnico(idUsuario, categoria, pagina, TAMANO_PAGINA_ASIGNACIONES);
+        renderizarTickets(resultado.tickets);
+        renderizarPaginacionAsignaciones(resultado.totalPaginas, resultado.paginaActual);
+    } catch (error) {
+        console.error('[Dashboard técnico] Error al cargar el panel de asignaciones:', error);
+        if (contenedorTickets) {
+            contenedorTickets.innerHTML = '<p class="text-muted text-center py-4">No se pudieron cargar los tickets</p>';
+        }
+        renderizarPaginacionAsignaciones(0, 1);
     }
 }
 
@@ -135,6 +157,29 @@ function renderizarTickets(tickets) {
         item.style.cursor = 'pointer';
     });
 }
+
+// ---------- PAGINACIÓN DEL PANEL "ASIGNACIONES" ----------
+function renderizarPaginacionAsignaciones(totalPaginas, paginaActual) {
+    const contenedor = document.getElementById('paginacionAsignaciones');
+    if (!contenedor) return;
+    contenedor.innerHTML = '';
+
+    for (let i = 1; i <= totalPaginas; i++) {
+        const activo = i === paginaActual ? 'active' : '';
+        contenedor.innerHTML += `
+            <li class="page-item ${activo}">
+                <a class="page-link border-0 bg-transparent text-dark" href="#" data-pagina="${i}">${i}</a>
+            </li>
+        `;
+    }
+}
+
+document.getElementById('paginacionAsignaciones')?.addEventListener('click', (evento) => {
+    const link = evento.target.closest('[data-pagina]');
+    if (!link) return;
+    evento.preventDefault();
+    cargarPanelAsignaciones(categoriaActual, Number(link.dataset.pagina));
+});
 
 
 function normalizarPrioridad(prioridad) {
@@ -220,11 +265,11 @@ function crearGraficos(datosCalificaciones, datosTiempos) {
                                 label: 'Porcentaje de calificaciones',
                                 data: datosCalificaciones,
                                 backgroundColor: [
+                                    '#0D3B6E',
                                     '#184E8C',
+                                    '#2E6DAE',
                                     '#539ECD',
-                                    '#ffe173',
-                                    '#ffbc66',
-                                    '#ff8484'
+                                    '#90BFDB'
                                 ],
                                 borderWidth: 2,
                                 borderColor: '#ffffff',
@@ -315,7 +360,7 @@ function crearGraficos(datosCalificaciones, datosTiempos) {
                         botonesResumen.forEach(b => b.classList.remove('activo'));
                         this.classList.add('activo');
                         const opcion = this.dataset.opcion;
-                        filtrarTickets(opcion);
+                        cargarPanelAsignaciones(opcion, 1);
                     });
                 });
             });
@@ -329,46 +374,29 @@ function crearGraficos(datosCalificaciones, datosTiempos) {
     }
 }
 
-// ---------- FILTRAR TICKETS ----------
-function filtrarTickets(opcion) {
-    if (!contenedorTickets) return;
+// ---------- MAPEAR RESOLUCIÓN POR DÍA (Oracle: 1=Domingo...7=Sábado) ----------
+function mapearResolucionPorDia(filas) {
+    const oracleToIndex = { '2': 0, '3': 1, '4': 2, '5': 3, '6': 4, '7': 5, '1': 6 };
+    const horas = [0, 0, 0, 0, 0, 0, 0];
 
-    const ahora = new Date();
-
-    let filtrados = [];
-
-    switch(opcion) {
-        case 'pendientes':
-            filtrados = ticketsPropios.filter(t => {
-                const estado = String(t.estado || '').trim().toLowerCase();
-                return !['resuelto', 'cerrado', 'cancelado'].includes(estado);
-            });
-            break;
-        case 'vencidos':
-            filtrados = ticketsPropios.filter(t => {
-                const estado = String(t.estado || '').trim().toLowerCase();
-                return !['resuelto', 'cerrado', 'cancelado'].includes(estado)
-                    && obtenerCategoriaVencimiento(t, ahora) === 'vencido';
-            });
-            break;
-        case 'hoy':
-            filtrados = ticketsPropios.filter(t => {
-                const estado = String(t.estado || '').trim().toLowerCase();
-                return !['resuelto', 'cerrado', 'cancelado'].includes(estado)
-                    && obtenerCategoriaVencimiento(t, ahora) === 'hoy';
-            });
-            break;
-        default:
-            filtrados = ticketsPropios;
+    if (Array.isArray(filas)) {
+        filas.forEach((fila) => {
+            if (fila && fila.length >= 2) {
+                const diaClave = String(fila[0]).trim();
+                const promedio = parseFloat(fila[1]) || 0;
+                const idx = oracleToIndex[diaClave];
+                if (idx !== undefined) {
+                    horas[idx] = Math.round(promedio * 10) / 10;
+                }
+            }
+        });
     }
-
-    renderizarTickets(filtrados);
+    return horas;
 }
 
 // ---------- ESTADO VACÍO CUANDO NO HAY SESIÓN O FALLA LA API ----------
 function mostrarDashboardVacio(mensaje) {
-    ticketsPropios = [];
-    actualizarContadores({ pendientes: 0, vencidos: 0, vencenHoy: 0 });
+    actualizarContadores({ pendientes: 0, vencidos: 0, hoy: 0 });
     if (contenedorTickets) {
         contenedorTickets.innerHTML = `
             <div class="text-center text-muted py-5">
@@ -376,6 +404,7 @@ function mostrarDashboardVacio(mensaje) {
                 <p>${mensaje}</p>
             </div>`;
     }
+    renderizarPaginacionAsignaciones(0, 1);
     crearGraficos([0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0]);
 }
 

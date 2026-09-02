@@ -17,21 +17,38 @@ export async function obtenerTickets() {
     return manejarRespuesta(await fetchFresco(`${API_BASE_URL}/tickets`));
 }
 
-export async function obtenerMetricasDashboard() {
-    return manejarRespuesta(await fetchFresco(`${API_BASE_URL}/estadisticas/metricas`));
+// idUsuarioAdmin filtra las metricas al departamento del admin (obligatorio, igual que en el resto del dashboard)
+export async function obtenerMetricasDashboard(idUsuarioAdmin) {
+    const params = new URLSearchParams({ idUsuarioAdmin });
+    return manejarRespuesta(await fetchFresco(`${API_BASE_URL}/estadisticas/metricas?${params.toString()}`));
 }
 
-export async function obtenerResolucionPorDia() {
-    return manejarRespuesta(await fetchFresco(`${API_BASE_URL}/estadisticas/resolucion-por-dia`));
+export async function obtenerResolucionPorDia(idUsuarioAdmin) {
+    const params = new URLSearchParams({ idUsuarioAdmin });
+    return manejarRespuesta(await fetchFresco(`${API_BASE_URL}/estadisticas/resolucion-por-dia?${params.toString()}`));
 }
 
-export async function obtenerResumenMensual(fechaInicio, fechaFin) {
+// idUsuarioAdmin filtra el resumen al departamento del admin (obligatorio para el dashboard)
+export async function obtenerResumenMensual(idUsuarioAdmin, fechaInicio, fechaFin) {
     const params = new URLSearchParams();
+    if (idUsuarioAdmin) params.append('idUsuarioAdmin', idUsuarioAdmin);
     if (fechaInicio) params.append('fechaInicio', fechaInicio);
     if (fechaFin) params.append('fechaFin', fechaFin);
     const query = params.toString();
     const url = `${API_BASE_URL}/tickets/resumen-mensual${query ? `?${query}` : ''}`;
     return manejarRespuesta(await fetchFresco(url));
+}
+
+// Panel "Mi resumen": paginado y filtrado por el departamento del admin
+export async function obtenerResumenPanelAdmin(idUsuarioAdmin, categoria, pagina = 1, tamano = 5) {
+    const params = new URLSearchParams({ idUsuarioAdmin, categoria, pagina, tamano });
+    return manejarRespuesta(await fetchFresco(`${API_BASE_URL}/tickets/resumen-panel-admin?${params.toString()}`));
+}
+
+// Contadores para las tarjetas Pendientes/Vencidos/Vencen hoy
+export async function obtenerContadoresPanelAdmin(idUsuarioAdmin) {
+    const params = new URLSearchParams({ idUsuarioAdmin });
+    return manejarRespuesta(await fetchFresco(`${API_BASE_URL}/tickets/resumen-panel-admin/contadores?${params.toString()}`));
 }
 
 // Limpia y ordena el promedio de satisfacción devuelto por /estadisticas/metricas.
