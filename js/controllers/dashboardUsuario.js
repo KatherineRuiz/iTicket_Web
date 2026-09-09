@@ -10,7 +10,7 @@ import {
     obtenerEvaluacionesParaDashboard,
     obtenerBitacorasParaDashboard,
     construirResumenUsuario
-} from '../services/dashboardUsuarioService.js?v=2';
+} from '../services/dashboardUsuarioService.js';
 
 let graficoTicketsInstance = null;
 let graficoEvaluacionesInstance = null;

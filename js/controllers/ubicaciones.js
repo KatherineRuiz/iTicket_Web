@@ -127,6 +127,16 @@ document.addEventListener("DOMContentLoaded", async function () {
             return;
         }
 
+        const nombreNormalizado = nombre.toLocaleLowerCase("es").replace(/\s+/g, " ");
+        const tipoDuplicado = tiposActuales.some(tipo =>
+            String(tipo.id) !== String(id) &&
+            String(tipo.nombre_tipo_ubicacion).trim().toLocaleLowerCase("es").replace(/\s+/g, " ") === nombreNormalizado
+        );
+        if (tipoDuplicado) {
+            mostrarError(`El tipo de ubicación '${nombre}' ya está registrado.`, false);
+            return;
+        }
+
         try {
             if (id) {
                 await actualizarTipoUbicacion(id, nombre);
@@ -242,6 +252,16 @@ document.addEventListener("DOMContentLoaded", async function () {
         }
         if (!idTipoUbicacion) {
             mostrarError("Selecciona un tipo de ubicación.", false);
+            return;
+        }
+
+        const nombreNormalizado = nombre.toLocaleLowerCase("es").replace(/\s+/g, " ");
+        const ubicacionDuplicada = ubicacionesActuales.some(ubicacion =>
+            String(ubicacion.id) !== String(id) &&
+            String(ubicacion.nombreUbicacion).trim().toLocaleLowerCase("es").replace(/\s+/g, " ") === nombreNormalizado
+        );
+        if (ubicacionDuplicada) {
+            mostrarError(`La ubicación '${nombre}' ya está registrada.`, false);
             return;
         }
 

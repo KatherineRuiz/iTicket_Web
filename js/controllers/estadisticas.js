@@ -1,6 +1,7 @@
 
 import { obtenerMetricas, obtenerAlertas, obtenerEquiposMasReportados } from "../services/estadisticasService.js";
 import { mostrarError } from "../components/sweetAlerts.js";
+import { renderizarPaginacion } from "../components/paginacion.js";
 
 let graficos = [];
 
@@ -321,45 +322,15 @@ function renderizarTablaAlertas(pageData) {
 
     if (textoContador) {
         const totalElementos = pageData?.totalElements || lista.length;
-        textoContador.textContent = `Mostrando página ${paginaAlertas + 1} de ${totalPaginasAlertas} (${totalElementos} registros)`;
+        const inicio = lista.length ? paginaAlertas * TAMANO_PAGINA_ALERTAS + 1 : 0;
+        const fin = lista.length ? inicio + lista.length - 1 : 0;
+        textoContador.textContent = `Mostrando ${inicio}-${fin} de ${totalElementos}`;
     }
 
     if (contenedorPaginacion) {
-        let paginacionHTML = '';
-        
-        paginacionHTML += `
-            <li class="page-item ${paginaAlertas === 0 ? 'disabled' : ''}">
-                <a class="page-link border-0 shadow-sm rounded-1 text-secondary px-2 btn-pag" href="#" data-page="${paginaAlertas - 1}">&laquo;</a>
-            </li>
-        `;
-
-        for (let i = 0; i < totalPaginasAlertas; i++) {
-            const isActiveClass = i === paginaAlertas ? 'bg-primary text-white fw-bold' : 'text-secondary';
-            const activeLi = i === paginaAlertas ? 'active' : '';
-            paginacionHTML += `
-                <li class="page-item ${activeLi}">
-                    <a class="page-link border-0 shadow-sm rounded-1 ${isActiveClass} btn-pag" href="#" data-page="${i}">${i + 1}</a>
-                </li>
-            `;
-        }
-
-        paginacionHTML += `
-            <li class="page-item ${paginaAlertas >= totalPaginasAlertas - 1 ? 'disabled' : ''}">
-                <a class="page-link border-0 shadow-sm rounded-1 text-secondary px-2 btn-pag" href="#" data-page="${paginaAlertas + 1}">&raquo;</a>
-            </li>
-        `;
-
-        contenedorPaginacion.innerHTML = paginacionHTML;
-
-        document.querySelectorAll('.btn-pag').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.preventDefault();
-                const nuevaPagina = parseInt(e.currentTarget.getAttribute('data-page'));
-                if (!isNaN(nuevaPagina) && nuevaPagina !== paginaAlertas && nuevaPagina >= 0 && nuevaPagina < totalPaginasAlertas) {
-                    paginaAlertas = nuevaPagina;
-                    cargarMetricas();
-                }
-            });
+        renderizarPaginacion(contenedorPaginacion, paginaAlertas + 1, totalPaginasAlertas, (pagina) => {
+            paginaAlertas = pagina - 1;
+            cargarMetricas();
         });
     }
 }
@@ -410,45 +381,15 @@ function renderizarTablaEquipos(pageData) {
 
     if (textoContador) {
         const totalElementos = pageData?.totalElements || lista.length;
-        textoContador.textContent = `Mostrando página ${paginaEquipos + 1} de ${totalPaginasEquipos} (${totalElementos} registros)`;
+        const inicio = lista.length ? paginaEquipos * TAMANO_PAGINA_EQUIPOS + 1 : 0;
+        const fin = lista.length ? inicio + lista.length - 1 : 0;
+        textoContador.textContent = `Mostrando ${inicio}-${fin} de ${totalElementos}`;
     }
 
     if (contenedorPaginacion) {
-        let paginacionHTML = '';
-
-        paginacionHTML += `
-            <li class="page-item ${paginaEquipos === 0 ? 'disabled' : ''}">
-                <a class="page-link border-0 shadow-sm rounded-1 text-secondary px-2 btn-pag-equipos" href="#" data-page="${paginaEquipos - 1}">&laquo;</a>
-            </li>
-        `;
-
-        for (let i = 0; i < totalPaginasEquipos; i++) {
-            const isActiveClass = i === paginaEquipos ? 'bg-primary text-white fw-bold' : 'text-secondary';
-            const activeLi = i === paginaEquipos ? 'active' : '';
-            paginacionHTML += `
-                <li class="page-item ${activeLi}">
-                    <a class="page-link border-0 shadow-sm rounded-1 ${isActiveClass} btn-pag-equipos" href="#" data-page="${i}">${i + 1}</a>
-                </li>
-            `;
-        }
-
-        paginacionHTML += `
-            <li class="page-item ${paginaEquipos >= totalPaginasEquipos - 1 ? 'disabled' : ''}">
-                <a class="page-link border-0 shadow-sm rounded-1 text-secondary px-2 btn-pag-equipos" href="#" data-page="${paginaEquipos + 1}">&raquo;</a>
-            </li>
-        `;
-
-        contenedorPaginacion.innerHTML = paginacionHTML;
-
-        document.querySelectorAll('.btn-pag-equipos').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.preventDefault();
-                const nuevaPagina = parseInt(e.currentTarget.getAttribute('data-page'));
-                if (!isNaN(nuevaPagina) && nuevaPagina !== paginaEquipos && nuevaPagina >= 0 && nuevaPagina < totalPaginasEquipos) {
-                    paginaEquipos = nuevaPagina;
-                    cargarMetricas();
-                }
-            });
+        renderizarPaginacion(contenedorPaginacion, paginaEquipos + 1, totalPaginasEquipos, (pagina) => {
+            paginaEquipos = pagina - 1;
+            cargarMetricas();
         });
     }
 }

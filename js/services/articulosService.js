@@ -23,7 +23,11 @@ export async function crearArticulo(codigoArticulo, idCategoria, idUbicacion, id
         body: JSON.stringify(cuerpo)
     });
     const resultado = await respuesta.json();
-    if (!respuesta.ok) throw new Error(resultado.message || "No se pudo crear el artículo");
+    if (!respuesta.ok) {
+        const error = new Error(resultado.message || "No se pudo crear el artículo");
+        error.status = respuesta.status;
+        throw error;
+    }
     return resultado.data;
 }
 
@@ -57,6 +61,10 @@ export async function actualizarArticulo(id, codigoArticulo, idCategoria, idUbic
         body: JSON.stringify({ codigoArticulo, idCategoria, idUbicacion, idModelo })
     });
     const resultado = await respuesta.json();
-    if (!respuesta.ok) throw new Error(resultado.message || "No se pudo actualizar el artículo");
+    if (!respuesta.ok) {
+        const error = new Error(resultado.message || "No se pudo actualizar el artículo");
+        error.status = respuesta.status;
+        throw error;
+    }
     return resultado.data;
 }

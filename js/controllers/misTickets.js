@@ -3,6 +3,7 @@ import { mostrarError, mostrarConfirmacion } from "../components/sweetAlerts.js"
 import { crearEvaluacion } from "../services/evaluacionesService.js";
 import { formatearFecha12H } from "../utils/formateadores.js";
 import { obtenerIdUsuario } from "../utils/sesion.js";
+import { renderizarPaginacion as pintarPaginacionComun } from "../components/paginacion.js";
 
 // Contadores superiores agrupados por estado.
 const numNuevos = document.getElementById("numNuevos");
@@ -134,24 +135,8 @@ function renderizarTickets(tickets) {
 }
 
 function renderizarPaginacion(totalPaginas, paginaActual) {
-    paginacionTickets.innerHTML = "";
-
-    for (let i = 1; i <= totalPaginas; i++) {
-        const activo = i === paginaActual ? "active" : "";
-        paginacionTickets.innerHTML += `
-            <li class="page-item ${activo}">
-                <a class="page-link border-0 bg-transparent text-dark" href="#" data-pagina="${i}">${i}</a>
-            </li>
-        `;
-    }
+    pintarPaginacionComun(paginacionTickets, paginaActual, totalPaginas, cargarTickets);
 }
-
-paginacionTickets.addEventListener("click", (e) => {
-    const link = e.target.closest("[data-pagina]");
-    if (!link) return;
-    e.preventDefault();
-    cargarTickets(Number(link.dataset.pagina));
-});
 
 async function cargarTickets(pagina = 1) {
     try {
@@ -160,7 +145,9 @@ async function cargarTickets(pagina = 1) {
         paginaActualTickets = resultado.paginaActual;
         renderizarTickets(resultado.tickets);
         renderizarPaginacion(resultado.totalPaginas, resultado.paginaActual);
-        infoTickets.textContent = `Mostrando ${resultado.tickets.length} de ${resultado.totalElementos} tickets`;
+        const inicio = resultado.tickets.length ? (resultado.paginaActual - 1) * 5 + 1 : 0;
+        const fin = resultado.tickets.length ? inicio + resultado.tickets.length - 1 : 0;
+        infoTickets.textContent = `Mostrando ${inicio}-${fin} de ${resultado.totalElementos}`;
     } catch (error) {
         console.error("Error al cargar tus tickets:", error);
         mostrarError("Error al cargar los tickets")

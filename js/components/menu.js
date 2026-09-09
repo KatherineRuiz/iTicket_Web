@@ -416,7 +416,7 @@ async function cambiarFotoPerfil(archivo, perfil, panel, boton) {
     mostrarEstadoFoto(panel, "La imagen se está guardando de forma segura.", "cargando");
 
     try {
-        const { actualizarFotoPerfil } = await import("../services/usuariosService.js?v=2");
+        const { actualizarFotoPerfil } = await import("../services/usuariosService.js");
         const actualizado = await actualizarFotoPerfil(usuario.idUsuario, archivo);
         const imagenUrl = actualizado?.imagenUrl;
         if (!imagenUrl) throw new Error("La API no devolvió la URL de la imagen.");
@@ -678,7 +678,7 @@ function prepararInteraccionTablas() {
     });
 }
 
-const FILAS_POR_PAGINA = 8;
+const FILAS_POR_PAGINA = 10;
 
 function inicializarPaginacionAutomatica() {
     prepararTablasSinPaginacion(document);

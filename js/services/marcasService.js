@@ -22,3 +22,14 @@ export async function eliminarMarca(id) {
     const respuesta = await fetch(`${API_URL}/${id}`, { method: "DELETE" });
     if (!respuesta.ok) throw new Error("No se pudo eliminar la marca");
 }
+
+export async function actualizarMarca(id, nombreMarca) {
+    const respuesta = await fetch(`${API_URL}/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ nombreMarca })
+    });
+    const resultado = await respuesta.json();
+    if (!respuesta.ok) throw new Error(resultado.message || "No se pudo actualizar la marca");
+    return resultado.data;
+}

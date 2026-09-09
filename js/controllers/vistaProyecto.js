@@ -1,10 +1,10 @@
 import { getProyecto, actualizarProyecto, eliminarProyecto } from "../services/proyectosService.js";
-import { getFases, getFasesPorProyecto, getNombreFase, crearFase, actualizarFase, eliminarFase } from "../services/faseService.js?v=2";
+import { getFases, getFasesPorProyecto, getNombreFase, crearFase, actualizarFase, eliminarFase } from "../services/faseService.js";
 import { getDetallesFase, getDetallesFasePorFase, crearDetalleFase, actualizarDetalleFase, eliminarDetalleFase } from "../services/detalleFaseService.js";
 import { mostrarError, mostrarExitoSimple, mostrarConfirmacion } from "../components/sweetAlerts.js";
 import { getUsuarios } from "../services/usuariosService.js";
 import { validarFormularioProyecto } from "../validators/proyectosValidator.js";
-import { validarFormularioFase } from "../validators/fasesValidators.js?v=2";
+import { validarFormularioFase } from "../validators/fasesValidators.js";
 import { validarFormularioDetalleFase } from "../validators/detalleFaseValidator.js";
 
 

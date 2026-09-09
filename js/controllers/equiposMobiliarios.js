@@ -1,7 +1,8 @@
 import { mostrarError, mostrarExitoSimple, mostrarConfirmacion } from "../components/sweetAlerts.js";
-import { getCategorias, crearCategoria, eliminarCategoria } from "../services/categoriasService.js";
-import { getMarcas, crearMarca, eliminarMarca } from "../services/marcasService.js";
-import { getModelos, crearModelo, eliminarModelo } from "../services/modelosService.js";
+import { getCategorias, crearCategoria, actualizarCategoria, eliminarCategoria } from "../services/categoriasService.js";
+import { getMarcas, crearMarca, actualizarMarca, eliminarMarca } from "../services/marcasService.js";
+import { getModelos, crearModelo, actualizarModelo, eliminarModelo } from "../services/modelosService.js";
+import { renderizarPaginacion } from "../components/paginacion.js";
 import { getUbicaciones } from "../services/ubicacionesService.js";
 import { getArticulosPaginados, crearArticulo, actualizarArticulo, eliminarArticulo } from "../services/articulosService.js";
 
@@ -105,40 +106,9 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
 
     function pintarPaginacion(resultado) {
-        const totalPaginas = resultado.totalPaginas;
-        controlesPaginacion.innerHTML = "";
-
-        if (totalPaginas <= 1) return;
-
-        const crearBoton = (texto, pagina, deshabilitado = false, activo = false) => `
-            <li class="page-item ${deshabilitado ? "disabled" : ""}">
-                <a class="page-link border-0 bg-transparent ${activo ? "fw-bold text-primary" : "text-dark"}"
-                   href="#" data-pagina="${pagina}">${texto}</a>
-            </li>
-        `;
-
-        let html = crearBoton('<i class="bi bi-chevron-left"></i>', paginaActual - 1, paginaActual === 1);
-
-        for (let i = 1; i <= totalPaginas; i++) {
-            if (i === 1 || i === totalPaginas || Math.abs(i - paginaActual) <= 1) {
-                html += crearBoton(i, i, false, i === paginaActual);
-            } else if (i === 2 || i === totalPaginas - 1) {
-                html += `<li class="page-item"><span class="mx-1 text-muted">...</span></li>`;
-            }
-        }
-
-        html += crearBoton('<i class="bi bi-chevron-right"></i>', paginaActual + 1, paginaActual === totalPaginas);
-
-        controlesPaginacion.innerHTML = html;
-
-        controlesPaginacion.querySelectorAll("a[data-pagina]").forEach(enlace => {
-            enlace.addEventListener("click", async (evento) => {
-                evento.preventDefault();
-                const nuevaPagina = Number(enlace.dataset.pagina);
-                if (nuevaPagina < 1 || nuevaPagina > totalPaginas || nuevaPagina === paginaActual) return;
-                paginaActual = nuevaPagina;
-                await cargarArticulos();
-            });
+        renderizarPaginacion(controlesPaginacion, paginaActual, resultado.totalPaginas, async (nuevaPagina) => {
+            paginaActual = nuevaPagina;
+            await cargarArticulos();
         });
     }
 
@@ -199,6 +169,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             if (ubicaciones.some(u => u.id == filtroUbicacion)) {
                 selectFiltroUbicacion.value = filtroUbicacion;
             }
+
         } catch (error) {
             mostrarError("No se pudieron cargar los filtros.", false);
         }
@@ -209,12 +180,27 @@ document.addEventListener("DOMContentLoaded", async function () {
     const modalCategoria = document.querySelector("#modalAgregarCategoria");
     const formCategoria = document.querySelector("#formCategoria");
     const tablaCategorias = document.querySelector("#tablaCategorias");
+    const categoriaId = document.querySelector("#categoriaId");
+    const txtNombreCategoria = document.querySelector("#txtNombreCategoria");
+    const tituloFormCategoria = document.querySelector("#tituloFormCategoria");
+    const btnTextoCategoria = document.querySelector("#btnTextoCategoria");
+    const btnCancelarCategoria = document.querySelector("#btnCancelarCategoria");
+    let categoriasRegistradas = [];
+
+    function limpiarEdicionCategoria() {
+        formCategoria.reset();
+        categoriaId.value = "";
+        tituloFormCategoria.textContent = "Agregar categoría";
+        btnTextoCategoria.textContent = "Guardar categoría";
+        btnCancelarCategoria.classList.add("d-none");
+    }
 
     modalCategoria.addEventListener("shown.bs.modal", cargarCategorias);
 
     async function cargarCategorias() {
         try {
             const categorias = await getCategorias();
+            categoriasRegistradas = categorias || [];
             pintarTablaCategorias(categorias);
         } catch (error) {
             mostrarError("No se pudieron cargar las categorías.", false);
@@ -230,12 +216,28 @@ document.addEventListener("DOMContentLoaded", async function () {
             <tr>
                 <td class="text-center">${c.nombreCategoria}</td>
                 <td class="text-center">
+                    <button class="btn btn-sm btn-outline-primary btn-editar-catalogo btn-editar-categoria" data-id="${c.idCategoria}" aria-label="Editar categoría">
+                        <i class="bi bi-pencil"></i>
+                    </button>
                     <button class="btn btn-link text-danger p-0 btn-eliminar-categoria" data-id="${c.idCategoria}">
                         <i class="bi bi-trash fs-5"></i>
                     </button>
                 </td>
             </tr>
         `).join("");
+
+        document.querySelectorAll(".btn-editar-categoria").forEach(boton => {
+            boton.addEventListener("click", () => {
+                const categoria = categorias.find(item => item.idCategoria == boton.dataset.id);
+                if (!categoria) return;
+                categoriaId.value = categoria.idCategoria;
+                txtNombreCategoria.value = categoria.nombreCategoria;
+                tituloFormCategoria.textContent = "Editar categoría";
+                btnTextoCategoria.textContent = "Actualizar categoría";
+                btnCancelarCategoria.classList.remove("d-none");
+                txtNombreCategoria.focus();
+            });
+        });
 
         document.querySelectorAll(".btn-eliminar-categoria").forEach(boton => {
             boton.addEventListener("click", async () => {
@@ -254,32 +256,69 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     formCategoria.addEventListener("submit", async (evento) => {
         evento.preventDefault();
-        const nombre = document.querySelector("#txtNombreCategoria").value.trim();
+        const nombre = txtNombreCategoria.value.trim();
 
         if (!nombre) return mostrarError("El nombre de la categoría es obligatorio.", false);
         if (nombre.length > 50) return mostrarError("El nombre no puede superar los 50 caracteres.", false);
 
+        const nombreNormalizado = nombre.toLocaleLowerCase("es").replace(/\s+/g, " ");
+        const categoriaDuplicada = categoriasRegistradas.some(categoria =>
+            String(categoria.idCategoria) !== String(categoriaId.value) &&
+            String(categoria.nombreCategoria).trim().toLocaleLowerCase("es").replace(/\s+/g, " ") === nombreNormalizado
+        );
+
+        if (categoriaDuplicada) {
+            return mostrarError(`La categoría '${nombre}' ya está registrada.`, false);
+        }
+
         try {
-            await crearCategoria(nombre);
-            mostrarExitoSimple("¡Listo!", "Categoría creada correctamente.");
-            formCategoria.reset();
+            if (categoriaId.value) {
+                await actualizarCategoria(categoriaId.value, nombre);
+                mostrarExitoSimple("¡Listo!", "Categoría actualizada correctamente.");
+            } else {
+                await crearCategoria(nombre);
+                mostrarExitoSimple("¡Listo!", "Categoría creada correctamente.");
+            }
+            limpiarEdicionCategoria();
             await recargarTablasEquipos();
         } catch (error) {
+            if (error.status === 409) {
+                mostrarError(`La categoría '${nombre}' ya está registrada.`, false);
+                return;
+            }
             mostrarError(error.message || "No se pudo crear la categoría.", false);
         }
     });
+
+    btnCancelarCategoria.addEventListener("click", limpiarEdicionCategoria);
+    modalCategoria.addEventListener("hidden.bs.modal", limpiarEdicionCategoria);
 
     // ===== MODAL: GESTIONAR MARCAS (carga bajo demanda) =====
 
     const modalMarca = document.querySelector("#modalAgregarMarca");
     const formMarca = document.querySelector("#formMarca");
     const tablaMarcas = document.querySelector("#tablaMarcas");
+    const marcaId = document.querySelector("#marcaId");
+    const txtNombreMarca = document.querySelector("#txtNombreMarca");
+    const tituloFormMarca = document.querySelector("#tituloFormMarca");
+    const btnTextoMarca = document.querySelector("#btnTextoMarca");
+    const btnCancelarMarca = document.querySelector("#btnCancelarMarca");
+    let marcasRegistradas = [];
+
+    function limpiarEdicionMarca() {
+        formMarca.reset();
+        marcaId.value = "";
+        tituloFormMarca.textContent = "Agregar marca";
+        btnTextoMarca.textContent = "Guardar marca";
+        btnCancelarMarca.classList.add("d-none");
+    }
 
     modalMarca.addEventListener("shown.bs.modal", cargarMarcas);
 
     async function cargarMarcas() {
         try {
             const marcas = await getMarcas();
+            marcasRegistradas = marcas || [];
             pintarTablaMarcas(marcas);
         } catch (error) {
             mostrarError("No se pudieron cargar las marcas.", false);
@@ -295,12 +334,28 @@ document.addEventListener("DOMContentLoaded", async function () {
             <tr>
                 <td class="text-center">${m.nombreMarca}</td>
                 <td class="text-center">
+                    <button class="btn btn-sm btn-outline-primary btn-editar-catalogo btn-editar-marca" data-id="${m.idMarca}" aria-label="Editar marca">
+                        <i class="bi bi-pencil"></i>
+                    </button>
                     <button class="btn btn-link text-danger p-0 btn-eliminar-marca" data-id="${m.idMarca}">
                         <i class="bi bi-trash fs-5"></i>
                     </button>
                 </td>
             </tr>
         `).join("");
+
+        document.querySelectorAll(".btn-editar-marca").forEach(boton => {
+            boton.addEventListener("click", () => {
+                const marca = marcas.find(item => item.idMarca == boton.dataset.id);
+                if (!marca) return;
+                marcaId.value = marca.idMarca;
+                txtNombreMarca.value = marca.nombreMarca;
+                tituloFormMarca.textContent = "Editar marca";
+                btnTextoMarca.textContent = "Actualizar marca";
+                btnCancelarMarca.classList.remove("d-none");
+                txtNombreMarca.focus();
+            });
+        });
 
         document.querySelectorAll(".btn-eliminar-marca").forEach(boton => {
             boton.addEventListener("click", async () => {
@@ -319,20 +374,38 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     formMarca.addEventListener("submit", async (evento) => {
         evento.preventDefault();
-        const nombre = document.querySelector("#txtNombreMarca").value.trim();
+        const nombre = txtNombreMarca.value.trim();
 
         if (!nombre) return mostrarError("El nombre de la marca es obligatorio.", false);
         if (nombre.length > 50) return mostrarError("El nombre no puede superar los 50 caracteres.", false);
 
+        const nombreNormalizado = nombre.toLocaleLowerCase("es").replace(/\s+/g, " ");
+        const marcaDuplicada = marcasRegistradas.some(marca =>
+            String(marca.idMarca) !== String(marcaId.value) &&
+            String(marca.nombreMarca).trim().toLocaleLowerCase("es").replace(/\s+/g, " ") === nombreNormalizado
+        );
+
+        if (marcaDuplicada) {
+            return mostrarError(`La marca '${nombre}' ya está registrada.`, false);
+        }
+
         try {
-            await crearMarca(nombre);
-            mostrarExitoSimple("¡Listo!", "Marca creada correctamente.");
-            formMarca.reset();
+            if (marcaId.value) {
+                await actualizarMarca(marcaId.value, nombre);
+                mostrarExitoSimple("¡Listo!", "Marca actualizada correctamente.");
+            } else {
+                await crearMarca(nombre);
+                mostrarExitoSimple("¡Listo!", "Marca creada correctamente.");
+            }
+            limpiarEdicionMarca();
             await recargarTablasEquipos();
         } catch (error) {
             mostrarError(error.message || "No se pudo crear la marca.", false);
         }
     });
+
+    btnCancelarMarca.addEventListener("click", limpiarEdicionMarca);
+    modalMarca.addEventListener("hidden.bs.modal", limpiarEdicionMarca);
 
     // ===== MODAL: GESTIONAR MODELOS (carga bajo demanda) =====
 
@@ -340,6 +413,20 @@ document.addEventListener("DOMContentLoaded", async function () {
     const formModelo = document.querySelector("#formModelo");
     const tablaModelos = document.querySelector("#tablaModelos");
     const selectMarcaModelo = document.querySelector("#selectMarcaModelo");
+    const modeloId = document.querySelector("#modeloId");
+    const txtNombreModelo = document.querySelector("#txtNombreModelo");
+    const tituloFormModelo = document.querySelector("#tituloFormModelo");
+    const btnTextoModelo = document.querySelector("#btnTextoModelo");
+    const btnCancelarModelo = document.querySelector("#btnCancelarModelo");
+    let modelosRegistrados = [];
+
+    function limpiarEdicionModelo() {
+        formModelo.reset();
+        modeloId.value = "";
+        tituloFormModelo.textContent = "Agregar modelo";
+        btnTextoModelo.textContent = "Guardar modelo";
+        btnCancelarModelo.classList.add("d-none");
+    }
 
     modalModelo.addEventListener("shown.bs.modal", async () => {
         await Promise.all([cargarModelos(), cargarSelectMarcas()]);
@@ -348,6 +435,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     async function cargarModelos() {
         try {
             const modelos = await getModelos();
+            modelosRegistrados = modelos || [];
             pintarTablaModelos(modelos);
         } catch (error) {
             mostrarError("No se pudieron cargar los modelos.", false);
@@ -374,12 +462,29 @@ document.addEventListener("DOMContentLoaded", async function () {
                 <td class="text-center">${m.nombreModelo}</td>
                 <td class="text-center">${m.nombreMarca}</td>
                 <td class="text-center">
+                    <button class="btn btn-sm btn-outline-primary btn-editar-catalogo btn-editar-modelo" data-id="${m.idModelo}" aria-label="Editar modelo">
+                        <i class="bi bi-pencil"></i>
+                    </button>
                     <button class="btn btn-link text-danger p-0 btn-eliminar-modelo" data-id="${m.idModelo}">
                         <i class="bi bi-trash fs-5"></i>
                     </button>
                 </td>
             </tr>
         `).join("");
+
+        document.querySelectorAll(".btn-editar-modelo").forEach(boton => {
+            boton.addEventListener("click", () => {
+                const modelo = modelos.find(item => item.idModelo == boton.dataset.id);
+                if (!modelo) return;
+                modeloId.value = modelo.idModelo;
+                txtNombreModelo.value = modelo.nombreModelo;
+                selectMarcaModelo.value = modelo.idMarca;
+                tituloFormModelo.textContent = "Editar modelo";
+                btnTextoModelo.textContent = "Actualizar modelo";
+                btnCancelarModelo.classList.remove("d-none");
+                txtNombreModelo.focus();
+            });
+        });
 
         document.querySelectorAll(".btn-eliminar-modelo").forEach(boton => {
             boton.addEventListener("click", async () => {
@@ -398,22 +503,41 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     formModelo.addEventListener("submit", async (evento) => {
         evento.preventDefault();
-        const nombre = document.querySelector("#txtNombreModelo").value.trim();
+        const nombre = txtNombreModelo.value.trim();
         const idMarca = selectMarcaModelo.value;
 
         if (!nombre) return mostrarError("El nombre del modelo es obligatorio.", false);
         if (nombre.length > 50) return mostrarError("El nombre no puede superar los 50 caracteres.", false);
         if (!idMarca) return mostrarError("Selecciona una marca.", false);
 
+        const nombreComparable = nombre.toLocaleLowerCase("es").replace(/\s+/g, " ");
+        const modeloDuplicado = modelosRegistrados.some(modelo =>
+            String(modelo.idModelo) !== String(modeloId.value) &&
+            Number(modelo.idMarca) === Number(idMarca) &&
+            String(modelo.nombreModelo).trim().toLocaleLowerCase("es").replace(/\s+/g, " ") === nombreComparable
+        );
+
+        if (modeloDuplicado) {
+            return mostrarError(`El modelo '${nombre}' ya está registrado para la marca seleccionada.`, false);
+        }
+
         try {
-            await crearModelo(nombre, Number(idMarca));
-            mostrarExitoSimple("¡Listo!", "Modelo creado correctamente.");
-            formModelo.reset();
+            if (modeloId.value) {
+                await actualizarModelo(modeloId.value, nombre, Number(idMarca));
+                mostrarExitoSimple("¡Listo!", "Modelo actualizado correctamente.");
+            } else {
+                await crearModelo(nombre, Number(idMarca));
+                mostrarExitoSimple("¡Listo!", "Modelo creado correctamente.");
+            }
+            limpiarEdicionModelo();
             await recargarTablasEquipos();
         } catch (error) {
             mostrarError(error.message || "No se pudo crear el modelo.", false);
         }
     });
+
+    btnCancelarModelo.addEventListener("click", limpiarEdicionModelo);
+    modalModelo.addEventListener("hidden.bs.modal", limpiarEdicionModelo);
 
     // ===== MODAL: GESTIONAR ARTÍCULOS (carga bajo demanda) =====
 
@@ -515,6 +639,10 @@ document.addEventListener("DOMContentLoaded", async function () {
             const instanciaModal = bootstrap.Modal.getInstance(modalArticulo);
             instanciaModal.hide();
         } catch (error) {
+            if (error.status === 409 || /restricción única|ya existe/i.test(error.message || "")) {
+                mostrarError(`El artículo con código '${codigo}' ya está registrado.`, false);
+                return;
+            }
             mostrarError(error.message || "No se pudo guardar el artículo.", false);
         }
     });

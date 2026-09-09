@@ -8,7 +8,7 @@ import {
     obtenerResumenMensual,
     obtenerResolucionPorDia,
     obtenerTopTecnicosPorCalificacion
-} from '../services/dashboardAdminService.js?v=3';
+} from '../services/dashboardAdminService.js';
 
 // ============================================================
 // VARIABLES GLOBALES

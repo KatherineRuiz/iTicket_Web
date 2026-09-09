@@ -1210,7 +1210,7 @@ body.menu-colapsado .main.layout-global-listo {
 .pagination {
     display: flex;
     align-items: center;
-    gap: 5px !important;
+    gap: 10px !important;
 }
 
 .pagination .page-item {
@@ -1226,26 +1226,26 @@ body.menu-colapsado .main.layout-global-listo {
     align-items: center;
     justify-content: center;
     border: 1px solid transparent !important;
-    border-radius: 9px !important;
+    border-radius: 0 !important;
     background: transparent !important;
     color: #667287 !important;
     font-size: 12px;
     font-weight: 600;
     box-shadow: none !important;
-    transition: color 170ms ease, background-color 170ms ease, transform 190ms var(--layout-ease);
+    transition: color 170ms ease, opacity 170ms ease;
 }
 
 .pagination .page-link:hover {
-    background: #e8f2ff !important;
+    background: transparent !important;
     color: #2869b3 !important;
-    transform: translateY(-1px);
 }
 
 .pagination .page-item.active .page-link {
-    border-color: #539ecd !important;
-    background: #539ecd !important;
-    color: #ffffff !important;
-    box-shadow: 0 5px 12px rgba(83, 158, 205, 0.25) !important;
+    border-color: transparent !important;
+    background: transparent !important;
+    color: #142454 !important;
+    font-weight: 800;
+    box-shadow: none !important;
 }
 
 .pagination .page-item.disabled .page-link {
@@ -1844,13 +1844,14 @@ html.tema-oscuro .pagination .page-link {
 }
 
 html.tema-oscuro .pagination .page-link:hover {
-    background-color: #253a58 !important;
+    background-color: transparent !important;
     color: #ffffff !important;
 }
 
 html.tema-oscuro .pagination .page-item.active .page-link {
-    background-color: #539ecd !important;
+    background-color: transparent !important;
     color: #ffffff !important;
+    font-weight: 800;
 }
 
 html.tema-oscuro .pagination .page-item.disabled .page-link {
@@ -2319,4 +2320,94 @@ html.tema-oscuro .modal-footer {
     .perfil-topbar .perfil-avatar {
         transition-duration: 180ms !important;
     }
+}
+
+.btn-editar-catalogo {
+    width: 38px !important;
+    min-width: 38px !important;
+    height: 38px !important;
+    padding: 0 !important;
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #0d6efd !important;
+    border-radius: 9px !important;
+    background: transparent !important;
+    color: #0d6efd !important;
+    box-shadow: none !important;
+}
+
+.btn-editar-catalogo:hover {
+    background: #eef6ff !important;
+    color: #075cc8 !important;
+    transform: translateY(-1px);
+}
+
+.btn-editar-catalogo:active {
+    transform: translateY(0);
+}
+
+.table-custom tbody td [class*="btn-editar-"],
+.table-custom tbody td [class*="btn-eliminar-"] {
+    width: 38px !important;
+    min-width: 38px !important;
+    height: 38px !important;
+    margin: 2px !important;
+    padding: 0 !important;
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    vertical-align: middle;
+    transition: color 180ms ease, border-color 180ms ease, background-color 180ms ease, transform 180ms ease;
+}
+
+.table-custom tbody td:has([class*="btn-editar-"]),
+.table-custom tbody td:has([class*="btn-eliminar-"]) {
+    width: 104px;
+    min-width: 104px;
+    padding-inline: 6px !important;
+    white-space: nowrap !important;
+    text-align: center;
+}
+
+.table-custom tbody td [class*="btn-editar-"] {
+    border: 1px solid #0d6efd !important;
+    color: #0d6efd !important;
+}
+
+.table-custom tbody td [class*="btn-eliminar-"] {
+    border: 1px solid #ff3f55 !important;
+    color: #ff3f55 !important;
+}
+
+.table-custom tbody td [class*="btn-editar-"]:hover {
+    border-color: #075cc8 !important;
+    background: #eef6ff !important;
+    color: #075cc8 !important;
+    transform: translateY(-1px);
+}
+
+.table-custom tbody td [class*="btn-eliminar-"]:hover {
+    border-color: #dc263d !important;
+    background: #fff1f3 !important;
+    color: #dc263d !important;
+    transform: translateY(-1px);
+}
+
+.table-custom tbody td [class*="btn-editar-"] i,
+.table-custom tbody td [class*="btn-eliminar-"] i {
+    margin: 0 !important;
+    font-size: 1rem !important;
+    line-height: 1;
+}
+
+html.tema-oscuro .table-custom tbody td [class*="btn-editar-"]:hover {
+    background: rgba(13, 110, 253, 0.14) !important;
+}
+
+html.tema-oscuro .table-custom tbody td [class*="btn-eliminar-"]:hover {
+    background: rgba(255, 63, 85, 0.12) !important;
 }

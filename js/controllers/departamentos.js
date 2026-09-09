@@ -12,6 +12,7 @@ const tituloFormDepartamento = document.getElementById('tituloFormDepartamento')
 const btnTextoDepartamento = document.getElementById('btnTextoDepartamento');
 const btnCancelarDepartamento = document.getElementById('btnCancelarDepartamento');
 const tablaDepartamentosBody = document.getElementById('tablaDepartamentosBody');
+let departamentosActuales = [];
 
 window.addEventListener('iticket:recargar-tablas-usuarios', () => {
     cargarDepartamentos();
@@ -39,18 +40,19 @@ export async function llenarSelectAreas() {
         });
     } catch (error) {
         console.error(error);
-        Swal.fire('Error', 'No se pudieron cargar las áreas', 'error');
+        mostrarError('No se pudieron cargar las áreas');
     }
 }
  
 export async function cargarDepartamentos() {
     try {
         const departamentos = await getDepartamentos();
+        departamentosActuales = departamentos || [];
         pintarTablaDepartamentos(departamentos);
         return departamentos;
     } catch (error) {
         console.error(error);
-        Swal.fire('Error', 'No se pudieron cargar los departamentos', 'error');
+        mostrarError('No se pudieron cargar los departamentos');
         return [];
     }
 }
@@ -130,6 +132,17 @@ formDepartamento.addEventListener('submit', async (evento) => {
         return;
     }
 
+    const nombreNormalizado = departamento.nombreDepartamento.toLocaleLowerCase('es').replace(/\s+/g, ' ');
+    const departamentoDuplicado = departamentosActuales.some(departamentoRegistrado =>
+        String(departamentoRegistrado.idDepartamento) !== String(id) &&
+        Number(departamentoRegistrado.idArea) === Number(departamento.idArea) &&
+        String(departamentoRegistrado.nombreDepartamento).trim().toLocaleLowerCase('es').replace(/\s+/g, ' ') === nombreNormalizado
+    );
+    if (departamentoDuplicado) {
+        mostrarError(`El departamento '${departamento.nombreDepartamento}' ya está registrado en el área seleccionada.`);
+        return;
+    }
+
     try {
         if (id) {
             await actualizarDepartamento(id, departamento);
@@ -142,7 +155,7 @@ formDepartamento.addEventListener('submit', async (evento) => {
         recargarGestionUsuarios();
     } catch (error) {
         console.error(error);
-        Swal.fire('Error', error.message || 'No se pudo guardar el departamento', 'error');
+        mostrarError(error.message || 'No se pudo guardar el departamento');
     }
 });
  
@@ -162,7 +175,7 @@ function confirmarEliminarDepartamento(id) {
                 recargarGestionUsuarios();
             } catch (error) {
                 console.error(error);
-                Swal.fire('Error', error.message || 'No se pudo eliminar el departamento', 'error');
+                mostrarError(error.message || 'No se pudo eliminar el departamento');
             }
         }
     });

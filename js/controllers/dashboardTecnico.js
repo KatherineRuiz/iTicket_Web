@@ -8,7 +8,7 @@ import {
     procesarDatosGraficos,
     obtenerContadoresPorEstado,
     obtenerCategoriaVencimiento
-} from "../services/dashboardTecnicosService.js?v=4";
+} from "../services/dashboardTecnicosService.js";
 import { obtenerUsuarioLogueado } from "../utils/sesion.js";
 
 // Elementos del DOM

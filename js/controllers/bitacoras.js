@@ -1,6 +1,7 @@
 import { mostrarError } from "../components/sweetAlerts.js";
 import { getBitacoras } from "../services/bitacorasService.js";
 import { formatearFecha12H } from "../utils/formateadores.js";
+import { renderizarPaginacion } from "../components/paginacion.js";
 
 const tblBitacoras = document.getElementById("tblBitacoras");
 const paginacionBitacoras = document.getElementById("paginacionBitacoras");
@@ -106,8 +107,9 @@ function renderizarTodos(pagina = 1) {
         `;
     });
 
-    infoBitacoras.textContent = `Mostrando ${paginaDeDatos.length} de ${filtradas.length} registros`;
-    renderizarPaginacion(paginacionBitacoras, totalPaginas, paginaActualTodos, renderizarTodos);
+    const fin = paginaDeDatos.length ? inicio + paginaDeDatos.length : 0;
+    infoBitacoras.textContent = `Mostrando ${paginaDeDatos.length ? inicio + 1 : 0}-${fin} de ${filtradas.length}`;
+    renderizarPaginacion(paginacionBitacoras, paginaActualTodos, totalPaginas, renderizarTodos);
 }
 
 function renderizarEliminados(pagina = 1) {
@@ -136,28 +138,9 @@ function renderizarEliminados(pagina = 1) {
         `;
     });
 
-    infoEliminados.textContent = `Mostrando ${paginaDeDatos.length} de ${filtradas.length} tickets eliminados`;
-    renderizarPaginacion(paginacionEliminados, totalPaginas, paginaActualEliminados, renderizarEliminados);
-}
-
-function renderizarPaginacion(contenedor, totalPaginas, paginaActual, alCambiarPagina) {
-    contenedor.innerHTML = "";
-
-    for (let i = 1; i <= totalPaginas; i++) {
-        const activo = i === paginaActual ? "active" : "";
-        contenedor.innerHTML += `
-            <li class="page-item ${activo}">
-                <a class="page-link border-0 bg-transparent text-dark" href="#" data-pagina="${i}">${i}</a>
-            </li>
-        `;
-    }
-
-    contenedor.onclick = (e) => {
-        const link = e.target.closest("[data-pagina]");
-        if (!link) return;
-        e.preventDefault();
-        alCambiarPagina(Number(link.dataset.pagina));
-    };
+    const fin = paginaDeDatos.length ? inicio + paginaDeDatos.length : 0;
+    infoEliminados.textContent = `Mostrando ${paginaDeDatos.length ? inicio + 1 : 0}-${fin} de ${filtradas.length}`;
+    renderizarPaginacion(paginacionEliminados, paginaActualEliminados, totalPaginas, renderizarEliminados);
 }
 
 txtBuscarBitacora.addEventListener("input", () => {

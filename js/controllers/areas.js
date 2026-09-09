@@ -9,6 +9,7 @@ const tituloFormArea = document.getElementById('tituloFormArea');
 const btnTextoArea = document.getElementById('btnTextoArea');
 const btnCancelarArea = document.getElementById('btnCancelarArea');
 const tablaAreasBody = document.getElementById('tablaAreasBody');
+let areasActuales = [];
 
 // Cualquier CRUD relacionado emite este evento para actualizar todas las
 // tablas de la pantalla sin que el usuario tenga que recargar el navegador
@@ -23,11 +24,12 @@ document.addEventListener('DOMContentLoaded', cargarAreas);
 export async function cargarAreas() {
     try {
         const areas = await getAreas();
+        areasActuales = areas || [];
         pintarTablaAreas(areas);
         return areas;
     } catch (error) {
         console.error(error);
-        Swal.fire('Error', 'No se pudieron cargar las áreas', 'error');
+        mostrarError('No se pudieron cargar las áreas');
         return [];
     }
 }
@@ -98,6 +100,16 @@ formArea.addEventListener('submit', async (evento) => {
         return;
     }
 
+    const nombreNormalizado = area.nombreArea.toLocaleLowerCase('es').replace(/\s+/g, ' ');
+    const areaDuplicada = areasActuales.some(areaRegistrada =>
+        String(areaRegistrada.idArea) !== String(id) &&
+        String(areaRegistrada.nombreArea).trim().toLocaleLowerCase('es').replace(/\s+/g, ' ') === nombreNormalizado
+    );
+    if (areaDuplicada) {
+        mostrarError(`El área '${area.nombreArea}' ya está registrada.`);
+        return;
+    }
+
     try {
         if (id) {
             await actualizarArea(id, area);
@@ -110,11 +122,12 @@ formArea.addEventListener('submit', async (evento) => {
         recargarGestionUsuarios();
     } catch (error) {
         console.error(error);
-        Swal.fire('Error', error.message || 'No se pudo guardar el área', 'error');
+        mostrarError(error.message || 'No se pudo guardar el área');
     }
 });
  
 function confirmarEliminarArea(id) {
+    const areaSeleccionada = areasActuales.find(area => String(area.idArea) === String(id));
     Swal.fire({
         title: '¿Eliminar área?',
         text: 'Esta acción no se puede deshacer',
@@ -130,7 +143,12 @@ function confirmarEliminarArea(id) {
                 recargarGestionUsuarios();
             } catch (error) {
                 console.error(error);
-                Swal.fire('Error', error.message || 'No se pudo eliminar el área', 'error');
+                if (/no se puede eliminar|siendo (usado|utilizado)|dependiente|child record/i.test(error.message || '')) {
+                    const nombreArea = areaSeleccionada?.nombreArea || 'seleccionada';
+                    mostrarError(`El área '${nombreArea}' no se puede eliminar porque tiene departamentos asociados.`);
+                    return;
+                }
+                mostrarError(error.message || 'No se pudo eliminar el área');
             }
         }
     });

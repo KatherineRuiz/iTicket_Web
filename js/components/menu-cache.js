@@ -39,7 +39,7 @@ let resolverLayout;
 window.__layoutCssReady = new Promise((resolver) => { resolverLayout = resolver; });
 const enlaceLayout = document.createElement("link");
 enlaceLayout.rel = "stylesheet";
-enlaceLayout.href = "css/layout-global.css?v=16";
+enlaceLayout.href = "css/layout-global.css";
 enlaceLayout.dataset.iticketLayout = "true";
 enlaceLayout.addEventListener("load", resolverLayout, { once: true });
 enlaceLayout.addEventListener("error", resolverLayout, { once: true });

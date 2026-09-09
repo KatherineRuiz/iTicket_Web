@@ -5,6 +5,7 @@ import { getTecnicosPorDepartamento } from "../services/usuariosService.js";
 import { getDepartamentosAsignables } from "../services/departamentosService.js";
 import { formatearFecha12H } from "../utils/formateadores.js";
 import { obtenerIdUsuario } from "../utils/sesion.js";
+import { renderizarPaginacion as pintarPaginacionComun } from "../components/paginacion.js";
 
 // Contadores del resumen superior
 const numNuevos = document.getElementById("numNuevos");
@@ -202,7 +203,9 @@ async function cargarTablaTickets(pagina = 1) {
         paginaActualTickets = resultado.paginaActual;
         renderizarTablaTickets(resultado.tickets);
         renderizarPaginacion(resultado.totalPaginas, resultado.paginaActual);
-        infoTickets.textContent = `Mostrando ${resultado.tickets.length} de ${resultado.totalElementos} tickets`;
+        const inicio = resultado.tickets.length ? (resultado.paginaActual - 1) * 10 + 1 : 0;
+        const fin = resultado.tickets.length ? inicio + resultado.tickets.length - 1 : 0;
+        infoTickets.textContent = `Mostrando ${inicio}-${fin} de ${resultado.totalElementos}`;
     } catch (error) {
         console.error("Error al cargar la tabla de tickets:", error);
         mostrarError("Oops... No se puedieron cargar los tickets");
@@ -232,24 +235,8 @@ function renderizarTablaTickets(tickets) {
 }
 
 function renderizarPaginacion(totalPaginas, paginaActual) {
-    paginacionTickets.innerHTML = "";
-
-    for (let i = 1; i <= totalPaginas; i++) {
-        const activo = i === paginaActual ? "active" : "";
-        paginacionTickets.innerHTML += `
-            <li class="page-item ${activo}">
-                <a class="page-link border-0 bg-transparent text-dark" href="#" data-pagina="${i}">${i}</a>
-            </li>
-        `;
-    }
+    pintarPaginacionComun(paginacionTickets, paginaActual, totalPaginas, cargarTablaTickets);
 }
-
-paginacionTickets.addEventListener("click", (e) => {
-    const link = e.target.closest("[data-pagina]");
-    if (!link) return;
-    e.preventDefault();
-    cargarTablaTickets(Number(link.dataset.pagina));
-});
 
 formAprobaciones.addEventListener("submit", async (e) => {
     e.preventDefault();

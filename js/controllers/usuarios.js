@@ -17,6 +17,7 @@ const tituloFormUsuario = document.getElementById('tituloFormUsuario');
 const btnTextoUsuario = document.getElementById('btnTextoUsuario');
 const btnCancelarUsuario = document.getElementById('btnCancelarUsuario');
 const tablaUsuariosBody = document.getElementById('tablaUsuariosBody');
+let usuariosActuales = [];
 
 // Áreas, departamentos y usuarios comparten este evento de actualización.
 window.addEventListener('iticket:recargar-tablas-usuarios', () => {
@@ -56,7 +57,7 @@ async function llenarSelectRoles() {
         });
     } catch (error) {
         console.error(error);
-        Swal.fire('Error', 'No se pudieron cargar los roles', 'error');
+        mostrarError('No se pudieron cargar los roles');
     }
 }
 
@@ -72,18 +73,19 @@ export async function llenarSelectDepartamentos() {
         });
     } catch (error) {
         console.error(error);
-        Swal.fire('Error', 'No se pudieron cargar los departamentos', 'error');
+        mostrarError('No se pudieron cargar los departamentos');
     }
 }
  
 async function cargarUsuarios() {
     try {
         const usuarios = await getUsuarios();
+        usuariosActuales = usuarios || [];
         pintarTablaUsuarios(usuarios);
         return usuarios;
     } catch (error) {
         console.error(error);
-        Swal.fire('Error', 'No se pudieron cargar los usuarios', 'error');
+        mostrarError('No se pudieron cargar los usuarios');
         return [];
     }
 }
@@ -186,6 +188,16 @@ formUsuario.addEventListener('submit', async (evento) => {
         return;
     }
 
+    const correoNormalizado = usuario.correo.toLocaleLowerCase('es');
+    const correoDuplicado = usuariosActuales.some(usuarioRegistrado =>
+        String(usuarioRegistrado.idUsuario) !== String(id) &&
+        String(usuarioRegistrado.correo).trim().toLocaleLowerCase('es') === correoNormalizado
+    );
+    if (correoDuplicado) {
+        mostrarError(`El correo '${usuario.correo}' ya está registrado.`);
+        return;
+    }
+
     try {
         if (id) {
             await actualizarUsuario(id, usuario);
@@ -198,7 +210,7 @@ formUsuario.addEventListener('submit', async (evento) => {
         recargarGestionUsuarios();
     } catch (error) {
         console.error(error);
-        Swal.fire('Error', error.message || 'No se pudo guardar el usuario', 'error');
+        mostrarError(error.message || 'No se pudo guardar el usuario');
     }
 });
  
@@ -218,7 +230,7 @@ function confirmarEliminarUsuario(id) {
                 recargarGestionUsuarios();
             } catch (error) {
                 console.error(error);
-                Swal.fire('Error', error.message || 'No se pudo eliminar el usuario', 'error');
+                mostrarError(error.message || 'No se pudo eliminar el usuario');
             }
         }
     });

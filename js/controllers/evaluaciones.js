@@ -1,5 +1,6 @@
 import { obtenerEvaluaciones, obtenerMetricasEvaluaciones } from "../services/evaluacionesService.js";
 import { mostrarError } from "../components/sweetAlerts.js";
+import { renderizarPaginacion as pintarPaginacionComun } from "../components/paginacion.js";
 
 const totalEvaluaciones     = document.getElementById("totalEvaluaciones");
 const promedioCalificacion  = document.getElementById("promedioCalificacion");
@@ -126,70 +127,10 @@ function renderizarTabla(data) {
 }
 
 function renderizarPaginacion() {
-    if (!contenedorPaginacion) return;
-    contenedorPaginacion.innerHTML = "";
-
-    if (totalPaginas <= 1) return;
-
-    // Botón Anterior
-    const liAnt = document.createElement("li");
-    liAnt.className = `page-item ${paginaActual === 0 ? 'disabled' : ''}`;
-    liAnt.innerHTML = `<a class="page-link border-0 bg-transparent ${paginaActual === 0 ? 'text-muted' : 'text-dark'}" href="#"><i class="bi bi-chevron-left"></i></a>`;
-    liAnt.addEventListener("click", (e) => {
-        e.preventDefault();
-        if (paginaActual > 0) { paginaActual--; cargarDatos(); }
+    pintarPaginacionComun(contenedorPaginacion, paginaActual + 1, totalPaginas, (pagina) => {
+        paginaActual = pagina - 1;
+        cargarDatos();
     });
-    contenedorPaginacion.appendChild(liAnt);
-
-    const ventana = 1;
-    let inicio = Math.max(0, paginaActual - ventana);
-    let fin = Math.min(totalPaginas - 1, paginaActual + ventana);
-
-    if (inicio > 0) {
-        agregarBotonPagina(0);
-        if (inicio > 1) agregarEllipsis();
-    }
-
-    for (let i = inicio; i <= fin; i++) {
-        agregarBotonPagina(i);
-    }
-
-    if (fin < totalPaginas - 1) {
-        if (fin < totalPaginas - 2) agregarEllipsis();
-        agregarBotonPagina(totalPaginas - 1);
-    }
-
-    // Botón Siguiente
-    const liSig = document.createElement("li");
-    liSig.className = `page-item ${paginaActual >= totalPaginas - 1 ? 'disabled' : ''}`;
-    liSig.innerHTML = `<a class="page-link border-0 bg-transparent ${paginaActual >= totalPaginas - 1 ? 'text-muted' : 'text-dark'}" href="#"><i class="bi bi-chevron-right"></i></a>`;
-    liSig.addEventListener("click", (e) => {
-        e.preventDefault();
-        if (paginaActual < totalPaginas - 1) { paginaActual++; cargarDatos(); }
-    });
-    contenedorPaginacion.appendChild(liSig);
-}
-
-function agregarBotonPagina(i) {
-    const li = document.createElement("li");
-    const esActiva = i === paginaActual;
-    li.className = `page-item ${esActiva ? 'active' : ''}`;
-    li.innerHTML = `<a class="page-link border-0 ${esActiva ? 'bg-primary text-white rounded-circle' : 'bg-transparent text-dark'}" href="#">${i + 1}</a>`;
-    li.addEventListener("click", (e) => {
-        e.preventDefault();
-        if (paginaActual !== i) {
-            paginaActual = i;
-            cargarDatos();
-        }
-    });
-    contenedorPaginacion.appendChild(li);
-}
-
-function agregarEllipsis() {
-    const li = document.createElement("li");
-    li.className = "page-item disabled";
-    li.innerHTML = `<span class="page-link border-0 bg-transparent text-muted px-1">...</span>`;
-    contenedorPaginacion.appendChild(li);
 }
 
 // La búsqueda usa debounce para no consultar la API por cada tecla. Los filtros
