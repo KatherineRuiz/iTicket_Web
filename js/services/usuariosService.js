@@ -40,7 +40,7 @@ export async function actualizarFotoPerfil(idUsuario, archivo) {
 
     try {
         const respuesta = await fetch(`${URL_USUARIOS}/${idUsuario}/imagen`, {
-            method: "POST",
+            method: "PATCH",
             body: formulario,
             signal: controlador.signal
         });

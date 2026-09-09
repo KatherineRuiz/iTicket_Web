@@ -1,19 +1,27 @@
 /*
  * DASHBOARD DE USUARIO
- * Obtiene el id desde la sesión, consulta tickets/evaluaciones/bitácoras en
- * paralelo y entrega esos datos al servicio de transformación. Antes de pintar
- * una gráfica destruye su instancia anterior para evitar canvas duplicados.
+ * Obtiene el id desde la sesión, consulta tickets y las métricas ya
+ * calculadas por el backend (calificaciones y tiempo promedio) en paralelo,
+ * y entrega esos datos al servicio de transformación. Antes de pintar una
+ * gráfica destruye su instancia anterior para evitar canvas duplicados.
  */
 import { obtenerUsuarioLogueado } from '../utils/sesion.js';
+import { formatearFecha12H } from '../utils/formateadores.js';
 import {
     obtenerTodosLosTicketsDelUsuario,
-    obtenerEvaluacionesParaDashboard,
-    obtenerBitacorasParaDashboard,
+    obtenerCalificacionesUsuario,
+    obtenerTiempoPromedioUsuario,
     construirResumenUsuario
+<<<<<<< HEAD
 } from '../services/dashboardUsuarioService.js';
+=======
+} from '../services/dashboardUsuarioService.js?v=4';
+>>>>>>> d1df806613e00fedbac3285e8ef8411330a584f5
 
 let graficoTicketsInstance = null;
 let graficoEvaluacionesInstance = null;
+
+const RESUMEN_VACIO = { prioridades: [0, 0, 0, 0, 0], calificaciones: [0, 0, 0, 0, 0], tiempoPromedio: 0, ultimosTickets: [] };
 
 function iniciarDashboardUsuario() {
     // El botón de bienvenida lleva al flujo existente para crear un ticket.
@@ -32,43 +40,41 @@ if (document.readyState === 'loading') {
 }
 
 // Promise.allSettled permite seguir mostrando tickets aunque fallen datos
-// secundarios como evaluaciones o bitácoras. Los fallos se convierten en [].
+// secundarios como calificaciones o tiempo promedio. Los fallos se convierten en valores por defecto.
 async function cargarDashboardUsuario() {
     const usuario = obtenerUsuarioLogueado();
     if (!usuario?.idUsuario) {
-        renderizarDashboard({ prioridades: [0, 0, 0, 0, 0], calificaciones: [0, 0, 0, 0, 0], tiempoPromedio: 0, ticketsActivos: 0, ticketsFinalizados: 0 });
+        renderizarDashboard(RESUMEN_VACIO);
         return;
     }
 
-    const [ticketsResult, evaluacionesResult, bitacorasResult] = await Promise.allSettled([
+    const [ticketsResult, calificacionesResult, tiempoResult] = await Promise.allSettled([
         obtenerTodosLosTicketsDelUsuario(usuario.idUsuario),
-        obtenerEvaluacionesParaDashboard(),
-        obtenerBitacorasParaDashboard()
+        obtenerCalificacionesUsuario(usuario.idUsuario),
+        obtenerTiempoPromedioUsuario(usuario.idUsuario)
     ]);
 
     if (ticketsResult.status === 'rejected') {
         console.error('[Dashboard usuario] Tickets:', ticketsResult.reason);
-        renderizarDashboard({ prioridades: [0, 0, 0, 0, 0], calificaciones: [0, 0, 0, 0, 0], tiempoPromedio: 0, ticketsActivos: 0, ticketsFinalizados: 0 });
+        renderizarDashboard(RESUMEN_VACIO);
         return;
     }
 
-    const evaluaciones = evaluacionesResult.status === 'fulfilled' ? evaluacionesResult.value : [];
-    const bitacoras = bitacorasResult.status === 'fulfilled' ? bitacorasResult.value : [];
-    if (evaluacionesResult.status === 'rejected') console.error('[Dashboard usuario] Evaluaciones:', evaluacionesResult.reason);
-    if (bitacorasResult.status === 'rejected') console.error('[Dashboard usuario] Bitácoras:', bitacorasResult.reason);
+    const calificaciones = calificacionesResult.status === 'fulfilled' ? calificacionesResult.value : [0, 0, 0, 0, 0];
+    const tiempoPromedio = tiempoResult.status === 'fulfilled' ? tiempoResult.value : 0;
+    if (calificacionesResult.status === 'rejected') console.error('[Dashboard usuario] Calificaciones:', calificacionesResult.reason);
+    if (tiempoResult.status === 'rejected') console.error('[Dashboard usuario] Tiempo promedio:', tiempoResult.reason);
 
-    renderizarDashboard(construirResumenUsuario(ticketsResult.value, evaluaciones, bitacoras));
+    renderizarDashboard(construirResumenUsuario(ticketsResult.value, calificaciones, tiempoPromedio));
 }
 
-// Actualiza texto y recrea las gráficas. destroy es indispensable porque
-// Chart.js no permite dos instancias activas sobre el mismo canvas.
+// Actualiza texto, la lista de últimos tickets y recrea las gráficas. destroy
+// es indispensable porque Chart.js no permite dos instancias activas sobre el mismo canvas.
 function renderizarDashboard(resumen) {
     const tiempoPromedio = document.getElementById('tiempoPromedio');
     if (tiempoPromedio) tiempoPromedio.textContent = resumen.tiempoPromedio;
-    const ticketsActivos = document.getElementById('ticketsActivosUsuario');
-    const ticketsFinalizados = document.getElementById('ticketsFinalizadosUsuario');
-    if (ticketsActivos) ticketsActivos.textContent = resumen.ticketsActivos ?? 0;
-    if (ticketsFinalizados) ticketsFinalizados.textContent = resumen.ticketsFinalizados ?? 0;
+
+    renderizarUltimosTickets(resumen.ultimosTickets || []);
 
     if (graficoTicketsInstance) graficoTicketsInstance.destroy();
     if (graficoEvaluacionesInstance) graficoEvaluacionesInstance.destroy();
@@ -106,7 +112,7 @@ function renderizarDashboard(resumen) {
                 datasets: [{
                     label: 'Evaluaciones',
                     data: resumen.calificaciones,
-                    backgroundColor: ['#184E8C', '#539ECD', '#ffe173', '#ffbc66', '#ff8484'],
+                    backgroundColor: ['#0D3B6E', '#184E8C', '#2E6DAE', '#539ECD', '#90BFDB'],
                     borderWidth: 2,
                     borderColor: '#ffffff',
                     hoverOffset: 4
@@ -116,6 +122,44 @@ function renderizarDashboard(resumen) {
         });
     }
 }
+
+// ---------- LISTA "ÚLTIMOS TICKETS" (los 5 más recientes del usuario) ----------
+function renderizarUltimosTickets(tickets) {
+    const contenedor = document.getElementById('listaUltimosTickets');
+    if (!contenedor) return;
+
+    if (!tickets || tickets.length === 0) {
+        contenedor.innerHTML = '<p class="text-muted text-center py-4 mb-0">Aún no has creado tickets</p>';
+        return;
+    }
+
+    contenedor.innerHTML = tickets.map((ticket) => {
+        const prioridad = ticket.prioridad || '';
+        const iconoPrioridad = window.obtenerClaseIconoTicket?.(prioridad)
+            || 'icono-ticket-prioridad-sin-asignar';
+
+        return `
+            <article data-id="${ticket.idTicket}" class="lista-tickets position-relative shadow-sm bg-white borde-lateral-${prioridad} rounded-3 p-3 mb-3 d-flex justify-content-between align-items-start">
+                <div class="elemento-ticket-asignado pe-1">
+                    <h6 class="fw-bold mb-1 fs-6 d-flex align-items-start texto-limitado-1">
+                        <i class="bi bi-ticket-perforated ${iconoPrioridad} me-2"></i>${ticket.asunto || 'Sin asunto'}
+                    </h6>
+                    <small class="text-muted d-block mb-2">${ticket.codigo || '—'}</small>
+                    <small class="text-muted d-block"><b>Estado: </b>${ticket.estado || '—'}</small>
+                    <small class="text-muted d-block"><b>Creado: </b>${formatearFecha12H(ticket.fechaCreacion)}</small>
+                </div>
+                ${prioridad ? `<span class="flex-shrink-0 position-absolute rounded-pill badge prioridad-${prioridad} px-3 py-2">${prioridad}</span>` : ''}
+            </article>
+        `;
+    }).join('');
+}
+
+document.getElementById('listaUltimosTickets')?.addEventListener('click', (evento) => {
+    const tarjeta = evento.target.closest('.lista-tickets');
+    if (!tarjeta) return;
+    const idTicket = tarjeta.dataset.id;
+    if (idTicket) window.location.href = `vistaTicket.html?id=${idTicket}`;
+});
 
 // Comparte animación y comportamiento responsive. La gráfica de barras recibe
 // ejes; la circular recibe leyenda inferior y no necesita escalas.

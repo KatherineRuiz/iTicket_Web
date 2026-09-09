@@ -201,7 +201,7 @@
                                     </tr>
                                 </thead>
                                 <tbody id="tblTickets">
-                                    
+
                                 </tbody>
                             </table>
                         </div>
@@ -210,7 +210,8 @@
                         <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top">
                             <span class="text-muted small" id="infoTickets"></span>
                             <nav aria-label="Paginacion">
-                                <ul class="pagination pagination-sm mb-0 align-items-center gap-1" id="paginacionTickets">
+                                <ul class="pagination pagination-sm mb-0 align-items-center gap-1"
+                                    id="paginacionTickets">
                                     <li class="page-item">
                                         <a class="page-link border-0 bg-transparent text-dark" href="#"><i
                                                 class="bi bi-chevron-right"></i></a>
@@ -262,11 +263,13 @@
                             <p class="meta-ticket-texto mb-1 d-flex align-items-baseline gap-1"><b>Fecha de
                                     creación:</b> <span id="modalFechaTicket"></span></p>
                             <p class="meta-ticket-texto mb-1 d-flex align-items-baseline gap-1"><b>Descripción:</b>
-                                <span id="modalDescripcionTicket" class="texto-limitado"></span></p>
+                                <span id="modalDescripcionTicket" class="texto-limitado"></span>
+                            </p>
                             <p class="meta-ticket-texto mb-1 d-flex align-items-baseline gap-1"><b>Ubicación:</b> <span
                                     id="modalUbicacionTicket" class="texto-limitado-1"></span></p>
                             <p class="meta-ticket-texto mb-1 d-flex align-items-baseline gap-1 d-none" id="filaEquipo">
-                                <b>Equipo:</b> <span id="modalArticulosTicket" class="texto-limitado-1"></span></p>
+                                <b>Equipo:</b> <span id="modalArticulosTicket" class="texto-limitado-1"></span>
+                            </p>
                             <p class="meta-ticket-texto mb-1 d-flex align-items-baseline gap-1 d-none"
                                 id="filaSoftware"><b>Software a instalar:</b> <span id="modalSoftwareVersionTicket"
                                     class="texto-limitado"></span></p>
@@ -322,7 +325,8 @@
 
                         <div
                             class="grupo-botones-verticales-maqueta d-flex flex-row flex-lg-column gap-2 flex-wrap mt-2 mt-lg-0">
-                            <button type="button" class="btn btn-eliminar boton-accion-pildora flex-grow-1" id="btnEliminarTicket">
+                            <button type="button" class="btn btn-eliminar boton-accion-pildora flex-grow-1"
+                                id="btnEliminarTicket">
                                 Eliminar
                             </button>
                             <button type="button" class="btn btn-secondary boton-accion-pildora flex-grow-1"
@@ -361,7 +365,8 @@
                 <div class="modal-body p-4">
                     <form id="formReasignarDepartamento">
                         <div class="mb-4">
-                            <label for="sltDepartamentoReasignar" class="form-label fw-bold text-navy">Departamento:</label>
+                            <label for="sltDepartamentoReasignar"
+                                class="form-label fw-bold text-navy">Departamento:</label>
                             <div class="d-flex justify-content-center">
                                 <select class="form-select selector-modal-ovalado" id="sltDepartamentoReasignar"
                                     required>
@@ -412,112 +417,19 @@
             </div>
 
             <div class="notificaciones-body px-4 pb-4">
-
-                <!-- Todo esto es las notificaciones de hoy -->
-                <div class="notificaciones-seccion mb-4">
-                    <h6 class="text-muted fw-bold mb-3 small">Hoy</h6>
-                    <div class="lista-notificaciones">
-
-                        <!-- Los divs de notificaciones empiezan desde aqui -->
-                        <div class="notificacion-item no-leida">
-                            <div class="avatar-notificacion">JG</div>
-                            <div class="contenido-notificacion">
-                                <div class="d-flex justify-content-between align-items-baseline">
-                                    <span class="notificacion-titulo">Nuevo ticket</span>
-                                    <span class="notificacion-tiempo">Hace 1 hora</span>
-                                </div>
-                                <p class="notificacion-texto">¡Josue Guinea ha creado un nuevo ticket!</p>
-                            </div>
-                        </div>
-
-                        <div class="notificacion-item no-leida">
-                            <div class="avatar-notificacion">JG</div>
-                            <div class="contenido-notificacion">
-                                <div class="d-flex justify-content-between align-items-baseline">
-                                    <span class="notificacion-titulo">Nuevo ticket</span>
-                                    <span class="notificacion-tiempo">Hace 1 hora</span>
-                                </div>
-                                <p class="notificacion-texto">¡Josue Guinea ha creado un nuevo ticket!</p>
-                            </div>
-                        </div>
-
-                        <div class="notificacion-item no-leida">
-                            <div class="avatar-notificacion">JG</div>
-                            <div class="contenido-notificacion">
-                                <div class="d-flex justify-content-between align-items-baseline">
-                                    <span class="notificacion-titulo">Nuevo ticket</span>
-                                    <span class="notificacion-tiempo">Hace 1 hora</span>
-                                </div>
-                                <p class="notificacion-texto">¡Josue Guinea ha creado un nuevo ticket!</p>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-
-                <!-- Aqui se muestran las de ayer -->
-                <div class="notificaciones-seccion">
-                    <h6 class="text-muted fw-bold mb-3 small">Ayer</h6>
-                    <div class="lista-notificaciones">
-
-                        <div class="notificacion-item">
-                            <div class="avatar-notificacion">JG</div>
-                            <div class="contenido-notificacion">
-                                <div class="d-flex justify-content-between align-items-baseline">
-                                    <span class="notificacion-titulo-visto">Nuevo ticket</span>
-                                    <span class="notificacion-tiempo">Hace 1 día</span>
-                                </div>
-                                <p class="notificacion-texto">¡Josue Guinea ha creado un nuevo ticket!</p>
-                            </div>
-                        </div>
-
-                        <div class="notificacion-item"eliminar>
-                            <div class="avatar-notificacion">JG</div>
-                            <div class="contenido-notificacion">
-                                <div class="d-flex justify-content-between align-items-baseline">
-                                    <span class="notificacion-titulo-visto">Nuevo ticket</span>
-                                    <span class="notificacion-tiempo">Hace 1 día</span>
-                                </div>
-                                <p class="notificacion-texto">¡Josue Guinea ha creado un nuevo ticket!</p>
-                            </div>
-                        </div>
-
-                        <div class="notificacion-item">
-                            <div class="avatar-notificacion">JG</div>
-                            <div class="contenido-notificacion">
-                                <div class="d-flex justify-content-between align-items-baseline">
-                                    <span class="notificacion-titulo-visto">Nuevo ticket</span>
-                                    <span class="notificacion-tiempo">Hace 1 día</span>
-                                </div>
-                                <p class="notificacion-texto">¡Josue Guinea ha creado un nuevo ticket!</p>
-                            </div>
-                        </div>
-
-                        <div class="notificacion-item">
-                            <div class="avatar-notificacion">JG</div>
-                            <div class="contenido-notificacion">
-                                <div class="d-flex justify-content-between align-items-baseline">
-                                    <span class="notificacion-titulo-visto">Nuevo ticket</span>
-                                    <span class="notificacion-tiempo">Hace 1 día</span>
-                                </div>
-                                <p class="notificacion-texto">¡Josue Guinea ha creado un nuevo ticket!</p>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-
+                <!-- Contenido generado dinámicamente por js/controllers/notificaciones.js -->
             </div>
         </div>
+    </div>
 
-        <!--JS de Bootstrap -->
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!--JS de Bootstrap -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-        <!--JS personalizado -->
-<script src="js/components/menu.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-        <script src="js/controllers/notificaciones.js"></script>
-        <script type="module" src="js/controllers/gestionTickets.js"></script>
+    <!--JS personalizado -->
+    <script src="js/components/menu.js?v=15"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script type="module" src="js/controllers/notificaciones.js"></script>
+    <script type="module" src="js/controllers/gestionTickets.js?v=3"></script>
 
 </body>
 

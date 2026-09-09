@@ -27,8 +27,18 @@ document.addEventListener("DOMContentLoaded", function () {
     cargarDatos();
 });
 
+function obtenerIdUsuarioLogueado() {
+    try {
+        const sesion = JSON.parse(sessionStorage.getItem("usuarioLogueado"));
+        return sesion?.idUsuario ?? null;
+    } catch {
+        return null;
+    }
+}
+
 async function cargarDatos() {
     try {
+        const idUsuarioAdmin = obtenerIdUsuarioLogueado();
         const busqueda = inputBusqueda ? inputBusqueda.value : "";
         const calificacion = selectCalificacion ? selectCalificacion.value : "0";
         
@@ -38,8 +48,8 @@ async function cargarDatos() {
 
         // Peticiones en paralelo para tabla paginada y métricas globales
         const [pageData, metricas] = await Promise.all([
-            obtenerEvaluaciones(paginaActual, tamanioPagina, busqueda, calificacion, fecha),
-            obtenerMetricasEvaluaciones(busqueda, calificacion, fecha)
+            obtenerEvaluaciones(idUsuarioAdmin, paginaActual, tamanioPagina, busqueda, calificacion, fecha),
+            obtenerMetricasEvaluaciones(idUsuarioAdmin, busqueda, calificacion, fecha)
         ]);
 
         if (!pageData) {
