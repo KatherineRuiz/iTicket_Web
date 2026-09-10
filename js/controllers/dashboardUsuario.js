@@ -12,11 +12,7 @@ import {
     obtenerCalificacionesUsuario,
     obtenerTiempoPromedioUsuario,
     construirResumenUsuario
-<<<<<<< HEAD
-} from '../services/dashboardUsuarioService.js';
-=======
 } from '../services/dashboardUsuarioService.js?v=4';
->>>>>>> d1df806613e00fedbac3285e8ef8411330a584f5
 
 let graficoTicketsInstance = null;
 let graficoEvaluacionesInstance = null;
@@ -139,16 +135,19 @@ function renderizarUltimosTickets(tickets) {
             || 'icono-ticket-prioridad-sin-asignar';
 
         return `
-            <article data-id="${ticket.idTicket}" class="lista-tickets position-relative shadow-sm bg-white borde-lateral-${prioridad} rounded-3 p-3 mb-3 d-flex justify-content-between align-items-start">
-                <div class="elemento-ticket-asignado pe-1">
-                    <h6 class="fw-bold mb-1 fs-6 d-flex align-items-start texto-limitado-1">
-                        <i class="bi bi-ticket-perforated ${iconoPrioridad} me-2"></i>${ticket.asunto || 'Sin asunto'}
-                    </h6>
+            <article data-id="${ticket.idTicket}" class="lista-tickets ticket-usuario-item position-relative shadow-sm bg-white borde-lateral-${prioridad} rounded-3 p-3 mb-3">
+                <div class="elemento-ticket-asignado">
+                    <div class="ticket-usuario-cabecera">
+                        <h6 class="ticket-usuario-titulo fw-bold mb-1 fs-6">
+                            <i class="bi bi-ticket-perforated ${iconoPrioridad}"></i>
+                            <span>${ticket.asunto || 'Sin asunto'}</span>
+                        </h6>
+                        ${prioridad ? `<span class="ticket-usuario-prioridad rounded-pill badge prioridad-${prioridad} px-3 py-2">${prioridad}</span>` : ''}
+                    </div>
                     <small class="text-muted d-block mb-2">${ticket.codigo || '—'}</small>
                     <small class="text-muted d-block"><b>Estado: </b>${ticket.estado || '—'}</small>
                     <small class="text-muted d-block"><b>Creado: </b>${formatearFecha12H(ticket.fechaCreacion)}</small>
                 </div>
-                ${prioridad ? `<span class="flex-shrink-0 position-absolute rounded-pill badge prioridad-${prioridad} px-3 py-2">${prioridad}</span>` : ''}
             </article>
         `;
     }).join('');

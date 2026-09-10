@@ -3,17 +3,12 @@ import {
     obtenerMetricasDashboard,
     obtenerResumenMensual,
     obtenerResolucionPorDia,
-<<<<<<< HEAD
-    obtenerTopTecnicosPorCalificacion
-} from '../services/dashboardAdminService.js';
-=======
     obtenerTopTecnicosPorCalificacion,
     obtenerResumenPanelAdmin,
     obtenerContadoresPanelAdmin
 } from '../services/dashboardAdminService.js?v=5';
 
 import { formatearFecha12H } from '../utils/formateadores.js'; 
->>>>>>> d1df806613e00fedbac3285e8ef8411330a584f5
 
 // ============================================================
 // VARIABLES GLOBALES

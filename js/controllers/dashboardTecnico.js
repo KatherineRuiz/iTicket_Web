@@ -2,21 +2,11 @@
    transforma esos datos en indicadores, listas y gráficas del técnico activo. */
 
 import {
-<<<<<<< HEAD
-    getTodosTicketsAsignados,
-    getEvaluacionesDashboard,
-    getBitacorasDashboard,
-    procesarDatosGraficos,
-    obtenerContadoresPorEstado,
-    obtenerCategoriaVencimiento
-} from "../services/dashboardTecnicosService.js";
-=======
     obtenerResumenPanelTecnico,
     obtenerContadoresPanelTecnico,
     getCalificacionesTecnico,
     getResolucionPorDiaTecnico
 } from "../services/dashboardTecnicosService.js?v=6";
->>>>>>> d1df806613e00fedbac3285e8ef8411330a584f5
 import { obtenerUsuarioLogueado } from "../utils/sesion.js";
 
 // Elementos del DOM

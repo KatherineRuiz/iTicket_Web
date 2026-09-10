@@ -315,6 +315,52 @@ html.tema-oscuro .ticket-resumen-icono-oscuro {
     overflow-x: hidden;
 }
 
+/* En las tarjetas estrechas del usuario, el asunto y la prioridad ocupan
+   columnas independientes para que nunca se dibujen uno encima del otro. */
+.dashboard-usuario .ticket-usuario-item {
+    min-width: 0;
+    cursor: pointer;
+}
+
+.dashboard-usuario .ticket-usuario-item .elemento-ticket-asignado {
+    width: 100%;
+    min-width: 0;
+}
+
+.dashboard-usuario .ticket-usuario-cabecera {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: start;
+    gap: 12px;
+}
+
+.dashboard-usuario .ticket-usuario-titulo {
+    min-width: 0;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    line-height: 1.35;
+}
+
+.dashboard-usuario .ticket-usuario-titulo i {
+    flex: 0 0 auto;
+    margin-top: 2px;
+}
+
+.dashboard-usuario .ticket-usuario-titulo span {
+    min-width: 0;
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+}
+
+.dashboard-usuario .ticket-usuario-prioridad.badge {
+    position: static !important;
+    flex: 0 0 auto;
+    white-space: nowrap;
+}
+
 @media (max-width: 1199.98px) {
     .dashboard-evaluaciones .mi-resumen {
         min-height: 520px;

@@ -244,6 +244,7 @@
 
 .cuerpo-evaluacion-pendiente {
   background: #f8fafd;
+  overflow-x: hidden;
 }
 
 .titulo-ticket-evaluacion {
@@ -254,11 +255,45 @@
 
 .ticket-evaluacion-resumen {
   position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 12px;
+  min-width: 0;
+  overflow: hidden;
   border: 1px solid #e2e7f0;
   border-left: 4px solid #539ecd;
   border-radius: 16px;
   background: #ffffff;
   box-shadow: 0 9px 24px rgba(20, 36, 84, 0.07);
+}
+
+.ticket-evaluacion-contenido {
+  min-width: 0;
+}
+
+.ticket-evaluacion-asunto {
+  min-width: 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  line-height: 1.35;
+}
+
+.ticket-evaluacion-asunto i {
+  flex: 0 0 auto;
+  margin-top: 2px;
+}
+
+.ticket-evaluacion-asunto span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.ticket-evaluacion-prioridad.badge {
+  position: static !important;
+  align-self: start;
+  white-space: nowrap;
 }
 
 .bloque-calificacion {
@@ -338,6 +373,15 @@ html.tema-oscuro .modal-evaluacion-pendiente .form-label {
     align-items: flex-start !important;
     flex-direction: column;
     gap: 8px;
+  }
+
+  .ticket-evaluacion-resumen {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 8px;
+  }
+
+  .ticket-evaluacion-prioridad.badge {
+    padding-inline: 12px !important;
   }
 }
 
