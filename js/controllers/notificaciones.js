@@ -184,6 +184,7 @@ function iconoPorTipo(tipo) {
         TICKET_RESUELTO: "bi-check-circle",
         TICKET_ELIMINADO: "bi-trash",
         TICKET_VENCIDO: "bi-exclamation-triangle",
+        TICKET_REASIGNADO: "bi-arrow-left-right",
         PROYECTO_CREADO: "bi-kanban",
         FASE_CREADA: "bi-diagram-3"
     };

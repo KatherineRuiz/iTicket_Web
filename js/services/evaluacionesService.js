@@ -1,9 +1,9 @@
 const API_URL = "http://localhost:8080/api/evaluaciones";
 
 // 1. Crear evaluación de ticket resuelto
-export async function crearEvaluacion(evaluacion) {
+export async function crearEvaluacion(evaluacion, idUsuario) {
     try {
-        const respuesta = await fetch(API_URL, {
+        const respuesta = await fetch(`${API_URL}?idUsuario=${idUsuario}`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(evaluacion)
