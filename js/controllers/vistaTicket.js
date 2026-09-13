@@ -859,12 +859,12 @@ listaComentarios?.addEventListener("click", async (e) => {
     if (!confirmar) return;
 
     try {
-        await eliminarComentario(idComentario);
+        await eliminarComentario(idComentario, idUsuario);
         comentariosActuales = comentariosActuales.filter((c) => c.id !== idComentario);
         renderizarComentarios();
     } catch (error) {
         console.error("Error al eliminar el comentario:", error);
-        mostrarError("No se pudo eliminar el comentario.");
+        mostrarError(error.message || "No se pudo eliminar el comentario.");
     }
 });
 
