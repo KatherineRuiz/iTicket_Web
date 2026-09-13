@@ -442,7 +442,7 @@ formReasignarDepartamento.addEventListener("submit", async (e) => {
     try {
         await actualizarDepartamento(idTicketSeleccionado, {
             departamento: datos.departamento
-        });
+        }, idUsuario);
 
         mostrarExitoSimple("¡Ticket reasignado!", "El ticket fue asignado a otro departamento.");
         await recargarGestionTickets();

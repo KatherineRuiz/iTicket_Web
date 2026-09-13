@@ -266,7 +266,7 @@ formEvaluacion.addEventListener("submit", async (e) => {
             calificacion: Number(calificacionInput.value),
             comentario,
             idTicket: ticket.idTicket
-        });
+        }, idUsuario);
     } catch (error) {
         mostrarError("No se pudo enviar la evaluación. Intenta de nuevo.");
         return;
