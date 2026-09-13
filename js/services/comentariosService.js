@@ -22,15 +22,16 @@ export async function crearComentario(dto) {
     }
 }
 
-//Eliminar un comentario
-export async function eliminarComentario(idComentario) {
+//Eliminar un comentario (idUsuario es quien solicita eliminar; el backend valida que sea el autor)
+export async function eliminarComentario(idComentario, idUsuario) {
     try {
-        const respuesta = await fetch(`${API_URL}/${idComentario}`, { 
-            method: "DELETE" 
+        const respuesta = await fetch(`${API_URL}/${idComentario}?idUsuario=${idUsuario}`, {
+            method: "DELETE"
         });
 
         if (!respuesta.ok) {
-            throw new Error("Error al eliminar el comentario");
+            const cuerpo = await respuesta.json().catch(() => null);
+            throw new Error(cuerpo?.message || "Error al eliminar el comentario");
         }
 
         return true;
