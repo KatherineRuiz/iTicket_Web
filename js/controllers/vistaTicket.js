@@ -1,4 +1,4 @@
-import { getTicket, editarComoCreador, editarComoGestor, editarEstadoAsignado, reportarTicket } from "../services/ticketsService.js";
+import { getTicket, editarComoCreador, editarComoGestor, editarEstadoAsignado, reportarTicket, eliminarTicket } from "../services/ticketsService.js";
 import { obtenerEvidenciasPorTicket, eliminarEvidencia, subirEvidencia } from "../services/evidenciasService.js";
 import { getDepartamentosAsignables } from "../services/departamentosService.js";
 import { buscarArticulosPorCodigoParcial } from "../services/articulosService.js";
@@ -40,6 +40,7 @@ const galeriaEvidenciasVista = document.getElementById("galeriaEvidenciasVista")
 const btnAbrirEdicionCreador = document.getElementById("btnAbrirEdicionCreador");
 const btnAbrirReasignacion = document.getElementById("btnAbrirReasignacion");
 const btnAbrirEstadoAsignado = document.getElementById("btnAbrirEstadoAsignado");
+const btnEliminarTicket = document.getElementById("btnEliminarTicket");
 
 //Modal: edición como creador
 const modalEdicionCreadorEl = document.getElementById("modalEdicionCreador");
@@ -239,7 +240,28 @@ function configurarPermisos() {
     btnAbrirReasignacion.classList.toggle("d-none", !permisos.reasignar);
     btnAbrirEstadoAsignado.classList.toggle("d-none", !permisos.cambiarEstado);
     btnGestionarReporte.classList.toggle("d-none", !permisos.reportar);
+    btnEliminarTicket.classList.toggle("d-none", !permisos.eliminar);
 }
+
+//El creador elimina su ticket mientras siga en estado "Nuevo" (misma regla que editarComoCreador)
+btnEliminarTicket?.addEventListener("click", async () => {
+    const confirmar = await mostrarConfirmacion(
+        "¿Eliminar este ticket?",
+        "Esta acción no se puede revertir.",
+        "Eliminar"
+    );
+    if (!confirmar) return;
+
+    try {
+        await eliminarTicket(ticketActual.idTicket, idUsuario);
+        mostrarExitoSimple("¡Ticket eliminado!", "Tu ticket fue eliminado correctamente.");
+        window.setTimeout(() => {
+            window.location.href = "misTickets.html";
+        }, 1200);
+    } catch (error) {
+        mostrarError(error.message || "No se pudo eliminar el ticket.");
+    }
+});
 
 //Modal de edición (creador)
 

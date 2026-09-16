@@ -7,6 +7,11 @@ export function puedeEditarComoCreador(ticket, idUsuario) {
     return ticket.creador === idUsuario && ticket.estado === "Nuevo";
 }
 
+//El creador solo puede eliminar su ticket mientras siga "Nuevo" (antes de ser aprobado/asignado)
+export function puedeEliminarComoCreador(ticket, idUsuario) {
+    return ticket.creador === idUsuario && ticket.estado === "Nuevo";
+}
+
 //Solo un admin puede reasignar
 export function puedeReasignar(ticket, rol) {
     return rol === "administrador" && ESTADOS_EN_CURSO_VENCIDO.includes(ticket.estado);
@@ -27,6 +32,7 @@ export function obtenerPermisos(ticket, idUsuario, rol) {
         editarCreador: puedeEditarComoCreador(ticket, idUsuario),
         reasignar: puedeReasignar(ticket, rol),
         cambiarEstado: puedeCambiarEstado(ticket, idUsuario),
-        reportar: puedeReportar(ticket, idUsuario)
+        reportar: puedeReportar(ticket, idUsuario),
+        eliminar: puedeEliminarComoCreador(ticket, idUsuario)
     };
 }
