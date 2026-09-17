@@ -733,3 +733,26 @@ body {
     box-shadow: 0 4px 12px rgba(229, 62, 62, 0.2);
     transition: all 0.3s ease;
 }
+
+.chat-icon {
+  width: 15px !important;
+  height: 15px !important;
+  object-fit: contain !important;
+  flex-shrink: 0 !important;
+  cursor: pointer !important;
+  transition: transform 0.2s ease, opacity 0.2s ease !important;
+}
+
+.chat-icon:hover {
+  opacity: 0.8 !important;
+  transform: scale(1.08) !important;
+}
+
+.chat-icon:active {
+  transform: scale(0.95) !important;
+}
+
+html.tema-oscuro .chat-icon {
+  filter: brightness(0) invert(1);
+  opacity: .92;
+}
