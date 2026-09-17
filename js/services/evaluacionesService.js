@@ -1,4 +1,6 @@
-const API_URL = "http://localhost:8080/api/evaluaciones";
+import { API_BASE_URL } from "./apiConfig.js";
+
+const API_URL = `${API_BASE_URL}/evaluaciones`;
 
 // 1. Crear evaluación de ticket resuelto
 export async function crearEvaluacion(evaluacion) {

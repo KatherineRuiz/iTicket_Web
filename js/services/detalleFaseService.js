@@ -1,5 +1,7 @@
+import { API_BASE_URL } from "./apiConfig.js";
+
 // URL de la API
-const API_URL = 'http://localhost:8080/api/detalleFase';
+const API_URL = `${API_BASE_URL}/detalleFase`;
 
 //Obtener la lista completa de detalles de fase
 export async function getDetallesFase() {

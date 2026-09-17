@@ -1,4 +1,6 @@
-const API_URL = "http://localhost:8080/api/tipoubicacion";
+import { API_BASE_URL } from "./apiConfig.js";
+
+const API_URL = `${API_BASE_URL}/tipoubicacion`;
 
 export async function getTiposUbicacion() {
     const respuesta = await fetch(API_URL);

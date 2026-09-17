@@ -1,4 +1,6 @@
-const API_URL = "http://localhost:8080/api/fases";
+import { API_BASE_URL } from "./apiConfig.js";
+
+const API_URL = `${API_BASE_URL}/fases`;
 
 // Obtiene la lista completa. Un 204 es válido y se normaliza a arreglo vacío.
 export async function getFases() {

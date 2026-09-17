@@ -1,4 +1,6 @@
-const API_URL = "http://localhost:8080/api/comentarios";
+import { API_BASE_URL } from "./apiConfig.js";
+
+const API_URL = `${API_BASE_URL}/comentarios`;
 
 //Crea un comentario asociado a un ticket
 export async function crearComentario(dto) {

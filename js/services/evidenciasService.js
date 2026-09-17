@@ -1,4 +1,6 @@
-const API_URL = "http://localhost:8080/api/evidencias";
+import { API_BASE_URL } from "./apiConfig.js";
+
+const API_URL = `${API_BASE_URL}/evidencias`;
 
 
 //Sube un archivo de evidencia asociado a un ticket ya creado

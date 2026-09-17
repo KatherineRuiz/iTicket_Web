@@ -656,7 +656,35 @@ function inicializarNotificacionesGlobales() {
 }
 
 function prepararInteraccionTablas() {
+    convertirAccionesDeTablas(document);
+
+    const observadorAcciones = new MutationObserver(function (cambios) {
+        cambios.forEach(function (cambio) {
+            cambio.addedNodes.forEach(function (nodo) {
+                if (nodo.nodeType === Node.ELEMENT_NODE) convertirAccionesDeTablas(nodo);
+            });
+        });
+    });
+    observadorAcciones.observe(document.body, { childList: true, subtree: true });
+
     document.addEventListener("click", function (evento) {
+        const botonMenu = evento.target.closest(".btn-menu-acciones-tabla");
+        if (botonMenu) {
+            evento.preventDefault();
+            evento.stopPropagation();
+            const menu = botonMenu.closest(".menu-acciones-tabla");
+            const estabaAbierto = menu.classList.contains("abierto");
+            cerrarMenusAccionesTabla();
+            if (!estabaAbierto) abrirMenuAccionesTabla(menu);
+            return;
+        }
+
+        if (evento.target.closest(".menu-acciones-tabla-opcion")) {
+            cerrarMenusAccionesTabla();
+            return;
+        }
+
+        cerrarMenusAccionesTabla();
         const fila = evento.target.closest(".table-custom tbody tr.fila-expandible");
 
         if (!fila || evento.target.closest("button, a, input, select, textarea, label")) {
@@ -675,6 +703,80 @@ function prepararInteraccionTablas() {
         });
         fila.classList.toggle("fila-expandida", !estabaExpandida);
         fila.setAttribute("aria-expanded", estabaExpandida ? "false" : "true");
+    });
+
+    document.addEventListener("keydown", function (evento) {
+        if (evento.key === "Escape") cerrarMenusAccionesTabla();
+    });
+
+    window.addEventListener("resize", function () { cerrarMenusAccionesTabla(); });
+    window.addEventListener("scroll", function () { cerrarMenusAccionesTabla(); }, true);
+}
+
+function convertirAccionesDeTablas(raiz) {
+    const selectorCelda = ".table-custom tbody td";
+    const celdas = [];
+    if (raiz.matches?.(selectorCelda)) celdas.push(raiz);
+    raiz.querySelectorAll?.(selectorCelda).forEach(function (celda) { celdas.push(celda); });
+
+    celdas.forEach(function (celda) {
+        if (celda.dataset.menuAccionesPreparado === "true") return;
+
+        const acciones = [...celda.querySelectorAll('button[class*="btn-editar-"], button[class*="btn-eliminar-"]')]
+            .filter(function (boton) { return !boton.closest(".menu-acciones-tabla"); });
+        if (!acciones.length) return;
+
+        celda.dataset.menuAccionesPreparado = "true";
+        const menu = document.createElement("div");
+        menu.className = "menu-acciones-tabla";
+
+        const botonAbrir = document.createElement("button");
+        botonAbrir.type = "button";
+        botonAbrir.className = "btn-menu-acciones-tabla";
+        botonAbrir.setAttribute("aria-label", "Mostrar acciones");
+        botonAbrir.setAttribute("aria-expanded", "false");
+        botonAbrir.innerHTML = '<i class="bi bi-three-dots" aria-hidden="true"></i>';
+
+        const panel = document.createElement("div");
+        panel.className = "panel-acciones-tabla";
+        panel.hidden = true;
+
+        acciones.forEach(function (boton) {
+            const esEliminar = [...boton.classList].some(function (clase) { return clase.includes("btn-eliminar-"); });
+            const texto = esEliminar ? "Eliminar" : "Editar";
+            boton.type = "button";
+            boton.classList.add("menu-acciones-tabla-opcion");
+            boton.classList.toggle("opcion-eliminar", esEliminar);
+            boton.setAttribute("aria-label", texto);
+            boton.innerHTML = `<i class="bi ${esEliminar ? "bi-trash3" : "bi-pencil-square"}" aria-hidden="true"></i><span>${texto}</span>`;
+            panel.appendChild(boton);
+        });
+
+        menu.append(botonAbrir, panel);
+        celda.appendChild(menu);
+    });
+}
+
+function abrirMenuAccionesTabla(menu) {
+    const panel = menu.querySelector(".panel-acciones-tabla");
+    const boton = menu.querySelector(".btn-menu-acciones-tabla");
+    if (!panel || !boton) return;
+
+    panel.hidden = false;
+    menu.classList.add("abierto");
+    boton.setAttribute("aria-expanded", "true");
+
+    const espacioDebajo = window.innerHeight - menu.getBoundingClientRect().bottom;
+    const espacioEncima = menu.getBoundingClientRect().top;
+    menu.classList.toggle("abre-arriba", espacioDebajo < panel.offsetHeight + 20 && espacioEncima > espacioDebajo);
+}
+
+function cerrarMenusAccionesTabla() {
+    document.querySelectorAll(".menu-acciones-tabla.abierto").forEach(function (menu) {
+        menu.classList.remove("abierto", "abre-arriba");
+        menu.querySelector(".btn-menu-acciones-tabla")?.setAttribute("aria-expanded", "false");
+        const panel = menu.querySelector(".panel-acciones-tabla");
+        if (panel) panel.hidden = true;
     });
 }
 

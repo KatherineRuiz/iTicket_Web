@@ -1,8 +1,8 @@
+import { API_BASE_URL } from "./apiConfig.js";
+
 // ============================================================
 // CONSTANTES GLOBALES DE URLS Y ENDPOINTS
 // ============================================================
-const API_BASE_URL = "http://localhost:8080/api";
-
 const ENDPOINTS = {
     METRICAS: `${API_BASE_URL}/estadisticas/metricas`,
     ALERTAS_INSATISFACCION: `${API_BASE_URL}/estadisticas/alertas`,

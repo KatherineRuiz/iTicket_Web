@@ -1,7 +1,7 @@
 import { getTicket, editarComoCreador, editarComoGestor, editarEstadoAsignado, reportarTicket } from "../services/ticketsService.js";
 import { obtenerEvidenciasPorTicket, eliminarEvidencia, subirEvidencia } from "../services/evidenciasService.js";
 import { getDepartamentosAsignables } from "../services/departamentosService.js";
-import { buscarArticulosPorCodigoParcial } from "../services/articulosService.js";
+import { buscarArticulosPorCodigoParcial, obtenerCodigosNoInventariados } from "../services/articulosService.js";
 import { getTecnicosPorDepartamento, getUsuarioById } from "../services/usuariosService.js";
 import { mostrarError, mostrarExitoSimple, mostrarConfirmacion } from "../components/sweetAlerts.js";
 import { validarFormularioTicket, validarFormularioAprobacion, validarFormularioReporte } from "../validators/ticketsValidator.js";
@@ -581,6 +581,24 @@ frmEdicionCreador?.addEventListener("submit", async (e) => {
         });
         mostrarError(errores.map((e) => e.mensaje).join(" "));
         return;
+    }
+
+    if (ticketActual.tipoTicket === "Articulo") {
+        let codigosInvalidos;
+        try {
+            codigosInvalidos = await obtenerCodigosNoInventariados(listaCodigosEquipos);
+        } catch (error) {
+            console.error("Error al comprobar los códigos del inventario:", error);
+            mostrarError("No pudimos comprobar los equipos en este momento. Intenta guardar nuevamente.");
+            return;
+        }
+
+        if (codigosInvalidos.length > 0) {
+            txtCodigoEdicion.classList.add("is-invalid");
+            const listado = codigosInvalidos.map((codigo) => `"${codigo}"`).join(", ");
+            mostrarError(`${codigosInvalidos.length === 1 ? "El código" : "Los códigos"} ${listado} no ${codigosInvalidos.length === 1 ? "pertenece" : "pertenecen"} al inventario. Elimínalo${codigosInvalidos.length === 1 ? "" : "s"} e ingresa ${codigosInvalidos.length === 1 ? "uno correcto" : "códigos correctos"}.`);
+            return;
+        }
     }
 
     const dto = {

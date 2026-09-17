@@ -1,4 +1,6 @@
-const API_URL = "http://localhost:8080/api/multimediaComentarios";
+import { API_BASE_URL } from "./apiConfig.js";
+
+const API_URL = `${API_BASE_URL}/multimediaComentarios`;
 
 //Sube un archivo adjunto asociado a un comentario ya creado
 export async function subirMultimediaComentario(archivo, idComentario) {

@@ -1,4 +1,6 @@
-const API_URL = "http://localhost:8080/api/articulos";
+import { API_BASE_URL } from "./apiConfig.js";
+
+const API_URL = `${API_BASE_URL}/articulos`;
 
 export async function getArticulosPaginados(pagina = 1, tamano = 10, filtros = {}) {
     const params = new URLSearchParams({ pagina, tamano });
@@ -52,6 +54,20 @@ export async function buscarArticulosPorCodigoParcial(fragmento) {
         console.error("Error al buscar artículos: ", error);
         throw error;
     }
+}
+
+export async function obtenerCodigosNoInventariados(codigos) {
+    const codigosUnicos = [...new Set((codigos || []).map((codigo) => String(codigo).trim()).filter(Boolean))];
+    const comprobaciones = await Promise.all(codigosUnicos.map(async (codigo) => {
+        const resultados = await buscarArticulosPorCodigoParcial(codigo);
+        const codigoBuscado = codigo.toLocaleUpperCase("es");
+        const existe = Array.isArray(resultados) && resultados.some((articulo) =>
+            String(articulo?.codigoArticulo || "").trim().toLocaleUpperCase("es") === codigoBuscado
+        );
+        return existe ? null : codigo;
+    }));
+
+    return comprobaciones.filter(Boolean);
 }
 
 export async function actualizarArticulo(id, codigoArticulo, idCategoria, idUbicacion, idModelo) {

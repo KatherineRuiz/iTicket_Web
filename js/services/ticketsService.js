@@ -1,5 +1,7 @@
+import { API_BASE_URL } from "./apiConfig.js";
+
 //Configuracion de URL
-const API_URL = "http://localhost:8080/api/tickets";
+const API_URL = `${API_BASE_URL}/tickets`;
 
 //Obtener la lista completa de tickets
 export async function getTickets() {

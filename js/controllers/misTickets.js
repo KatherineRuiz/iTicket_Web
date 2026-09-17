@@ -177,7 +177,7 @@ dtBuscarFecha.addEventListener("change", () => {
     cargarTickets(1);
 });
 
-btnAbrirEvaluacion.addEventListener("click", async () => {
+async function abrirEvaluacionesPendientes() {
     // La cola solo se consulta cuando está vacía; después se recorre en memoria.
     if (colaEvaluaciones.length === 0) {
         try {
@@ -196,7 +196,14 @@ btnAbrirEvaluacion.addEventListener("click", async () => {
     }
 
     pintarTicketEvaluacion();
-});
+    evaluacionModal.show();
+}
+
+btnAbrirEvaluacion.addEventListener("click", abrirEvaluacionesPendientes);
+
+if (new URLSearchParams(window.location.search).get("evaluar") === "pendientes") {
+    abrirEvaluacionesPendientes();
+}
 
 function pintarTicketEvaluacion() {
     const ticket = colaEvaluaciones[indiceActual];

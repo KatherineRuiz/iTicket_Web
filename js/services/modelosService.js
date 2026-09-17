@@ -1,4 +1,6 @@
-const API_URL = "http://localhost:8080/api/modelos";
+import { API_BASE_URL } from "./apiConfig.js";
+
+const API_URL = `${API_BASE_URL}/modelos`;
 
 export async function getModelos() {
     const respuesta = await fetch(API_URL);

@@ -238,7 +238,6 @@ body {
     background: rgba(255, 255, 255, 0.82);
     border: 1px solid rgba(17, 18, 20, 0.06);
     box-shadow: 0 10px 24px rgba(17, 24, 39, 0.045);
-    backdrop-filter: blur(12px);
 }
 
 /* Animación perfil */
@@ -348,7 +347,6 @@ body {
     width: 100vw;
     height: 100vh;
     background-color: rgba(0, 0, 0, 0.58);
-    backdrop-filter: blur(3px);
     z-index: 1030;
     opacity: 0;
     pointer-events: none;
@@ -640,13 +638,18 @@ body {
     font-weight: 600;
     font-size: 15px;
     text-align: center;
-    box-shadow: 0 4px 12px rgba(67, 147, 246, 0.2);
-    transition: all 0.3s ease;
+    box-shadow: none !important;
+    transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
 .btn-azul-redondeado:hover,
-.btn-personalizado-primario:hover {
+.btn-azul-redondeado:focus,
+.btn-azul-redondeado:active,
+.btn-personalizado-primario:hover,
+.btn-personalizado-primario:focus,
+.btn-personalizado-primario:active {
     background-color: var(--blue-hover) !important;
+    box-shadow: none !important;
     transform: translateY(-1px);
 }
 
@@ -659,12 +662,15 @@ body {
     font-weight: 600;
     font-size: 15px;
     text-align: center;
-    box-shadow: 0 4px 12px rgba(67, 147, 246, 0.2);
-    transition: all 0.3s ease;
+    box-shadow: none !important;
+    transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
-.btn-oscuro-redondeado:hover {
+.btn-oscuro-redondeado:hover,
+.btn-oscuro-redondeado:focus,
+.btn-oscuro-redondeado:active {
     background-color: var(--blue-hover) !important;
+    box-shadow: none !important;
     transform: translateY(-1px);
 }
 

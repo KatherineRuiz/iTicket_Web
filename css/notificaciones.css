@@ -6,8 +6,6 @@
     width: 100vw;
     height: 100vh;
     background-color: rgba(10, 18, 38, 0.45);
-    backdrop-filter: blur(3px);
-    /* Esto hace que se vea difuminado todo lo que no es la parte de notificación */
     z-index: 1500;
     opacity: 0;
     pointer-events: none;
