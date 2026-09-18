@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="es">
- 
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>iTicket - Equipos y mobiliarios</title>
+    <link rel="shortcut icon" href="img/logo.png" type="image/x-icon">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="css/common.css">
@@ -12,14 +13,14 @@
     <link rel="stylesheet" href="css/equipos.css">
     <script src="js/components/menu-cache.js"></script>
 </head>
- 
+
 <body>
     <!-- Todo el header  -->
     <header id="contenedorMenuLateral"></header>
     <div class="menu-lateral-overlay" id="overlay"></div>
- 
+
     <main class="main px-md-4 pt-3  ">
- 
+
         <section class="superior rounded-5 ps-4 d-none d-md-flex">
             <h6 class="mb-0 bold">Equipos y mobiliarios</h6>
             <div class="position-relative">
@@ -32,7 +33,7 @@
                 </div>
             </div>
         </section>
- 
+
         <div class="contenido-principal container-fluid">
             <!-- Barra superior: el indicador, el buscador y la acción principal comparten
                  la misma fila para no desperdiciar el espacio horizontal disponible. -->
@@ -66,9 +67,9 @@
                     </div>
                 </div>
             </div>
- 
+
             <div class="row g-4">
- 
+
                 <!-- Botones y filtro -->
                 <div class="col-12 col-lg-3">
                     <!-- Botones de agregar -->
@@ -89,11 +90,11 @@
                             <i class="bi bi-plus-lg me-2"></i> Gestionar categoría
                         </a>
                     </div>
- 
+
                     <!-- Panel de filtros: se filtra por categoría y ubicación (datos reales) -->
                     <div class="panel-filtros p-4">
                         <h6 class="titulo-filtros mb-3"><i class="bi bi-filter-left me-2"></i> Filtros</h6>
- 
+
                         <div class="filtro-grupo mb-3">
                             <label for="selectFiltroCategoria" class="filtro-subtitulo">Categoría</label>
                             <select class="form-select rounded-3 mt-1" id="selectFiltroCategoria">
@@ -101,7 +102,7 @@
                                 <!-- Se llena dinámicamente -->
                             </select>
                         </div>
- 
+
                         <div class="filtro-grupo">
                             <label for="selectFiltroUbicacion" class="filtro-subtitulo">Ubicación</label>
                             <select class="form-select rounded-3 mt-1" id="selectFiltroUbicacion">
@@ -111,7 +112,7 @@
                         </div>
                     </div>
                 </div>
- 
+
                 <!-- Tabla, buscador y boton agregar -->
                 <div class="col-12 col-lg-9">
                     <!-- Tabla principal -->
@@ -133,29 +134,30 @@
                                 </tbody>
                             </table>
                         </div>
- 
+
                         <!-- Paginación real, controlada desde equiposMobiliarios.js -->
                         <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top">
                             <span class="text-muted small" id="txtResumenPaginacion">Mostrando 0 de 0</span>
                             <nav aria-label="Paginacion">
-                                <ul class="pagination pagination-sm mb-0 align-items-center gap-1" id="controlesPaginacion">
+                                <ul class="pagination pagination-sm mb-0 align-items-center gap-1"
+                                    id="controlesPaginacion">
                                     <!-- Se llena dinámicamente -->
                                 </ul>
                             </nav>
                         </div>
                     </div>
- 
+
                 </div>
             </div>
         </div>
     </main>
- 
+
     <!-- 1. MODAL GESTIONAR CATEGORÍAS -->
     <div class="modal fade" id="modalAgregarCategoria" tabindex="-1" aria-labelledby="modalAgregarCategoriaLabel"
         aria-hidden="true">
         <div class="modal-dialog modal-xl modal-dialog-centered">
             <div class="modal-content border-0 rounded-4 shadow">
- 
+
                 <div class="modal-header border-0 pb-0">
                     <h5 class="fw-bold mb-0 w-100 titulo-seccion p-3 d-flex align-items-center justify-content-between">
                         <span class="text-center flex-grow-1 ms-4">Gestionar categorías</span>
@@ -163,41 +165,45 @@
                             aria-label="Close"></button>
                     </h5>
                 </div>
- 
+
                 <div class="modal-body p-4">
                     <div class="row g-4">
- 
+
                         <!-- Formulario -->
                         <div class="col-12 col-lg-5">
                             <div class="p-3 bg-light rounded-4 h-100 d-flex flex-column justify-content-between">
-                                <form id="formCategoria" novalidate class="h-100 d-flex flex-column justify-content-between">
+                                <form id="formCategoria" novalidate
+                                    class="h-100 d-flex flex-column justify-content-between">
                                     <input type="hidden" id="categoriaId">
                                     <div class="mb-3">
-                                        <h6 class="fw-bold text-navy mb-3 text-center" id="tituloFormCategoria">Agregar categoría</h6>
- 
+                                        <h6 class="fw-bold text-navy mb-3 text-center" id="tituloFormCategoria">Agregar
+                                            categoría</h6>
+
                                         <label for="txtNombreCategoria" class="form-label small fw-bold text-navy">
                                             Nombre de la categoría
                                         </label>
                                         <input type="text" class="form-control rounded-3" id="txtNombreCategoria"
                                             maxlength="50" placeholder="Ej: Teclados" required>
                                     </div>
- 
+
                                     <div class="pt-2 mt-auto">
                                         <button type="submit"
                                             class="btn btn-azul-redondeado w-100 py-2 rounded-3 fw-bold text-white shadow-sm d-flex align-items-center justify-content-center">
-                                            <i class="bi bi-check-circle me-2"></i><span id="btnTextoCategoria">Guardar categoría</span>
+                                            <i class="bi bi-check-circle me-2"></i><span id="btnTextoCategoria">Guardar
+                                                categoría</span>
                                         </button>
-                                        <button type="button" class="btn btn-outline-secondary w-100 mt-2 d-none" id="btnCancelarCategoria">Cancelar edición</button>
+                                        <button type="button" class="btn btn-outline-secondary w-100 mt-2 d-none"
+                                            id="btnCancelarCategoria">Cancelar edición</button>
                                     </div>
                                 </form>
                             </div>
                         </div>
- 
+
                         <!-- Tabla -->
                         <div class="col-12 col-lg-7">
                             <div class="p-3 bg-white border rounded-4 h-100">
                                 <h6 class="fw-bold text-navy mb-3 text-center">Categorías existentes</h6>
- 
+
                                 <div class="card-tabla p-4">
                                     <div class="table-responsive">
                                         <table class="table table-borderless table-custom align-middle">
@@ -215,20 +221,20 @@
                                 </div>
                             </div>
                         </div>
- 
+
                     </div>
                 </div>
- 
+
             </div>
         </div>
     </div>
- 
+
     <!-- 2. MODAL GESTIONAR MODELOS -->
     <div class="modal fade" id="modalAgregarModelos" tabindex="-1" aria-labelledby="modalAgregarModelosLabel"
         aria-hidden="true">
         <div class="modal-dialog modal-xl modal-dialog-centered">
             <div class="modal-content border-0 rounded-4 shadow">
- 
+
                 <div class="modal-header border-0 pb-0">
                     <h5 class="fw-bold mb-0 w-100 titulo-seccion p-3 d-flex align-items-center justify-content-between">
                         <span class="text-center flex-grow-1 ms-4">Gestionar modelos</span>
@@ -236,25 +242,27 @@
                             aria-label="Close"></button>
                     </h5>
                 </div>
- 
+
                 <div class="modal-body p-4">
                     <div class="row g-4">
- 
+
                         <!-- Formulario -->
                         <div class="col-12 col-lg-5">
                             <div class="p-3 bg-light rounded-4 h-100 d-flex flex-column justify-content-between">
-                                <form id="formModelo" novalidate class="h-100 d-flex flex-column justify-content-between">
+                                <form id="formModelo" novalidate
+                                    class="h-100 d-flex flex-column justify-content-between">
                                     <input type="hidden" id="modeloId">
                                     <div>
-                                        <h6 class="fw-bold text-navy mb-3 text-center" id="tituloFormModelo">Agregar modelo</h6>
- 
+                                        <h6 class="fw-bold text-navy mb-3 text-center" id="tituloFormModelo">Agregar
+                                            modelo</h6>
+
                                         <div class="mb-3">
                                             <label for="txtNombreModelo"
                                                 class="form-label small fw-bold text-navy">Modelo</label>
                                             <input type="text" class="form-control rounded-3" id="txtNombreModelo"
                                                 maxlength="50" placeholder="Ej: Inspiron 15" required>
                                         </div>
- 
+
                                         <div class="mb-3">
                                             <label for="selectMarcaModelo"
                                                 class="form-label small fw-bold text-navy">Marca</label>
@@ -267,23 +275,25 @@
                                             </div>
                                         </div>
                                     </div>
- 
+
                                     <div class="pt-2 mt-auto">
                                         <button type="submit"
                                             class="btn btn-azul-redondeado w-100 py-2 rounded-3 fw-bold text-white shadow-sm d-flex align-items-center justify-content-center">
-                                            <i class="bi bi-check-circle me-2"></i><span id="btnTextoModelo">Guardar modelo</span>
+                                            <i class="bi bi-check-circle me-2"></i><span id="btnTextoModelo">Guardar
+                                                modelo</span>
                                         </button>
-                                        <button type="button" class="btn btn-outline-secondary w-100 mt-2 d-none" id="btnCancelarModelo">Cancelar edición</button>
+                                        <button type="button" class="btn btn-outline-secondary w-100 mt-2 d-none"
+                                            id="btnCancelarModelo">Cancelar edición</button>
                                     </div>
                                 </form>
                             </div>
                         </div>
- 
+
                         <!-- Tabla -->
                         <div class="col-12 col-lg-7">
                             <div class="p-3 bg-white border rounded-4 h-100">
                                 <h6 class="fw-bold text-navy mb-3 text-center">Modelos existentes</h6>
- 
+
                                 <div class="card-tabla p-4">
                                     <div class="table-responsive">
                                         <table class="table table-borderless table-custom align-middle">
@@ -302,20 +312,20 @@
                                 </div>
                             </div>
                         </div>
- 
+
                     </div>
                 </div>
- 
+
             </div>
         </div>
     </div>
- 
+
     <!-- 3. MODAL GESTIONAR MARCAS -->
     <div class="modal fade" id="modalAgregarMarca" tabindex="-1" aria-labelledby="modalAgregarMarcaLabel"
         aria-hidden="true">
         <div class="modal-dialog modal-xl modal-dialog-centered">
             <div class="modal-content border-0 rounded-4 shadow">
- 
+
                 <div class="modal-header border-0 pb-0">
                     <h5 class="fw-bold mb-0 w-100 titulo-seccion p-3 d-flex align-items-center justify-content-between">
                         <span class="text-center flex-grow-1 ms-4">Gestionar marca</span>
@@ -323,41 +333,45 @@
                             aria-label="Close"></button>
                     </h5>
                 </div>
- 
+
                 <div class="modal-body p-4">
                     <div class="row g-4">
- 
+
                         <!-- Formulario -->
                         <div class="col-12 col-lg-5">
                             <div class="p-3 bg-light rounded-4 h-100 d-flex flex-column justify-content-between">
-                                <form id="formMarca" novalidate class="h-100 d-flex flex-column justify-content-between">
+                                <form id="formMarca" novalidate
+                                    class="h-100 d-flex flex-column justify-content-between">
                                     <input type="hidden" id="marcaId">
                                     <div class="mb-3">
-                                        <h6 class="fw-bold text-navy mb-3 text-center" id="tituloFormMarca">Agregar marca</h6>
- 
+                                        <h6 class="fw-bold text-navy mb-3 text-center" id="tituloFormMarca">Agregar
+                                            marca</h6>
+
                                         <label for="txtNombreMarca" class="form-label small fw-bold text-navy">
                                             Nombre de la marca
                                         </label>
                                         <input type="text" class="form-control rounded-3" id="txtNombreMarca"
                                             maxlength="50" placeholder="Ej: Dell" required>
                                     </div>
- 
+
                                     <div class="pt-2 mt-auto">
                                         <button type="submit"
                                             class="btn btn-azul-redondeado w-100 py-2 rounded-3 fw-bold text-white shadow-sm d-flex align-items-center justify-content-center">
-                                            <i class="bi bi-check-circle me-2"></i><span id="btnTextoMarca">Guardar marca</span>
+                                            <i class="bi bi-check-circle me-2"></i><span id="btnTextoMarca">Guardar
+                                                marca</span>
                                         </button>
-                                        <button type="button" class="btn btn-outline-secondary w-100 mt-2 d-none" id="btnCancelarMarca">Cancelar edición</button>
+                                        <button type="button" class="btn btn-outline-secondary w-100 mt-2 d-none"
+                                            id="btnCancelarMarca">Cancelar edición</button>
                                     </div>
                                 </form>
                             </div>
                         </div>
- 
+
                         <!-- Tabla -->
                         <div class="col-12 col-lg-7">
                             <div class="p-3 bg-white border rounded-4 h-100">
                                 <h6 class="fw-bold text-navy mb-3 text-center">Marcas existentes</h6>
- 
+
                                 <div class="card-tabla p-4">
                                     <div class="table-responsive">
                                         <table class="table table-borderless table-custom align-middle">
@@ -375,20 +389,20 @@
                                 </div>
                             </div>
                         </div>
- 
+
                     </div>
                 </div>
- 
+
             </div>
         </div>
     </div>
- 
+
     <!-- 4. MODAL GESTIONAR ARTÍCULOS -->
     <div class="modal fade" id="modalAgregarArticulos" tabindex="-1" aria-labelledby="modalAgregarArticulosLabel"
         aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content border-0 rounded-4 shadow">
- 
+
                 <div class="modal-header border-0 pb-0">
                     <h5 class="fw-bold mb-0 w-100 titulo-seccion p-3 d-flex align-items-center justify-content-between">
                         <span class="text-center flex-grow-1 ms-4">Gestionar artículos</span>
@@ -396,51 +410,54 @@
                             aria-label="Close"></button>
                     </h5>
                 </div>
- 
+
                 <div class="modal-body p-4">
                     <div class="p-3 bg-light rounded-4">
                         <form id="formArticulo" novalidate>
                             <input type="hidden" id="articuloId">
                             <h6 class="fw-bold text-navy mb-3 text-center" id="tituloFormArticulo">Agregar artículo</h6>
- 
+
                             <div class="mb-3">
                                 <label for="txtCodigoArticulo" class="form-label small fw-bold text-navy">Código del
                                     artículo</label>
-                                <input type="text" class="form-control rounded-3" id="txtCodigoArticulo"
-                                    maxlength="20" placeholder="Ej: P2425H" required>
+                                <input type="text" class="form-control rounded-3" id="txtCodigoArticulo" maxlength="20"
+                                    placeholder="Ej: P2425H" required>
                             </div>
- 
+
                             <div class="mb-3">
                                 <label for="selectCategoriaArticulo"
                                     class="form-label small fw-bold text-navy">Categoría</label>
-                                <select class="form-select rounded-3 py-2 fs-6 shadow-sm" id="selectCategoriaArticulo" required>
+                                <select class="form-select rounded-3 py-2 fs-6 shadow-sm" id="selectCategoriaArticulo"
+                                    required>
                                     <option selected disabled value="">Selecciona la categoría...</option>
                                     <!-- Se llena dinámicamente al abrir este modal -->
                                 </select>
                             </div>
- 
+
                             <div class="mb-3">
                                 <label for="selectUbicacionArticulo"
                                     class="form-label small fw-bold text-navy">Ubicación</label>
-                                <select class="form-select rounded-3 py-2 fs-6 shadow-sm" id="selectUbicacionArticulo" required>
+                                <select class="form-select rounded-3 py-2 fs-6 shadow-sm" id="selectUbicacionArticulo"
+                                    required>
                                     <option selected disabled value="">Selecciona la ubicación...</option>
                                     <!-- Se llena dinámicamente al abrir este modal -->
                                 </select>
                             </div>
- 
+
                             <div class="mb-3">
-                                <label for="selectModeloArticulo"
-                                    class="form-label small fw-bold text-navy">Modelo <span class="text-muted fw-normal">(opcional)</span></label>
+                                <label for="selectModeloArticulo" class="form-label small fw-bold text-navy">Modelo
+                                    <span class="text-muted fw-normal">(opcional)</span></label>
                                 <select class="form-select rounded-3 py-2 fs-6 shadow-sm" id="selectModeloArticulo">
                                     <option selected value="">Sin modelo asignado</option>
                                     <!-- Se llena dinámicamente al abrir este modal -->
                                 </select>
                             </div>
- 
+
                             <div class="pt-2">
                                 <button type="submit"
                                     class="btn btn-azul-redondeado w-100 py-2 rounded-3 fw-bold text-white shadow-sm d-flex align-items-center justify-content-center">
-                                    <i class="bi bi-check-circle me-2"></i> <span id="btnTextoArticulo">Guardar artículo</span>
+                                    <i class="bi bi-check-circle me-2"></i> <span id="btnTextoArticulo">Guardar
+                                        artículo</span>
                                 </button>
                                 <button type="button" id="btnCancelarArticulo"
                                     class="btn btn-outline-secondary w-100 py-2 rounded-3 fw-bold mt-2 d-none">
@@ -450,11 +467,11 @@
                         </form>
                     </div>
                 </div>
- 
+
             </div>
         </div>
     </div>
- 
+
     <!-- Todo esto es lo de notificaciones y siempre ira al final -->
     <div class="notificaciones-overlay" id="notificacionesOverlay">
         <div class="panel-notificaciones" id="panelNotificaciones">
@@ -466,13 +483,13 @@
             </div>
         </div>
     </div>
- 
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script type="module" src="js/controllers/notificaciones.js"></script>
     <script src="js/components/menu.js?v=15"></script>
     <script type="module" src="js/controllers/equiposMobiliarios.js?v=2"></script>
- 
+
 </body>
- 
+
 </html>

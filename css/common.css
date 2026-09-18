@@ -756,3 +756,23 @@ html.tema-oscuro .chat-icon {
   filter: brightness(0) invert(1);
   opacity: .92;
 }
+
+/* Título de las tarjetas de tickets en una sola línea con "...".
+   El h6 lleva d-flex de Bootstrap y con flex nunca salen los tres puntos, por eso se fuerza block */
+:is(.lista-tickets, .lista-tickets-asignados) .elemento-ticket-asignado {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+:is(.lista-tickets, .lista-tickets-asignados) h6.texto-limitado-1 {
+  display: block !important;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* La etiqueta de prioridad va en position-absolute y no ocupa espacio: se le reserva
+   el ancho de la más larga ("Critica", 71px) más su separación del borde */
+:is(.lista-tickets, .lista-tickets-asignados):has(> .badge.position-absolute) h6.texto-limitado-1 {
+  padding-right: 90px;
+}

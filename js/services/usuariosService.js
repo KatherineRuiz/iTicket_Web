@@ -32,6 +32,16 @@ export async function actualizarUsuario(idUsuario, usuario) {
     return manejarRespuesta(respuesta);
 }
 
+export async function cambiarClave(idUsuario, claveActual, claveNueva) {
+    const respuesta = await fetch(`${URL_USUARIOS}/${idUsuario}/clave`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ claveActual, claveNueva })
+    });
+
+    return manejarRespuesta(respuesta);
+}
+
 export async function actualizarFotoPerfil(idUsuario, archivo) {
     const formulario = new FormData();
     formulario.append("archivo", archivo);

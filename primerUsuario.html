@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Primer usuario - iTicket</title>
+    <link rel="shortcut icon" href="img/logo.png" type="image/x-icon">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="css/login.css" rel="stylesheet" />
+    <link href="css/common.css" rel="stylesheet" />
+</head>
+
+<body class="d-flex align-items-center justify-content-center min-vh-100 py-4">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-11 col-lg-9 tarjeta-login">
+                <svg class="curva-divisoria" viewBox="0 0 1600 977" preserveAspectRatio="none">
+                    <path d="M-103-3 468 0c-9 78 41 154 105 217 67 63 141 129 218 202 79 76 108 190 52 342-43 89-76 137-146 239H-103Z"
+                        fill="#f0f7f9" />
+                </svg>
+
+                <div class="row g-0 capa-contenido h-100">
+                    <div class="col-md-6 d-none d-md-flex flex-column align-items-start justify-content-between p-4">
+                        <img src="img/login/logo.png" alt="Logo iTicket" class="logo-sesion" />
+                        <div class="d-flex align-items-center justify-content-center w-100 flex-grow-1">
+                            <img src="img/login/img_Login1.png" alt="Ilustración"
+                                class="img-fluid img-ilustracion-formulario mx-auto d-block" />
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-md-6 d-flex align-items-center justify-content-center justify-content-md-end">
+                        <div class="contenedor-formulario-compacto w-100 p-4 ps-md-5 me-lg-5 text-white pb-5">
+
+                            <h2 class="mb-2 fw-bold text-center">
+                                <span class="texto-bienvenida">Bienvenido</span>
+                            </h2>
+                            <p class="text-center text-white-50 small mb-4">
+                                Crea la cuenta del primer administrador de iTicket.
+                            </p>
+
+                            <form id="formPrimerUsuario" novalidate>
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold" for="txtNombre">Nombre</label>
+                                    <input type="text" id="txtNombre" class="form-control rounded-pill"
+                                        maxlength="30" required />
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold" for="txtCorreo">Correo electrónico</label>
+                                    <input type="email" id="txtCorreo" class="form-control rounded-pill"
+                                        placeholder="nombre@ejemplo.com" maxlength="100" required />
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold" for="txtClave">Contraseña</label>
+                                    <input type="password" id="txtClave" class="form-control rounded-pill"
+                                        placeholder="Mínimo 8 caracteres" minlength="8" required />
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold" for="txtConfirmar">Confirmar contraseña</label>
+                                    <input type="password" id="txtConfirmar" class="form-control rounded-pill" required />
+                                </div>
+
+                                <!-- Se muestra si ya hay departamentos de IT o Mantenimiento -->
+                                <div class="mb-3" id="bloqueDepartamento" hidden>
+                                    <label class="form-label fw-semibold" for="selDepartamento">Departamento</label>
+                                    <select id="selDepartamento" class="form-select rounded-pill"></select>
+                                </div>
+
+                                <!-- Se muestra si la base de datos aún no tiene departamentos -->
+                                <div id="bloqueNuevoDepartamento" hidden>
+                                    <p class="small text-white-50 mb-2">
+                                        Aún no hay departamentos registrados, se creará el primero junto con tu cuenta.
+                                    </p>
+                                    <div class="mb-3">
+                                        <label class="form-label fw-semibold" for="txtArea">Área</label>
+                                        <input type="text" id="txtArea" class="form-control rounded-pill"
+                                            placeholder="Ej. Instituto Técnico Ricaldone" maxlength="50" />
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label fw-semibold" for="txtDepartamento">Departamento</label>
+                                        <input type="text" id="txtDepartamento" class="form-control rounded-pill"
+                                            placeholder="Ej. Soporte técnico" maxlength="50" />
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label fw-semibold" for="selTipo">Tipo de departamento</label>
+                                        <select id="selTipo" class="form-select rounded-pill">
+                                            <option value="IT">IT</option>
+                                            <option value="Mantenimiento">Mantenimiento</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="d-grid mt-4">
+                                    <button type="submit" id="btnCrear"
+                                        class="btn btn-azul-redondeado w-100 py-3 rounded-4 shadow-sm text-white">
+                                        Crear administrador
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script type="module" src="js/controllers/primerUsuario.js"></script>
+</body>
+
+</html>

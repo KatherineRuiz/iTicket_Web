@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>iTicket</title>
+    <link rel="shortcut icon" href="/img/logo.png" type="image/x-icon">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     <script src="js/components/menu-cache.js"></script>
@@ -44,13 +45,16 @@
 
                     <div class="col-12 col-lg-5">
                         <div class="p-3 bg-light rounded-4 h-100">
-                            <form id="formTipoUbicacion" novalidate class="h-100 d-flex flex-column justify-content-between">
+                            <form id="formTipoUbicacion" novalidate
+                                class="h-100 d-flex flex-column justify-content-between">
                                 <div class="py-2">
                                     <input type="hidden" id="tipoUbicacionId">
-                                    <h6 class="fw-bold text-navy mb-3 text-center" id="tituloFormTipoUbicacion">Agregar tipo de ubicación</h6>
+                                    <h6 class="fw-bold text-navy mb-3 text-center" id="tituloFormTipoUbicacion">Agregar
+                                        tipo de ubicación</h6>
 
                                     <div class="mb-3">
-                                        <label for="txtNombreTipoUbicacion" class="form-label small fw-bold text-navy">Nombre del
+                                        <label for="txtNombreTipoUbicacion"
+                                            class="form-label small fw-bold text-navy">Nombre del
                                             tipo de
                                             ubicación</label>
                                         <input type="text" class="form-control rounded-3" id="txtNombreTipoUbicacion"
@@ -61,7 +65,8 @@
                                 <div class="pt-2 mt-auto">
                                     <button type="submit"
                                         class="btn btn-azul-redondeado w-100 py-2 rounded-3 fw-bold text-white shadow-sm d-flex align-items-center justify-content-center">
-                                        <i class="bi bi-check-circle me-2"></i> <span id="btnTextoTipoUbicacion">Guardar tipo de ubicación</span>
+                                        <i class="bi bi-check-circle me-2"></i> <span id="btnTextoTipoUbicacion">Guardar
+                                            tipo de ubicación</span>
                                     </button>
                                     <button type="button" id="btnCancelarTipoUbicacion"
                                         class="btn btn-outline-secondary w-100 py-2 rounded-3 fw-bold mt-2 d-none">
@@ -108,13 +113,16 @@
 
                     <div class="col-12 col-lg-5">
                         <div class="p-3 bg-light rounded-4 h-100">
-                            <form id="formUbicacion" novalidate class="h-100 d-flex flex-column justify-content-between">
+                            <form id="formUbicacion" novalidate
+                                class="h-100 d-flex flex-column justify-content-between">
                                 <div class="py-2">
                                     <input type="hidden" id="ubicacionId">
-                                    <h6 class="fw-bold text-navy mb-3 text-center" id="tituloFormUbicacion">Agregar ubicación</h6>
+                                    <h6 class="fw-bold text-navy mb-3 text-center" id="tituloFormUbicacion">Agregar
+                                        ubicación</h6>
 
                                     <div class="mb-3">
-                                        <label for="txtNombreUbicacion" class="form-label small fw-bold text-navy">Nombre de la
+                                        <label for="txtNombreUbicacion"
+                                            class="form-label small fw-bold text-navy">Nombre de la
                                             ubicación</label>
                                         <input type="text" class="form-control rounded-3" id="txtNombreUbicacion"
                                             maxlength="50" required>
@@ -125,8 +133,10 @@
                                     <label for="selectTipoUbicacion" class="form-label small fw-bold text-navy">Tipo de
                                         ubicación</label>
                                     <div class="input-group">
-                                        <select class="form-select rounded-3 py-2 fs-6 shadow-sm" id="selectTipoUbicacion" required>
-                                            <option selected disabled value="">Selecciona el tipo de ubicación...</option>
+                                        <select class="form-select rounded-3 py-2 fs-6 shadow-sm"
+                                            id="selectTipoUbicacion" required>
+                                            <option selected disabled value="">Selecciona el tipo de ubicación...
+                                            </option>
                                             <!-- Se llena dinámicamente al cargar la página -->
                                         </select>
                                     </div>
@@ -135,7 +145,8 @@
                                 <div class="pt-2 mt-auto">
                                     <button type="submit"
                                         class="btn btn-azul-redondeado w-100 py-2 rounded-3 fw-bold text-white shadow-sm d-flex align-items-center justify-content-center">
-                                        <i class="bi bi-check-circle me-2"></i> <span id="btnTextoUbicacion">Guardar ubicación</span>
+                                        <i class="bi bi-check-circle me-2"></i> <span id="btnTextoUbicacion">Guardar
+                                            ubicación</span>
                                     </button>
                                     <button type="button" id="btnCancelarUbicacion"
                                         class="btn btn-outline-secondary w-100 py-2 rounded-3 fw-bold mt-2 d-none">

@@ -299,6 +299,20 @@ function crearPanelPerfil(datos) {
         </button>
         <input type="file" id="inputFotoPerfil" accept="image/jpeg,image/png,image/webp" hidden>
         <p class="perfil-panel-estado" id="estadoFotoPerfil" role="status" aria-live="polite"></p>
+        <button type="button" class="perfil-panel-accion" id="btnCambiarClave" aria-controls="formCambioClave">
+            <i class="bi bi-key" aria-hidden="true"></i>
+            <span class="perfil-panel-accion-texto">Cambiar contraseña</span>
+        </button>
+        <form class="perfil-panel-form-clave" id="formCambioClave" hidden novalidate>
+            <input type="password" id="txtClaveActual" placeholder="Contraseña actual" aria-label="Contraseña actual" autocomplete="current-password">
+            <input type="password" id="txtClaveNueva" placeholder="Nueva contraseña (mín. 8)" aria-label="Nueva contraseña" autocomplete="new-password">
+            <input type="password" id="txtClaveConfirmar" placeholder="Confirmar nueva contraseña" aria-label="Confirmar nueva contraseña" autocomplete="new-password">
+            <div class="perfil-panel-form-acciones">
+                <button type="button" class="perfil-panel-form-cancelar" id="btnCancelarClave">Cancelar</button>
+                <button type="submit" class="perfil-panel-form-guardar" id="btnGuardarClave">Guardar</button>
+            </div>
+        </form>
+        <p class="perfil-panel-estado" id="estadoClave" role="status" aria-live="polite"></p>
         <button type="button" class="perfil-panel-accion" id="btnTemaOscuro" aria-pressed="false">
             <i class="bi bi-moon-stars" aria-hidden="true"></i>
             <span class="perfil-panel-accion-texto">Modo oscuro</span>
@@ -382,6 +396,8 @@ function configurarPanelPerfil(perfil, panel) {
         localStorage.removeItem("menuColapsado");
         window.location.href = "index.html";
     });
+
+    configurarCambioClave(perfil, panel);
 }
 
 /*
@@ -442,9 +458,103 @@ async function cambiarFotoPerfil(archivo, perfil, panel, boton) {
 
 // Informa carga, éxito o error en un texto
 function mostrarEstadoFoto(panel, mensaje, tipo) {
-    const estado = panel.querySelector("#estadoFotoPerfil");
+    mostrarEstadoPanel(panel.querySelector("#estadoFotoPerfil"), mensaje, tipo);
+}
+
+function mostrarEstadoPanel(estado, mensaje, tipo) {
     estado.textContent = mensaje;
     estado.dataset.tipo = tipo;
+}
+
+// No hay columna en la BD para saber si es el primer inicio de sesión, así que se
+// recuerda por usuario en este navegador: el aviso sale hasta que cambie su contraseña aquí
+function claveCambioPendiente(idUsuario) {
+    if (!idUsuario) return false;
+    try {
+        return localStorage.getItem(`iticket_clave_cambiada_${idUsuario}`) !== "true";
+    } catch (error) {
+        return false;
+    }
+}
+
+function marcarClaveCambiada(idUsuario) {
+    try {
+        localStorage.setItem(`iticket_clave_cambiada_${idUsuario}`, "true");
+    } catch (error) {
+        console.warn("[iTicket] No se pudo recordar el cambio de contraseña:", error);
+    }
+}
+
+function configurarCambioClave(perfil, panel) {
+    const boton = panel.querySelector("#btnCambiarClave");
+    const form = panel.querySelector("#formCambioClave");
+    const estado = panel.querySelector("#estadoClave");
+    const btnGuardar = panel.querySelector("#btnGuardarClave");
+    const idUsuario = obtenerDatosPerfil().idUsuario;
+
+    function actualizarAviso() {
+        const pendiente = claveCambioPendiente(idUsuario);
+        boton.classList.toggle("clave-pendiente", pendiente);
+        boton.title = pendiente ? "Aún usas la contraseña que te asignaron" : "";
+        perfil.classList.toggle("clave-pendiente", pendiente);
+    }
+
+    function cerrarFormulario() {
+        form.hidden = true;
+        form.reset();
+        boton.setAttribute("aria-expanded", "false");
+    }
+
+    actualizarAviso();
+
+    boton.addEventListener("click", function () {
+        const abrir = form.hidden;
+        mostrarEstadoPanel(estado, "", "");
+        if (!abrir) {
+            cerrarFormulario();
+            return;
+        }
+        form.hidden = false;
+        boton.setAttribute("aria-expanded", "true");
+        form.querySelector("#txtClaveActual").focus();
+    });
+    panel.querySelector("#btnCancelarClave").addEventListener("click", cerrarFormulario);
+
+    form.addEventListener("submit", async function (evento) {
+        evento.preventDefault();
+        const actual = form.querySelector("#txtClaveActual").value;
+        const nueva = form.querySelector("#txtClaveNueva").value;
+        const confirmar = form.querySelector("#txtClaveConfirmar").value;
+
+        let error = null;
+        if (!idUsuario) error = "Inicia sesión para cambiar tu contraseña.";
+        else if (!actual || !nueva || !confirmar) error = "Completa los tres campos.";
+        else if (nueva.length < 8) error = "La nueva contraseña debe tener al menos 8 caracteres.";
+        else if (nueva !== confirmar) error = "Las contraseñas nuevas no coinciden.";
+        else if (nueva === actual) error = "La nueva contraseña debe ser diferente a la actual.";
+        if (error) {
+            mostrarEstadoPanel(estado, error, "error");
+            return;
+        }
+
+        btnGuardar.disabled = true;
+        mostrarEstadoPanel(estado, "Guardando la nueva contraseña…", "cargando");
+        try {
+            const { cambiarClave } = await import("../services/usuariosService.js");
+            await cambiarClave(idUsuario, actual, nueva);
+            marcarClaveCambiada(idUsuario);
+            cerrarFormulario();
+            actualizarAviso();
+            mostrarEstadoPanel(estado, "Contraseña actualizada correctamente.", "exito");
+        } catch (errorApi) {
+            const mensaje = errorApi instanceof TypeError
+                ? "No se pudo conectar con el servidor. Inténtalo de nuevo en unos momentos."
+                : (errorApi.message || "No se pudo cambiar la contraseña.");
+            mostrarEstadoPanel(estado, mensaje, "error");
+        } finally {
+            btnGuardar.disabled = false;
+        }
+    });
 }
 
 /* El tema oscuro como tal no cambia de hojas de css para cambiarla, sino que cambia las clases en el html para sobreescribir los estilos
@@ -455,7 +565,14 @@ function aplicarTemaGuardado() {
 }
 
 function aplicarEstadoTema(activarOscuro, botonTema) {
-    document.documentElement.classList.toggle("tema-oscuro", activarOscuro);
+    const raiz = document.documentElement;
+    // Se apagan las transiciones, se cambia el tema y se fuerza el cálculo de estilos en el
+    // mismo instante: así los colores cambian de golpe y el recálculo ocurre antes de que
+    // empiece el círculo, no durante ni al final de la animación
+    raiz.classList.add("tema-sin-transiciones");
+    raiz.classList.toggle("tema-oscuro", activarOscuro);
+    void document.body.offsetHeight;
+    raiz.classList.remove("tema-sin-transiciones");
     localStorage.setItem("iticket_tema", activarOscuro ? "oscuro" : "claro");
     actualizarBotonTema(botonTema);
     document.dispatchEvent(new CustomEvent("iticket:tema-cambiado", {
@@ -513,7 +630,7 @@ async function cambiarTemaConCapa(activarOscuro, botonTema, origenX, origenY, ra
     const expansion = capa.animate([
         { transform: "translate(-50%, -50%) scale(0)" },
         { transform: `translate(-50%, -50%) scale(${escalaFinal})` }
-    ], { duration: 560, easing: "cubic-bezier(0.22, 1, 0.36, 1)", fill: "forwards" });
+    ], { duration: 600, easing: "cubic-bezier(0.3, 0.7, 0.4, 1)", fill: "forwards" });
     await expansion.finished;
     aplicarEstadoTema(activarOscuro, botonTema);
     const salida = capa.animate([{ opacity: 1 }, { opacity: 0 }], {
