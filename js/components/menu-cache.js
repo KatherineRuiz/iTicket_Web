@@ -1,6 +1,6 @@
 /* Aqui se carga el css antes de que se muestre el contenido para que no haya flashasos */
 
-const MENU_CACHE_KEY_PREVIO = "iticket_menu_v5";
+const MENU_CACHE_KEY_PREVIO = "iticket_menu_v8";
 window.__menuCacheHTML = sessionStorage.getItem(MENU_CACHE_KEY_PREVIO) || null;
 
 try {

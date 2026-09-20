@@ -65,7 +65,7 @@
                         </p>
                     </div>
 
-                    <button id="btnEditarProyecto" class="btn btn-azul-redondeado px-4">
+                    <button id="btnEditarProyecto" class="btn btn-azul-redondeado px-4" data-roles="admin">
                         <i class="bi bi-pencil-square me-2"></i> Editar
                     </button>
                 </div>
@@ -179,17 +179,17 @@
                             <option value="">Fase</option>
                         </select>
                         <!-- Si la columna es angosta, los botones muestran solo el ícono (vistaProyecto.css) -->
-                        <button id="btnEditarFase" class="btn btn-azul-redondeado px-3 text-nowrap flex-shrink-0"
+                        <button id="btnEditarFase" class="btn btn-azul-redondeado px-3 text-nowrap flex-shrink-0" data-roles="admin"
                             title="Editar fase" aria-label="Editar fase">
                             <i class="bi bi-pencil-square" aria-hidden="true"></i><span class="texto-boton-fase ms-1">Editar</span>
                         </button>
-                        <button id="btnCrearFase" class="btn btn-azul-redondeado px-3 text-nowrap flex-shrink-0"
+                        <button id="btnCrearFase" class="btn btn-azul-redondeado px-3 text-nowrap flex-shrink-0" data-roles="admin"
                             title="Crear fase" aria-label="Crear fase">
                             <i class="bi bi-plus-lg" aria-hidden="true"></i><span class="texto-boton-fase ms-1">Crear fase</span>
                         </button>
 
                         <!-- Boton para eliminar la fase -->
-                        <button id="btnEliminarFase" type="button" class="btn btn-oscuro-redondeado rounded-4 px-3 text-nowrap flex-shrink-0"
+                        <button id="btnEliminarFase" type="button" class="btn btn-oscuro-redondeado rounded-4 px-3 text-nowrap flex-shrink-0" data-roles="admin"
                             title="Eliminar fase" aria-label="Eliminar fase">
                             <i class="bi bi-trash" aria-hidden="true"></i><span class="texto-boton-fase ms-1">Eliminar</span>
                         </button>
@@ -208,7 +208,7 @@
                         Detalles
                     </div>
 
-                    <div class="d-flex justify-content-end gap-2 mb-3">
+                    <div class="d-flex justify-content-end gap-2 mb-3" data-roles="admin">
                         <button id="btnEditarDetalle" class="btn btn-azul-redondeado px-3">
                             <i class="bi bi-pencil-square me-1"></i> Editar
                         </button>

@@ -10,6 +10,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" href="css/common.css">
     <link rel="stylesheet" href="css/dashboard.css?v=6">
+    <link rel="stylesheet" href="css/tickets.css">
     <link rel="stylesheet" href="css/notificaciones.css?v=2">
     <script src="js/components/menu-cache.js?v=17"></script>
 </head>
@@ -30,79 +31,83 @@
             </div>
         </section>
 
-        <div class="contenido-principal container-fluid dashboard-personal dashboard-tecnico">
-            <div class="row g-4 m-0 p-0 align-items-center dashboard-personal-superior">
-                <section class="col-lg-5 col-12">
-                    <div
-                        class="bienvenida dashboard-bienvenida-admin d-flex justify-content-evenly align-items-center text-center p-3 shadow">
+        <div class="contenido-principal container-fluid dashboard-tecnico">
+            <div class="row g-4 m-0 p-0 align-items-stretch dashboard-admin-grid">
+                <!--Bienvenida y gráfica, con las mismas medidas que en el dashboard del administrador-->
+                <div class="col-xl-5 col-12 d-flex flex-column">
+                    <div class="bienvenida d-flex justify-content-evenly align-items-center text-center p-3 shadow">
                         <img class="w-50" src="img/crearTicket.png" alt="Persona gestionando tickets">
                         <div>
                             <h4 class="fw-bold">¡Bienvenido!</h4>
                             <h6 class="mb-3">¿Algún problema? Crea un ticket</h6>
-                            <button class="btn-oscuro border-0 px-4 py-2 fw-bold rounded-pill">Crear</button>
+                            <button id="btnCrear" class="btn-oscuro border-0 px-4 py-2 fw-bold rounded-pill">Crear</button>
                         </div>
                     </div>
-                </section>
 
-                <section class="col-lg-7 col-12 px-3 px-lg-4">
-                    <h2 class="text-center bold dashboard-resumen-mes-titulo mb-3">Asignaciones</h2>
-                    <div class="row g-3" id="botones-resumen">
-                        <div class="col-lg-4 col-12">
-                            <button type="button"
-                                class="btn btn-resumen d-flex align-items-center justify-content-between px-3 py-2 rounded-4 activo"
-                                data-opcion="pendientes">
-                                <span class="opcion-texto">Pendientes</span><strong class="opcion-numero"
-                                    id="num-pendientes">0</strong>
-                            </button>
+                    <!--Gráfico del tiempo de resolución promedio. Crece para terminar a la
+                        misma altura que la columna de "Asignaciones"-->
+                    <section
+                        class="d-flex flex-column align-items-center text-center bg-white rounded-5 p-4 shadow mt-4 flex-grow-1">
+                        <h4 class="p-3 bold">Tiempo de resolución</h4>
+                        <div class="position-relative w-100 flex-grow-1 grafico-resolucion-tecnico">
+                            <canvas id="graficoResolucion"></canvas>
                         </div>
-                        <div class="col-lg-4 col-12">
-                            <button type="button"
-                                class="btn btn-resumen d-flex align-items-center justify-content-between px-3 py-2 rounded-4"
-                                data-opcion="vencidos">
-                                <span class="opcion-texto">Vencidos</span><strong class="opcion-numero"
-                                    id="num-vencidas">0</strong>
-                            </button>
-                        </div>
-                        <div class="col-lg-4 col-12">
-                            <button type="button"
-                                class="btn btn-resumen d-flex align-items-center justify-content-between px-3 py-2 rounded-4"
-                                data-opcion="hoy">
-                                <span class="opcion-texto">Vencen hoy</span><strong class="opcion-numero"
-                                    id="num-hoy">0</strong>
-                            </button>
-                        </div>
-                    </div>
-                </section>
-            </div>
-
-            <div class="row px-3 pb-3 mt-1 g-4 align-items-stretch dashboard-admin-grid">
-                <div class="col-xl-5 col-12">
-
-                    <section class="dashboard-card-admin dashboard-grafica-admin bg-white rounded-5 p-4 shadow mt-4">
-                        <h4 class="bold">Tus calificaciones</h4>
-                        <div class="grafico"><canvas id="graficoCalificacion"></canvas></div>
-                    </section>
-
-                    <section class="dashboard-card-admin dashboard-grafica-admin bg-white rounded-5 p-4 shadow mt-4">
-                        <h4 class="bold">Tiempo de resolución</h4>
-                        <p class="text-muted small text-center mb-2">Promedio de la última semana</p>
-                        <div class="grafico"><canvas id="graficoResolucion"></canvas></div>
                     </section>
                 </div>
 
+                <!--Sección de "Asignaciones": mismo diseño que "Mi resumen" del administrador-->
                 <section class="col-xl-7 col-12 d-flex px-xl-4 dashboard-evaluaciones">
                     <div class="w-100 d-flex flex-column dashboard-panel">
-                        <div
-                            class="mi-resumen dashboard-resumen-tecnico dashboard-panel-asignaciones flex-column flex-grow-1 w-100 shadow">
-                            <div class="contenedor-tickets-scroll dashboard-lista-asignaciones p-3">
-                                <div class="dashboard-cargando"><i class="bi bi-arrow-repeat"></i><span>Cargando tus
-                                        tickets...</span></div>
+                        <div>
+                            <h5 class="fw-bold mb-3 text-center p-3 titulo-seccion">Asignaciones</h5>
+                        </div>
+                        <div class="mi-resumen flex-column flex-grow-1 w-100 shadow">
+                            <!--Filtros de la sección-->
+                            <div class="p-3">
+                                <div class="row g-3 justify-content-center" id="botones-resumen">
+                                    <div class="col-md-4 col-sm-12">
+                                        <button type="button"
+                                            class="btn btn-resumen d-flex align-items-center justify-content-between px-3 px-md-1 px-lg-3 py-2 rounded-4 activo"
+                                            data-opcion="pendientes">
+                                            <span class="opcion-texto text-start">Pendientes</span>
+                                            <span class="opcion-numero" id="num-pendientes">0</span>
+                                        </button>
+                                    </div>
+
+                                    <div class="col-md-4 col-sm-12">
+                                        <button type="button"
+                                            class="btn btn-resumen d-flex align-items-center justify-content-between px-3 py-2 rounded-4"
+                                            data-opcion="vencidos">
+                                            <span class="opcion-texto text-start">Vencidos</span>
+                                            <span class="opcion-numero" id="num-vencidas">0</span>
+                                        </button>
+                                    </div>
+
+                                    <div class="col-md-4 col-sm-12">
+                                        <button type="button"
+                                            class="btn btn-resumen d-flex align-items-center justify-content-between px-3 py-2 rounded-4"
+                                            data-opcion="hoy">
+                                            <span class="opcion-texto text-start">Vencen hoy</span>
+                                            <span class="opcion-numero" id="num-hoy">0</span>
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
-                            <nav aria-label="Paginacion de asignaciones"
-                                class="d-flex justify-content-end mt-2 px-3 pb-3">
-                                <ul class="pagination pagination-sm mb-0 align-items-center gap-1"
-                                    id="paginacionAsignaciones"></ul>
-                            </nav>
+
+                            <!--Tickets asignados al técnico-->
+                            <div class="p-3 mx-3 flex-grow-1 d-flex">
+                                <div class="bg-white p-3 rounded-4 shadow-sm contenedor-lista-tickets w-100">
+                                    <div class="contenedor-tickets-scroll dashboard-lista-asignaciones">
+                                        <div class="dashboard-cargando"><i class="bi bi-arrow-repeat"></i><span>Cargando tus
+                                                tickets...</span></div>
+                                    </div>
+                                    <nav aria-label="Paginacion de asignaciones"
+                                        class="d-flex justify-content-end mt-2">
+                                        <ul class="pagination pagination-sm mb-0 align-items-center gap-1"
+                                            id="paginacionAsignaciones"></ul>
+                                    </nav>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </section>

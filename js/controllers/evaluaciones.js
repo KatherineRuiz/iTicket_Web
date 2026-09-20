@@ -1,6 +1,13 @@
 import { obtenerEvaluaciones, obtenerMetricasEvaluaciones } from "../services/evaluacionesService.js";
 import { mostrarError } from "../components/sweetAlerts.js";
 import { renderizarPaginacion as pintarPaginacionComun } from "../components/paginacion.js";
+import { obtenerRolUsuario } from "../utils/sesion.js";
+
+// Las evaluaciones son solo del administrador, ni siquiera por enlace directo
+const rolActual = obtenerRolUsuario();
+if (rolActual !== "admin") {
+    window.location.replace(rolActual === "tecnico" ? "dashboardTecnicos.html" : "dashboardUsuarios.html");
+}
 
 const totalEvaluaciones     = document.getElementById("totalEvaluaciones");
 const promedioCalificacion  = document.getElementById("promedioCalificacion");

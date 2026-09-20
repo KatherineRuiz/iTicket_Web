@@ -31,11 +31,11 @@
             </div>
         </section>
 
-        <div class="contenido-principal container-fluid dashboard-personal dashboard-usuario">
-            <div class="row px-3 pb-3 mt-1 g-4 align-items-start dashboard-admin-grid">
-                <section class="col-xl-4 col-12">
-                    <div
-                        class="bienvenida dashboard-bienvenida-admin d-flex justify-content-evenly align-items-center text-center p-3 shadow">
+        <div class="contenido-principal container-fluid dashboard-usuario">
+            <div class="row g-4 m-0 p-0 align-items-stretch dashboard-admin-grid">
+                <!--Bienvenida y prioridades, con las mismas medidas que en los otros dashboards-->
+                <div class="col-xl-5 col-12 d-flex flex-column">
+                    <div class="bienvenida d-flex justify-content-evenly align-items-center text-center p-3 shadow">
                         <img class="w-50" src="img/crearTicket.png" alt="Persona creando un ticket">
                         <div>
                             <h4 class="fw-bold">¡Bienvenido!</h4>
@@ -44,37 +44,27 @@
                         </div>
                     </div>
 
-                    <div class="dashboard-card-admin dashboard-grafica-admin bg-white rounded-5 p-4 shadow mt-4">
-                        <h4 class="bold">Prioridades</h4>
-                        <div class="grafico"><canvas id="graficoTickets"></canvas></div>
-                    </div>
-                </section>
-
-                <section class="col-xl-4 col-12">
-                    <div class="dashboard-card-admin dashboard-grafica-admin bg-white rounded-5 p-4 shadow">
-                        <h4 class="bold">Tus evaluaciones</h4>
-                        <div class="grafico"><canvas id="graficoEvaluacion"></canvas></div>
-                    </div>
-
-                    <div class="dashboard-card-admin bg-white rounded-5 p-4 shadow mt-3">
-                        <h4 class="bold">Tiempo de respuesta</h4>
-                        <div class="dashboard-tiempo-admin">
-                            <div class="dashboard-tiempo-admin-contenido">
-                                <i class="bi bi-clock-history"></i>
-                                <div class="text-start">
-                                    <strong><span id="tiempoPromedio">0</span> h</strong>
-                                    <small class="d-block">Promedio de resolución</small>
-                                </div>
-                            </div>
+                    <!--Prioridades de sus tickets. Crece para terminar a la misma altura
+                        que la columna de "Últimos tickets"-->
+                    <section
+                        class="d-flex flex-column align-items-center text-center bg-white rounded-5 p-4 shadow mt-4 flex-grow-1">
+                        <h4 class="p-3 bold">Prioridades</h4>
+                        <div class="position-relative w-100 flex-grow-1 grafico-prioridades-usuario">
+                            <canvas id="graficoTickets"></canvas>
                         </div>
-                    </div>
-                </section>
+                    </section>
+                </div>
 
-                <section class="col-xl-4 col-12">
-                    <div class="dashboard-card-admin dashboard-grafica-admin bg-white rounded-5 p-4 shadow">
-                        <h4 class="bold">Últimos tickets</h4>
-                        <div class="contenedor-lista-tickets" id="listaUltimosTickets">
-                            <p class="text-muted text-center py-4 mb-0">Cargando tickets...</p>
+                <!--Últimos tickets, con el mismo encabezado que "Asignaciones" del técnico-->
+                <section class="col-xl-7 col-12 d-flex px-xl-4">
+                    <div class="w-100 d-flex flex-column dashboard-panel">
+                        <div>
+                            <h5 class="fw-bold mb-3 text-center p-3 titulo-seccion">Últimos tickets</h5>
+                        </div>
+                        <div class="bg-white rounded-5 p-4 shadow flex-grow-1 d-flex flex-column">
+                            <div class="contenedor-lista-tickets" id="listaUltimosTickets">
+                                <p class="text-muted text-center py-4 mb-0">Cargando tickets...</p>
+                            </div>
                         </div>
                     </div>
                 </section>

@@ -1641,3 +1641,46 @@ html.tema-oscuro .dashboard-contador-tecnico .opcion-numero {
         border-radius: 28px;
     }
 }
+
+/* "Asignaciones" se estira hasta la altura de la bienvenida y la gráfica; si hay muchos
+   tickets se desplaza solo la lista, igual que en el resumen del administrador. */
+.dashboard-tecnico .mi-resumen .contenedor-lista-tickets {
+    display: flex;
+    flex-direction: column;
+    min-height: 360px;
+    overflow: hidden;
+}
+
+.dashboard-tecnico .dashboard-lista-asignaciones {
+    flex: 1;
+    height: auto;
+    min-height: 0;
+    margin-top: 0;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
+/* Arranca a la misma altura que el dashboard del administrador, sin el margen
+   negativo que sube la primera fila */
+.dashboard-tecnico .dashboard-admin-grid,
+.dashboard-usuario .dashboard-admin-grid {
+    margin-top: 0;
+}
+
+.grafico-resolucion-tecnico {
+    min-height: 300px;
+}
+
+/* Dashboard de usuario: la gráfica y la lista llenan su tarjeta para que las dos
+   columnas terminen a la misma altura */
+.grafico-prioridades-usuario {
+    min-height: 300px;
+}
+
+.dashboard-usuario .dashboard-panel .contenedor-lista-tickets {
+    flex: 1;
+    height: auto;
+    min-height: 0;
+    max-height: 540px;
+    overflow-y: auto;
+}

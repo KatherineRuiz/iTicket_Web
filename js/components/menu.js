@@ -1,5 +1,5 @@
 /* Aqui se cargan los componentes del menú */
-const MENU_CACHE_KEY = "iticket_menu_v5";
+const MENU_CACHE_KEY = "iticket_menu_v8";
 const BREAKPOINT_MENU = 1100;
 
 /* Color del ticket dependiendo de su prioridad */
@@ -1217,7 +1217,7 @@ function inicializarMenu() {
     const equiposMenu = document.getElementById("equiposMenu");
     if (!menu || !btnMenu) return;
 
-    const rolActivo = (localStorage.getItem("rolUsuario") || "admin").toLowerCase().trim();
+    const rolActivo = obtenerRolActivo();
     ajustarEnlaceInicio(menu, rolActivo);
     aplicarVisibilidadPorRol(rolActivo);
     marcarOpcionActiva(menu, window.location.pathname.split("/").pop() || "dashboardAdmin.html");
@@ -1337,6 +1337,29 @@ function marcarOpcionActiva(menu, paginaActual) {
             submenu.closest(".menu-opcion")?.classList.add("abrir");
         }
     });
+}
+
+/* El rol sale del usuario que inició sesión (sessionStorage). Antes se leía de
+   localStorage con "admin" por defecto, así que un usuario sin sesión veía el menú completo. */
+function obtenerRolActivo() {
+    let nombreRol = "";
+    try {
+        nombreRol = (JSON.parse(sessionStorage.getItem("usuarioLogueado") || "null") || {}).nombreRol || "";
+    } catch (error) {
+        console.warn("[iTicket] No se pudo leer la sesión para el menú.", error);
+    }
+
+    const texto = String(nombreRol).toLowerCase();
+    let rol = "";
+    if (texto.includes("admin")) rol = "admin";
+    else if (texto.includes("tecnic") || texto.includes("técnic")) rol = "tecnico";
+    else if (texto) rol = "usuario";
+
+    // Sin sesión se usa el rol más limitado
+    if (!rol) rol = (localStorage.getItem("rolUsuario") || "usuario").toLowerCase().trim();
+
+    localStorage.setItem("rolUsuario", rol);
+    return rol;
 }
 
 function aplicarVisibilidadPorRol(rolActual) {

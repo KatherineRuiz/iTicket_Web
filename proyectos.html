@@ -39,7 +39,8 @@
             <div class="row g-5">
                 <section class="col-lg-3 col-md-5 col-sm-12">
 
-                    <div class="accion-crear-proyecto">
+                    <!-- Solo el administrador crea proyectos (data-roles lo aplica menu.js) -->
+                    <div class="accion-crear-proyecto" data-roles="admin">
                         <button
                             class="btn btn-azul-redondeado btn-crear-proyecto w-100 mb-4 shadow-sm d-flex align-items-center justify-content-center"
                             data-bs-toggle="modal" data-bs-target="#modalCrearProyecto">

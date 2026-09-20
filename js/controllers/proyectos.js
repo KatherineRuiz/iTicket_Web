@@ -7,6 +7,15 @@ import {
 import { getUsuarios } from "../services/usuariosService.js";
 import { mostrarError, mostrarExitoSimple } from "../components/sweetAlerts.js";
 import { validarFormularioProyecto } from "../validators/proyectosValidator.js";
+import { obtenerRolUsuario, obtenerUsuarioLogueado } from "../utils/sesion.js";
+import { getDepartamentoById } from "../services/departamentosService.js";
+import { getFases } from "../services/faseService.js";
+
+/* Permisos: el administrador ve y administra todo. El técnico solo consulta los proyectos
+   de su departamento y no puede crearlos. Un usuario normal no entra a esta pantalla. */
+const rolActual = obtenerRolUsuario();
+if (rolActual === "usuario") window.location.replace("dashboardUsuarios.html");
+const esTecnico = rolActual === "tecnico";
 
 //Referencias a elementos del DOM
 const graficoTipoProyecto = document.getElementById('graficoTipoProyecto');
@@ -145,10 +154,47 @@ function obtenerUsuarios() {
     return cargandoUsuarios;
 }
 
+/* Un proyecto pertenece a un departamento a través de sus fases (departamentoEncargado).
+   El técnico solo ve los proyectos con alguna fase de su departamento o marcada como "Ambos". */
+let tipoDepartamentoTecnico;
+
+async function obtenerTipoDepartamento() {
+    if (tipoDepartamentoTecnico !== undefined) return tipoDepartamentoTecnico;
+
+    const idDepartamento = obtenerUsuarioLogueado()?.idDepartamento;
+    try {
+        const departamento = idDepartamento ? await getDepartamentoById(idDepartamento) : null;
+        tipoDepartamentoTecnico = departamento?.tipoDepartamento ?? null;
+    } catch (error) {
+        console.error("No se pudo obtener el departamento del técnico:", error);
+        tipoDepartamentoTecnico = null;
+    }
+    return tipoDepartamentoTecnico;
+}
+
+async function filtrarProyectosPermitidos(proyectos) {
+    if (!esTecnico || !proyectos?.length) return proyectos;
+
+    const tipo = (await obtenerTipoDepartamento() || "").toLowerCase();
+    if (!tipo) return [];
+
+    const fases = await getFases().catch(() => []);
+    const idsPermitidos = new Set(
+        fases
+            .filter((fase) => {
+                const encargado = String(fase.departamentoEncargado || "").toLowerCase();
+                return encargado === tipo || encargado === "ambos";
+            })
+            .map((fase) => fase.proyecto)
+    );
+
+    return proyectos.filter((proyecto) => idsPermitidos.has(proyecto.idProyecto));
+}
+
 //Trae la lista de proyectos desde la API y refresca la vista completa
 async function cargarProyectos() {
     try {
-        const proyectos = await getProyectos();
+        const proyectos = await filtrarProyectosPermitidos(await getProyectos());
         renderizarProyectos(proyectos);
         actualizarIndicadores(proyectos);
         actualizarGrafico(proyectos);
@@ -364,6 +410,8 @@ async function aplicarFiltros() {
         } else {
             proyectos = await getProyectos();
         }
+
+        proyectos = await filtrarProyectosPermitidos(proyectos);
 
         if (tipo) {
             proyectos = proyectos.filter((p) =>

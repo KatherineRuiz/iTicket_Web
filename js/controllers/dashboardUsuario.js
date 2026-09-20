@@ -1,23 +1,19 @@
 /*
  * DASHBOARD DE USUARIO
- * Obtiene el id desde la sesión, consulta tickets y las métricas ya
- * calculadas por el backend (calificaciones y tiempo promedio) en paralelo,
- * y entrega esos datos al servicio de transformación. Antes de pintar una
- * gráfica destruye su instancia anterior para evitar canvas duplicados.
+ * Obtiene el id desde la sesión, consulta sus tickets y entrega esos datos al
+ * servicio de transformación. Antes de pintar la gráfica destruye su instancia
+ * anterior para evitar canvas duplicados.
  */
 import { obtenerUsuarioLogueado } from '../utils/sesion.js';
 import { formatearFecha12H } from '../utils/formateadores.js';
 import {
     obtenerTodosLosTicketsDelUsuario,
-    obtenerCalificacionesUsuario,
-    obtenerTiempoPromedioUsuario,
     construirResumenUsuario
 } from '../services/dashboardUsuarioService.js?v=4';
 
 let graficoTicketsInstance = null;
-let graficoEvaluacionesInstance = null;
 
-const RESUMEN_VACIO = { prioridades: [0, 0, 0, 0, 0], calificaciones: [0, 0, 0, 0, 0], tiempoPromedio: 0, ultimosTickets: [] };
+const RESUMEN_VACIO = { prioridades: [0, 0, 0, 0, 0], ultimosTickets: [] };
 
 function iniciarDashboardUsuario() {
     // El botón de bienvenida lleva al flujo existente para crear un ticket.
@@ -35,8 +31,7 @@ if (document.readyState === 'loading') {
     iniciarDashboardUsuario();
 }
 
-// Promise.allSettled permite seguir mostrando tickets aunque fallen datos
-// secundarios como calificaciones o tiempo promedio. Los fallos se convierten en valores por defecto.
+// Si la consulta falla se pinta el dashboard vacío en lugar de dejarlo cargando.
 async function cargarDashboardUsuario() {
     const usuario = obtenerUsuarioLogueado();
     if (!usuario?.idUsuario) {
@@ -44,36 +39,21 @@ async function cargarDashboardUsuario() {
         return;
     }
 
-    const [ticketsResult, calificacionesResult, tiempoResult] = await Promise.allSettled([
-        obtenerTodosLosTicketsDelUsuario(usuario.idUsuario),
-        obtenerCalificacionesUsuario(usuario.idUsuario),
-        obtenerTiempoPromedioUsuario(usuario.idUsuario)
-    ]);
-
-    if (ticketsResult.status === 'rejected') {
-        console.error('[Dashboard usuario] Tickets:', ticketsResult.reason);
+    try {
+        const tickets = await obtenerTodosLosTicketsDelUsuario(usuario.idUsuario);
+        renderizarDashboard(construirResumenUsuario(tickets));
+    } catch (error) {
+        console.error('[Dashboard usuario] Tickets:', error);
         renderizarDashboard(RESUMEN_VACIO);
-        return;
     }
-
-    const calificaciones = calificacionesResult.status === 'fulfilled' ? calificacionesResult.value : [0, 0, 0, 0, 0];
-    const tiempoPromedio = tiempoResult.status === 'fulfilled' ? tiempoResult.value : 0;
-    if (calificacionesResult.status === 'rejected') console.error('[Dashboard usuario] Calificaciones:', calificacionesResult.reason);
-    if (tiempoResult.status === 'rejected') console.error('[Dashboard usuario] Tiempo promedio:', tiempoResult.reason);
-
-    renderizarDashboard(construirResumenUsuario(ticketsResult.value, calificaciones, tiempoPromedio));
 }
 
-// Actualiza texto, la lista de últimos tickets y recrea las gráficas. destroy
-// es indispensable porque Chart.js no permite dos instancias activas sobre el mismo canvas.
+// Actualiza la lista de últimos tickets y recrea la gráfica. destroy es
+// indispensable porque Chart.js no permite dos instancias activas sobre el mismo canvas.
 function renderizarDashboard(resumen) {
-    const tiempoPromedio = document.getElementById('tiempoPromedio');
-    if (tiempoPromedio) tiempoPromedio.textContent = resumen.tiempoPromedio;
-
     renderizarUltimosTickets(resumen.ultimosTickets || []);
 
     if (graficoTicketsInstance) graficoTicketsInstance.destroy();
-    if (graficoEvaluacionesInstance) graficoEvaluacionesInstance.destroy();
 
     if (typeof Chart === 'undefined') {
         console.error('[Dashboard usuario] Chart.js no terminó de cargar.');
@@ -83,38 +63,19 @@ function renderizarDashboard(resumen) {
     const graficoTickets = document.getElementById('graficoTickets');
     if (graficoTickets) {
         graficoTicketsInstance = new Chart(graficoTickets.getContext('2d'), {
-            type: 'bar',
+            type: 'doughnut',
             data: {
                 labels: ['No asignada', 'Baja', 'Media', 'Alta', 'Crítica'],
                 datasets: [{
                     label: 'Cantidad',
                     data: resumen.prioridades,
                     backgroundColor: ['#90BFDB', '#D4FFCA', '#ffe173', '#ffbc66', '#ff8484'],
-                    borderWidth: 0,
-                    borderRadius: 8,
-                    maxBarThickness: 45
-                }]
-            },
-            options: opcionesGrafico(false)
-        });
-    }
-
-    const graficoEvaluacion = document.getElementById('graficoEvaluacion');
-    if (graficoEvaluacion) {
-        graficoEvaluacionesInstance = new Chart(graficoEvaluacion.getContext('2d'), {
-            type: 'doughnut',
-            data: {
-                labels: ['5 Estrellas', '4 Estrellas', '3 Estrellas', '2 Estrellas', '1 Estrella'],
-                datasets: [{
-                    label: 'Evaluaciones',
-                    data: resumen.calificaciones,
-                    backgroundColor: ['#0D3B6E', '#184E8C', '#2E6DAE', '#539ECD', '#90BFDB'],
                     borderWidth: 2,
                     borderColor: '#ffffff',
                     hoverOffset: 4
                 }]
             },
-            options: opcionesGrafico(true)
+            options: opcionesGrafico()
         });
     }
 }
@@ -160,9 +121,8 @@ document.getElementById('listaUltimosTickets')?.addEventListener('click', (event
     if (idTicket) window.location.href = `vistaTicket.html?id=${idTicket}`;
 });
 
-// Comparte animación y comportamiento responsive. La gráfica de barras recibe
-// ejes; la circular recibe leyenda inferior y no necesita escalas.
-function opcionesGrafico(mostrarLeyenda) {
+// La gráfica circular muestra la leyenda abajo y no necesita escalas.
+function opcionesGrafico() {
     return {
         responsive: true,
         maintainAspectRatio: false,
@@ -170,14 +130,10 @@ function opcionesGrafico(mostrarLeyenda) {
         animation: { duration: 650, easing: 'easeOutQuart' },
         plugins: {
             legend: {
-                display: mostrarLeyenda,
+                display: true,
                 position: 'bottom',
                 labels: { boxWidth: 15, font: { size: 12 } }
             }
-        },
-        scales: mostrarLeyenda ? undefined : {
-            y: { beginAtZero: true, ticks: { precision: 0 }, grid: { color: '#EAEAEA' } },
-            x: { grid: { display: false } }
         }
     };
 }

@@ -6,6 +6,39 @@ import { getUsuarios } from "../services/usuariosService.js";
 import { validarFormularioProyecto } from "../validators/proyectosValidator.js";
 import { validarFormularioFase } from "../validators/fasesValidators.js";
 import { validarFormularioDetalleFase } from "../validators/detalleFaseValidator.js";
+import { obtenerRolUsuario, obtenerUsuarioLogueado } from "../utils/sesion.js";
+import { getDepartamentoById } from "../services/departamentosService.js";
+
+/* Permisos: el administrador administra el proyecto, sus fases y sus detalles. El técnico
+   solo consulta los proyectos de su departamento; un usuario normal no entra aquí. */
+const rolActual = obtenerRolUsuario();
+if (rolActual === "usuario") window.location.replace("dashboardUsuarios.html");
+const soloLectura = rolActual === "tecnico";
+
+/* El técnico solo puede abrir proyectos con alguna fase de su departamento (o "Ambos") */
+async function validarAccesoDelTecnico(fasesDelProyecto) {
+    if (!soloLectura) return true;
+
+    const idDepartamento = obtenerUsuarioLogueado()?.idDepartamento;
+    let tipo = "";
+    try {
+        const departamento = idDepartamento ? await getDepartamentoById(idDepartamento) : null;
+        tipo = String(departamento?.tipoDepartamento || "").toLowerCase();
+    } catch (error) {
+        console.error("No se pudo obtener el departamento del técnico:", error);
+    }
+
+    const permitido = (fasesDelProyecto || []).some((fase) => {
+        const encargado = String(fase.departamentoEncargado || "").toLowerCase();
+        return tipo && (encargado === tipo || encargado === "ambos");
+    });
+
+    if (!permitido) {
+        mostrarError("Este proyecto no pertenece a tu departamento.");
+        window.location.replace("proyectos.html");
+    }
+    return permitido;
+}
 
 
 //si no existe un proyecto creado en la Api, se redirige a la pagina de proyectos
@@ -201,10 +234,10 @@ async function inicializarVistaProyecto(id) {
             li.className = 'd-flex align-items-center justify-content-between gap-2 py-2 border-bottom';
             li.innerHTML = `
         <div class="d-flex align-items-center gap-2 flex-grow-1">
-            <input type="checkbox" class="form-check-input" data-id-detalle="${detalle.id}" ${detalle.completado ? 'checked' : ''}>
+            <input type="checkbox" class="form-check-input" data-id-detalle="${detalle.id}" ${detalle.completado ? 'checked' : ''} ${soloLectura ? 'disabled' : ''}>
             <span class="${detalle.completado ? 'text-decoration-line-through text-muted' : ''}">${detalle.descripcionDetalle}</span>
         </div>
-        <i class="bi bi-trash btnEliminarDetalle" data-id-detalle="${detalle.id}" title="Eliminar"></i>
+        ${soloLectura ? '' : `<i class="bi bi-trash btnEliminarDetalle" data-id-detalle="${detalle.id}" title="Eliminar"></i>`}
       `;
 
             listaDetalleVista.appendChild(li);
@@ -391,6 +424,10 @@ async function inicializarVistaProyecto(id) {
 
     async function recargarFasesProyecto(idPreferido = faseSeleccionadaId) {
         const fasesApi = await getFasesPorProyecto(proyecto.idProyecto);
+
+        // El técnico solo puede abrir proyectos de su departamento
+        if (!(await validarAccesoDelTecnico(fasesApi))) return;
+
         fases = fasesApi.map((fase) => ({ id: fase.idFase, detalles: [], ...fase }));
 
         const seleccionExiste = fases.some((fase) => Number(fase.id) === Number(idPreferido));

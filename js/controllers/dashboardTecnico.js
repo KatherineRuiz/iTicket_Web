@@ -1,17 +1,16 @@
-/* Dashboard técnico: reúne tickets, evaluaciones y bitácoras desde la API y
-   transforma esos datos en indicadores, listas y gráficas del técnico activo. */
+/* Dashboard técnico: reúne los tickets asignados y el tiempo de resolución desde la API
+   y los transforma en indicadores, lista y gráfica del técnico activo.
+   Las evaluaciones son exclusivas del administrador, por eso aquí no aparecen. */
 
 import {
     obtenerResumenPanelTecnico,
     obtenerContadoresPanelTecnico,
-    getCalificacionesTecnico,
     getResolucionPorDiaTecnico
 } from "../services/dashboardTecnicosService.js?v=6";
 import { obtenerUsuarioLogueado } from "../utils/sesion.js";
 
 // Elementos del DOM
 const graficoResolucion = document.getElementById('graficoResolucion');
-const graficoCalificacion = document.getElementById('graficoCalificacion');
 const botonesResumen = document.querySelectorAll('[data-opcion]');
 const btnCrear = document.querySelector('.btn-oscuro');
 const contenedorTickets = document.querySelector('.contenedor-tickets-scroll');
@@ -23,7 +22,6 @@ const numHoy = document.getElementById('num-hoy');
 const TAMANO_PAGINA_ASIGNACIONES = 5;
 let categoriaActual = 'pendientes';
 let paginaActualAsignaciones = 1;
-let graficoCalificacionesInstance = null;
 let graficoTiempoInstance = null;
 
 // Obtener ID del usuario logueado
@@ -45,17 +43,14 @@ async function cargarDatos() {
     try {
         mostrarLoading(true);
 
-        const [contadoresResult, calificacionesResult, resolucionResult] = await Promise.allSettled([
+        const [contadoresResult, resolucionResult] = await Promise.allSettled([
             obtenerContadoresPanelTecnico(idUsuario),
-            getCalificacionesTecnico(idUsuario),
             getResolucionPorDiaTecnico(idUsuario)
         ]);
 
         const contadores = contadoresResult.status === 'fulfilled' ? contadoresResult.value : null;
-        const calificaciones = calificacionesResult.status === 'fulfilled' ? calificacionesResult.value : [0, 0, 0, 0, 0];
         const filasResolucion = resolucionResult.status === 'fulfilled' ? resolucionResult.value : [];
         if (contadoresResult.status === 'rejected') console.error('No se cargaron los contadores del panel:', contadoresResult.reason);
-        if (calificacionesResult.status === 'rejected') console.error('No se cargaron las calificaciones:', calificacionesResult.reason);
         if (resolucionResult.status === 'rejected') console.error('No se cargó el tiempo de resolución:', resolucionResult.reason);
 
         // Actualizar UI: tarjetas de contadores y lista paginada (respeta "Pendientes" activo por defecto)
@@ -63,7 +58,7 @@ async function cargarDatos() {
         cargarPanelAsignaciones('pendientes', 1);
 
         // Procesar y actualizar gráficos
-        crearGraficos(calificaciones, mapearResolucionPorDia(filasResolucion));
+        crearGraficos(mapearResolucionPorDia(filasResolucion));
 
         mostrarLoading(false);
     } catch (error) {
@@ -214,18 +209,19 @@ function obtenerClasePrioridad(prioridad) {
     }
 }
 
+// Mismos colores pastel que las prioridades de los tickets (tickets.css)
 function obtenerClaseBadge(prioridad) {
     const p = normalizarPrioridad(prioridad);
     switch (p) {
         case 'critica':
         case 'critico':
-            return 'bg-danger-light text-danger';
+            return 'prio-Critica sin-absolute';
         case 'alta':
-            return 'bg-warning-light text-warning';
+            return 'prio-Alta sin-absolute';
         case 'media':
-            return 'bg-warning-light-2 text-warning-dark';
+            return 'prio-Media sin-absolute';
         default:
-            return 'bg-success-light text-success';
+            return 'prio-Baja sin-absolute';
     }
 }
 
@@ -245,16 +241,12 @@ function obtenerTextoPrioridad(prioridad) {
 }
 
 // ---------- CREAR GRÁFICOS ----------
-function crearGraficos(datosCalificaciones, datosTiempos) {
+function crearGraficos(datosTiempos) {
     if (typeof Chart === 'undefined') {
         console.error('[Dashboard técnico] Chart.js no terminó de cargar.');
         return;
     }
     // Destruir gráficos anteriores si existen
-    if (graficoCalificacionesInstance) {
-        graficoCalificacionesInstance.destroy();
-        graficoCalificacionesInstance = null;
-    }
     if (graficoTiempoInstance) {
         graficoTiempoInstance.destroy();
         graficoTiempoInstance = null;
@@ -263,57 +255,6 @@ function crearGraficos(datosCalificaciones, datosTiempos) {
     const dibujar = function() {
         requestAnimationFrame(() => {
             requestAnimationFrame(() => {
-                // Gráfico de calificaciones (Doughnut)
-                if (graficoCalificacion) {
-                    const grfCalificacion = graficoCalificacion.getContext('2d');
-                    graficoCalificacionesInstance = new Chart(grfCalificacion, {
-                        type: 'doughnut',
-                        data: {
-                            labels: ['5 Estrellas', '4 Estrellas', '3 Estrellas', '2 Estrellas', '1 Estrella'],
-                            datasets: [{
-                                label: 'Porcentaje de calificaciones',
-                                data: datosCalificaciones,
-                                backgroundColor: [
-                                    '#0D3B6E',
-                                    '#184E8C',
-                                    '#2E6DAE',
-                                    '#539ECD',
-                                    '#90BFDB'
-                                ],
-                                borderWidth: 2,
-                                borderColor: '#ffffff',
-                                hoverOffset: 4
-                            }]
-                        },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            resizeDelay: 200,
-                            animation: {
-                                duration: 1000,
-                                easing: 'easeOutQuart'
-                            },
-                            plugins: {
-                                legend: {
-                                    display: true,
-                                    position: 'bottom',
-                                    labels: {
-                                        boxWidth: 15,
-                                        font: { size: 12 }
-                                    }
-                                },
-                                tooltip: {
-                                    callbacks: {
-                                        label: function (context) {
-                                            return `${context.label}: ${context.raw}%`;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    });
-                }
-
                 // Gráfico de tiempos promedio (Bar)
                 if (graficoResolucion) {
                     const grfResolucion = graficoResolucion.getContext('2d');
