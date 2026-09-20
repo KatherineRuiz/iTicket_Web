@@ -1,5 +1,9 @@
+/* La misma tipografía que el resto del sistema (common.css no se carga en estas pantallas) */
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
 /* ==================== 1. GENERALES Y ANIMACIONES ==================== */
 body {
+    font-family: 'Inter', sans-serif;
     background-image: url('../img/login/Background.png');
     background-size: cover;
     background-position: center;
@@ -58,7 +62,6 @@ body {
     overflow: hidden;
     border-radius: 2rem;
     min-height: 600px;
-    box-shadow: 0 0 40px rgba(255, 255, 255, 0.25);
 }
 
 .curva-divisoria {

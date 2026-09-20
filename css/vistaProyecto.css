@@ -213,3 +213,30 @@ html.tema-oscuro .formulario-proyecto-modal .form-label {
     padding: 18px !important;
   }
 }
+
+/* Formulario de fases más compacto para que el modal quepa en la pantalla */
+.formulario-fase-compacto .form-label {
+  margin-bottom: .35rem;
+}
+
+.formulario-fase-compacto textarea {
+  min-height: 72px !important;
+  height: 72px;
+  resize: vertical;
+}
+
+/* Fila de la fase: dropdown y botones en una línea. Si la columna es angosta,
+   los botones quedan solo con el ícono para que el dropdown tenga espacio. */
+.columna-fases {
+  container-type: inline-size;
+}
+
+@container (max-width: 700px) {
+  .fila-acciones-fase .texto-boton-fase {
+    display: none;
+  }
+
+  .fila-acciones-fase .btn {
+    padding-inline: .9rem !important;
+  }
+}

@@ -132,7 +132,7 @@ function renderizarGraficosYKPIs(data) {
         console.error('[Estadísticas] Chart.js no terminó de cargar. Los KPIs sí fueron actualizados.');
         return;
     }
-    Chart.defaults.font.family = "'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif";
+    Chart.defaults.font.family = "Inter, system-ui, -apple-system, sans-serif";
     Chart.defaults.color = '#6c757d';
 
     // 1. Gráfica de Satisfacción por Técnico
@@ -373,10 +373,11 @@ function renderizarTablaEquipos(pageData) {
         // Campos del backend (ReportadosDTO):
         // codigoEquipo, ubicacion, modeloMarca, categoria, numeroTickets, estadoGeneral
         // estadoGeneral viene como: "Normal", "Atención" o "Crítico"
-        let badgeClass = 'bg-secondary';
-        if (eq.estadoGeneral === 'Normal') badgeClass = 'bg-success';
-        if (eq.estadoGeneral === 'Atención') badgeClass = 'bg-warning text-dark';
-        if (eq.estadoGeneral === 'Crítico') badgeClass = 'bg-danger';
+        // Mismos colores pastel que las prioridades de los tickets (tickets.css)
+        let badgeClass = 'text-bg-light';
+        if (eq.estadoGeneral === 'Normal') badgeClass = 'prio-Baja sin-absolute';
+        if (eq.estadoGeneral === 'Atención') badgeClass = 'prio-Media sin-absolute';
+        if (eq.estadoGeneral === 'Crítico') badgeClass = 'prio-Critica sin-absolute';
 
         fila.innerHTML = `
             <td class="fw-semibold">${eq.codigoEquipo || '—'}</td>
@@ -384,7 +385,7 @@ function renderizarTablaEquipos(pageData) {
             <td>${eq.modeloMarca || '—'}</td>
             <td>${eq.categoria || '—'}</td>
             <td class="fw-bold">${eq.numeroTickets ?? 0}</td>
-            <td><span class="badge ${badgeClass} px-2 py-1">${eq.estadoGeneral || '—'}</span></td>
+            <td><span class="badge ${badgeClass} rounded-pill px-3 py-2">${eq.estadoGeneral || '—'}</span></td>
         `;
         tbodyEquipos.appendChild(fila);
     });

@@ -1,6 +1,21 @@
 import { login } from "../services/authService.js";
-import { getUsuarioById } from "../services/usuariosService.js";
+import { getUsuarioById, getUsuarios } from "../services/usuariosService.js";
 import { mostrarError, mostrarExitoRedireccion } from "../components/sweetAlerts.js";
+
+// Si la base de datos todavía no tiene usuarios, se manda a crear el primer administrador
+async function revisarPrimerUsuario() {
+    try {
+        const usuarios = await getUsuarios();
+        if (!usuarios || usuarios.length === 0) {
+            window.location.replace("primerUsuario.html");
+        }
+    } catch (error) {
+        // Si la API no responde se queda en el login; el error se verá al intentar iniciar sesión
+        console.warn("No se pudo revisar si existen usuarios:", error);
+    }
+}
+
+revisarPrimerUsuario();
 
 document.addEventListener("DOMContentLoaded", function () {
     const formularioLogin = document.querySelector("#formLogin");

@@ -121,7 +121,16 @@ function pintarNotificaciones(body, resultado) {
     body.querySelectorAll("[data-pagina-notif]").forEach(link => {
         link.addEventListener("click", (evento) => {
             evento.preventDefault();
-            cargarNotificaciones(Number(link.dataset.paginaNotif));
+            const pagina = Number(link.dataset.paginaNotif);
+            if (pagina === paginaActual) return;
+            const direccion = pagina > paginaActual ? 1 : -1;
+            const cambiar = () => cargarNotificaciones(pagina);
+            // Transición al cambiar de página (definida en menu.js)
+            if (window.animarCambioPagina) {
+                window.animarCambioPagina(body, cambiar, direccion);
+            } else {
+                cambiar();
+            }
         });
     });
 }

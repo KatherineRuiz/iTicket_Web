@@ -138,14 +138,9 @@
                 <!-- Buscador listado de Tickets -->
                 <div class="col-12">
                     <h5 class="fw-bold mb-3 titulo-seccion text-center p-3">Todos los tickets</h5>
-                    <div class="d-flex justify-content-end mb-3">
-                        <a href="bitacoras.html" class="btn btn-oscuro-redondeado boton-accion-pildora">
-                            <i class="bi bi-clock-history me-1"></i>Ver bitácora
-                        </a>
-                    </div>
-                    <!-- Sección del Buscador y Filtros -->
+                    <!-- Sección del Buscador, Filtros y acceso a la bitácora -->
                     <div class="row g-3 align-items-center mb-4">
-                        <div class="col-12 col-md-12 col-lg-6 col-sm-8">
+                        <div class="col-12 col-md-12 col-lg col-sm-8">
                             <div class="buscador-contenedor">
                                 <i class="bi bi-search icono-busqueda"></i>
                                 <input type="text" class="form-control buscador-input" id="txtBuscar"
@@ -181,6 +176,14 @@
                         <!-- Filtro de Fecha -->
                         <div class="col-4 col-md-4 col-lg-2 col-sm-6">
                             <input type="date" class="form-control select-ticket-filtro" id="dtBuscarFecha">
+                        </div>
+
+                        <!-- Acceso a la bitácora, en la misma fila que los filtros -->
+                        <div class="col-12 col-lg-auto">
+                            <a href="bitacoras.html"
+                                class="btn btn-oscuro-redondeado boton-accion-pildora boton-bitacora-filtros w-100 text-nowrap d-flex align-items-center justify-content-center">
+                                <i class="bi bi-clock-history me-1"></i>Ver bitácora
+                            </a>
                         </div>
                     </div>
 

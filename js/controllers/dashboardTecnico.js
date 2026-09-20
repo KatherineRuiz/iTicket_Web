@@ -178,7 +178,16 @@ document.getElementById('paginacionAsignaciones')?.addEventListener('click', (ev
     const link = evento.target.closest('[data-pagina]');
     if (!link) return;
     evento.preventDefault();
-    cargarPanelAsignaciones(categoriaActual, Number(link.dataset.pagina));
+    const pagina = Number(link.dataset.pagina);
+    if (pagina === paginaActualAsignaciones) return;
+    const direccion = pagina > paginaActualAsignaciones ? 1 : -1;
+    const cambiar = () => cargarPanelAsignaciones(categoriaActual, pagina);
+    // Transición al cambiar de página (definida en menu.js)
+    if (window.animarCambioPagina) {
+        window.animarCambioPagina(contenedorTickets, cambiar, direccion);
+    } else {
+        cambiar();
+    }
 });
 
 

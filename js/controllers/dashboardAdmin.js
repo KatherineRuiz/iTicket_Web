@@ -264,7 +264,16 @@ document.getElementById('paginacionResumenDashboard')?.addEventListener('click',
     const link = evento.target.closest('[data-pagina]');
     if (!link) return;
     evento.preventDefault();
-    cargarPanelResumen(categoriaActual, Number(link.dataset.pagina));
+    const pagina = Number(link.dataset.pagina);
+    if (pagina === paginaActualResumen) return;
+    const direccion = pagina > paginaActualResumen ? 1 : -1;
+    const cambiar = () => cargarPanelResumen(categoriaActual, pagina);
+    // Transición al cambiar de página (definida en menu.js)
+    if (window.animarCambioPagina) {
+        window.animarCambioPagina(document.getElementById('listaTicketsDashboard'), cambiar, direccion);
+    } else {
+        cambiar();
+    }
 });
 
 // ============================================================

@@ -2691,3 +2691,419 @@ html.tema-oscuro .table-custom tbody td .menu-acciones-tabla-opcion.opcion-elimi
 @media (prefers-reduced-motion: reduce) {
     .panel-acciones-tabla { animation: none; }
 }
+
+/* Tabla con el contenido centrado en cada columna: con columnas del mismo ancho y textos
+   de largos distintos, alinear a la izquierda deja todo el espacio sobrante de un solo lado */
+.table-custom.tabla-centrada :is(th, td) {
+    text-align: center !important;
+}
+
+.table-custom.tabla-centrada tbody td .menu-acciones-tabla {
+    justify-content: center;
+}
+
+/* Tablas cuyas columnas deben medir lo mismo, sin importar lo largo del texto */
+.table-custom.tabla-columnas-iguales {
+    table-layout: fixed;
+    width: 100%;
+}
+
+.table-custom.tabla-columnas-iguales :is(th, td) {
+    overflow-wrap: anywhere;
+}
+
+/* Transición al cambiar de página en tablas y listas (window.animarCambioPagina en menu.js).
+   --direccion-pagina vale 1 al avanzar y -1 al regresar. */
+.pagina-saliendo {
+    opacity: .3;
+    transform: translateX(calc(-12px * var(--direccion-pagina, 1)));
+    transition: opacity 170ms ease, transform 170ms ease;
+    pointer-events: none;
+}
+
+.pagina-entrando > * {
+    animation: entrada-pagina 360ms cubic-bezier(.22, 1, .36, 1) both;
+    animation-delay: calc(var(--orden-pagina, 0) * 40ms);
+}
+
+/* ---------- Dropdowns personalizados (inicializarSelectsPersonalizados en menu.js) ---------- */
+.select-personalizado {
+    position: relative;
+    width: 100%;
+    min-width: 0;
+}
+
+/* El select original queda oculto, pero sigue en el formulario para validar y enviar su valor */
+.select-personalizado > .select-nativo-oculto {
+    position: absolute !important;
+    left: 0;
+    bottom: 0;
+    width: 100% !important;
+    height: 1px !important;
+    min-height: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    opacity: 0 !important;
+    pointer-events: none;
+}
+
+/* Si el select original debía crecer dentro de una fila flex, el dropdown también lo hace */
+.select-personalizado:has(> select.flex-grow-1) {
+    flex: 1 1 0;
+}
+
+.select-personalizado-boton {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    text-align: left;
+}
+
+.select-personalizado-texto {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Flecha hacia arriba mientras la lista está abierta */
+.select-personalizado.abierto > .select-personalizado-boton {
+    border-color: #4393f6 !important;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23285f9c' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 15 6-6 6 6'/%3E%3C/svg%3E") !important;
+    box-shadow: 0 0 0 3px rgba(67, 147, 246, .12) !important;
+}
+
+.select-personalizado-lista {
+    position: fixed;
+    z-index: 2000;
+    margin: 0;
+    padding: 6px;
+    overflow-y: auto;
+    list-style: none;
+    border: 1px solid #dfe7f1;
+    border-radius: 14px;
+    background: #ffffff;
+    box-shadow: 0 16px 36px rgba(20, 36, 84, .14), 0 2px 6px rgba(20, 36, 84, .06);
+    transform-origin: top center;
+    animation: abrir-select 160ms cubic-bezier(.22, 1, .36, 1);
+    scrollbar-width: thin;
+}
+
+.select-personalizado.hacia-arriba > .select-personalizado-lista {
+    transform-origin: bottom center;
+}
+
+.select-personalizado-opcion {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .75rem;
+    padding: 9px 12px;
+    border-radius: 10px;
+    color: #1d2b43;
+    font-size: .92rem;
+    font-weight: 500;
+    line-height: 1.3;
+    cursor: pointer;
+    transition: background-color 120ms ease, color 120ms ease;
+}
+
+.select-personalizado-opcion + .select-personalizado-opcion {
+    margin-top: 2px;
+}
+
+.select-personalizado-opcion i {
+    flex: 0 0 auto;
+    color: #1f6fd1;
+    font-size: 1rem;
+    visibility: hidden;
+}
+
+.select-personalizado-opcion.activa {
+    background: #eef4fc;
+}
+
+.select-personalizado-opcion.seleccionada {
+    color: #1f6fd1;
+    font-weight: 700;
+}
+
+.select-personalizado-opcion.seleccionada i {
+    visibility: visible;
+}
+
+.select-personalizado-opcion.deshabilitada {
+    opacity: .45;
+    cursor: not-allowed;
+}
+
+@keyframes abrir-select {
+    from { opacity: 0; transform: translateY(-4px) scale(.98); }
+    to { opacity: 1; transform: none; }
+}
+
+html.tema-oscuro .select-personalizado.abierto > .select-personalizado-boton {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%238fc5f1' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 15 6-6 6 6'/%3E%3C/svg%3E") !important;
+}
+
+html.tema-oscuro .select-personalizado-lista {
+    border-color: #2b374c;
+    background: #182235;
+    box-shadow: 0 18px 40px rgba(0, 0, 0, .45);
+}
+
+html.tema-oscuro .select-personalizado-opcion { color: #dce3ee; }
+html.tema-oscuro .select-personalizado-opcion.activa { background: #223049; }
+html.tema-oscuro .select-personalizado-opcion.seleccionada,
+html.tema-oscuro .select-personalizado-opcion i { color: #8fc5f1; }
+
+@media (prefers-reduced-motion: reduce) {
+    .select-personalizado-lista { animation: none; }
+}
+
+/* ---------- Calendario personalizado (inicializarFechasPersonalizadas en menu.js) ---------- */
+.fecha-personalizada {
+    position: relative;
+    width: 100%;
+    min-width: 0;
+}
+
+.fecha-personalizada > .input-fecha-personalizada {
+    padding-right: 2.6rem !important;
+    cursor: pointer;
+}
+
+/* Se oculta el ícono nativo: el calendario propio lo reemplaza */
+.input-fecha-personalizada::-webkit-calendar-picker-indicator {
+    display: none;
+}
+
+.btn-abrir-calendario {
+    position: absolute;
+    top: 50%;
+    right: .55rem;
+    display: grid;
+    place-items: center;
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    border: 0;
+    border-radius: 8px;
+    color: #285f9c;
+    background: transparent;
+    transform: translateY(-50%);
+    transition: background-color 150ms ease;
+}
+
+.btn-abrir-calendario:hover,
+.fecha-personalizada.abierto .btn-abrir-calendario {
+    background: #eef4fc;
+}
+
+.fecha-personalizada.abierto > .input-fecha-personalizada {
+    border-color: #4393f6 !important;
+    box-shadow: 0 0 0 3px rgba(67, 147, 246, .12) !important;
+}
+
+.calendario-panel {
+    position: fixed;
+    z-index: 2000;
+    width: 296px;
+    padding: 12px;
+    border: 1px solid #dfe7f1;
+    border-radius: 16px;
+    background: #ffffff;
+    box-shadow: 0 16px 36px rgba(20, 36, 84, .14), 0 2px 6px rgba(20, 36, 84, .06);
+    transform-origin: top left;
+    animation: abrir-select 160ms cubic-bezier(.22, 1, .36, 1);
+}
+
+.fecha-personalizada.hacia-arriba > .calendario-panel {
+    transform-origin: bottom left;
+}
+
+.calendario-encabezado {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.calendario-mes {
+    color: #17213a;
+    font-size: .95rem;
+    font-weight: 700;
+}
+
+.calendario-flecha {
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: 0;
+    border-radius: 10px;
+    color: #285f9c;
+    background: transparent;
+    transition: background-color 150ms ease;
+}
+
+.calendario-flecha:hover {
+    background: #eef4fc;
+}
+
+.calendario-semana,
+.calendario-dias {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+}
+
+.calendario-semana span {
+    padding: 4px 0;
+    color: #7a879b;
+    font-size: .72rem;
+    font-weight: 700;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+.calendario-dia {
+    aspect-ratio: 1;
+    padding: 0;
+    border: 0;
+    border-radius: 10px;
+    color: #1d2b43;
+    background: transparent;
+    font-size: .86rem;
+    font-weight: 600;
+    transition: background-color 120ms ease, color 120ms ease;
+}
+
+.calendario-dia:hover:not(:disabled) {
+    background: #eef4fc;
+}
+
+.calendario-dia.otro-mes {
+    color: #b3bdcc;
+    font-weight: 500;
+}
+
+/* Hoy: anillo; seleccionado: relleno azul */
+.calendario-dia.hoy {
+    box-shadow: inset 0 0 0 1.5px #4393f6;
+    color: #1f6fd1;
+}
+
+.calendario-dia.seleccionado {
+    color: #ffffff;
+    background: #4393f6;
+    box-shadow: none;
+}
+
+.calendario-dia.seleccionado:hover {
+    background: #2b7ee2;
+}
+
+.calendario-dia:focus-visible,
+.calendario-flecha:focus-visible,
+.calendario-accion:focus-visible {
+    outline: 2px solid #4393f6;
+    outline-offset: 1px;
+}
+
+.calendario-dia:disabled {
+    color: #cfd6e0;
+    cursor: not-allowed;
+}
+
+.calendario-hora {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    margin: 10px 0 0;
+    color: #53627a;
+    font-size: .82rem;
+    font-weight: 600;
+}
+
+.calendario-hora input {
+    flex: 1;
+    min-height: 36px !important;
+    border-radius: 10px !important;
+}
+
+.calendario-pie {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #edf1f6;
+}
+
+.calendario-accion {
+    padding: .35rem .8rem;
+    border: 0;
+    border-radius: 999px;
+    color: #53627a;
+    background: transparent;
+    font-size: .82rem;
+    font-weight: 700;
+    transition: background-color 150ms ease, color 150ms ease;
+}
+
+.calendario-accion:hover {
+    background: #f1f4f8;
+}
+
+.calendario-accion-principal {
+    color: #1f6fd1;
+    background: #e8f1fd;
+}
+
+.calendario-accion-principal:hover {
+    color: #ffffff;
+    background: #4393f6;
+}
+
+html.tema-oscuro .btn-abrir-calendario,
+html.tema-oscuro .calendario-flecha { color: #8fc5f1; }
+html.tema-oscuro .btn-abrir-calendario:hover,
+html.tema-oscuro .fecha-personalizada.abierto .btn-abrir-calendario,
+html.tema-oscuro .calendario-flecha:hover,
+html.tema-oscuro .calendario-dia:hover:not(:disabled) { background: #223049; }
+
+html.tema-oscuro .calendario-panel {
+    border-color: #2b374c;
+    background: #182235;
+    box-shadow: 0 18px 40px rgba(0, 0, 0, .45);
+}
+
+html.tema-oscuro .calendario-mes { color: #eef3fa; }
+html.tema-oscuro .calendario-semana span { color: #8f9db3; }
+html.tema-oscuro .calendario-dia { color: #dce3ee; }
+html.tema-oscuro .calendario-dia.otro-mes { color: #53627a; }
+html.tema-oscuro .calendario-dia.hoy { color: #8fc5f1; box-shadow: inset 0 0 0 1.5px #5598e7; }
+html.tema-oscuro .calendario-dia.seleccionado { color: #ffffff; background: #3987e5; box-shadow: none; }
+html.tema-oscuro .calendario-dia:disabled { color: #3a475d; }
+html.tema-oscuro .calendario-hora { color: #9eacc1; }
+html.tema-oscuro .calendario-pie { border-top-color: #263147; }
+html.tema-oscuro .calendario-accion { color: #b8c4d6; }
+html.tema-oscuro .calendario-accion:hover { background: #223049; }
+html.tema-oscuro .calendario-accion-principal { color: #9dcbef; background: rgba(67, 147, 246, .16); }
+html.tema-oscuro .calendario-accion-principal:hover { color: #ffffff; background: #4393f6; }
+
+@media (prefers-reduced-motion: reduce) {
+    .calendario-panel { animation: none; }
+}
+
+@keyframes entrada-pagina {
+    from {
+        opacity: 0;
+        transform: translateX(calc(18px * var(--direccion-pagina, 1)));
+    }
+
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}

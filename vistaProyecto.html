@@ -169,25 +169,29 @@
             <!-- Fases y Detalles -->
             <div class="row g-4">
                 <!-- Panel de Fases -->
-                <div class="col-lg-6">
+                <div class="col-lg-6 columna-fases">
                     <div class="encabezado-panel rounded-pill text-white text-center fw-bold py-2 mb-3">
                         Fases
                     </div>
 
-                    <div class="d-flex gap-2 mb-3 flex-wrap">
+                    <div class="fila-acciones-fase d-flex gap-2 mb-3 flex-wrap flex-md-nowrap align-items-center">
                         <select id="selectFase" class="form-select rounded-4 flex-grow-1">
                             <option value="">Fase</option>
                         </select>
-                        <button id="btnEditarFase" class="btn btn-azul-redondeado px-3">
-                            <i class="bi bi-pencil-square me-1"></i> Editar
+                        <!-- Si la columna es angosta, los botones muestran solo el ícono (vistaProyecto.css) -->
+                        <button id="btnEditarFase" class="btn btn-azul-redondeado px-3 text-nowrap flex-shrink-0"
+                            title="Editar fase" aria-label="Editar fase">
+                            <i class="bi bi-pencil-square" aria-hidden="true"></i><span class="texto-boton-fase ms-1">Editar</span>
                         </button>
-                        <button id="btnCrearFase" class="btn btn-azul-redondeado px-3">
-                            <i class="bi bi-plus-lg me-1"></i> Crear Fase
+                        <button id="btnCrearFase" class="btn btn-azul-redondeado px-3 text-nowrap flex-shrink-0"
+                            title="Crear fase" aria-label="Crear fase">
+                            <i class="bi bi-plus-lg" aria-hidden="true"></i><span class="texto-boton-fase ms-1">Crear fase</span>
                         </button>
 
                         <!-- Boton para eliminar la fase -->
-                        <button id="btnEliminarFase" type="button" class="btn btn-oscuro-redondeado rounded-4 px-4">
-                            <i class="bi bi-trash me-1"></i> Eliminar
+                        <button id="btnEliminarFase" type="button" class="btn btn-oscuro-redondeado rounded-4 px-3 text-nowrap flex-shrink-0"
+                            title="Eliminar fase" aria-label="Eliminar fase">
+                            <i class="bi bi-trash" aria-hidden="true"></i><span class="texto-boton-fase ms-1">Eliminar</span>
                         </button>
                     </div>
 
@@ -228,32 +232,32 @@
 
     <!-- Modal para creación de fases del proyecto -->
     <div class="modal fade" tabindex="-1" id="modalFasesProyecto" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
             <div class="modal-content modal-proyecto-estetico overflow-hidden">
                 <div class="modal-header modal-iticket-encabezado border-0 position-relative">
                     <h5 class="modal-title text-white fw-bold w-100 text-center mb-0">
-                        Fases del Proyecto
+                        Fases del proyecto
                     </h5>
                     <button type="button" class="btn-close btn-close-white position-absolute end-0 me-3"
                         data-bs-dismiss="modal" aria-label="Cerrar"></button>
                 </div>
 
                 <div class="modal-body modal-proyecto-cuerpo p-4">
-                    <div id="listaFasesAgregadas" class="mb-4 d-flex flex-column gap-2"></div>
+                    <div id="listaFasesAgregadas" class="mb-3 d-flex flex-column gap-2"></div>
 
-                    <form id="formAgregarFase" class="formulario-proyecto-modal p-4">
-                        <h6 class="titulo-formulario-modal fw-bold mb-4">
+                    <form id="formAgregarFase" class="formulario-proyecto-modal formulario-fase-compacto p-3 p-md-4">
+                        <h6 class="titulo-formulario-modal fw-bold mb-3">
                             <i class="bi bi-layers me-2" aria-hidden="true"></i>Nueva fase
                         </h6>
 
                         <div class="row g-3">
-                            <div class="col-md-8">
+                            <div class="col-md-7">
                                 <label for="txtNombreFase" class="form-label text-navy fw-semibold">Nombre de la
                                     fase</label>
                                 <input type="text" class="form-control" id="txtNombreFase" maxlength="100" required />
                             </div>
 
-                            <div class="col-md-4">
+                            <div class="col-md-5">
                                 <label for="txtDepartamentoEncargado"
                                     class="form-label text-navy fw-semibold">Departamento encargado</label>
                                 <select class="form-select" id="txtDepartamentoEncargado" required>
@@ -296,12 +300,12 @@
                                 <input type="date" class="form-control" id="txtFechaFinalReal" optional />
                             </div>
 
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <label for="txtProveedor" class="form-label text-navy fw-semibold">Proveedor</label>
                                 <input type="text" class="form-control" id="txtProveedor" maxlength="100" required />
                             </div>
 
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <label for="numPresupuesto" class="form-label text-navy fw-semibold">Presupuesto
                                     estimado</label>
                                 <div class="input-group">
@@ -310,7 +314,7 @@
                                         required />
                                 </div>
                             </div>
-                            <div class="col-md-6 d-none" id="campoGastoTotalFase">
+                            <div class="col-md-4 d-none" id="campoGastoTotalFase">
                                 <label for="numTotal" class="form-label text-navy fw-semibold">Total</label>
                                 <div class="input-group">
                                     <span class="input-group-text">$</span>
@@ -318,7 +322,7 @@
                                         optional />
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <label for="faseFinalizada" class="form-label text-navy fw-semibold">Finalizada</label>
                                 <select class="form-select" id="faseFinalizada" placeholder="Selecciona el estado"
                                     required>
@@ -329,20 +333,17 @@
                             </div>
                         </div>
 
-                        <div class="d-flex justify-content-end mt-4 gap-2">
+                        <div class="d-flex justify-content-end mt-3 gap-2">
+                            <button type="button" class="btn btn-outline-secondary rounded-pill px-4"
+                                data-bs-dismiss="modal">
+                                Cerrar
+                            </button>
                             <button type="submit" class="btn btn-azul-redondeado px-4">
                                 <i class="bi bi-plus-lg me-1"></i>
                                 <span id="txtBotonGuardarFase">Agregar fase</span>
                             </button>
                         </div>
                     </form>
-
-                    <div class="d-flex justify-content-end mt-4 gap-2">
-                        <button type="button" class="btn btn-outline-secondary rounded-pill px-4"
-                            data-bs-dismiss="modal">
-                            Cerrar
-                        </button>
-                    </div>
                 </div>
             </div>
         </div>

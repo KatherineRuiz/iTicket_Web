@@ -306,7 +306,8 @@
 }
 
 .boton-accion-pildora {
-    height: 44px !important;
+    /* Mismo alto que los filtros de su fila */
+    height: 46px !important;
     border-radius: 50px !important;
     font-size: 0.95rem !important;
     font-weight: 600 !important;
@@ -317,6 +318,13 @@
     border: none !important;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05) !important;
     transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+/* En la fila de filtros: mismas esquinas que los selects y la fecha, y más compacto */
+.boton-bitacora-filtros {
+    border-radius: 14px !important;
+    padding: 0 16px !important;
+    font-size: .88rem !important;
 }
 
 .boton-accion-pildora:hover {

@@ -9,6 +9,202 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link href="css/login.css" rel="stylesheet" />
     <link href="css/common.css" rel="stylesheet" />
+    <style>
+        /* Indicador de pasos */
+        .pasos-indicador {
+            display: flex;
+            margin: 0 0 1.75rem;
+            padding: 0;
+            list-style: none;
+        }
+
+        .pasos-indicador li {
+            position: relative;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: .4rem;
+            color: #90BFDB;
+            font-size: .75rem;
+            font-weight: 600;
+        }
+
+        /* Línea que une cada círculo con el anterior */
+        .pasos-indicador li:not(:first-child)::before {
+            content: "";
+            position: absolute;
+            top: 17px;
+            right: calc(50% + 22px);
+            width: calc(100% - 44px);
+            height: 2px;
+            border-radius: 2px;
+            background: rgba(144, 191, 219, .3);
+            transition: background-color .3s ease;
+        }
+
+        .pasos-indicador li.completado:not(:first-child)::before,
+        .pasos-indicador li.activo:not(:first-child)::before {
+            background: #43A1FF;
+        }
+
+        .pasos-numero {
+            width: 36px;
+            height: 36px;
+            display: grid;
+            place-items: center;
+            border: 2px solid rgba(144, 191, 219, .45);
+            border-radius: 50%;
+            color: #90BFDB;
+            font-size: .9rem;
+            transition: background-color .3s ease, border-color .3s ease, color .3s ease;
+        }
+
+        .pasos-indicador li.activo {
+            color: #fff;
+        }
+
+        .pasos-indicador li.activo .pasos-numero {
+            border-color: #43A1FF;
+            color: #fff;
+            background: #43A1FF;
+        }
+
+        .pasos-indicador li.completado .pasos-numero {
+            border-color: #43A1FF;
+            color: #43A1FF;
+            background: rgba(67, 161, 255, .12);
+        }
+
+        /* Cada paso del formulario */
+        .paso {
+            display: none;
+        }
+
+        .paso.activo {
+            display: block;
+            animation: pasoAdelante .35s ease both;
+        }
+
+        .paso.activo.desde-atras {
+            animation-name: pasoAtras;
+        }
+
+        @keyframes pasoAdelante {
+            from { opacity: 0; transform: translateX(24px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes pasoAtras {
+            from { opacity: 0; transform: translateX(-24px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .paso-titulo {
+            margin: 0 0 .25rem;
+            font-size: 1.35rem;
+            font-weight: 700;
+        }
+
+        .paso-descripcion {
+            margin: 0 0 1.5rem;
+            color: #90BFDB;
+            font-size: .875rem;
+        }
+
+        .paso .form-label {
+            font-size: .875rem;
+        }
+
+        /* Requisitos de la contraseña */
+        .requisitos-clave {
+            margin: -.25rem 0 0;
+            padding: 0;
+            list-style: none;
+            font-size: .8rem;
+            color: #90BFDB;
+        }
+
+        .requisitos-clave li {
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+            margin-bottom: .3rem;
+            transition: color .2s ease;
+        }
+
+        .requisitos-clave li::before {
+            content: "";
+            width: 16px;
+            height: 16px;
+            flex: 0 0 16px;
+            border: 2px solid rgba(144, 191, 219, .5);
+            border-radius: 50%;
+            transition: background-color .2s ease, border-color .2s ease;
+        }
+
+        .requisitos-clave li.cumplido {
+            color: #7ee2a8;
+        }
+
+        .requisitos-clave li.cumplido::before {
+            border-color: #34c77b;
+            background: #34c77b url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 8.5 7 11l5-6' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 12px no-repeat;
+        }
+
+        /* Mensaje de error del paso */
+        .paso-error {
+            min-height: 1.25rem;
+            margin: .25rem 0 0;
+            color: #ff9b9b;
+            font-size: .8rem;
+            font-weight: 600;
+        }
+
+        /* Botones de navegación */
+        /* Si no caben en una fila, "Atrás" pasa debajo del botón principal */
+        .acciones-pasos {
+            display: flex;
+            flex-wrap: wrap-reverse;
+            gap: .75rem;
+            margin-top: 1rem;
+        }
+
+        .acciones-pasos .btn {
+            flex: 1 1 auto;
+            min-width: 0;
+            padding: .8rem 1.25rem !important;
+            white-space: nowrap;
+        }
+
+        /* Mismo alto que los campos de texto del login */
+        .paso .form-select.rounded-pill {
+            padding: .75rem 2.5rem .75rem 1.25rem;
+            border: none;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, .1);
+        }
+
+        .btn-atras {
+            border: 1px solid rgba(144, 191, 219, .5);
+            border-radius: 15px;
+            color: #fff;
+            background: transparent;
+            font-weight: 600;
+        }
+
+        .btn-atras:hover,
+        .btn-atras:focus-visible {
+            border-color: #90BFDB;
+            color: #fff;
+            background: rgba(144, 191, 219, .12);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .paso.activo {
+                animation: none;
+            }
+        }
+    </style>
 </head>
 
 <body class="d-flex align-items-center justify-content-center min-vh-100 py-4">
@@ -24,79 +220,111 @@
                     <div class="col-md-6 d-none d-md-flex flex-column align-items-start justify-content-between p-4">
                         <img src="img/login/logo.png" alt="Logo iTicket" class="logo-sesion" />
                         <div class="d-flex align-items-center justify-content-center w-100 flex-grow-1">
-                            <img src="img/login/img_Login1.png" alt="Ilustración"
+                            <img src="img/login/img_PrimerUsuario.png" alt="Ilustración de registro de usuario"
                                 class="img-fluid img-ilustracion-formulario mx-auto d-block" />
                         </div>
                     </div>
 
                     <div class="col-12 col-md-6 d-flex align-items-center justify-content-center justify-content-md-end">
-                        <div class="contenedor-formulario-compacto w-100 p-4 ps-md-5 me-lg-5 text-white pb-5">
+                        <div class="contenedor-formulario-compacto w-100 p-4 ps-md-5 me-lg-5 text-white py-5">
 
-                            <h2 class="mb-2 fw-bold text-center">
-                                <span class="texto-bienvenida">Bienvenido</span>
-                            </h2>
-                            <p class="text-center text-white-50 small mb-4">
-                                Crea la cuenta del primer administrador de iTicket.
-                            </p>
+                            <ol class="pasos-indicador" aria-label="Progreso de la configuración">
+                                <li class="activo" data-indicador="1">
+                                    <span class="pasos-numero">1</span>
+                                    <span>Cuenta</span>
+                                </li>
+                                <li data-indicador="2">
+                                    <span class="pasos-numero">2</span>
+                                    <span>Seguridad</span>
+                                </li>
+                                <li data-indicador="3">
+                                    <span class="pasos-numero">3</span>
+                                    <span>Departamento</span>
+                                </li>
+                            </ol>
 
                             <form id="formPrimerUsuario" novalidate>
-                                <div class="mb-3">
-                                    <label class="form-label fw-semibold" for="txtNombre">Nombre</label>
-                                    <input type="text" id="txtNombre" class="form-control rounded-pill"
-                                        maxlength="30" required />
-                                </div>
+                                <!-- Paso 1: datos de la cuenta -->
+                                <section class="paso activo" data-paso="1">
+                                    <h1 class="paso-titulo">Bienvenido a iTicket</h1>
+                                    <p class="paso-descripcion">Crea la cuenta del primer administrador del sistema.</p>
 
-                                <div class="mb-3">
-                                    <label class="form-label fw-semibold" for="txtCorreo">Correo electrónico</label>
-                                    <input type="email" id="txtCorreo" class="form-control rounded-pill"
-                                        placeholder="nombre@ejemplo.com" maxlength="100" required />
-                                </div>
-
-                                <div class="mb-3">
-                                    <label class="form-label fw-semibold" for="txtClave">Contraseña</label>
-                                    <input type="password" id="txtClave" class="form-control rounded-pill"
-                                        placeholder="Mínimo 8 caracteres" minlength="8" required />
-                                </div>
-
-                                <div class="mb-3">
-                                    <label class="form-label fw-semibold" for="txtConfirmar">Confirmar contraseña</label>
-                                    <input type="password" id="txtConfirmar" class="form-control rounded-pill" required />
-                                </div>
-
-                                <!-- Se muestra si ya hay departamentos de IT o Mantenimiento -->
-                                <div class="mb-3" id="bloqueDepartamento" hidden>
-                                    <label class="form-label fw-semibold" for="selDepartamento">Departamento</label>
-                                    <select id="selDepartamento" class="form-select rounded-pill"></select>
-                                </div>
-
-                                <!-- Se muestra si la base de datos aún no tiene departamentos -->
-                                <div id="bloqueNuevoDepartamento" hidden>
-                                    <p class="small text-white-50 mb-2">
-                                        Aún no hay departamentos registrados, se creará el primero junto con tu cuenta.
-                                    </p>
                                     <div class="mb-3">
-                                        <label class="form-label fw-semibold" for="txtArea">Área</label>
-                                        <input type="text" id="txtArea" class="form-control rounded-pill"
-                                            placeholder="Ej. Instituto Técnico Ricaldone" maxlength="50" />
+                                        <label class="form-label fw-semibold" for="txtNombre">Nombre</label>
+                                        <input type="text" id="txtNombre" class="form-control rounded-pill"
+                                            placeholder="Ej. Ana López" maxlength="30" autocomplete="name" />
                                     </div>
-                                    <div class="mb-3">
-                                        <label class="form-label fw-semibold" for="txtDepartamento">Departamento</label>
-                                        <input type="text" id="txtDepartamento" class="form-control rounded-pill"
-                                            placeholder="Ej. Soporte técnico" maxlength="50" />
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="form-label fw-semibold" for="selTipo">Tipo de departamento</label>
-                                        <select id="selTipo" class="form-select rounded-pill">
-                                            <option value="IT">IT</option>
-                                            <option value="Mantenimiento">Mantenimiento</option>
-                                        </select>
-                                    </div>
-                                </div>
 
-                                <div class="d-grid mt-4">
-                                    <button type="submit" id="btnCrear"
-                                        class="btn btn-azul-redondeado w-100 py-3 rounded-4 shadow-sm text-white">
-                                        Crear administrador
+                                    <div class="mb-2">
+                                        <label class="form-label fw-semibold" for="txtCorreo">Correo electrónico</label>
+                                        <input type="email" id="txtCorreo" class="form-control rounded-pill"
+                                            placeholder="nombre@ejemplo.com" maxlength="100" autocomplete="email" />
+                                    </div>
+                                </section>
+
+                                <!-- Paso 2: contraseña -->
+                                <section class="paso" data-paso="2">
+                                    <h1 class="paso-titulo">Protege tu cuenta</h1>
+                                    <p class="paso-descripcion">Elige la contraseña con la que vas a iniciar sesión.</p>
+
+                                    <div class="mb-3">
+                                        <label class="form-label fw-semibold" for="txtClave">Contraseña</label>
+                                        <input type="password" id="txtClave" class="form-control rounded-pill"
+                                            placeholder="Mínimo 8 caracteres" autocomplete="new-password" />
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label fw-semibold" for="txtConfirmar">Confirmar contraseña</label>
+                                        <input type="password" id="txtConfirmar" class="form-control rounded-pill"
+                                            placeholder="Repite la contraseña" autocomplete="new-password" />
+                                    </div>
+
+                                    <ul class="requisitos-clave">
+                                        <li id="reqLongitud">Al menos 8 caracteres</li>
+                                        <li id="reqCoincide">Las contraseñas coinciden</li>
+                                    </ul>
+                                </section>
+
+                                <!-- Paso 3: departamento -->
+                                <section class="paso" data-paso="3">
+                                    <h1 class="paso-titulo">Tu departamento</h1>
+                                    <p class="paso-descripcion">Indica a qué departamento pertenecerás.</p>
+
+                                    <!-- Se muestra si ya hay departamentos de IT o Mantenimiento -->
+                                    <div class="mb-3" id="bloqueDepartamento" hidden>
+                                        <label class="form-label fw-semibold" for="selDepartamento">Departamento</label>
+                                        <select id="selDepartamento" class="form-select rounded-pill"></select>
+                                    </div>
+
+                                    <!-- Se muestra si la base de datos aún no tiene departamentos -->
+                                    <div id="bloqueNuevoDepartamento" hidden>
+                                        <div class="mb-3">
+                                            <label class="form-label fw-semibold" for="txtArea">Área</label>
+                                            <input type="text" id="txtArea" class="form-control rounded-pill"
+                                                placeholder="Ej. Instituto Técnico Ricaldone" maxlength="50" />
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label fw-semibold" for="txtDepartamento">Departamento</label>
+                                            <input type="text" id="txtDepartamento" class="form-control rounded-pill"
+                                                placeholder="Ej. Soporte técnico" maxlength="50" />
+                                        </div>
+                                        <div class="mb-2">
+                                            <label class="form-label fw-semibold" for="selTipo">Tipo de departamento</label>
+                                            <select id="selTipo" class="form-select rounded-pill">
+                                                <option value="IT">IT</option>
+                                                <option value="Mantenimiento">Mantenimiento</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </section>
+
+                                <p class="paso-error" id="errorPaso" role="alert"></p>
+
+                                <div class="acciones-pasos">
+                                    <button type="button" id="btnAtras" class="btn btn-atras" hidden>Atrás</button>
+                                    <button type="submit" id="btnSiguiente"
+                                        class="btn btn-azul-redondeado shadow-sm text-white">
+                                        Siguiente
                                     </button>
                                 </div>
                             </form>

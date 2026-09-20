@@ -337,10 +337,6 @@ function cambiarVisibilidadHistorial(contraer) {
     overlayHistorialChat?.classList.toggle("activo", esMovil && !contraer);
 }
 
-document.getElementById("btnAdjuntar")?.addEventListener("click", () => {
-    console.log("Botón de adjuntar presionado.");
-});
-
 btnAlternarConversaciones?.addEventListener("click", () => {
     cambiarVisibilidadHistorial(!chatLayout.classList.contains("historial-contraido"));
 });

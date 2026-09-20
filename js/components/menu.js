@@ -22,6 +22,8 @@ document.addEventListener("DOMContentLoaded", function () {
     inicializarNotificacionesGlobales();
     prepararInteraccionTablas();
     inicializarPaginacionAutomatica();
+    inicializarSelectsPersonalizados();
+    inicializarFechasPersonalizadas();
     configurarEstiloGlobalGraficas();
     prepararNavegacionSuave();
     cargarMenuCompartido();
@@ -898,6 +900,65 @@ function cerrarMenusAccionesTabla() {
 }
 
 const FILAS_POR_PAGINA = 10;
+const DURACION_SALIDA_PAGINA = 170;
+const DURACION_ENTRADA_PAGINA = 800;
+
+// Transición al cambiar de página en listas y tablas paginadas: el contenido actual se
+// desvanece hacia un lado y el nuevo entra elemento por elemento desde el lado contrario.
+// direccion = 1 al avanzar de página y -1 al regresar.
+window.animarCambioPagina = async function (contenido, cambiarPagina, direccion = 1) {
+    const reducirMovimiento = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (!contenido || reducirMovimiento) {
+        await cambiarPagina();
+        return;
+    }
+
+    // Mantiene la altura mientras carga la página nueva para que el resto no brinque
+    const marco = contenido.tagName === "TBODY" ? (contenido.closest(".table-responsive") || contenido.closest("table")) : contenido;
+    if (marco) marco.style.minHeight = `${marco.offsetHeight}px`;
+
+    window.clearTimeout(contenido.__temporizadorPagina);
+    contenido.style.setProperty("--direccion-pagina", direccion < 0 ? -1 : 1);
+    contenido.classList.remove("pagina-entrando");
+    contenido.classList.add("pagina-saliendo");
+    await new Promise((resolver) => window.setTimeout(resolver, DURACION_SALIDA_PAGINA));
+
+    // Algunas páginas cargan los datos sin devolver una promesa: se espera a que el contenido cambie
+    let huboCambio = false;
+    let resolverCambio;
+    const esperaCambio = new Promise((resolver) => { resolverCambio = resolver; });
+    let temporizadorCambio;
+    const observador = new MutationObserver(() => {
+        huboCambio = true;
+        window.clearTimeout(temporizadorCambio);
+        temporizadorCambio = window.setTimeout(resolverCambio, 40);
+    });
+    observador.observe(contenido, { childList: true, subtree: true, attributes: true, attributeFilter: ["hidden"] });
+
+    try {
+        const resultado = cambiarPagina();
+        const devolvioPromesa = typeof resultado?.then === "function";
+        await resultado;
+        const limite = huboCambio ? 400 : (devolvioPromesa ? 150 : 4000);
+        await Promise.race([esperaCambio, new Promise((resolver) => window.setTimeout(resolver, limite))]);
+    } finally {
+        observador.disconnect();
+        window.clearTimeout(temporizadorCambio);
+        // Cada elemento visible entra con un pequeño retraso según su posición
+        [...contenido.children]
+            .filter((hijo) => !hijo.hidden)
+            .forEach((hijo, indice) => hijo.style.setProperty("--orden-pagina", Math.min(indice, 12)));
+
+        contenido.classList.remove("pagina-saliendo");
+        void contenido.offsetWidth;
+        contenido.classList.add("pagina-entrando");
+        if (marco) marco.style.minHeight = "";
+
+        contenido.__temporizadorPagina = window.setTimeout(() => {
+            contenido.classList.remove("pagina-entrando");
+        }, DURACION_ENTRADA_PAGINA);
+    }
+};
 
 function inicializarPaginacionAutomatica() {
     prepararTablasSinPaginacion(document);
@@ -1008,8 +1069,12 @@ function agregarBotonPaginacion(lista, contenido, pagina, deshabilitado, activo,
     </button>`;
     elemento.querySelector("button").addEventListener("click", () => {
         if (deshabilitado || activo) return;
-        estado.pagina = pagina;
-        alCambiar();
+        const direccion = pagina > estado.pagina ? 1 : -1;
+        const tbody = lista.closest(".paginacion-tabla-auto")?.previousElementSibling?.querySelector?.("tbody");
+        window.animarCambioPagina(tbody, () => {
+            estado.pagina = pagina;
+            alCambiar();
+        }, direccion);
     });
     lista.appendChild(elemento);
 }
@@ -1289,3 +1354,553 @@ window.cambiarRolSimulado = function (nuevoRol) {
 window.cambiarUsuarioSimulado = function (idUsuario, nombre, correo) {
     sessionStorage.setItem("usuarioLogueado", JSON.stringify({ idUsuario, nombre, correo }));
 };
+
+/* =====================================================================
+   DROPDOWNS PERSONALIZADOS
+   La lista que abre un <select> nativo la dibuja el sistema operativo y casi no se
+   puede estilizar. Aquí cada select.form-select recibe un botón y una lista propia.
+   El <select> original se queda oculto y sigue siendo la fuente de verdad: los
+   controladores lo siguen llenando, leyendo (.value) y escuchando ("change") igual.
+   Para excluir uno: <select data-select-nativo>.
+   ===================================================================== */
+
+let contadorSelects = 0;
+let selectAbierto = null;
+
+function inicializarSelectsPersonalizados() {
+    document.querySelectorAll("select.form-select").forEach(mejorarSelect);
+
+    new MutationObserver((cambios) => {
+        cambios.forEach((cambio) => cambio.addedNodes.forEach((nodo) => {
+            if (nodo.nodeType !== Node.ELEMENT_NODE) return;
+            if (nodo.matches("select.form-select")) mejorarSelect(nodo);
+            nodo.querySelectorAll?.("select.form-select").forEach(mejorarSelect);
+        }));
+    }).observe(document.body, { childList: true, subtree: true });
+
+    // Cerrar al hacer clic fuera, al desplazar la página o al cambiar el tamaño
+    document.addEventListener("pointerdown", (evento) => {
+        if (selectAbierto && !selectAbierto.envoltorio.contains(evento.target)) cerrarSelect(selectAbierto);
+    });
+    window.addEventListener("resize", () => selectAbierto && cerrarSelect(selectAbierto));
+    document.addEventListener("scroll", (evento) => {
+        if (selectAbierto && !selectAbierto.lista.contains(evento.target)) cerrarSelect(selectAbierto);
+    }, true);
+}
+
+function mejorarSelect(select) {
+    if (select.__selectPersonalizado || select.multiple || select.size > 1 || select.hasAttribute("data-select-nativo")) return;
+
+    const id = `selectPersonalizado${++contadorSelects}`;
+    const envoltorio = document.createElement("div");
+    envoltorio.className = "select-personalizado";
+
+    const boton = document.createElement("button");
+    boton.type = "button";
+    boton.id = `${id}Boton`;
+    boton.setAttribute("role", "combobox");
+    boton.setAttribute("aria-haspopup", "listbox");
+    boton.setAttribute("aria-expanded", "false");
+    boton.setAttribute("aria-controls", `${id}Lista`);
+    boton.innerHTML = '<span class="select-personalizado-texto"></span>';
+
+    const lista = document.createElement("ul");
+    lista.className = "select-personalizado-lista";
+    lista.id = `${id}Lista`;
+    lista.setAttribute("role", "listbox");
+    lista.tabIndex = -1;
+    lista.hidden = true;
+
+    select.parentNode.insertBefore(envoltorio, select);
+    envoltorio.append(select, boton, lista);
+    select.classList.add("select-nativo-oculto");
+    select.tabIndex = -1;
+    select.setAttribute("aria-hidden", "true");
+
+    const estado = { select, envoltorio, boton, lista, indiceActivo: -1, busqueda: "", temporizadorBusqueda: null };
+    select.__selectPersonalizado = estado;
+
+    // El nombre accesible viene del <label for="..."> del select original
+    const etiqueta = select.id ? document.querySelector(`label[for="${CSS.escape(select.id)}"]`) : null;
+    if (etiqueta) {
+        if (!etiqueta.id) etiqueta.id = `${id}Etiqueta`;
+        boton.setAttribute("aria-labelledby", `${etiqueta.id} ${boton.id}`);
+        lista.setAttribute("aria-labelledby", etiqueta.id);
+        etiqueta.addEventListener("click", (evento) => { evento.preventDefault(); boton.focus(); });
+    } else if (select.getAttribute("aria-label")) {
+        boton.setAttribute("aria-label", select.getAttribute("aria-label"));
+    }
+
+    // Si algún código enfoca el select oculto, el foco pasa al botón
+    select.addEventListener("focus", () => boton.focus());
+
+    // Asignar .value o .selectedIndex desde JavaScript no dispara eventos: se intercepta para refrescar el texto
+    ["value", "selectedIndex"].forEach((propiedad) => {
+        const descriptor = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, propiedad);
+        Object.defineProperty(select, propiedad, {
+            configurable: true,
+            get() { return descriptor.get.call(this); },
+            set(valor) { descriptor.set.call(this, valor); sincronizarSelect(estado); }
+        });
+    });
+
+    select.addEventListener("change", () => sincronizarSelect(estado));
+    select.form?.addEventListener("reset", () => window.setTimeout(() => sincronizarSelect(estado)));
+
+    // Opciones cargadas después, cambios de clase (is-invalid) o de disabled
+    new MutationObserver(() => sincronizarSelect(estado)).observe(select, {
+        childList: true, subtree: true, characterData: true,
+        attributes: true, attributeFilter: ["class", "disabled", "selected", "hidden"]
+    });
+
+    boton.addEventListener("click", () => (lista.hidden ? abrirSelect(estado) : cerrarSelect(estado)));
+    boton.addEventListener("keydown", (evento) => manejarTecladoSelect(estado, evento));
+    lista.addEventListener("keydown", (evento) => manejarTecladoSelect(estado, evento));
+    lista.addEventListener("click", (evento) => {
+        const opcion = evento.target.closest("[data-indice]");
+        if (opcion && !opcion.classList.contains("deshabilitada")) elegirOpcion(estado, Number(opcion.dataset.indice));
+    });
+    lista.addEventListener("pointermove", (evento) => {
+        const opcion = evento.target.closest("[data-indice]");
+        if (opcion && !opcion.classList.contains("deshabilitada")) marcarActiva(estado, Number(opcion.dataset.indice), false);
+    });
+
+    sincronizarSelect(estado);
+}
+
+// Copia al botón las clases, el texto seleccionado y el estado del select original
+function sincronizarSelect(estado) {
+    const { select, boton } = estado;
+    const clases = [...select.classList].filter((clase) => clase !== "select-nativo-oculto");
+    boton.className = [...clases, "select-personalizado-boton"].join(" ");
+    boton.disabled = select.disabled;
+
+    const opcion = select.options[select.selectedIndex];
+    const texto = opcion ? opcion.textContent.trim() : "";
+    boton.querySelector(".select-personalizado-texto").textContent = texto || " ";
+    boton.classList.toggle("sin-valor", !opcion || opcion.value === "");
+
+    if (!estado.lista.hidden) construirOpciones(estado);
+}
+
+function construirOpciones(estado) {
+    const { select, lista } = estado;
+    lista.innerHTML = "";
+    [...select.options].forEach((opcion, indice) => {
+        if (opcion.hidden) return;
+        const elemento = document.createElement("li");
+        elemento.id = `${lista.id}Opcion${indice}`;
+        elemento.dataset.indice = indice;
+        elemento.setAttribute("role", "option");
+        const seleccionada = indice === select.selectedIndex;
+        elemento.setAttribute("aria-selected", String(seleccionada));
+        elemento.className = "select-personalizado-opcion";
+        if (seleccionada) elemento.classList.add("seleccionada");
+        if (opcion.disabled) {
+            elemento.classList.add("deshabilitada");
+            elemento.setAttribute("aria-disabled", "true");
+        }
+        if (opcion.value === "") elemento.classList.add("opcion-vacia");
+        elemento.innerHTML = '<span class="select-personalizado-opcion-texto"></span><i class="bi bi-check2" aria-hidden="true"></i>';
+        elemento.querySelector("span").textContent = opcion.textContent.trim();
+        lista.appendChild(elemento);
+    });
+}
+
+function abrirSelect(estado) {
+    if (estado.boton.disabled) return;
+    if (selectAbierto && selectAbierto !== estado) cerrarSelect(selectAbierto);
+    selectAbierto = estado;
+
+    construirOpciones(estado);
+    estado.lista.hidden = false;
+    estado.boton.setAttribute("aria-expanded", "true");
+    estado.envoltorio.classList.add("abierto");
+    posicionarLista(estado);
+    marcarActiva(estado, estado.select.selectedIndex >= 0 ? estado.select.selectedIndex : primeraHabilitada(estado, 0, 1), true);
+}
+
+function cerrarSelect(estado, devolverFoco = false) {
+    estado.lista.hidden = true;
+    estado.boton.setAttribute("aria-expanded", "false");
+    estado.boton.removeAttribute("aria-activedescendant");
+    estado.envoltorio.classList.remove("abierto", "hacia-arriba");
+    if (selectAbierto === estado) selectAbierto = null;
+    if (devolverFoco) estado.boton.focus();
+}
+
+// La lista usa position: fixed para que no la recorten tarjetas con overflow hidden
+function posicionarLista(estado) {
+    const { boton, lista, envoltorio } = estado;
+    const rect = boton.getBoundingClientRect();
+    const espacioAbajo = window.innerHeight - rect.bottom - 12;
+    const espacioArriba = rect.top - 12;
+    const haciaArriba = espacioAbajo < Math.min(lista.scrollHeight, 320) && espacioArriba > espacioAbajo;
+
+    lista.style.minWidth = `${rect.width}px`;
+    lista.style.maxWidth = `${Math.max(rect.width, 320)}px`;
+    lista.style.maxHeight = `${Math.max(140, Math.min(320, haciaArriba ? espacioArriba : espacioAbajo))}px`;
+    posicionarFlotante(lista, rect, envoltorio, 320);
+}
+
+function marcarActiva(estado, indice, desplazar = true) {
+    estado.indiceActivo = indice;
+    estado.lista.querySelectorAll(".activa").forEach((elemento) => elemento.classList.remove("activa"));
+    const elemento = estado.lista.querySelector(`[data-indice="${indice}"]`);
+    if (!elemento) return;
+    elemento.classList.add("activa");
+    estado.boton.setAttribute("aria-activedescendant", elemento.id);
+    if (desplazar) elemento.scrollIntoView({ block: "nearest" });
+}
+
+function primeraHabilitada(estado, desde, paso) {
+    const opciones = estado.select.options;
+    for (let i = desde; i >= 0 && i < opciones.length; i += paso) {
+        if (!opciones[i].disabled && !opciones[i].hidden) return i;
+    }
+    return -1;
+}
+
+function elegirOpcion(estado, indice) {
+    const { select } = estado;
+    const cambio = select.selectedIndex !== indice;
+    select.selectedIndex = indice;
+    cerrarSelect(estado, true);
+    if (cambio) {
+        select.dispatchEvent(new Event("input", { bubbles: true }));
+        select.dispatchEvent(new Event("change", { bubbles: true }));
+    }
+}
+
+function manejarTecladoSelect(estado, evento) {
+    const abierto = !estado.lista.hidden;
+    const total = estado.select.options.length;
+
+    switch (evento.key) {
+        case "ArrowDown":
+        case "ArrowUp": {
+            evento.preventDefault();
+            if (!abierto) { abrirSelect(estado); return; }
+            const paso = evento.key === "ArrowDown" ? 1 : -1;
+            const siguiente = primeraHabilitada(estado, estado.indiceActivo + paso, paso);
+            if (siguiente >= 0) marcarActiva(estado, siguiente);
+            return;
+        }
+        case "Home":
+        case "End":
+            if (!abierto) return;
+            evento.preventDefault();
+            marcarActiva(estado, evento.key === "Home" ? primeraHabilitada(estado, 0, 1) : primeraHabilitada(estado, total - 1, -1));
+            return;
+        case "Enter":
+        case " ":
+            if (evento.key === " " && estado.busqueda) break;
+            evento.preventDefault();
+            if (!abierto) abrirSelect(estado);
+            else if (estado.indiceActivo >= 0) elegirOpcion(estado, estado.indiceActivo);
+            return;
+        case "Escape":
+            if (!abierto) return;
+            evento.preventDefault();
+            evento.stopPropagation(); // que no cierre el modal que lo contiene
+            cerrarSelect(estado, true);
+            return;
+        case "Tab":
+            if (abierto) cerrarSelect(estado);
+            return;
+    }
+
+    // Escribir letras salta a la opción que empieza con ese texto
+    if (evento.key.length === 1 && !evento.ctrlKey && !evento.metaKey && !evento.altKey) {
+        estado.busqueda += evento.key.toLowerCase();
+        window.clearTimeout(estado.temporizadorBusqueda);
+        estado.temporizadorBusqueda = window.setTimeout(() => { estado.busqueda = ""; }, 600);
+
+        const opciones = [...estado.select.options];
+        const coincidencia = opciones.findIndex((opcion) =>
+            !opcion.disabled && !opcion.hidden && opcion.textContent.trim().toLowerCase().startsWith(estado.busqueda));
+        if (coincidencia < 0) return;
+        if (abierto) marcarActiva(estado, coincidencia);
+        else elegirOpcion(estado, coincidencia);
+    }
+}
+
+/* =====================================================================
+   CALENDARIO PERSONALIZADO
+   El calendario de <input type="date"> también lo dibuja el sistema. Aquí el campo se
+   queda igual (se puede seguir escribiendo la fecha y su .value no cambia de formato),
+   pero al hacer clic se abre un calendario propio. En datetime-local se agrega la hora.
+   Para excluir uno: <input type="date" data-fecha-nativa>.
+   ===================================================================== */
+
+let fechaAbierta = null;
+const NOMBRES_DIAS = ["do", "lu", "ma", "mi", "ju", "vi", "sá"];
+
+function inicializarFechasPersonalizadas() {
+    const selector = 'input[type="date"], input[type="datetime-local"]';
+    document.querySelectorAll(selector).forEach(mejorarFecha);
+
+    new MutationObserver((cambios) => {
+        cambios.forEach((cambio) => cambio.addedNodes.forEach((nodo) => {
+            if (nodo.nodeType !== Node.ELEMENT_NODE) return;
+            if (nodo.matches(selector)) mejorarFecha(nodo);
+            nodo.querySelectorAll?.(selector).forEach(mejorarFecha);
+        }));
+    }).observe(document.body, { childList: true, subtree: true });
+
+    document.addEventListener("pointerdown", (evento) => {
+        if (fechaAbierta && !fechaAbierta.envoltorio.contains(evento.target)) cerrarCalendario(fechaAbierta);
+    });
+    window.addEventListener("resize", () => fechaAbierta && cerrarCalendario(fechaAbierta));
+    document.addEventListener("scroll", (evento) => {
+        if (fechaAbierta && !fechaAbierta.panel.contains(evento.target)) cerrarCalendario(fechaAbierta);
+    }, true);
+}
+
+function aFechaTexto(fecha) {
+    const dos = (n) => String(n).padStart(2, "0");
+    return `${fecha.getFullYear()}-${dos(fecha.getMonth() + 1)}-${dos(fecha.getDate())}`;
+}
+
+// "2026-09-19" -> Date local (sin desfase de zona horaria)
+function deFechaTexto(texto) {
+    const coincidencia = /^(\d{4})-(\d{2})-(\d{2})/.exec(texto || "");
+    return coincidencia ? new Date(Number(coincidencia[1]), Number(coincidencia[2]) - 1, Number(coincidencia[3])) : null;
+}
+
+function mejorarFecha(input) {
+    if (input.__fechaPersonalizada || input.hasAttribute("data-fecha-nativa")) return;
+
+    const conHora = input.type === "datetime-local";
+    const envoltorio = document.createElement("div");
+    envoltorio.className = "fecha-personalizada";
+
+    const boton = document.createElement("button");
+    boton.type = "button";
+    boton.className = "btn-abrir-calendario";
+    boton.tabIndex = -1;
+    boton.setAttribute("aria-label", "Abrir calendario");
+    boton.innerHTML = '<i class="bi bi-calendar3" aria-hidden="true"></i>';
+
+    const panel = document.createElement("div");
+    panel.className = "calendario-panel";
+    panel.setAttribute("role", "dialog");
+    panel.setAttribute("aria-label", "Elegir fecha");
+    panel.hidden = true;
+    panel.innerHTML = `
+        <div class="calendario-encabezado">
+            <button type="button" class="calendario-flecha" data-mover="-1" aria-label="Mes anterior"><i class="bi bi-chevron-left" aria-hidden="true"></i></button>
+            <span class="calendario-mes" aria-live="polite"></span>
+            <button type="button" class="calendario-flecha" data-mover="1" aria-label="Mes siguiente"><i class="bi bi-chevron-right" aria-hidden="true"></i></button>
+        </div>
+        <div class="calendario-semana" aria-hidden="true">${NOMBRES_DIAS.map((dia) => `<span>${dia}</span>`).join("")}</div>
+        <div class="calendario-dias" role="grid"></div>
+        ${conHora ? `<label class="calendario-hora"><span>Hora</span><input type="time" class="form-control form-control-sm" step="60"></label>` : ""}
+        <div class="calendario-pie">
+            <button type="button" class="calendario-accion" data-accion="borrar">Borrar</button>
+            <button type="button" class="calendario-accion calendario-accion-principal" data-accion="hoy">Hoy</button>
+        </div>`;
+
+    input.parentNode.insertBefore(envoltorio, input);
+    envoltorio.append(input, boton, panel);
+    input.classList.add("input-fecha-personalizada");
+
+    const estado = { input, envoltorio, boton, panel, conHora, mesVisible: null, diaActivo: null };
+    input.__fechaPersonalizada = estado;
+
+    // Clic en el campo o en el ícono abre el calendario; escribir la fecha sigue funcionando
+    input.addEventListener("click", (evento) => {
+        evento.preventDefault();
+        if (panel.hidden) abrirCalendario(estado);
+    });
+    boton.addEventListener("click", () => (panel.hidden ? abrirCalendario(estado) : cerrarCalendario(estado, true)));
+    input.addEventListener("keydown", (evento) => {
+        if ((evento.key === "ArrowDown" && evento.altKey) || evento.key === "F4") {
+            evento.preventDefault();
+            abrirCalendario(estado);
+        } else if (evento.key === "Escape" && !panel.hidden) {
+            evento.preventDefault();
+            evento.stopPropagation();
+            cerrarCalendario(estado, true);
+        }
+    });
+    input.addEventListener("change", () => { if (!panel.hidden) pintarCalendario(estado); });
+
+    panel.addEventListener("click", (evento) => {
+        const flecha = evento.target.closest("[data-mover]");
+        if (flecha) { moverMes(estado, Number(flecha.dataset.mover)); return; }
+
+        const dia = evento.target.closest("[data-fecha]");
+        if (dia && !dia.disabled) { elegirFecha(estado, deFechaTexto(dia.dataset.fecha)); return; }
+
+        const accion = evento.target.closest("[data-accion]")?.dataset.accion;
+        if (accion === "hoy") elegirFecha(estado, new Date());
+        if (accion === "borrar") elegirFecha(estado, null);
+    });
+    panel.addEventListener("keydown", (evento) => manejarTecladoCalendario(estado, evento));
+    panel.querySelector(".calendario-hora input")?.addEventListener("change", (evento) => {
+        const fecha = deFechaTexto(input.value) || new Date();
+        asignarValorFecha(estado, fecha, evento.target.value);
+    });
+}
+
+function abrirCalendario(estado) {
+    if (estado.input.disabled || estado.input.readOnly) return;
+    if (fechaAbierta && fechaAbierta !== estado) cerrarCalendario(fechaAbierta);
+    if (typeof selectAbierto !== "undefined" && selectAbierto) cerrarSelect(selectAbierto);
+    fechaAbierta = estado;
+
+    const seleccionada = deFechaTexto(estado.input.value);
+    const base = seleccionada || new Date();
+    estado.mesVisible = new Date(base.getFullYear(), base.getMonth(), 1);
+    estado.diaActivo = base;
+
+    estado.panel.hidden = false;
+    estado.envoltorio.classList.add("abierto");
+    pintarCalendario(estado);
+    posicionarFlotante(estado.panel, estado.input.getBoundingClientRect(), estado.envoltorio, 420);
+    estado.panel.querySelector(".calendario-dia.activo")?.focus();
+}
+
+function cerrarCalendario(estado, devolverFoco = false) {
+    estado.panel.hidden = true;
+    estado.envoltorio.classList.remove("abierto", "hacia-arriba");
+    if (fechaAbierta === estado) fechaAbierta = null;
+    if (devolverFoco) estado.input.focus();
+}
+
+function moverMes(estado, meses) {
+    const { mesVisible, diaActivo } = estado;
+    estado.mesVisible = new Date(mesVisible.getFullYear(), mesVisible.getMonth() + meses, 1);
+    const ultimoDia = new Date(estado.mesVisible.getFullYear(), estado.mesVisible.getMonth() + 1, 0).getDate();
+    estado.diaActivo = new Date(estado.mesVisible.getFullYear(), estado.mesVisible.getMonth(), Math.min(diaActivo.getDate(), ultimoDia));
+    pintarCalendario(estado);
+}
+
+function fueraDeRango(estado, fecha) {
+    const texto = aFechaTexto(fecha);
+    const minimo = (estado.input.min || "").slice(0, 10);
+    const maximo = (estado.input.max || "").slice(0, 10);
+    return (minimo && texto < minimo) || (maximo && texto > maximo);
+}
+
+function pintarCalendario(estado) {
+    const { panel, mesVisible, input } = estado;
+    const titulo = mesVisible.toLocaleDateString("es", { month: "long", year: "numeric" });
+    panel.querySelector(".calendario-mes").textContent = titulo.charAt(0).toUpperCase() + titulo.slice(1);
+
+    const seleccionada = input.value.slice(0, 10);
+    const hoy = aFechaTexto(new Date());
+    const activo = aFechaTexto(estado.diaActivo);
+
+    // 6 semanas completas empezando en domingo
+    const inicio = new Date(mesVisible.getFullYear(), mesVisible.getMonth(), 1 - mesVisible.getDay());
+    const dias = panel.querySelector(".calendario-dias");
+    dias.innerHTML = "";
+    for (let i = 0; i < 42; i++) {
+        const fecha = new Date(inicio.getFullYear(), inicio.getMonth(), inicio.getDate() + i);
+        const texto = aFechaTexto(fecha);
+        const boton = document.createElement("button");
+        boton.type = "button";
+        boton.className = "calendario-dia";
+        boton.dataset.fecha = texto;
+        boton.textContent = fecha.getDate();
+        boton.tabIndex = texto === activo ? 0 : -1;
+        boton.setAttribute("aria-label", fecha.toLocaleDateString("es", { weekday: "long", day: "numeric", month: "long", year: "numeric" }));
+        if (fecha.getMonth() !== mesVisible.getMonth()) boton.classList.add("otro-mes");
+        if (texto === hoy) boton.classList.add("hoy");
+        if (texto === seleccionada) {
+            boton.classList.add("seleccionado");
+            boton.setAttribute("aria-pressed", "true");
+        }
+        if (texto === activo) boton.classList.add("activo");
+        if (fueraDeRango(estado, fecha)) boton.disabled = true;
+        dias.appendChild(boton);
+    }
+
+    const hora = panel.querySelector(".calendario-hora input");
+    if (hora) hora.value = input.value.slice(11, 16) || hora.value || "08:00";
+}
+
+function asignarValorFecha(estado, fecha, hora) {
+    const { input, conHora, panel } = estado;
+    if (!fecha) {
+        input.value = "";
+    } else if (conHora) {
+        const horaElegida = hora || panel.querySelector(".calendario-hora input")?.value || "08:00";
+        input.value = `${aFechaTexto(fecha)}T${horaElegida}`;
+    } else {
+        input.value = aFechaTexto(fecha);
+    }
+    input.dispatchEvent(new Event("input", { bubbles: true }));
+    input.dispatchEvent(new Event("change", { bubbles: true }));
+}
+
+function elegirFecha(estado, fecha) {
+    if (fecha && fueraDeRango(estado, fecha)) return;
+    asignarValorFecha(estado, fecha);
+    // Con hora el panel sigue abierto para poder ajustarla; sin hora se cierra
+    if (estado.conHora && fecha) {
+        estado.diaActivo = fecha;
+        estado.mesVisible = new Date(fecha.getFullYear(), fecha.getMonth(), 1);
+        pintarCalendario(estado);
+    } else {
+        cerrarCalendario(estado, true);
+    }
+}
+
+function manejarTecladoCalendario(estado, evento) {
+    if (evento.key === "Escape") {
+        evento.preventDefault();
+        evento.stopPropagation(); // que no cierre el modal que lo contiene
+        cerrarCalendario(estado, true);
+        return;
+    }
+    if (!evento.target.classList.contains("calendario-dia")) return;
+
+    const saltos = { ArrowLeft: -1, ArrowRight: 1, ArrowUp: -7, ArrowDown: 7 };
+    const actual = estado.diaActivo;
+    let nueva = null;
+    if (saltos[evento.key]) nueva = new Date(actual.getFullYear(), actual.getMonth(), actual.getDate() + saltos[evento.key]);
+    if (evento.key === "PageUp") nueva = new Date(actual.getFullYear(), actual.getMonth() - 1, actual.getDate());
+    if (evento.key === "PageDown") nueva = new Date(actual.getFullYear(), actual.getMonth() + 1, actual.getDate());
+    if (evento.key === "Home") nueva = new Date(actual.getFullYear(), actual.getMonth(), actual.getDate() - actual.getDay());
+    if (evento.key === "End") nueva = new Date(actual.getFullYear(), actual.getMonth(), actual.getDate() + (6 - actual.getDay()));
+    if (!nueva) return;
+
+    evento.preventDefault();
+    estado.diaActivo = nueva;
+    estado.mesVisible = new Date(nueva.getFullYear(), nueva.getMonth(), 1);
+    pintarCalendario(estado);
+    estado.panel.querySelector(".calendario-dia.activo")?.focus();
+}
+
+// Coloca un panel flotante (position: fixed) debajo o encima de un elemento, dentro de la ventana.
+// Dentro de un modal o de un contenedor con transform, "fixed" se mide desde ese contenedor, que
+// puede estar desplazado o escalado: se prueban dos posiciones para saber dónde queda el origen
+// y cuánto mide un píxel. Se mide sin la animación de apertura, que escala el panel.
+function posicionarFlotante(panel, rect, envoltorio, altoMaximo) {
+    const espacioAbajo = window.innerHeight - rect.bottom - 12;
+    const espacioArriba = rect.top - 12;
+    const altoPanel = Math.min(panel.scrollHeight, altoMaximo);
+    const haciaArriba = espacioAbajo < altoPanel && espacioArriba > espacioAbajo;
+    envoltorio.classList.toggle("hacia-arriba", haciaArriba);
+
+    const anchoPanel = panel.offsetWidth;
+    const izquierda = Math.max(8, Math.min(rect.left, window.innerWidth - anchoPanel - 8));
+    const arriba = haciaArriba ? rect.top - 6 - panel.offsetHeight : rect.bottom + 6;
+
+    panel.style.animation = "none";
+    panel.style.left = "0px";
+    panel.style.top = "0px";
+    const origen = panel.getBoundingClientRect();
+    panel.style.left = "100px";
+    panel.style.top = "100px";
+    const prueba = panel.getBoundingClientRect();
+    const escalaX = (prueba.left - origen.left) / 100 || 1;
+    const escalaY = (prueba.top - origen.top) / 100 || 1;
+    panel.style.left = `${(izquierda - origen.left) / escalaX}px`;
+    panel.style.top = `${(arriba - origen.top) / escalaY}px`;
+    void panel.offsetWidth;
+    panel.style.animation = "";
+}

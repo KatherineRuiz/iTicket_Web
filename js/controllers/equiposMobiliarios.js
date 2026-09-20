@@ -76,7 +76,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                 </td>
                 <td>${articulo.nombreUbicacion}</td>
                 <td>${articulo.nombreMarca ?? "—"}</td>
-                <td class="text-center">
+                <td>
                     <button class="btn btn-sm btn-outline-primary btn-editar-articulo" data-id="${articulo.idArticulo}">
                         <i class="bi bi-pencil"></i>
                     </button>
