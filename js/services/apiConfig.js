@@ -14,7 +14,12 @@ export async function manejarRespuesta(respuesta) {
  
     if (!respuesta.ok || (cuerpo && cuerpo.success === false)) {
         const mensaje = (cuerpo && (cuerpo.message || cuerpo.error)) || `Error ${respuesta.status}`;
-        throw new Error(mensaje);
+        
+        const errorObj = new Error(mensaje);
+        if (cuerpo && cuerpo.errorCode) {
+            errorObj.errorCode = cuerpo.errorCode;
+        }
+        throw errorObj;
     }
  
     if (cuerpo && Object.prototype.hasOwnProperty.call(cuerpo, 'data')) {

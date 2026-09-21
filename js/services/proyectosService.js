@@ -1,4 +1,4 @@
-import { API_BASE_URL } from "./apiConfig.js";
+import { API_BASE_URL, manejarRespuesta } from "./apiConfig.js";
 
 //Configuracion de URL
 const API_URL = `${API_BASE_URL}/proyectos`;

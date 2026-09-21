@@ -1,4 +1,4 @@
-import { API_AUTH_BASE_URL } from "./apiConfig.js";
+import { API_AUTH_BASE_URL, manejarRespuesta } from "./apiConfig.js";
 
 const API_AUTH_URL = API_AUTH_BASE_URL;
 
@@ -11,16 +11,7 @@ export async function login(correo, clave) {
             body: JSON.stringify({ correo, clave })
         });
 
-        if (respuesta.status === 401) {
-            // Credenciales incorrectas: no es un error de red, es un rechazo esperado
-            return null;
-        }
-
-        if (!respuesta.ok) {
-            throw new Error("Error inesperado al iniciar sesión");
-        }
-
-        return await respuesta.json();
+        return await manejarRespuesta(respuesta);
     } catch (error) {
         console.error("Error en el login:", error);
         throw error;

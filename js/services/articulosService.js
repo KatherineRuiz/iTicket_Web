@@ -1,4 +1,4 @@
-import { API_BASE_URL } from "./apiConfig.js";
+import { API_BASE_URL, manejarRespuesta } from "./apiConfig.js";
 
 const API_URL = `${API_BASE_URL}/articulos`;
 
@@ -10,9 +10,7 @@ export async function getArticulosPaginados(pagina = 1, tamano = 10, filtros = {
     if (filtros.idUbicacion) params.append("idUbicacion", filtros.idUbicacion);
 
     const respuesta = await fetch(`${API_URL}/paginado?${params.toString()}`);
-    if (!respuesta.ok) throw new Error("Error al obtener los artículos");
-    const registros = await respuesta.json();
-    return registros.data; // { articulos, totalElementos, totalPaginas, paginaActual }
+    return await manejarRespuesta(respuesta); // { articulos, totalElementos, totalPaginas, paginaActual }
 }
 
 export async function crearArticulo(codigoArticulo, idCategoria, idUbicacion, idModelo) {
@@ -43,13 +41,7 @@ export async function eliminarArticulo(id) {
 export async function buscarArticulosPorCodigoParcial(fragmento) {
     try{
         const respuesta = await fetch(`${API_URL}/buscar?codigo=${encodeURIComponent(fragmento)}`);
-        if(!respuesta.ok){
-            console.error("Error al buscar artículos");
-            throw new Error("Error al buscar artículos");
-        }
-
-        const registros = await respuesta.json();
-        return registros.data;
+        return await manejarRespuesta(respuesta);
     } catch(error){
         console.error("Error al buscar artículos: ", error);
         throw error;

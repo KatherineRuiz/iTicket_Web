@@ -314,7 +314,7 @@ async function cargarDepartamentos() {
     }
   } catch (error) {
     console.error("Error al cargar los departamentos: ", error);
-    mostrarError("No se pudieron cargar los departamentos.");
+    mostrarError(error.message || "No se pudieron cargar los departamentos.");
   }
 }
 
@@ -454,7 +454,7 @@ frmTicket.addEventListener("submit", async function (e) {
       codigosInvalidos = await obtenerCodigosNoInventariados(listaCodigosEquipos);
     } catch (error) {
       console.error("Error al comprobar los códigos del inventario:", error);
-      mostrarError("No pudimos comprobar los equipos en este momento. Intenta enviar el ticket nuevamente.");
+      mostrarError(error.message || "No pudimos comprobar los equipos en este momento. Intenta enviar el ticket nuevamente.");
       return;
     }
 

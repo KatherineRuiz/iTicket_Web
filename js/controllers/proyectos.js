@@ -303,7 +303,7 @@ formCrearProyecto.addEventListener('submit', async (e) => {
     try {
         usuarios = await obtenerUsuarios();
     } catch (error) {
-        mostrarError("No se pudo obtener la lista de usuarios para validar el coordinador y el supervisor.");
+        mostrarError(error.message || "No se pudo obtener la lista de usuarios para validar el coordinador y el supervisor.");
         return;
     }
 
