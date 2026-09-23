@@ -160,7 +160,7 @@ async function cargarTicket() {
         renderizarComentarios();
     } catch (error) {
         console.error("Error al cargar el ticket:", error);
-        mostrarError("No se pudo cargar la información del ticket.");
+        mostrarError(error.message || "No se pudo cargar la información del ticket.");
     }
 }
 
@@ -341,7 +341,7 @@ async function cargarDepartamentosEdicion() {
         departamentosCargados = true;
     } catch (error) {
         console.error("Error al cargar departamentos:", error);
-        mostrarError("No se pudieron cargar los departamentos.");
+        mostrarError(error.message || "No se pudieron cargar los departamentos.");
     }
 }
 
@@ -555,7 +555,7 @@ galeriaMultimediaEdicion?.addEventListener("click", async (e) => {
             renderizarGaleriaVista();
         } catch (error) {
             console.error("Error al eliminar evidencia:", error);
-            mostrarError("No se pudo eliminar la evidencia.");
+            mostrarError(error.message || "No se pudo eliminar la evidencia.");
         }
         return;
     }
@@ -611,7 +611,7 @@ frmEdicionCreador?.addEventListener("submit", async (e) => {
             codigosInvalidos = await obtenerCodigosNoInventariados(listaCodigosEquipos);
         } catch (error) {
             console.error("Error al comprobar los códigos del inventario:", error);
-            mostrarError("No pudimos comprobar los equipos en este momento. Intenta guardar nuevamente.");
+            mostrarError(error.message || "No pudimos comprobar los equipos en este momento. Intenta guardar nuevamente.");
             return;
         }
 
@@ -688,7 +688,7 @@ async function cargarTecnicosEdicion() {
         });
     } catch (error) {
         console.error("Error al cargar técnicos:", error);
-        mostrarError("No se pudieron cargar los técnicos disponibles.");
+        mostrarError(error.message || "No se pudieron cargar los técnicos disponibles.");
     }
 }
 
@@ -847,7 +847,7 @@ async function cargarBitacoras() {
         });
     }catch (error) {
         console.error("Error al cargar la tabla de bitácoras:", error);
-        mostrarError("Oops... No se pudo cargar la bitácora");
+        mostrarError(error.message || "Oops... No se pudo cargar la bitácora");
     }
 }
 
@@ -1021,7 +1021,7 @@ frmComentario?.addEventListener("submit", async (e) => {
         renderizarComentarios();
     } catch (error) {
         console.error("Error al enviar el comentario:", error);
-        mostrarError("No se pudo enviar el comentario.");
+        mostrarError(error.message || "No se pudo enviar el comentario.");
     } finally {
         btnEnviarComentario.disabled = false;
     }

@@ -75,7 +75,7 @@ async function cargarDatos() {
         renderizarPaginacion();
     } catch (error) {
         console.error("Error al cargar datos de evaluaciones:", error);
-        mostrarError("No se pudieron cargar las evaluaciones. Intenta de nuevo más tarde.");
+        mostrarError(error.message || "No se pudieron cargar las evaluaciones. Intenta de nuevo más tarde.");
     }
 }
 

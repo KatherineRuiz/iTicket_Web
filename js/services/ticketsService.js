@@ -1,4 +1,4 @@
-import { API_BASE_URL } from "./apiConfig.js";
+import { API_BASE_URL, manejarRespuesta } from "./apiConfig.js";
 
 //Configuracion de URL
 const API_URL = `${API_BASE_URL}/tickets`;
@@ -7,13 +7,7 @@ const API_URL = `${API_BASE_URL}/tickets`;
 export async function getTickets() {
     try{
         const respuesta = await fetch(API_URL);
-        if(!respuesta.ok){
-            console.error("Error al obtener los tickets");
-            throw new Error("Error al obtener los tickets");
-        }
-
-        const registros = await respuesta.json();
-        return registros.data;
+        return await manejarRespuesta(respuesta);
     }catch (error) {
         console.error("Error al obtener los tickets:", error);
         throw error;
@@ -32,6 +26,9 @@ export async function crearTicket(ticket) {
         const cuerpo = await respuesta.json().catch(() => null);
 
         if(!respuesta.ok) {
+            if (cuerpo && cuerpo.errorCode) {
+                throw new Error(`[${cuerpo.errorCode}] ${cuerpo.message}`);
+            }
             throw new Error(cuerpo?.message || "Error al crear el ticket");
         }
 

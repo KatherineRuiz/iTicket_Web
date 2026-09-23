@@ -1,12 +1,10 @@
-import { API_BASE_URL } from "./apiConfig.js";
+import { API_BASE_URL, manejarRespuesta } from "./apiConfig.js";
 
 const API_URL = `${API_BASE_URL}/categorias`;
 
 export async function getCategorias() {
     const respuesta = await fetch(API_URL);
-    if (!respuesta.ok) throw new Error("Error al obtener las categorías");
-    const registros = await respuesta.json();
-    return registros.data;
+    return await manejarRespuesta(respuesta);
 }
 
 export async function crearCategoria(nombreCategoria) {

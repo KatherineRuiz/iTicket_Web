@@ -1,12 +1,10 @@
-import { API_BASE_URL } from "./apiConfig.js";
+import { API_BASE_URL, manejarRespuesta } from "./apiConfig.js";
 
 const API_URL = `${API_BASE_URL}/modelos`;
 
 export async function getModelos() {
     const respuesta = await fetch(API_URL);
-    if (!respuesta.ok) throw new Error("Error al obtener los modelos");
-    const registros = await respuesta.json();
-    return registros.data;
+    return await manejarRespuesta(respuesta);
 }
 
 export async function crearModelo(nombreModelo, idMarca) {
@@ -15,9 +13,7 @@ export async function crearModelo(nombreModelo, idMarca) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ nombreModelo, idMarca })
     });
-    const resultado = await respuesta.json();
-    if (!respuesta.ok) throw new Error(resultado.message || "No se pudo crear el modelo");
-    return resultado.data;
+    return await manejarRespuesta(respuesta);
 }
 
 export async function eliminarModelo(id) {
@@ -31,7 +27,5 @@ export async function actualizarModelo(id, nombreModelo, idMarca) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ nombreModelo, idMarca })
     });
-    const resultado = await respuesta.json();
-    if (!respuesta.ok) throw new Error(resultado.message || "No se pudo actualizar el modelo");
-    return resultado.data;
+    return await manejarRespuesta(respuesta);
 }

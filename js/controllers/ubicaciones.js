@@ -46,7 +46,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             pintarTablaTipos(tipos);
             pintarSelectTipos(tipos);
         } catch (error) {
-            mostrarError("No se pudieron cargar los tipos de ubicación.", false);
+            mostrarError(error.message || "No se pudieron cargar los tipos de ubicación.", false);
         }
     }
 
@@ -165,7 +165,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             mostrarExitoSimple("¡Listo!", "Tipo de ubicación eliminado.");
             await recargarTablasUbicaciones();
         } catch (error) {
-            mostrarError("No se pudo eliminar. Puede que esté en uso por alguna ubicación.", false);
+            mostrarError(error.message || "No se pudo eliminar. Puede que esté en uso por alguna ubicación.", false);
         }
     }
 
@@ -177,7 +177,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             ubicacionesActuales = ubicaciones;
             pintarTablaUbicaciones(ubicaciones);
         } catch (error) {
-            mostrarError("No se pudieron cargar las ubicaciones.", false);
+            mostrarError(error.message || "No se pudieron cargar las ubicaciones.", false);
         }
     }
 
@@ -293,7 +293,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             mostrarExitoSimple("¡Listo!", "Ubicación eliminada.");
             await recargarTablasUbicaciones();
         } catch (error) {
-            mostrarError("No se pudo eliminar. Puede que esté en uso por algún artículo.", false);
+            mostrarError(error.message || "No se pudo eliminar. Puede que esté en uso por algún artículo.", false);
         }
     }
 

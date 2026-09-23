@@ -1,13 +1,11 @@
-import { API_BASE_URL } from "./apiConfig.js";
+import { API_BASE_URL, manejarRespuesta } from "./apiConfig.js";
 
 const API_URL = `${API_BASE_URL}/ubicaciones`;
 
 export async function getUbicaciones() {
     try {
         const respuesta = await fetch(API_URL);
-        if (!respuesta.ok) throw new Error("Error al obtener las ubicaciones");
-        const registros = await respuesta.json();
-        return registros.data;
+        return await manejarRespuesta(respuesta);
     } catch (error) {
         console.error("Error al obtener las ubicaciones: ", error);
         throw error;
@@ -20,9 +18,7 @@ export async function crearUbicacion(nombreUbicacion, idTipoUbicacion) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ nombreUbicacion, idTipoUbicacion })
     });
-    const resultado = await respuesta.json();
-    if (!respuesta.ok) throw new Error(resultado.message || "No se pudo crear la ubicación");
-    return resultado.data;
+    return await manejarRespuesta(respuesta);
 }
 
 export async function eliminarUbicacion(id) {
@@ -36,7 +32,5 @@ export async function actualizarUbicacion(id, nombreUbicacion, idTipoUbicacion) 
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ nombreUbicacion, idTipoUbicacion })
     });
-    const resultado = await respuesta.json();
-    if (!respuesta.ok) throw new Error(resultado.message || "No se pudo actualizar la ubicación");
-    return resultado.data;
+    return await manejarRespuesta(respuesta);
 }

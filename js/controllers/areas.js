@@ -29,7 +29,7 @@ export async function cargarAreas() {
         return areas;
     } catch (error) {
         console.error(error);
-        mostrarError('No se pudieron cargar las áreas');
+        mostrarError(error.message || 'No se pudieron cargar las áreas');
         return [];
     }
 }

@@ -62,7 +62,7 @@ async function inicializarVistaProyecto(id) {
     try {
         proyecto = await getProyecto(id);
     } catch (error) {
-        mostrarError("El proyecto solicitado no existe o no se pudo cargar.");
+        mostrarError(error.message || "El proyecto solicitado no existe o no se pudo cargar.");
         window.location.href = "proyectos.html";
         return;
     }
@@ -300,7 +300,7 @@ async function inicializarVistaProyecto(id) {
             document.getElementById('txtCoordinadorProyectoEdicion').value = coordinador ? coordinador.correo : '';
             document.getElementById('txtSupervisorProyectoEdicion').value = supervisor ? supervisor.correo : '';
         } catch (error) {
-            mostrarError("No se pudo cargar la lista de usuarios para editar coordinador/supervisor.");
+            mostrarError(error.message || "No se pudo cargar la lista de usuarios para editar coordinador/supervisor.");
         }
     }
 
@@ -370,7 +370,7 @@ async function inicializarVistaProyecto(id) {
         try {
             usuarios = await obtenerUsuarios();
         } catch (error) {
-            mostrarError("No se pudo obtener la lista de usuarios.");
+            mostrarError(error.message || "No se pudo obtener la lista de usuarios.");
             return;
         }
 
@@ -707,7 +707,7 @@ async function inicializarVistaProyecto(id) {
         const idMaximo = fases.reduce((max, f) => Math.max(max, f.id), 0);
         idFaseContador = idMaximo + 1;
     } catch (error) {
-        mostrarError("No se pudieron cargar las fases de este proyecto.");
+        mostrarError(error.message || "No se pudieron cargar las fases de este proyecto.");
     }
 
     pintarDatosProyecto();

@@ -111,7 +111,7 @@ async function cargarIndicadores() {
     }
     catch (error) {
         console.error("Error al cargar indicadores de estado: ", error);
-        mostrarError("Error. No se pudieron cargar los indicadores de estado");
+        mostrarError(error.message || "Error. No se pudieron cargar los indicadores de estado");
     }
 }
 
@@ -123,7 +123,7 @@ async function cargarAprobacionesPendientes(idUsuario) {
     }
     catch (error) {
         console.error("Error al cargar aprobaciones pendientes:", error);
-        mostrarError("Error al cargar aprobaciones pendientes");
+        mostrarError(error.message || "Error al cargar aprobaciones pendientes");
     }
 }
 
@@ -192,7 +192,7 @@ async function cargarTecnicos(idDepartamento) {
     }
     catch (error) {
         console.error("Error al cargar técnicos:", error);
-        mostrarError("Oops... Hubo un error al cargar los técnicos");
+        mostrarError(error.message || "Oops... Hubo un error al cargar los técnicos");
     }
 }
 
@@ -208,7 +208,7 @@ async function cargarTablaTickets(pagina = 1) {
         infoTickets.textContent = `Mostrando ${inicio}-${fin} de ${resultado.totalElementos}`;
     } catch (error) {
         console.error("Error al cargar la tabla de tickets:", error);
-        mostrarError("Oops... No se puedieron cargar los tickets");
+        mostrarError(error.message || "Oops... No se puedieron cargar los tickets");
     }
 }
 
@@ -395,7 +395,7 @@ async function cargarDepartamentos() {
 
     } catch (error) {
         console.error("Error al cargar los departamentos: ", error);
-        mostrarError("No se pudieron cargar los departamentos.");
+        mostrarError(error.message || "No se pudieron cargar los departamentos.");
     }
 }
 
