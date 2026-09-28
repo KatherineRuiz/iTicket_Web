@@ -1,3 +1,4 @@
+import { mostrarError, mostrarExitoRedireccion } from "../components/sweetAlerts.js";
     document.addEventListener("DOMContentLoaded", function () {
     const formularioRecuperacion = document.querySelector("#formRecovery");
 
