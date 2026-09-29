@@ -1,61 +1,31 @@
-    <!doctype html>
-    <html lang="es">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Código de Validación</title>
-        <link rel="shortcut icon" href="/img/logo.png" type="image/x-icon">
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"/>
-        <link href="css/login.css" rel="stylesheet" />
-    </head>
-
-    <body class="d-flex align-items-center justify-content-center min-vh-100">
-        <div class="container">
-        <div class="row justify-content-center">
-            <div
-            class="col-11 col-sm-8 col-md-6 col-lg-5 tarjeta-validacion p-4 p-sm-5 d-flex flex-column align-items-center"
-            >
-            <div class="contenedor-formulario-compacto w-100 d-flex flex-column align-items-center">
-                <img src="img/login/logo.png" alt="Logo iTicket"class="logo-sesion mb-4"/>
-
-                <div class="mb-4 w-100 text-center">
-                <span class="texto-fondo-especial-codigo-validacion caja-titulo-validacion">
-                    Para recuperar su contraseña, se le enviará un código de
-                    verificación a su correo.
-                </span>
-                </div>
-
-                <div class="mb-4 text-center text-muted">
-                <p class="fw-bold">INGRESE EL CÓDIGO DE VERIFICACIÓN</p>
-                </div>
-
-                <div class="contenedor-codigo">
-                <input type="text" class="digito-codigo" maxlength="1" />
-                <input type="text" class="digito-codigo" maxlength="1" />
-                <input type="text" class="digito-codigo" maxlength="1" />
-                <input type="text" class="digito-codigo" maxlength="1" />
-                <input type="text" class="digito-codigo" maxlength="1" />
-                <input type="text" class="digito-codigo" maxlength="1" />
-                <input type="text" class="digito-codigo" maxlength="1" />
-                </div>
-
-                <div class="mb-4 text-center">
-                <span class="text-secondary">No recibí ningún código. </span>
-                <a href="#" class="reenviar-enlace" id="linkReenviar">Reenviar</a>
-                </div>
-
-                <button type="button"class="btn btn-azul rounded-pill w-100 text-white fw-bold" 
-                id="btnAceptarCodigo">
-                Validar
-                </button>
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Correo Enviado</title>
+    <link rel="shortcut icon" href="/img/logo.png" type="image/x-icon">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="css/login.css" rel="stylesheet" />
+</head>
+<body class="d-flex align-items-center justify-content-center min-vh-100">
+    <div class="container">
+    <div class="row justify-content-center">
+        <div class="col-11 col-sm-8 col-md-6 col-lg-5 tarjeta-validacion p-4 p-sm-5 d-flex flex-column align-items-center">
+        <div class="contenedor-formulario-compacto w-100 d-flex flex-column align-items-center">
+            <img src="img/login/logo.png" alt="Logo iTicket" class="logo-sesion mb-4"/>
+            <div class="mb-4 w-100 text-center">
+                <span class="texto-fondo-especial-codigo-validacion caja-titulo-validacion" style="font-size: 1.2rem; display: block; margin-bottom: 1rem;">¡Revisa tu correo!</span>
+                <p class="text-muted" style="line-height: 1.5;">Hemos enviado un enlace mágico a tu correo electrónico. Haz clic en él para restablecer tu contraseña de forma segura.</p>
             </div>
+            <div class="mb-4 text-center">
+                <img src="https://cdn-icons-png.flaticon.com/512/3062/3062634.png" alt="Email Sent" style="width: 120px; opacity: 0.8; margin-bottom: 20px;" />
             </div>
+            <a href="index.html" class="btn btn-azul rounded-pill w-100 text-white fw-bold">Volver al Login</a>
         </div>
         </div>
-
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-        <script src="js/components/menu.js"></script>
-        <script type="module" src="js/controllers/codigoVerificacion.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
-    </body>
-    </html>
+    </div>
+    </div>
+    <script src="js/components/menu.js"></script>
+</body>
+</html>
