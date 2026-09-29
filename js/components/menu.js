@@ -198,11 +198,13 @@ function inicializarPerfil(perfil) {
     const correo = String(usuario?.correo || usuario?.email || "Correo no disponible").trim();
     const departamento = String(usuario?.nombreDepartamento || usuario?.departamento || "Sin departamento asignado").trim();
     const imagenUrl = usuario?.imagenUrl || usuario?.fotoPerfil || usuario?.imagenPerfil || "";
+    // El avatar del encabezado mide ~32px: se pide la miniatura en vez de la foto completa
+    const imagenAvatar = usuario?.imagenMiniaturaUrl || imagenUrl;
     const inicial = primerNombre.charAt(0).toUpperCase() || "U";
 
     primerNombrePerfil.textContent = primerNombre;
     fotoLetra.textContent = inicial;
-    configurarImagenPerfil(foto, imagenUrl);
+    configurarImagenPerfil(foto, imagenAvatar);
 
     document.getElementById("perfilPanel")?.remove();
     const panel = crearPanelPerfil({ nombreCompleto, correo, departamento, imagenUrl, inicial });
@@ -468,23 +470,11 @@ function mostrarEstadoPanel(estado, mensaje, tipo) {
     estado.dataset.tipo = tipo;
 }
 
-// No hay columna en la BD para saber si es el primer inicio de sesión, así que se
-// recuerda por usuario en este navegador: el aviso sale hasta que cambie su contraseña aquí
-function claveCambioPendiente(idUsuario) {
-    if (!idUsuario) return false;
-    try {
-        return localStorage.getItem(`iticket_clave_cambiada_${idUsuario}`) !== "true";
-    } catch (error) {
-        return false;
-    }
-}
-
-function marcarClaveCambiada(idUsuario) {
-    try {
-        localStorage.setItem(`iticket_clave_cambiada_${idUsuario}`, "true");
-    } catch (error) {
-        console.warn("[iTicket] No se pudo recordar el cambio de contraseña:", error);
-    }
+/* El dato viene de la base dentro de la sesión: claveInicial en true significa que el
+   usuario todavía usa la contraseña que le asignaron. Si el campo no viene (una sesión
+   anterior a este cambio) no se avisa: es mejor callar que acusar a quien sí la cambió. */
+function claveCambioPendiente() {
+    return obtenerDatosPerfil().claveInicial === true;
 }
 
 function configurarCambioClave(perfil, panel) {
@@ -495,7 +485,7 @@ function configurarCambioClave(perfil, panel) {
     const idUsuario = obtenerDatosPerfil().idUsuario;
 
     function actualizarAviso() {
-        const pendiente = claveCambioPendiente(idUsuario);
+        const pendiente = claveCambioPendiente();
         boton.classList.toggle("clave-pendiente", pendiente);
         boton.title = pendiente ? "Aún usas la contraseña que te asignaron" : "";
         perfil.classList.toggle("clave-pendiente", pendiente);
@@ -544,7 +534,9 @@ function configurarCambioClave(perfil, panel) {
         try {
             const { cambiarClave } = await import("../services/usuariosService.js");
             await cambiarClave(idUsuario, actual, nueva);
-            marcarClaveCambiada(idUsuario);
+            // La API ya guardó el cambio; la sesión del navegador todavía tiene el valor viejo
+            const usuario = obtenerDatosPerfil();
+            sessionStorage.setItem("usuarioLogueado", JSON.stringify({ ...usuario, claveInicial: false }));
             cerrarFormulario();
             actualizarAviso();
             mostrarEstadoPanel(estado, "Contraseña actualizada correctamente.", "exito");

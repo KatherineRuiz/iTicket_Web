@@ -3,6 +3,7 @@ import { getCategorias, crearCategoria, actualizarCategoria, eliminarCategoria }
 import { getMarcas, crearMarca, actualizarMarca, eliminarMarca } from "../services/marcasService.js";
 import { getModelos, crearModelo, actualizarModelo, eliminarModelo } from "../services/modelosService.js";
 import { renderizarPaginacion } from "../components/paginacion.js";
+import { inicializarOrdenamientoTabla, ordenarLista } from "../components/ordenamientoTabla.js";
 import { getUbicaciones } from "../services/ubicacionesService.js";
 import { getArticulosPaginados, crearArticulo, actualizarArticulo, eliminarArticulo } from "../services/articulosService.js";
 
@@ -14,6 +15,8 @@ document.addEventListener("DOMContentLoaded", async function () {
     let filtroBusqueda = "";
     let filtroCategoria = "";
     let filtroUbicacion = "";
+    // Criterio de ordenamiento vigente ("campo,asc"). Vacío = el orden por defecto de la API
+    let ordenActual = "";
     let temporizadorBusqueda = null;
 
     // Después de cualquier CRUD se actualizan en paralelo la tabla principal y todo lo que pudo haber cambiado
@@ -37,6 +40,14 @@ document.addEventListener("DOMContentLoaded", async function () {
     const selectFiltroCategoria = document.querySelector("#selectFiltroCategoria");
     const selectFiltroUbicacion = document.querySelector("#selectFiltroUbicacion");
 
+    // Ordenamiento por encabezado: se vuelve a la página 1 porque la página 3 del orden
+    // anterior no muestra los mismos registros con el orden nuevo
+    inicializarOrdenamientoTabla(tablaArticulos.closest("table"), async (sort) => {
+        ordenActual = sort;
+        paginaActual = 1;
+        await cargarArticulos();
+    });
+
     // Carga inicial: solo la tabla principal y los selects de filtro.
     // Categorías, Marcas, Modelos "de gestión" NO se piden aquí -- se piden
     // solo cuando el usuario abre el modal correspondiente (carga bajo demanda real).
@@ -48,6 +59,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                 busqueda: filtroBusqueda,
                 idCategoria: filtroCategoria,
                 idUbicacion: filtroUbicacion,
+                sort: ordenActual,
             });
             pintarTablaArticulos(resultado.articulos);
             pintarResumen(resultado);
@@ -186,6 +198,13 @@ document.addEventListener("DOMContentLoaded", async function () {
     const btnTextoCategoria = document.querySelector("#btnTextoCategoria");
     const btnCancelarCategoria = document.querySelector("#btnCancelarCategoria");
     let categoriasRegistradas = [];
+    // Este catálogo se trae completo, así que se ordena aquí antes de pintarlo
+    let ordenCategorias = "";
+
+    inicializarOrdenamientoTabla(tablaCategorias?.closest("table"), (orden) => {
+        ordenCategorias = orden;
+        pintarTablaCategorias(categoriasRegistradas);
+    });
 
     function limpiarEdicionCategoria() {
         formCategoria.reset();
@@ -212,7 +231,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             tablaCategorias.innerHTML = `<tr><td colspan="2" class="text-center text-muted py-3">No hay categorías registradas</td></tr>`;
             return;
         }
-        tablaCategorias.innerHTML = categorias.map(c => `
+        tablaCategorias.innerHTML = ordenarLista(categorias, ordenCategorias).map(c => `
             <tr>
                 <td class="text-center">${c.nombreCategoria}</td>
                 <td class="text-center">
@@ -304,6 +323,13 @@ document.addEventListener("DOMContentLoaded", async function () {
     const btnTextoMarca = document.querySelector("#btnTextoMarca");
     const btnCancelarMarca = document.querySelector("#btnCancelarMarca");
     let marcasRegistradas = [];
+    // Este catálogo se trae completo, así que se ordena aquí antes de pintarlo
+    let ordenMarcas = "";
+
+    inicializarOrdenamientoTabla(tablaMarcas?.closest("table"), (orden) => {
+        ordenMarcas = orden;
+        pintarTablaMarcas(marcasRegistradas);
+    });
 
     function limpiarEdicionMarca() {
         formMarca.reset();
@@ -330,7 +356,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             tablaMarcas.innerHTML = `<tr><td colspan="2" class="text-center text-muted py-3">No hay marcas registradas</td></tr>`;
             return;
         }
-        tablaMarcas.innerHTML = marcas.map(m => `
+        tablaMarcas.innerHTML = ordenarLista(marcas, ordenMarcas).map(m => `
             <tr>
                 <td class="text-center">${m.nombreMarca}</td>
                 <td class="text-center">
@@ -419,6 +445,13 @@ document.addEventListener("DOMContentLoaded", async function () {
     const btnTextoModelo = document.querySelector("#btnTextoModelo");
     const btnCancelarModelo = document.querySelector("#btnCancelarModelo");
     let modelosRegistrados = [];
+    // Este catálogo se trae completo, así que se ordena aquí antes de pintarlo
+    let ordenModelos = "";
+
+    inicializarOrdenamientoTabla(tablaModelos?.closest("table"), (orden) => {
+        ordenModelos = orden;
+        pintarTablaModelos(modelosRegistrados);
+    });
 
     function limpiarEdicionModelo() {
         formModelo.reset();
@@ -457,7 +490,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             tablaModelos.innerHTML = `<tr><td colspan="3" class="text-center text-muted py-3">No hay modelos registrados</td></tr>`;
             return;
         }
-        tablaModelos.innerHTML = modelos.map(m => `
+        tablaModelos.innerHTML = ordenarLista(modelos, ordenModelos).map(m => `
             <tr>
                 <td class="text-center">${m.nombreModelo}</td>
                 <td class="text-center">${m.nombreMarca}</td>

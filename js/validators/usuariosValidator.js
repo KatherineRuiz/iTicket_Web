@@ -16,9 +16,9 @@ export function validarFormularioUsuario(datos, esEdicion) {
         errores.push({ campo: "correoUsuario", mensaje: "El correo no puede superar los 100 caracteres." });
     }
 
-    //Al crear la contraseña es obligatoria; al editar solo se valida si se escribió una nueva
-    const claveEscrita = datos.clave && datos.clave.trim();
-    if (!esEdicion || claveEscrita) {
+    //La contraseña solo se pide al crear: al editar un usuario no se toca su clave
+    if (!esEdicion) {
+        const claveEscrita = datos.clave && datos.clave.trim();
         if (!claveEscrita) {
             errores.push({ campo: "passwordUsuario", mensaje: "La contraseña es obligatoria." });
         } else if (datos.clave.length < 8) {

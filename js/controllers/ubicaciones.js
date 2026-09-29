@@ -1,4 +1,5 @@
 import { mostrarError, mostrarExitoSimple, mostrarConfirmacion } from "../components/sweetAlerts.js";
+import { inicializarOrdenamientoTabla, ordenarLista } from "../components/ordenamientoTabla.js";
 import {
     getTiposUbicacion,
     crearTipoUbicacion,
@@ -30,6 +31,19 @@ document.addEventListener("DOMContentLoaded", async function () {
     const btnCancelarUbicacion = document.querySelector("#btnCancelarUbicacion");
     let tiposActuales = [];
     let ubicacionesActuales = [];
+    // Las dos tablas traen todos sus registros: el orden se aplica aquí antes de pintarlas
+    let ordenTipos = "";
+    let ordenUbicaciones = "";
+
+    inicializarOrdenamientoTabla(tablaTiposUbicacion?.closest("table"), (orden) => {
+        ordenTipos = orden;
+        pintarTablaTipos(tiposActuales);
+    });
+
+    inicializarOrdenamientoTabla(tablaUbicaciones?.closest("table"), (orden) => {
+        ordenUbicaciones = orden;
+        pintarTablaUbicaciones(ubicacionesActuales);
+    });
 
     // Promise.all actualiza tipos y ubicaciones al mismo tiempo. Esto también
     // renueva el select porque depende del catálogo de tipos.
@@ -58,7 +72,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             return;
         }
 
-        tablaTiposUbicacion.innerHTML = tipos.map(tipo => `
+        tablaTiposUbicacion.innerHTML = ordenarLista(tipos, ordenTipos).map(tipo => `
             <tr>
                 <td class="text-center fw-bold">${tipo.nombre_tipo_ubicacion}</td>
                 <td class="text-center">
@@ -189,7 +203,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             return;
         }
 
-        tablaUbicaciones.innerHTML = ubicaciones.map(ubicacion => `
+        tablaUbicaciones.innerHTML = ordenarLista(ubicaciones, ordenUbicaciones).map(ubicacion => `
             <tr>
                 <td class="text-center fw-bold">${ubicacion.nombreUbicacion}</td>
                 <td class="text-center">${ubicacion.nombreTipoUbicacion}</td>

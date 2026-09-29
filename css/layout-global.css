@@ -3107,3 +3107,14 @@ html.tema-oscuro .calendario-accion-principal:hover { color: #ffffff; background
         transform: none;
     }
 }
+
+/* Ordenamiento de tablas en modo oscuro: el texto del encabezado conserva su color,
+   solo la flecha de la columna activa se resalta */
+html.tema-oscuro .table-custom thead th.columna-ordenable.orden-activo .icono-orden {
+    color: var(--accent-celeste);
+}
+
+html.tema-oscuro .table-responsive.tabla-cargando::after {
+    border-color: rgba(103, 174, 247, 0.25);
+    border-top-color: var(--accent-celeste);
+}

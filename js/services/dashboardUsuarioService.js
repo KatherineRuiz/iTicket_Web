@@ -16,7 +16,7 @@ function fetchFresco(url) {
 // Función interna para una sola página; el resto del archivo trabaja con el
 // arreglo unificado que construye obtenerTodosLosTicketsDelUsuario.
 async function obtenerPaginaTickets(idUsuario, pagina) {
-    const parametros = new URLSearchParams({ idUsuario, pagina, tamano: 200 });
+    const parametros = new URLSearchParams({ idUsuario, pagina, tamano: 50 }); // El tamaño de la página estaba en 200
     return manejarRespuesta(await fetchFresco(`${API_BASE_URL}/tickets/mis-tickets?${parametros}`));
 }
 

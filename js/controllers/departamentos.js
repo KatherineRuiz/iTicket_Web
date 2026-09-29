@@ -2,7 +2,8 @@ import { getDepartamentos, crearDepartamento, actualizarDepartamento, eliminarDe
 import { getAreas } from '../services/areasService.js';
 import { validarFormularioDepartamento } from '../validators/departamentosValidator.js';
 import { mostrarError } from '../components/sweetAlerts.js';
- 
+import { inicializarOrdenamientoTabla, ordenarLista } from '../components/ordenamientoTabla.js';
+
 const formDepartamento = document.getElementById('formDepartamento');
 const departamentoIdInput = document.getElementById('departamentoId');
 const nombreDepartamentoInput = document.getElementById('nombreDepartamento');
@@ -13,6 +14,13 @@ const btnTextoDepartamento = document.getElementById('btnTextoDepartamento');
 const btnCancelarDepartamento = document.getElementById('btnCancelarDepartamento');
 const tablaDepartamentosBody = document.getElementById('tablaDepartamentosBody');
 let departamentosActuales = [];
+// Esta tabla trae todos sus registros, así que el orden se aplica aquí antes de pintarla
+let ordenDepartamentos = '';
+
+inicializarOrdenamientoTabla(tablaDepartamentosBody?.closest('table'), (orden) => {
+    ordenDepartamentos = orden;
+    pintarTablaDepartamentos(departamentosActuales);
+});
 
 window.addEventListener('iticket:recargar-tablas-usuarios', () => {
     cargarDepartamentos();
@@ -59,7 +67,7 @@ export async function cargarDepartamentos() {
  
 function pintarTablaDepartamentos(departamentos) {
     tablaDepartamentosBody.innerHTML = '';
-    departamentos.forEach(dep => {
+    ordenarLista(departamentos, ordenDepartamentos).forEach(dep => {
         const fila = document.createElement('tr');
         fila.innerHTML = `
             <td class="text-center">${dep.nombreDepartamento}</td>

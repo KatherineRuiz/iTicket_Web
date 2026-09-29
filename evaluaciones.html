@@ -119,12 +119,15 @@
                         <table class="table table-borderless table-custom align-middle">
                             <thead>
                                 <tr>
-                                    <th scope="col">Código Ticket</th>
-                                    <th scope="col">Asunto</th>
+                                    <!-- data-orden: el campo es la propiedad de la entidad en la API.
+                                         Técnico y Comentarios no se ordenan: el primero es una relación anidada
+                                         que puede venir vacía y el segundo es texto libre. -->
+                                    <th scope="col" data-orden="ticket.codigo">Código Ticket</th>
+                                    <th scope="col" data-orden="ticket.asunto">Asunto</th>
                                     <th scope="col">Técnico</th>
-                                    <th scope="col">Calificación</th>
+                                    <th scope="col" data-orden="calificacion">Calificación</th>
                                     <th scope="col">Comentarios</th>
-                                    <th scope="col">Fecha de evaluación</th>
+                                    <th scope="col" data-orden="ticket.fechaCreacion">Fecha de evaluación</th>
                                 </tr>
                             </thead>
                             <tbody id="tablaEvaluaciones">

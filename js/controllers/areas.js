@@ -1,7 +1,8 @@
 import { getAreas, crearArea, actualizarArea, eliminarArea } from '../services/areasService.js';
 import { validarFormularioArea } from '../validators/areasValidator.js';
 import { mostrarError } from '../components/sweetAlerts.js';
- 
+import { inicializarOrdenamientoTabla, ordenarLista } from '../components/ordenamientoTabla.js';
+
 const formArea = document.getElementById('formArea');
 const areaIdInput = document.getElementById('areaId');
 const nombreAreaInput = document.getElementById('nombreArea');
@@ -10,6 +11,13 @@ const btnTextoArea = document.getElementById('btnTextoArea');
 const btnCancelarArea = document.getElementById('btnCancelarArea');
 const tablaAreasBody = document.getElementById('tablaAreasBody');
 let areasActuales = [];
+// Esta tabla trae todos sus registros, así que el orden se aplica aquí antes de pintarla
+let ordenAreas = '';
+
+inicializarOrdenamientoTabla(tablaAreasBody?.closest('table'), (orden) => {
+    ordenAreas = orden;
+    pintarTablaAreas(areasActuales);
+});
 
 // Cualquier CRUD relacionado emite este evento para actualizar todas las
 // tablas de la pantalla sin que el usuario tenga que recargar el navegador
@@ -36,7 +44,7 @@ export async function cargarAreas() {
 
 function pintarTablaAreas(areas) {
     tablaAreasBody.innerHTML = '';
-    areas.forEach(area => {
+    ordenarLista(areas, ordenAreas).forEach(area => {
         const fila = document.createElement('tr');
         fila.innerHTML = `
             <td class="text-center">${area.nombreArea}</td>
