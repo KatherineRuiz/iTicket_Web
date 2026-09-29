@@ -1,4 +1,4 @@
-import { API_BASE_URL, manejarRespuesta } from "./apiConfig.js";
+import { API_BASE_URL, manejarRespuesta, apiFetch } from "./apiConfig.js";
 
 //Configuracion de URL
 const API_URL = `${API_BASE_URL}/proyectos`;
@@ -6,7 +6,7 @@ const API_URL = `${API_BASE_URL}/proyectos`;
 //Obtener la lista completa de proyectos
 export async function getProyectos() {
     try {
-        const respuesta = await fetch(API_URL);
+        const respuesta = await apiFetch(API_URL);
 
         //204 No Content -> no hay proyectos registrados todavia
         if (respuesta.status === 204) {
@@ -28,7 +28,7 @@ export async function getProyectos() {
 //Obtener un proyecto por ID
 export async function getProyecto(id) {
     try {
-        const respuesta = await fetch(`${API_URL}/${id}`);
+        const respuesta = await apiFetch(`${API_URL}/${id}`);
 
         if (!respuesta.ok) {
             const cuerpo = await respuesta.json().catch(() => null);
@@ -46,7 +46,7 @@ export async function getProyecto(id) {
 //Crear un nuevo proyecto
 export async function crearProyecto(proyecto) {
     try {
-        const respuesta = await fetch(API_URL, {
+        const respuesta = await apiFetch(API_URL, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(proyecto)
@@ -68,7 +68,7 @@ export async function crearProyecto(proyecto) {
 //Actualizar un proyecto existente
 export async function actualizarProyecto(id, proyecto) {
     try {
-        const respuesta = await fetch(`${API_URL}/${id}`, {
+        const respuesta = await apiFetch(`${API_URL}/${id}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(proyecto)
@@ -90,7 +90,7 @@ export async function actualizarProyecto(id, proyecto) {
 //Eliminar un proyecto
 export async function eliminarProyecto(id) {
     try {
-        const respuesta = await fetch(`${API_URL}/${id}`, {
+        const respuesta = await apiFetch(`${API_URL}/${id}`, {
             method: "DELETE"
         });
 
@@ -114,7 +114,7 @@ export async function eliminarProyecto(id) {
 //Buscar proyectos por nombre (coincidencia parcial)
 export async function buscarProyectosPorNombre(nombre) {
     try {
-        const respuesta = await fetch(`${API_URL}/nombre?nombre=${encodeURIComponent(nombre)}`);
+        const respuesta = await apiFetch(`${API_URL}/nombre?nombre=${encodeURIComponent(nombre)}`);
 
         if (respuesta.status === 404) {
             return [];
@@ -135,7 +135,7 @@ export async function buscarProyectosPorNombre(nombre) {
 //Buscar proyectos por tipo (Construcción, Remodelación, Ampliación, Mantenimiento)
 export async function buscarProyectosPorTipo(tipo) {
     try {
-        const respuesta = await fetch(`${API_URL}/tipo/${encodeURIComponent(tipo)}`);
+        const respuesta = await apiFetch(`${API_URL}/tipo/${encodeURIComponent(tipo)}`);
 
         if (respuesta.status === 404) {
             return [];

@@ -1,8 +1,8 @@
-import { API_BASE_URL, manejarRespuesta } from './apiConfig.js';
+import { API_BASE_URL, manejarRespuesta, apiFetch } from './apiConfig.js';
 
 // Todas las lecturas del dashboard omiten la caché para evitar cifras antiguas.
 function fetchFresco(url) {
-    return fetch(url, { cache: 'no-store' });
+    return apiFetch(url, { cache: 'no-store' });
 }
 
 // Panel "Asignaciones": paginado y filtrado por los tickets asignados al técnico.

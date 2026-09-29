@@ -4,12 +4,12 @@
  * acceder a endpoints, este archivo normaliza el ranking por calificación que
  * ya calcula el backend a partir de las evaluaciones.
  */
-import { API_BASE_URL, manejarRespuesta } from './apiConfig.js';
+import { API_BASE_URL, manejarRespuesta, apiFetch } from './apiConfig.js';
 
 // Evita reutilizar respuestas guardadas por el navegador en un dashboard:
 // sus contadores deben reflejar siempre el estado actual de la API.
 function fetchFresco(url) {
-    return fetch(url, { cache: 'no-store' });
+    return apiFetch(url, { cache: 'no-store' });
 }
 
 // Obtiene los tickets usados por contadores y por el ranking de técnicos.

@@ -18,7 +18,8 @@ window.obtenerClaseIconoTicket = function (prioridad) {
 
 document.addEventListener("DOMContentLoaded", function () {
     aplicarTemaGuardado();
-    prepararLayoutGlobal();
+    prepararLayoutGlobal();    
+    verificarSesionActiva();
     inicializarNotificacionesGlobales();
     prepararInteraccionTablas();
     inicializarPaginacionAutomatica();
@@ -29,6 +30,31 @@ document.addEventListener("DOMContentLoaded", function () {
     cargarMenuCompartido();
     finalizarPreparacionVisual();
 });
+
+/* Revalida la sesion contra el servidor (GET /auth/me), sin bloquear el resto
+   de la pagina -- que ya se pinta al instante con lo que hay en sessionStorage.
+   Si el servidor dice que la sesion no es valida (401), apiFetch mismo limpia
+   todo y manda al login; aqui no hace falta repetir esa logica. */
+async function verificarSesionActiva() {
+    try {
+        const { esPaginaPublica } = await import("../services/apiConfig.js");
+        if (esPaginaPublica()) return;
+
+        const { obtenerSesion } = await import("../services/authService.js");
+        const sesionReal = await obtenerSesion();
+
+        // El rol real siempre viene del JWT firmado en el servidor, nunca de
+        // lo que haya en sessionStorage. Si alguien lo manipulo a mano desde
+        // la consola del navegador, aqui se corrige y se recarga el menu.
+        const usuarioLocal = JSON.parse(sessionStorage.getItem("usuarioLogueado") || "null");
+        if (usuarioLocal && usuarioLocal.nombreRol !== sesionReal.rol) {
+            sessionStorage.setItem("usuarioLogueado", JSON.stringify({ ...usuarioLocal, nombreRol: sesionReal.rol }));
+            window.location.reload();
+        }
+    } catch (error) {
+        console.warn("[iTicket] No se pudo verificar la sesion con el servidor:", error.message);
+    }
+}
 
 /* Revela la interfaz con una transición corta cuando el CSS global ya existe */
 async function finalizarPreparacionVisual() {
@@ -392,12 +418,22 @@ function configurarPanelPerfil(perfil, panel) {
         }
     });
 
-    botonSalir.addEventListener("click", function () {
-        sessionStorage.clear();
-        localStorage.removeItem("rolUsuario");
-        localStorage.removeItem("menuColapsado");
-        window.location.href = "index.html";
-    });
+    botonSalir.addEventListener("click", async function () {
+    botonSalir.disabled = true;
+
+    try {
+        const { cerrarSesion } = await import("../services/authService.js");
+        await cerrarSesion();
+    } catch (error) {
+        // Si la API no responde (sin conexion, sesion ya vencida, etc.), igual
+        // cerramos la sesion local -- no tiene sentido dejar al usuario atascado.
+        console.warn("[iTicket] No se pudo avisar al servidor del cierre de sesion:", error.message);
+    }
+
+    const { limpiarSesionLocal } = await import("../services/apiConfig.js");
+    limpiarSesionLocal();
+    window.location.href = "index.html";
+});
 
     configurarCambioClave(perfil, panel);
 }

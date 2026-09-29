@@ -1,4 +1,4 @@
-import { API_BASE_URL, manejarRespuesta } from "./apiConfig.js";
+import { API_BASE_URL, manejarRespuesta, apiFetch } from "./apiConfig.js";
 
 const API_URL = `${API_BASE_URL}/evidencias`;
 
@@ -10,7 +10,7 @@ export async function subirEvidencia(archivo, idTicket) {
         formData.append("archivo", archivo);
         formData.append("idTicket", idTicket);
 
-        const respuesta = await fetch(`${API_URL}/subir`, {
+        const respuesta = await apiFetch(`${API_URL}/subir`, {
             method: "POST",
             body: formData
         });
@@ -30,7 +30,7 @@ export async function subirEvidencia(archivo, idTicket) {
 //Obtener todas las evidencias de un ticket
 export async function obtenerEvidenciasPorTicket(idTicket) {
     try {
-        const respuesta = await fetch(`${API_URL}/ticket/${idTicket}`);
+        const respuesta = await apiFetch(`${API_URL}/ticket/${idTicket}`);
 
         if (respuesta.status === 204) {
             return [];
@@ -50,7 +50,7 @@ export async function obtenerEvidenciasPorTicket(idTicket) {
 //Eliminar evidencia
 export async function eliminarEvidencia(idEvidencia) {
     try {
-        const respuesta = await fetch(`${API_URL}/${idEvidencia}`, { method: "DELETE" });
+        const respuesta = await apiFetch(`${API_URL}/${idEvidencia}`, { method: "DELETE" });
 
         if (!respuesta.ok) {
             throw new Error("Error al eliminar la evidencia");
