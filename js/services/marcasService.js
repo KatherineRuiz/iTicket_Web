@@ -1,37 +1,31 @@
-import { API_BASE_URL } from "./apiConfig.js";
+import { API_BASE_URL, manejarRespuesta, apiFetch } from "./apiConfig.js";
 
 const API_URL = `${API_BASE_URL}/marcas`;
 
 export async function getMarcas() {
-    const respuesta = await fetch(API_URL);
-    if (!respuesta.ok) throw new Error("Error al obtener las marcas");
-    const registros = await respuesta.json();
-    return registros.data;
+    const respuesta = await apiFetch(API_URL);
+    return await manejarRespuesta(respuesta);
 }
 
 export async function crearMarca(nombreMarca) {
-    const respuesta = await fetch(API_URL, {
+    const respuesta = await apiFetch(API_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ nombreMarca })
     });
-    const resultado = await respuesta.json();
-    if (!respuesta.ok) throw new Error(resultado.message || "No se pudo crear la marca");
-    return resultado.data;
+    return await manejarRespuesta(respuesta);
 }
 
 export async function eliminarMarca(id) {
-    const respuesta = await fetch(`${API_URL}/${id}`, { method: "DELETE" });
+    const respuesta = await apiFetch(`${API_URL}/${id}`, { method: "DELETE" });
     if (!respuesta.ok) throw new Error("No se pudo eliminar la marca");
 }
 
 export async function actualizarMarca(id, nombreMarca) {
-    const respuesta = await fetch(`${API_URL}/${id}`, {
+    const respuesta = await apiFetch(`${API_URL}/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ nombreMarca })
     });
-    const resultado = await respuesta.json();
-    if (!respuesta.ok) throw new Error(resultado.message || "No se pudo actualizar la marca");
-    return resultado.data;
+    return await manejarRespuesta(respuesta);
 }

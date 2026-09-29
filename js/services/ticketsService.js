@@ -1,4 +1,4 @@
-import { API_BASE_URL } from "./apiConfig.js";
+import { API_BASE_URL, manejarRespuesta, apiFetch } from "./apiConfig.js";
 
 //Configuracion de URL
 const API_URL = `${API_BASE_URL}/tickets`;
@@ -6,14 +6,8 @@ const API_URL = `${API_BASE_URL}/tickets`;
 //Obtener la lista completa de tickets
 export async function getTickets() {
     try{
-        const respuesta = await fetch(API_URL);
-        if(!respuesta.ok){
-            console.error("Error al obtener los tickets");
-            throw new Error("Error al obtener los tickets");
-        }
-
-        const registros = await respuesta.json();
-        return registros.data;
+        const respuesta = await apiFetch(API_URL);
+        return await manejarRespuesta(respuesta);
     }catch (error) {
         console.error("Error al obtener los tickets:", error);
         throw error;
@@ -23,7 +17,7 @@ export async function getTickets() {
 //Crear nuevo ticket
 export async function crearTicket(ticket) {
     try{
-        const respuesta = await fetch(API_URL, {
+        const respuesta = await apiFetch(API_URL, {
             method: "POST",
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify(ticket)
@@ -32,6 +26,9 @@ export async function crearTicket(ticket) {
         const cuerpo = await respuesta.json().catch(() => null);
 
         if(!respuesta.ok) {
+            if (cuerpo && cuerpo.errorCode) {
+                throw new Error(`[${cuerpo.errorCode}] ${cuerpo.message}`);
+            }
             throw new Error(cuerpo?.message || "Error al crear el ticket");
         }
 
@@ -45,7 +42,7 @@ export async function crearTicket(ticket) {
 //Obtener un ticket por ID
 export async function getTicket(id) {
     try{
-        const respuesta = await fetch(`${API_URL}/${id}`);
+        const respuesta = await apiFetch(`${API_URL}/${id}`);
         
         if(!respuesta.ok){
             console.error("Error al obtener el ticket");
@@ -63,7 +60,7 @@ export async function getTicket(id) {
 //Obtener los contadores de tickets segun el estado
 export async function getIndicadoresEstado(idUsuario) {
     try{
-        const respuesta = await fetch(`${API_URL}/indicadores/gestion/${idUsuario}`);
+        const respuesta = await apiFetch(`${API_URL}/indicadores/gestion/${idUsuario}`);
 
         if(!respuesta.ok){
             console.error("Error al obtener los indicadores de estado de los tickets");
@@ -81,7 +78,7 @@ export async function getIndicadoresEstado(idUsuario) {
 //Obtener los contadores de tickets propios segun el estado
 export async function getIndicadoresEstadoPropios(idUsuario) {
     try{
-        const respuesta = await fetch(`${API_URL}/indicadores/${idUsuario}`);
+        const respuesta = await apiFetch(`${API_URL}/indicadores/${idUsuario}`);
 
         if(!respuesta.ok){
             console.error("Error al obtener los indicadores de estado de los tickets");
@@ -99,7 +96,7 @@ export async function getIndicadoresEstadoPropios(idUsuario) {
 //Aprobar tickets asignando prioridad, tecnico y fecha de vencimiento
 export async function asignarTicket(id, idUsuarioAdmin, asignacion) {
     try{
-        const respuesta = await fetch(`${API_URL}/${id}/asignacion?idUsuario=${idUsuarioAdmin}`, {
+        const respuesta = await apiFetch(`${API_URL}/${id}/asignacion?idUsuario=${idUsuarioAdmin}`, {
             method: "PATCH",
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify(asignacion)
@@ -121,7 +118,7 @@ export async function asignarTicket(id, idUsuarioAdmin, asignacion) {
 //Eliminar ticket
 export async function eliminarTicket(id, idUsuario) {
     try {
-        const respuesta = await fetch(`${API_URL}/${id}?idUsuario=${idUsuario}`, {
+        const respuesta = await apiFetch(`${API_URL}/${id}?idUsuario=${idUsuario}`, {
             method: "DELETE"
         });
 
@@ -140,7 +137,7 @@ export async function eliminarTicket(id, idUsuario) {
 
 export async function getAprobacionesPendientes(limite = 5, idUsuario) {
     try{
-        const respuesta = await fetch(`${API_URL}/aprobaciones-pendientes?limite=${limite}&idUsuarioAdmin=${idUsuario}`);
+        const respuesta = await apiFetch(`${API_URL}/aprobaciones-pendientes?limite=${limite}&idUsuarioAdmin=${idUsuario}`);
 
         if(!respuesta.ok){
             throw new Error("Error al obrtener los tickets con aprobaciones pendientes");
@@ -163,7 +160,7 @@ export async function getTicketsPorDepartamento(idUsuarioAdmin, pagina = 1, tama
         if(filtros.estado) parametros.append("estado", filtros.estado);
         if(filtros.fecha) parametros.append("fecha", filtros.fecha);
 
-        const respuesta = await fetch(`${API_URL}/departamento?${parametros}`);
+        const respuesta = await apiFetch(`${API_URL}/departamento?${parametros}`);
 
         if (!respuesta.ok) {
             throw new Error("Error al obtener los tickets");
@@ -187,7 +184,7 @@ export async function getTicketsAsignados(idUsuario, pagina = 1, tamano = 5, fil
         if(filtros.estado) parametros.append("estado", filtros.estado);
         if(filtros.fecha) parametros.append("fecha", filtros.fecha);
 
-        const respuesta = await fetch(`${API_URL}/tickets-asignados?${parametros}`);
+        const respuesta = await apiFetch(`${API_URL}/tickets-asignados?${parametros}`);
 
         if (!respuesta.ok) {
             throw new Error("Error al obtener los tickets asignados");
@@ -211,7 +208,7 @@ export async function getTicketsPropios(idUsuario, pagina = 1, tamano = 5, filtr
         if(filtros.estado) parametros.append("estado", filtros.estado);
         if(filtros.fecha) parametros.append("fecha", filtros.fecha);
 
-        const respuesta = await fetch(`${API_URL}/mis-tickets?${parametros}`);
+        const respuesta = await apiFetch(`${API_URL}/mis-tickets?${parametros}`);
 
         if (!respuesta.ok) {
             throw new Error("Error al obtener los tickets asignados");
@@ -229,7 +226,7 @@ export async function getTicketsPropios(idUsuario, pagina = 1, tamano = 5, filtr
 //Cambiar departamento de un ticket (solo un administrador, y solo mientras el ticket esta "Nuevo")
 export async function actualizarDepartamento(id, departamento, idUsuario) {
     try{
-        const respuesta = await fetch(`${API_URL}/reasignar/${id}?idUsuario=${idUsuario}`, {
+        const respuesta = await apiFetch(`${API_URL}/reasignar/${id}?idUsuario=${idUsuario}`, {
             method: "PATCH",
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify(departamento)
@@ -257,7 +254,7 @@ export async function getTicketsPendientesEvaluacion(idUsuario) {
 //Editar ticket como creador (asunto, descripcion, departamento y detalle según tipo)
 export async function editarComoCreador(id, dto, idUsuario) {
     try {
-        const respuesta = await fetch(`${API_URL}/${id}/editar-creador?idUsuario=${idUsuario}`, {
+        const respuesta = await apiFetch(`${API_URL}/${id}/editar-creador?idUsuario=${idUsuario}`, {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(dto)
@@ -278,7 +275,7 @@ export async function editarComoCreador(id, dto, idUsuario) {
 //Reasignar ticket como administrador (fecha, prioridad, técnico)
 export async function editarComoGestor(id, dto, idUsuario) {
     try {
-        const respuesta = await fetch(`${API_URL}/${id}/gestion?idUsuario=${idUsuario}`, {
+        const respuesta = await apiFetch(`${API_URL}/${id}/gestion?idUsuario=${idUsuario}`, {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(dto)
@@ -299,7 +296,7 @@ export async function editarComoGestor(id, dto, idUsuario) {
 //Cambiar estado del ticket (solo el usuario asignado, entre "En proceso" y "En espera")
 export async function editarEstadoAsignado(id, estado, idUsuario) {
     try {
-        const respuesta = await fetch(`${API_URL}/${id}/estado-asignado?idUsuario=${idUsuario}`, {
+        const respuesta = await apiFetch(`${API_URL}/${id}/estado-asignado?idUsuario=${idUsuario}`, {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ estado })
@@ -320,7 +317,7 @@ export async function editarEstadoAsignado(id, estado, idUsuario) {
 //Crear oeditar el reporte técnico
 export async function reportarTicket(id, dto, idUsuario) {
     try {
-        const respuesta = await fetch(`${API_URL}/${id}/reporte?idUsuario=${idUsuario}`, {
+        const respuesta = await apiFetch(`${API_URL}/${id}/reporte?idUsuario=${idUsuario}`, {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(dto)

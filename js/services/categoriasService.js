@@ -1,16 +1,14 @@
-import { API_BASE_URL } from "./apiConfig.js";
+import { API_BASE_URL, manejarRespuesta, apiFetch } from "./apiConfig.js";
 
 const API_URL = `${API_BASE_URL}/categorias`;
 
 export async function getCategorias() {
-    const respuesta = await fetch(API_URL);
-    if (!respuesta.ok) throw new Error("Error al obtener las categorías");
-    const registros = await respuesta.json();
-    return registros.data;
+    const respuesta = await apiFetch(API_URL);
+    return await manejarRespuesta(respuesta);
 }
 
 export async function crearCategoria(nombreCategoria) {
-    const respuesta = await fetch(API_URL, {
+    const respuesta = await apiFetch(API_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ nombreCategoria })
@@ -25,12 +23,12 @@ export async function crearCategoria(nombreCategoria) {
 }
 
 export async function eliminarCategoria(id) {
-    const respuesta = await fetch(`${API_URL}/${id}`, { method: "DELETE" });
+    const respuesta = await apiFetch(`${API_URL}/${id}`, { method: "DELETE" });
     if (!respuesta.ok) throw new Error("No se pudo eliminar la categoría");
 }
 
 export async function actualizarCategoria(id, nombreCategoria) {
-    const respuesta = await fetch(`${API_URL}/${id}`, {
+    const respuesta = await apiFetch(`${API_URL}/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ nombreCategoria })

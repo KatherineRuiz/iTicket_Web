@@ -1,11 +1,11 @@
-import { API_BASE_URL } from "./apiConfig.js";
+import { API_BASE_URL, manejarRespuesta, apiFetch } from "./apiConfig.js";
 
 const API_URL = `${API_BASE_URL}/bitacoras`
 
 //Obtener la bitácora completa (todos los tickets, incluidos los eliminados)
 export async function getBitacoras(idUsuarioAdmin) {
     try {
-        const respuesta = await fetch(`${API_URL}?idUsuarioAdmin=${idUsuarioAdmin}`);
+        const respuesta = await apiFetch(`${API_URL}?idUsuarioAdmin=${idUsuarioAdmin}`);
 
         //204 No Content -> no hay bitacoras registradas todavia
         if (respuesta.status === 204) {
@@ -26,7 +26,7 @@ export async function getBitacoras(idUsuarioAdmin) {
 
 export async function getBitacorasPorTicket(idTicket) {
     try{
-        const respuesta = await fetch(`${API_URL}/bitacoraTicket/${idTicket}`);
+        const respuesta = await apiFetch(`${API_URL}/bitacoraTicket/${idTicket}`);
         if(!respuesta.ok){
             console.error("Error al obtener las bitácoras del ticket");
             throw new Error("Error al obtener las bitácoras del ticket");

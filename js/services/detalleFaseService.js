@@ -1,4 +1,4 @@
-import { API_BASE_URL } from "./apiConfig.js";
+import { API_BASE_URL, manejarRespuesta, apiFetch } from "./apiConfig.js";
 
 // URL de la API
 const API_URL = `${API_BASE_URL}/detalleFase`;
@@ -6,7 +6,7 @@ const API_URL = `${API_BASE_URL}/detalleFase`;
 //Obtener la lista completa de detalles de fase
 export async function getDetallesFase() {
     try {
-        const respuesta = await fetch(API_URL);
+        const respuesta = await apiFetch(API_URL);
 
         if (respuesta.status === 204) {
             return [];
@@ -28,7 +28,7 @@ export async function getDetallesFase() {
 //Crear un nuevo detalle de fase
 export async function crearDetalleFase(detalle) {
     try {
-        const respuesta = await fetch(API_URL, {
+        const respuesta = await apiFetch(API_URL, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -52,7 +52,7 @@ export async function crearDetalleFase(detalle) {
 //Actualizar un detalle de fase existente
 export async function actualizarDetalleFase(id, detalleActualizado) {
     try {
-        const respuesta = await fetch(`${API_URL}/${id}`, {
+        const respuesta = await apiFetch(`${API_URL}/${id}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
@@ -76,7 +76,7 @@ export async function actualizarDetalleFase(id, detalleActualizado) {
 //Eliminar un detalle de fase existente
 export async function eliminarDetalleFase(id) {
     try {
-        const respuesta = await fetch(`${API_URL}/${id}`, {
+        const respuesta = await apiFetch(`${API_URL}/${id}`, {
             method: 'DELETE'
         });
 
@@ -100,7 +100,7 @@ export async function eliminarDetalleFase(id) {
 //Obtener listado de detalles segun la fase seleccionada
 export async function getDetallesFasePorFase(idFase) {
     try {
-        const respuesta = await fetch(`${API_URL}/idFase/${idFase}`);
+        const respuesta = await apiFetch(`${API_URL}/idFase/${idFase}`);
 
         //204 o 404 -> esta fase todavia no tiene detalles registrados
         if (respuesta.status === 204 || respuesta.status === 404) {

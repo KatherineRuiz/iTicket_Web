@@ -1,11 +1,11 @@
-import { API_BASE_URL } from "./apiConfig.js";
+import { API_BASE_URL, manejarRespuesta, apiFetch } from "./apiConfig.js";
 
 const API_URL = `${API_BASE_URL}/fases`;
 
 // Obtiene la lista completa. Un 204 es válido y se normaliza a arreglo vacío.
 export async function getFases() {
     try {
-        const respuesta = await fetch(API_URL);
+        const respuesta = await apiFetch(API_URL);
 
         //204 No Content -> no hay fases registradas todavia
         if (respuesta.status === 204) {
@@ -29,7 +29,7 @@ export async function getFases() {
 // Un 404 significa que no existe y se devuelve null, no un error de interfaz.
 export async function getNombreFase(name) {
     try {
-        const respuesta = await fetch(`${API_URL}/nombreFase/${encodeURIComponent(name)}`);
+        const respuesta = await apiFetch(`${API_URL}/nombreFase/${encodeURIComponent(name)}`);
 
         //404 Not Found -> no hay fase con ese nombre
         if (respuesta.status === 404) {
@@ -51,7 +51,7 @@ export async function getNombreFase(name) {
 // Crea una fase enviando el objeto recibido como JSON.
 export async function crearFase(fase) {
     try {
-        const respuesta = await fetch(API_URL, {
+        const respuesta = await apiFetch(API_URL, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -74,7 +74,7 @@ export async function crearFase(fase) {
 // Leer el mensaje de error del backend ayuda a explicar restricciones concretas.
 export async function actualizarFase(id, faseActualizada) {
     try {
-        const respuesta = await fetch(`${API_URL}/${id}`, {
+        const respuesta = await apiFetch(`${API_URL}/${id}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(faseActualizada)
@@ -96,7 +96,7 @@ export async function actualizarFase(id, faseActualizada) {
 // Elimina una fase. Un 204 confirma éxito aunque no exista cuerpo para leer.
 export async function eliminarFase(id) {
     try {
-        const respuesta = await fetch(`${API_URL}/${id}`, {
+        const respuesta = await apiFetch(`${API_URL}/${id}`, {
             method: "DELETE"
         });
 
@@ -122,7 +122,7 @@ export async function eliminarFase(id) {
 // se convierten en [] porque para la vista ambos significan "sin fases".
 export async function getFasesPorProyecto(idProyecto) {
     try {
-        const respuesta = await fetch(`${API_URL}/proyecto/${idProyecto}`);
+        const respuesta = await apiFetch(`${API_URL}/proyecto/${idProyecto}`);
 
         //204 No Content -> el proyecto todavia no tiene fases registradas
         if (respuesta.status === 204) {

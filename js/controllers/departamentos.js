@@ -48,7 +48,7 @@ export async function llenarSelectAreas() {
         });
     } catch (error) {
         console.error(error);
-        mostrarError('No se pudieron cargar las áreas');
+        mostrarError(error.message || 'No se pudieron cargar las áreas');
     }
 }
  
@@ -60,7 +60,7 @@ export async function cargarDepartamentos() {
         return departamentos;
     } catch (error) {
         console.error(error);
-        mostrarError('No se pudieron cargar los departamentos');
+        mostrarError(error.message || 'No se pudieron cargar los departamentos');
         return [];
     }
 }

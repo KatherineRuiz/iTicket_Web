@@ -94,7 +94,7 @@ async function cargarIndicadores() {
     }
     catch (error) {
         console.error("Error al cargar indicadores de estado: ", error);
-        mostrarError("Error. No se pudieron cargar los indicadores de estado");
+        mostrarError(error.message || "Error. No se pudieron cargar los indicadores de estado");
     }
 }
 
@@ -185,7 +185,7 @@ async function abrirEvaluacionesPendientes() {
             colaEvaluaciones = resultado.tickets;
             indiceActual = 0;
         } catch (error) {
-            mostrarError("No se pudieron cargar tus evaluaciones pendientes.");
+            mostrarError(error.message || "No se pudieron cargar tus evaluaciones pendientes.");
             return;
         }
     }
@@ -262,7 +262,7 @@ formEvaluacion.addEventListener("submit", async (e) => {
             idTicket: ticket.idTicket
         }, idUsuario);
     } catch (error) {
-        mostrarError("No se pudo enviar la evaluación. Intenta de nuevo.");
+        mostrarError(error.message || "No se pudo enviar la evaluación. Intenta de nuevo.");
         return;
     }
 

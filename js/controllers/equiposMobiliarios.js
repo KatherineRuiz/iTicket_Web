@@ -65,7 +65,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             pintarResumen(resultado);
             pintarPaginacion(resultado);
         } catch (error) {
-            mostrarError("No se pudieron cargar los artículos.", false);
+            mostrarError(error.message || "No se pudieron cargar los artículos.", false);
         }
     }
 
@@ -137,7 +137,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             mostrarExitoSimple("¡Listo!", "Artículo eliminado.");
             await recargarTablasEquipos();
         } catch (error) {
-            mostrarError("No se pudo eliminar el artículo.", false);
+            mostrarError(error.message || "No se pudo eliminar el artículo.", false);
         }
     }
 
@@ -183,7 +183,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             }
 
         } catch (error) {
-            mostrarError("No se pudieron cargar los filtros.", false);
+            mostrarError(error.message || "No se pudieron cargar los filtros.", false);
         }
     }
 
@@ -222,7 +222,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             categoriasRegistradas = categorias || [];
             pintarTablaCategorias(categorias);
         } catch (error) {
-            mostrarError("No se pudieron cargar las categorías.", false);
+            mostrarError(error.message || "No se pudieron cargar las categorías.", false);
         }
     }
 
@@ -267,7 +267,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                     mostrarExitoSimple("¡Listo!", "Categoría eliminada.");
                     await recargarTablasEquipos();
                 } catch (error) {
-                    mostrarError("No se pudo eliminar. Puede que esté en uso por algún artículo.", false);
+                    mostrarError(error.message || "No se pudo eliminar. Puede que esté en uso por algún artículo.", false);
                 }
             });
         });
@@ -347,7 +347,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             marcasRegistradas = marcas || [];
             pintarTablaMarcas(marcas);
         } catch (error) {
-            mostrarError("No se pudieron cargar las marcas.", false);
+            mostrarError(error.message || "No se pudieron cargar las marcas.", false);
         }
     }
 
@@ -392,7 +392,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                     mostrarExitoSimple("¡Listo!", "Marca eliminada.");
                     await recargarTablasEquipos();
                 } catch (error) {
-                    mostrarError("No se pudo eliminar. Puede que esté en uso por algún modelo.", false);
+                    mostrarError(error.message || "No se pudo eliminar. Puede que esté en uso por algún modelo.", false);
                 }
             });
         });
@@ -471,7 +471,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             modelosRegistrados = modelos || [];
             pintarTablaModelos(modelos);
         } catch (error) {
-            mostrarError("No se pudieron cargar los modelos.", false);
+            mostrarError(error.message || "No se pudieron cargar los modelos.", false);
         }
     }
 
@@ -481,7 +481,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             selectMarcaModelo.innerHTML = '<option selected disabled value="">Selecciona la marca...</option>' +
                 marcas.map(m => `<option value="${m.idMarca}">${m.nombreMarca}</option>`).join("");
         } catch (error) {
-            mostrarError("No se pudieron cargar las marcas.", false);
+            mostrarError(error.message || "No se pudieron cargar las marcas.", false);
         }
     }
 
@@ -528,7 +528,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                     mostrarExitoSimple("¡Listo!", "Modelo eliminado.");
                     await recargarTablasEquipos();
                 } catch (error) {
-                    mostrarError("No se pudo eliminar. Puede que esté en uso por algún artículo.", false);
+                    mostrarError(error.message || "No se pudo eliminar. Puede que esté en uso por algún artículo.", false);
                 }
             });
         });
@@ -636,7 +636,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
             if (articuloPendienteEdicion) cargarArticuloEnFormulario(articuloPendienteEdicion);
         } catch (error) {
-            mostrarError("No se pudieron cargar los datos del formulario.", false);
+            mostrarError(error.message || "No se pudieron cargar los datos del formulario.", false);
         }
     }
 

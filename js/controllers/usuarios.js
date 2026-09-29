@@ -67,7 +67,7 @@ async function llenarSelectRoles() {
         });
     } catch (error) {
         console.error(error);
-        mostrarError('No se pudieron cargar los roles');
+        mostrarError(error.message || 'No se pudieron cargar los roles');
     }
 }
 
@@ -83,7 +83,7 @@ export async function llenarSelectDepartamentos() {
         });
     } catch (error) {
         console.error(error);
-        mostrarError('No se pudieron cargar los departamentos');
+        mostrarError(error.message || 'No se pudieron cargar los departamentos');
     }
 }
  
@@ -95,7 +95,7 @@ async function cargarUsuarios() {
         return usuarios;
     } catch (error) {
         console.error(error);
-        mostrarError('No se pudieron cargar los usuarios');
+        mostrarError(error.message || 'No se pudieron cargar los usuarios');
         return [];
     }
 }

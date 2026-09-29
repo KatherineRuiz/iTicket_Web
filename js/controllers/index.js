@@ -75,7 +75,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 localStorage.setItem("rolUsuario", rol);
                 mostrarExitoRedireccion("¡Sesión Iniciada!", "", destino);
             } catch (error) {
-                mostrarError("No se pudo conectar con el servidor. Intenta de nuevo.", false);
+                mostrarError(error.message || "No se pudo conectar con el servidor. Intenta de nuevo.", false);
                 botonIniciarSesion.disabled = false;
             }
         });

@@ -65,7 +65,7 @@ async function cargarBitacoras() {
         renderizarEliminados(1);
     } catch (error) {
         console.error("Error al cargar la bitácora:", error);
-        mostrarError("Oops... No se pudo cargar la bitácora de actividad");
+        mostrarError(error.message || "Oops... No se pudo cargar la bitácora de actividad");
     }
 }
 
