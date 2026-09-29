@@ -68,7 +68,8 @@
                                         <input type="email" class="form-control rounded-3" id="correoUsuario"
                                             maxlength="100" placeholder="ejemplo@correo.com" required>
                                     </div>
-                                    <div class="mb-3">
+                                    <!-- Solo se pide al crear: al editar un usuario no se toca su contraseña -->
+                                    <div class="mb-3" id="campoPasswordUsuario">
                                         <label for="passwordUsuario"
                                             class="form-label small fw-bold text-navy">Contraseña</label>
                                         <input type="password" class="form-control rounded-3" id="passwordUsuario"
@@ -114,11 +115,12 @@
                                     <table class="table table-borderless table-custom align-middle mb-0">
                                         <thead>
                                             <tr>
-                                                <th class="text-center">Usuario</th>
-                                                <th class="text-center">Rol</th>
-                                                <th class="text-center">Departamento</th>
-                                                <th class="text-center">Estado</th>
-                                                <th class="text-center">Correo</th>
+                                                <!-- data-orden: campo del objeto que devuelve la API, se ordena en el navegador -->
+                                                <th class="text-center" data-orden="nombreUsuario">Usuario</th>
+                                                <th class="text-center" data-orden="nombreRol">Rol</th>
+                                                <th class="text-center" data-orden="nombreDepartamento">Departamento</th>
+                                                <th class="text-center" data-orden="estado">Estado</th>
+                                                <th class="text-center" data-orden="correo">Correo</th>
                                                 <th class="text-center">Acciones</th>
                                             </tr>
                                         </thead>
@@ -173,7 +175,7 @@
                                     <table class="table table-borderless table-custom tabla-columnas-iguales align-middle mb-0">
                                         <thead>
                                             <tr>
-                                                <th class="text-center">Área</th>
+                                                <th class="text-center" data-orden="nombreArea">Área</th>
                                                 <th class="text-center">Acciones</th>
                                             </tr>
                                         </thead>
@@ -250,9 +252,9 @@
                                     <table class="table table-borderless table-custom tabla-columnas-iguales align-middle mb-0">
                                         <thead>
                                             <tr>
-                                                <th class="text-center">Departamento</th>
-                                                <th class="text-center">Tipo</th>
-                                                <th class="text-center">Área</th>
+                                                <th class="text-center" data-orden="nombreDepartamento">Departamento</th>
+                                                <th class="text-center" data-orden="tipoDepartamento">Tipo</th>
+                                                <th class="text-center" data-orden="nombreArea">Área</th>
                                                 <th class="text-center">Acciones</th>
                                             </tr>
                                         </thead>

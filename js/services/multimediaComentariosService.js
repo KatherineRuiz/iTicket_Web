@@ -1,4 +1,4 @@
-import { API_BASE_URL, manejarRespuesta } from "./apiConfig.js";
+import { API_BASE_URL, manejarRespuesta, apiFetch } from "./apiConfig.js";
 
 const API_URL = `${API_BASE_URL}/multimediaComentarios`;
 
@@ -9,7 +9,7 @@ export async function subirMultimediaComentario(archivo, idComentario) {
         formData.append("archivo", archivo);
         formData.append("idComentario", idComentario);
 
-        const respuesta = await fetch(`${API_URL}/subir`, {
+        const respuesta = await apiFetch(`${API_URL}/subir`, {
             method: "POST",
             body: formData
         });

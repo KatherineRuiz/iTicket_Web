@@ -1,6 +1,6 @@
 import {
     API_BASE_URL,
-    manejarRespuesta
+    manejarRespuesta, apiFetch
 } from "./apiConfig.js"; // Importa la URL base y el manejador común de respuestas.
 
 const CHATBOT_URL = `${API_BASE_URL}/chatbot`;
@@ -19,7 +19,7 @@ export async function enviarMensajeChatbot(idUsuario, mensaje, idConversacion = 
         throw new Error("Escribe un mensaje para continuar.");
     }
 
-    const respuesta = await fetch(`${CHATBOT_URL}/mensaje`, {
+    const respuesta = await apiFetch(`${CHATBOT_URL}/mensaje`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -37,7 +37,7 @@ export async function enviarMensajeChatbot(idUsuario, mensaje, idConversacion = 
 /** Obtiene las cinco conversaciones más recientes del usuario. */
 export async function obtenerConversacionesChatbot(idUsuario) {
     validarUsuario(idUsuario);
-    const respuesta = await fetch(
+    const respuesta = await apiFetch(
         `${CHATBOT_URL}/conversaciones?idUsuario=${encodeURIComponent(idUsuario)}`
     );
     return manejarRespuesta(respuesta);
@@ -46,7 +46,7 @@ export async function obtenerConversacionesChatbot(idUsuario) {
 /** Obtiene todos los mensajes de una conversación propia. */
 export async function obtenerConversacionChatbot(idUsuario, idConversacion) {
     validarUsuario(idUsuario);
-    const respuesta = await fetch(
+    const respuesta = await apiFetch(
         `${CHATBOT_URL}/conversaciones/${encodeURIComponent(idConversacion)}`
         + `?idUsuario=${encodeURIComponent(idUsuario)}`
     );
@@ -56,7 +56,7 @@ export async function obtenerConversacionChatbot(idUsuario, idConversacion) {
 /** Elimina una conversación propia y todos sus mensajes. */
 export async function eliminarConversacionChatbot(idUsuario, idConversacion) {
     validarUsuario(idUsuario);
-    const respuesta = await fetch(
+    const respuesta = await apiFetch(
         `${CHATBOT_URL}/conversaciones/${encodeURIComponent(idConversacion)}`
         + `?idUsuario=${encodeURIComponent(idUsuario)}`,
         { method: "DELETE" }

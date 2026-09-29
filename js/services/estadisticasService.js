@@ -1,4 +1,4 @@
-import { API_BASE_URL, manejarRespuesta } from "./apiConfig.js";
+import { API_BASE_URL, manejarRespuesta, apiFetch } from "./apiConfig.js";
 
 // ============================================================
 // CONSTANTES GLOBALES DE URLS Y ENDPOINTS
@@ -29,7 +29,7 @@ export async function obtenerMetricas(
         params.append('sizeAlertas', sizeAlertas);
 
         const url = `${ENDPOINTS.METRICAS}?${params.toString()}`;
-        const respuesta = await fetch(url);
+        const respuesta = await apiFetch(url);
 
         if (!respuesta.ok) {
             throw new Error(`Error al obtener métricas: ${respuesta.status}`);
@@ -54,7 +54,7 @@ export async function obtenerAlertas(idUsuarioAdmin, fechaInicio = '', fechaFin 
         params.append('size', size);
 
         const url = `${ENDPOINTS.ALERTAS_INSATISFACCION}?${params.toString()}`;
-        const respuesta = await fetch(url);
+        const respuesta = await apiFetch(url);
 
         if (!respuesta.ok) {
             throw new Error(`Error al obtener alertas: ${respuesta.status}`);
@@ -86,7 +86,7 @@ export async function obtenerEquiposMasReportados(idUsuarioAdmin, fechaInicio = 
         params.append('size', size);
 
         const url = `${ENDPOINTS.EQUIPOS_MAS_REPORTADOS}?${params.toString()}`;
-        const respuesta = await fetch(url);
+        const respuesta = await apiFetch(url);
 
         if (!respuesta.ok) {
             throw new Error(`Error al obtener equipos reportados: ${respuesta.status}`);

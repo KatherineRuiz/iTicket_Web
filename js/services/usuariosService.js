@@ -1,9 +1,9 @@
-import { API_BASE_URL, manejarRespuesta } from "./apiConfig.js";
+import { API_BASE_URL, manejarRespuesta, apiFetch } from "./apiConfig.js";
 
 const URL_USUARIOS = `${API_BASE_URL}/usuarios`;
 
 export async function getUsuarioById(idUsuario) {
-    const respuesta = await fetch(`${URL_USUARIOS}/${idUsuario}`);
+    const respuesta = await apiFetch(`${URL_USUARIOS}/${idUsuario}`);
     return manejarRespuesta(respuesta);
 }
 
@@ -13,7 +13,7 @@ export async function getUsuarioPorId(idUsuario) {
 }
 
 export async function crearUsuario(usuario) {
-    const respuesta = await fetch(URL_USUARIOS, {
+    const respuesta = await apiFetch(URL_USUARIOS, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(usuario)
@@ -23,7 +23,7 @@ export async function crearUsuario(usuario) {
 }
 
 export async function actualizarUsuario(idUsuario, usuario) {
-    const respuesta = await fetch(`${URL_USUARIOS}/${idUsuario}`, {
+    const respuesta = await apiFetch(`${URL_USUARIOS}/${idUsuario}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(usuario)
@@ -33,7 +33,7 @@ export async function actualizarUsuario(idUsuario, usuario) {
 }
 
 export async function cambiarClave(idUsuario, claveActual, claveNueva) {
-    const respuesta = await fetch(`${URL_USUARIOS}/${idUsuario}/clave`, {
+    const respuesta = await apiFetch(`${URL_USUARIOS}/${idUsuario}/clave`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ claveActual, claveNueva })
@@ -49,7 +49,7 @@ export async function actualizarFotoPerfil(idUsuario, archivo) {
     const limiteEspera = window.setTimeout(() => controlador.abort(), 30000);
 
     try {
-        const respuesta = await fetch(`${URL_USUARIOS}/${idUsuario}/imagen`, {
+        const respuesta = await apiFetch(`${URL_USUARIOS}/${idUsuario}/imagen`, {
             method: "PATCH",
             body: formulario,
             signal: controlador.signal
@@ -66,7 +66,7 @@ export async function actualizarFotoPerfil(idUsuario, archivo) {
 }
 
 export async function eliminarUsuario(idUsuario) {
-    const respuesta = await fetch(`${URL_USUARIOS}/${idUsuario}`, {
+    const respuesta = await apiFetch(`${URL_USUARIOS}/${idUsuario}`, {
         method: "DELETE"
     });
 
@@ -75,13 +75,13 @@ export async function eliminarUsuario(idUsuario) {
 
 // Obtiene la lista completa que alimenta la tabla de administración.
 export async function getUsuarios() {
-    const respuesta = await fetch(URL_USUARIOS);
+    const respuesta = await apiFetch(URL_USUARIOS);
     return manejarRespuesta(respuesta);
 }
 
 export async function getTecnicosPorDepartamento(idDepartamento) {
     const parametros = new URLSearchParams({ idDepartamento });
-    const respuesta = await fetch(
+    const respuesta = await apiFetch(
         `${URL_USUARIOS}/tecnicos?${parametros}`
     );
 

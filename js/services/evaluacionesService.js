@@ -1,11 +1,11 @@
-import { API_BASE_URL, manejarRespuesta } from "./apiConfig.js";
+import { API_BASE_URL, manejarRespuesta, apiFetch } from "./apiConfig.js";
 
 const API_URL = `${API_BASE_URL}/evaluaciones`;
 
 // 1. Crear evaluación de ticket resuelto
 export async function crearEvaluacion(evaluacion, idUsuario) {
     try {
-        const respuesta = await fetch(`${API_URL}?idUsuario=${idUsuario}`, {
+        const respuesta = await apiFetch(`${API_URL}?idUsuario=${idUsuario}`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(evaluacion)
@@ -27,11 +27,12 @@ export async function crearEvaluacion(evaluacion, idUsuario) {
 // 2. Obtener evaluaciones paginadas con filtros opcionales (búsqueda, calificación y fecha)
 export async function obtenerEvaluaciones(
     idUsuarioAdmin,
-    page = 0, 
-    size = 10, 
-    busqueda = "", 
-    calificacion = "", 
-    fecha = ""
+    page = 0,
+    size = 10,
+    busqueda = "",
+    calificacion = "",
+    fecha = "",
+    sort = ""
 ) {
     try {
         const params = new URLSearchParams({
@@ -39,6 +40,9 @@ export async function obtenerEvaluaciones(
             page: page.toString(),
             size: size.toString()
         });
+
+        // Spring arma el Pageable con page, size y sort directamente desde la URL
+        if (sort) params.append("sort", sort);
 
         if (busqueda && busqueda.trim() !== "") {
             params.append("busqueda", busqueda.trim());
@@ -52,7 +56,7 @@ export async function obtenerEvaluaciones(
             params.append("fecha", fecha.trim());
         }
 
-        const respuesta = await fetch(`${API_URL}?${params.toString()}`);
+        const respuesta = await apiFetch(`${API_URL}?${params.toString()}`);
 
         if (!respuesta.ok) {
             throw new Error("Error al obtener las evaluaciones");
@@ -87,7 +91,7 @@ export async function obtenerMetricasEvaluaciones(idUsuarioAdmin, busqueda = "",
         const queryString = params.toString();
         const url = queryString ? `${API_URL}/metricas?${queryString}` : `${API_URL}/metricas`;
 
-        const respuesta = await fetch(url);
+        const respuesta = await apiFetch(url);
 
         if (!respuesta.ok) {
             throw new Error("Error al obtener las métricas de evaluaciones");
@@ -104,7 +108,7 @@ export async function obtenerMetricasEvaluaciones(idUsuarioAdmin, busqueda = "",
 // 4. Obtener el conteo total de evaluaciones
 export async function obtenerEvaluacionesConteo() {
     try {
-        const respuesta = await fetch(`${API_URL}/contar_evaluaciones`);
+        const respuesta = await apiFetch(`${API_URL}/contar_evaluaciones`);
 
         if (!respuesta.ok) {
             throw new Error("Error al obtener el conteo de evaluaciones");
