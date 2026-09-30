@@ -24,10 +24,10 @@ export async function crearComentario(dto) {
     }
 }
 
-//Eliminar un comentario (idUsuario es quien solicita eliminar; el backend valida que sea el autor)
+//Eliminar un comentario (el backend valida que sea el autor, resuelto de la cookie de sesion)
 export async function eliminarComentario(idComentario, idUsuario) {
     try {
-        const respuesta = await apiFetch(`${API_URL}/${idComentario}?idUsuario=${idUsuario}`, {
+        const respuesta = await apiFetch(`${API_URL}/${idComentario}`, {
             method: "DELETE"
         });
 

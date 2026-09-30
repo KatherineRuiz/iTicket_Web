@@ -1,8 +1,7 @@
 import { mostrarError } from "../components/sweetAlerts.js";
 import { getBitacoras } from "../services/bitacorasService.js";
 import { formatearFecha12H } from "../utils/formateadores.js";
-import { renderizarPaginacion } from "../components/paginacion.js";
-import { inicializarOrdenamientoTabla, ordenarLista } from "../components/ordenamientoTabla.js";
+import { renderizarPaginacion as pintarPaginacionComun } from "../components/paginacion.js";
 
 const tblBitacoras = document.getElementById("tblBitacoras");
 const paginacionBitacoras = document.getElementById("paginacionBitacoras");
@@ -16,106 +15,53 @@ const infoEliminados = document.getElementById("infoBitacorasEliminados");
 const txtBuscarEliminados = document.getElementById("txtBuscarEliminados");
 
 const TAMANO_PAGINA = 10;
-//La bitácora registra la eliminación de un ticket con este texto como "nuevoEstado".
-//Si en la base de datos se guarda con otro texto exacto, ajustar aquí.
-const ESTADO_ELIMINADO = "eliminado";
+//Nombre del estado "eliminado" en la base de datos. La pestaña de eliminados
+//siempre lo manda como filtro fijo, sin importar lo que el usuario busque.
+const ESTADO_ELIMINADO = "Eliminado";
 
-let bitacorasCompletas = [];
 let paginaActualTodos = 1;
 let paginaActualEliminados = 1;
-// Criterio de cada tabla. Los registros se traen completos, así que el orden se aplica aquí
-let ordenTodos = "";
-let ordenEliminados = "";
-
-inicializarOrdenamientoTabla(tblBitacoras?.closest("table"), (orden) => {
-    ordenTodos = orden;
-    renderizarTodos(1);
-});
-
-inicializarOrdenamientoTabla(tblEliminados?.closest("table"), (orden) => {
-    ordenEliminados = orden;
-    renderizarEliminados(1);
-});
+// Cada tabla pagina y filtra en la API, así que cada una guarda sus propios filtros
+let filtrosTodos = {};
+let filtrosEliminados = {};
 let temporizadorBusquedaTodos = null;
 let temporizadorBusquedaEliminados = null;
 
 document.addEventListener("DOMContentLoaded", () => {
-    cargarBitacoras();
+    cargarTablaTodos(1);
+    cargarTablaEliminados(1);
 });
 
-function obtenerIdUsuarioLogueado() {
-    try {
-        const sesion = JSON.parse(sessionStorage.getItem("usuarioLogueado"));
-        return sesion?.idUsuario ?? null;
-    } catch {
-        return null;
-    }
+function esEliminado(bitacora) {
+    return (bitacora.nuevoEstado || "").trim().toLowerCase() === ESTADO_ELIMINADO.toLowerCase();
 }
 
-async function cargarBitacoras() {
+async function cargarTablaTodos(pagina = 1) {
     try {
-        const bitacoras = await getBitacoras(obtenerIdUsuarioLogueado());
-        bitacorasCompletas = Array.isArray(bitacoras) ? bitacoras : [];
+        const resultado = await getBitacoras(pagina, TAMANO_PAGINA, filtrosTodos);
 
-        //Ordena del registro mas reciente al mas antiguo
-        bitacorasCompletas.sort((a, b) => new Date(b.fechaHora) - new Date(a.fechaHora));
+        paginaActualTodos = resultado.paginaActual;
+        renderizarTodos(resultado.bitacoras);
+        pintarPaginacionComun(paginacionBitacoras, resultado.paginaActual, resultado.totalPaginas, cargarTablaTodos);
 
-        poblarFiltroEstados();
-        renderizarTodos(1);
-        renderizarEliminados(1);
+        const inicio = resultado.bitacoras.length ? (resultado.paginaActual - 1) * TAMANO_PAGINA + 1 : 0;
+        const fin = resultado.bitacoras.length ? inicio + resultado.bitacoras.length - 1 : 0;
+        infoBitacoras.textContent = `Mostrando ${inicio}-${fin} de ${resultado.totalElementos}`;
     } catch (error) {
         console.error("Error al cargar la bitácora:", error);
         mostrarError(error.message || "Oops... No se pudo cargar la bitácora de actividad");
     }
 }
 
-//Arma el select de estados con base en los valores reales que trae la bitácora
-function poblarFiltroEstados() {
-    const estados = [...new Set(bitacorasCompletas.map((b) => b.nuevoEstado).filter(Boolean))].sort();
-
-    sltEstadoBitacora.innerHTML = '<option value="">Todos los estados</option>';
-    estados.forEach((estado) => {
-        sltEstadoBitacora.innerHTML += `<option value="${estado}">${estado}</option>`;
-    });
-}
-
-function esEliminado(bitacora) {
-    return (bitacora.nuevoEstado || "").trim().toLowerCase() === ESTADO_ELIMINADO;
-}
-
-function filtrarBitacoras(lista, busqueda, estado) {
-    const texto = (busqueda || "").trim().toLowerCase();
-
-    return lista.filter((b) => {
-        const coincideTexto = !texto
-            || (b.codigoTicket || "").toLowerCase().includes(texto)
-            || (b.asuntoTicket || "").toLowerCase().includes(texto)
-            || (b.nombreUsuario || "").toLowerCase().includes(texto);
-
-        const coincideEstado = !estado || b.nuevoEstado === estado;
-
-        return coincideTexto && coincideEstado;
-    });
-}
-
-function renderizarTodos(pagina = 1) {
-    // El orden se aplica sobre el total filtrado, antes de cortar la página
-    const filtradas = ordenarLista(
-        filtrarBitacoras(bitacorasCompletas, txtBuscarBitacora.value, sltEstadoBitacora.value),
-        ordenTodos);
-    const totalPaginas = Math.max(1, Math.ceil(filtradas.length / TAMANO_PAGINA));
-    paginaActualTodos = Math.min(Math.max(pagina, 1), totalPaginas);
-
-    const inicio = (paginaActualTodos - 1) * TAMANO_PAGINA;
-    const paginaDeDatos = filtradas.slice(inicio, inicio + TAMANO_PAGINA);
-
+function renderizarTodos(bitacoras) {
     tblBitacoras.innerHTML = "";
 
-    if (paginaDeDatos.length === 0) {
+    if (bitacoras.length === 0) {
         tblBitacoras.innerHTML = `<tr><td colspan="6" class="text-muted py-4">No se encontraron registros de bitácora.</td></tr>`;
+        return;
     }
 
-    paginaDeDatos.forEach((b) => {
+    bitacoras.forEach((b) => {
         const eliminado = esEliminado(b);
         tblBitacoras.innerHTML += `
             <tr>
@@ -132,28 +78,36 @@ function renderizarTodos(pagina = 1) {
             </tr>
         `;
     });
-
-    const fin = paginaDeDatos.length ? inicio + paginaDeDatos.length : 0;
-    infoBitacoras.textContent = `Mostrando ${paginaDeDatos.length ? inicio + 1 : 0}-${fin} de ${filtradas.length}`;
-    renderizarPaginacion(paginacionBitacoras, paginaActualTodos, totalPaginas, renderizarTodos);
 }
 
-function renderizarEliminados(pagina = 1) {
-    const soloEliminados = bitacorasCompletas.filter(esEliminado);
-    const filtradas = ordenarLista(filtrarBitacoras(soloEliminados, txtBuscarEliminados.value, ""), ordenEliminados);
-    const totalPaginas = Math.max(1, Math.ceil(filtradas.length / TAMANO_PAGINA));
-    paginaActualEliminados = Math.min(Math.max(pagina, 1), totalPaginas);
+async function cargarTablaEliminados(pagina = 1) {
+    try {
+        // Estado fijo: esta pestaña solo muestra bitácoras de tickets eliminados
+        const filtros = { ...filtrosEliminados, estado: ESTADO_ELIMINADO };
+        const resultado = await getBitacoras(pagina, TAMANO_PAGINA, filtros);
 
-    const inicio = (paginaActualEliminados - 1) * TAMANO_PAGINA;
-    const paginaDeDatos = filtradas.slice(inicio, inicio + TAMANO_PAGINA);
+        paginaActualEliminados = resultado.paginaActual;
+        renderizarEliminados(resultado.bitacoras);
+        pintarPaginacionComun(paginacionEliminados, resultado.paginaActual, resultado.totalPaginas, cargarTablaEliminados);
 
+        const inicio = resultado.bitacoras.length ? (resultado.paginaActual - 1) * TAMANO_PAGINA + 1 : 0;
+        const fin = resultado.bitacoras.length ? inicio + resultado.bitacoras.length - 1 : 0;
+        infoEliminados.textContent = `Mostrando ${inicio}-${fin} de ${resultado.totalElementos}`;
+    } catch (error) {
+        console.error("Error al cargar los tickets eliminados:", error);
+        mostrarError(error.message || "Oops... No se pudieron cargar los tickets eliminados");
+    }
+}
+
+function renderizarEliminados(bitacoras) {
     tblEliminados.innerHTML = "";
 
-    if (paginaDeDatos.length === 0) {
+    if (bitacoras.length === 0) {
         tblEliminados.innerHTML = `<tr><td colspan="4" class="text-muted py-4">No hay tickets eliminados registrados.</td></tr>`;
+        return;
     }
 
-    paginaDeDatos.forEach((b) => {
+    bitacoras.forEach((b) => {
         tblEliminados.innerHTML += `
             <tr>
                 <td>${formatearFecha12H(b.fechaHora)}</td>
@@ -163,20 +117,25 @@ function renderizarEliminados(pagina = 1) {
             </tr>
         `;
     });
-
-    const fin = paginaDeDatos.length ? inicio + paginaDeDatos.length : 0;
-    infoEliminados.textContent = `Mostrando ${paginaDeDatos.length ? inicio + 1 : 0}-${fin} de ${filtradas.length}`;
-    renderizarPaginacion(paginacionEliminados, paginaActualEliminados, totalPaginas, renderizarEliminados);
 }
 
 txtBuscarBitacora.addEventListener("input", () => {
     clearTimeout(temporizadorBusquedaTodos);
-    temporizadorBusquedaTodos = setTimeout(() => renderizarTodos(1), 400);
+    temporizadorBusquedaTodos = setTimeout(() => {
+        filtrosTodos.busqueda = txtBuscarBitacora.value.trim();
+        cargarTablaTodos(1);
+    }, 400);
 });
 
-sltEstadoBitacora.addEventListener("change", () => renderizarTodos(1));
+sltEstadoBitacora.addEventListener("change", () => {
+    filtrosTodos.estado = sltEstadoBitacora.value;
+    cargarTablaTodos(1);
+});
 
 txtBuscarEliminados.addEventListener("input", () => {
     clearTimeout(temporizadorBusquedaEliminados);
-    temporizadorBusquedaEliminados = setTimeout(() => renderizarEliminados(1), 400);
+    temporizadorBusquedaEliminados = setTimeout(() => {
+        filtrosEliminados.busqueda = txtBuscarEliminados.value.trim();
+        cargarTablaEliminados(1);
+    }, 400);
 });
