@@ -1,4 +1,4 @@
-import { API_BASE_URL, manejarRespuesta } from "./apiConfig.js";
+import { API_BASE_URL, manejarRespuesta, apiFetch } from "./apiConfig.js";
 
 const API_URL = `${API_BASE_URL}/articulos`;
 
@@ -8,8 +8,9 @@ export async function getArticulosPaginados(pagina = 1, tamano = 10, filtros = {
     if (filtros.busqueda) params.append("busqueda", filtros.busqueda);
     if (filtros.idCategoria) params.append("idCategoria", filtros.idCategoria);
     if (filtros.idUbicacion) params.append("idUbicacion", filtros.idUbicacion);
+    if (filtros.sort) params.append("sort", filtros.sort);
 
-    const respuesta = await fetch(`${API_URL}/paginado?${params.toString()}`);
+    const respuesta = await apiFetch(`${API_URL}/paginado?${params.toString()}`);
     return await manejarRespuesta(respuesta); // { articulos, totalElementos, totalPaginas, paginaActual }
 }
 
@@ -17,7 +18,7 @@ export async function crearArticulo(codigoArticulo, idCategoria, idUbicacion, id
     const cuerpo = { codigoArticulo, idCategoria, idUbicacion };
     if (idModelo) cuerpo.idModelo = idModelo;
 
-    const respuesta = await fetch(API_URL, {
+    const respuesta = await apiFetch(API_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(cuerpo)
@@ -32,7 +33,7 @@ export async function crearArticulo(codigoArticulo, idCategoria, idUbicacion, id
 }
 
 export async function eliminarArticulo(id) {
-    const respuesta = await fetch(`${API_URL}/${id}`, { method: "DELETE" });
+    const respuesta = await apiFetch(`${API_URL}/${id}`, { method: "DELETE" });
     if (!respuesta.ok) throw new Error("No se pudo eliminar el artículo");
 }
 
@@ -40,7 +41,7 @@ export async function eliminarArticulo(id) {
 // espacios o caracteres especiales rompan el parámetro de la URL.
 export async function buscarArticulosPorCodigoParcial(fragmento) {
     try{
-        const respuesta = await fetch(`${API_URL}/buscar?codigo=${encodeURIComponent(fragmento)}`);
+        const respuesta = await apiFetch(`${API_URL}/buscar?codigo=${encodeURIComponent(fragmento)}`);
         return await manejarRespuesta(respuesta);
     } catch(error){
         console.error("Error al buscar artículos: ", error);
@@ -63,7 +64,7 @@ export async function obtenerCodigosNoInventariados(codigos) {
 }
 
 export async function actualizarArticulo(id, codigoArticulo, idCategoria, idUbicacion, idModelo) {
-    const respuesta = await fetch(`${API_URL}/${id}`, {
+    const respuesta = await apiFetch(`${API_URL}/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ codigoArticulo, idCategoria, idUbicacion, idModelo })

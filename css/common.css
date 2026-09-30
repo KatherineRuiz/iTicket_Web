@@ -776,3 +776,104 @@ html.tema-oscuro .chat-icon {
 :is(.lista-tickets, .lista-tickets-asignados):has(> .badge.position-absolute) h6.texto-limitado-1 {
   padding-right: 90px;
 }
+
+/* ===== ORDENAMIENTO DE TABLAS ===== */
+/* Las columnas con data-orden se vuelven clicables y muestran hacia dónde ordenan */
+/* El texto del encabezado no cambia de color: el único indicador es la flecha,
+   así la fila de títulos se mantiene pareja aunque haya una columna activa */
+.table-custom thead th.columna-ordenable {
+    cursor: pointer;
+    user-select: none;
+    white-space: nowrap;
+}
+
+.table-custom thead th.columna-ordenable .icono-orden {
+    display: inline-block;
+    margin-left: 6px;
+    font-size: 11px;
+    opacity: 0.45;
+    vertical-align: middle;
+    transition: opacity 0.2s ease, transform 0.25s cubic-bezier(0.34, 1.3, 0.64, 1);
+}
+
+/* El descendente es la misma flecha girada: al alternar se ve el giro en vez de un salto */
+.table-custom thead th.columna-ordenable .icono-orden[data-direccion="desc"] {
+    transform: rotate(180deg);
+}
+
+.table-custom thead th.columna-ordenable:hover .icono-orden {
+    opacity: 0.8;
+}
+
+/* La columna por la que se está ordenando ahora mismo: solo se marca la flecha */
+.table-custom thead th.columna-ordenable.orden-activo .icono-orden {
+    opacity: 1;
+    color: var(--blue-primary);
+}
+
+/* Velo mientras la tabla recarga: el contenido se atenúa y aparece el indicador.
+   Va sobre el contenedor con scroll para que cubra el ancho completo. */
+.table-responsive.tabla-cargando {
+    position: relative;
+    pointer-events: none;
+}
+
+.table-responsive.tabla-cargando tbody {
+    opacity: 0.25;
+    transition: opacity 0.2s ease;
+}
+
+.table-responsive.tabla-cargando::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 30px;
+    height: 30px;
+    margin: -15px 0 0 -15px;
+    border: 3px solid rgba(67, 147, 246, 0.25);
+    border-top-color: var(--blue-primary);
+    border-radius: 50%;
+    animation: giro-tabla 0.7s linear infinite;
+}
+
+@keyframes giro-tabla {
+    to { transform: rotate(360deg); }
+}
+
+/* Entrada escalonada de las filas al reordenar: se nota que la tabla cambió de orden
+   sin que parezca que la página se recargó */
+.table-custom tbody.filas-reordenadas tr {
+    animation: entrada-fila 0.32s ease both;
+}
+
+.table-custom tbody.filas-reordenadas tr:nth-child(1)  { animation-delay: 0.00s; }
+.table-custom tbody.filas-reordenadas tr:nth-child(2)  { animation-delay: 0.03s; }
+.table-custom tbody.filas-reordenadas tr:nth-child(3)  { animation-delay: 0.06s; }
+.table-custom tbody.filas-reordenadas tr:nth-child(4)  { animation-delay: 0.09s; }
+.table-custom tbody.filas-reordenadas tr:nth-child(5)  { animation-delay: 0.12s; }
+.table-custom tbody.filas-reordenadas tr:nth-child(6)  { animation-delay: 0.15s; }
+.table-custom tbody.filas-reordenadas tr:nth-child(7)  { animation-delay: 0.18s; }
+.table-custom tbody.filas-reordenadas tr:nth-child(8)  { animation-delay: 0.21s; }
+.table-custom tbody.filas-reordenadas tr:nth-child(9)  { animation-delay: 0.24s; }
+.table-custom tbody.filas-reordenadas tr:nth-child(n+10) { animation-delay: 0.27s; }
+
+@keyframes entrada-fila {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: none; }
+}
+
+/* Quien pidió menos movimiento ve la atenuación, pero sin animaciones */
+@media (prefers-reduced-motion: reduce) {
+    .table-responsive.tabla-cargando::after {
+        animation: none;
+    }
+
+    .table-custom tbody.filas-reordenadas tr {
+        animation: none;
+    }
+
+    .table-custom thead th.columna-ordenable .icono-orden {
+        transition: none;
+    }
+}

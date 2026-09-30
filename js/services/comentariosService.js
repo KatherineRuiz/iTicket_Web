@@ -1,11 +1,11 @@
-import { API_BASE_URL, manejarRespuesta } from "./apiConfig.js";
+import { API_BASE_URL, manejarRespuesta, apiFetch } from "./apiConfig.js";
 
 const API_URL = `${API_BASE_URL}/comentarios`;
 
 //Crea un comentario asociado a un ticket
 export async function crearComentario(dto) {
     try {
-        const respuesta = await fetch(API_URL, {
+        const respuesta = await apiFetch(API_URL, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(dto)
@@ -27,7 +27,7 @@ export async function crearComentario(dto) {
 //Eliminar un comentario (idUsuario es quien solicita eliminar; el backend valida que sea el autor)
 export async function eliminarComentario(idComentario, idUsuario) {
     try {
-        const respuesta = await fetch(`${API_URL}/${idComentario}?idUsuario=${idUsuario}`, {
+        const respuesta = await apiFetch(`${API_URL}/${idComentario}?idUsuario=${idUsuario}`, {
             method: "DELETE"
         });
 
@@ -46,7 +46,7 @@ export async function eliminarComentario(idComentario, idUsuario) {
 //Obtener todos los comentarios de un ticket
 export async function obtenerComentariosPorTicket(idTicket) {
     try {
-        const respuesta = await fetch(`${API_URL}/ticket/${idTicket}`);
+        const respuesta = await apiFetch(`${API_URL}/ticket/${idTicket}`);
 
         if (respuesta.status === 404) {
             return [];
