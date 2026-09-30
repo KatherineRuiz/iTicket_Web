@@ -15,9 +15,32 @@ const rolActual = obtenerRolUsuario();
 if (rolActual === "usuario") window.location.replace("dashboardUsuarios.html");
 const soloLectura = rolActual === "tecnico";
 
-/* El técnico solo puede abrir proyectos con alguna fase de su departamento (o "Ambos") */
-async function validarAccesoDelTecnico(fasesDelProyecto) {
+// Identidad del técnico frente a ESTE proyecto en concreto. La matriz de permisos:
+// Coordinador -> CRUD de fases y detalles, y consulta del proyecto.
+// Supervisor  -> CRUD de detalles únicamente; fases y proyecto solo en consulta.
+// Cualquier otro técnico -> todo en consulta (según su departamento).
+function esCoordinadorDelProyecto(proyectoActual) {
+    const idUsuario = obtenerUsuarioLogueado()?.idUsuario;
+    return idUsuario != null && !!proyectoActual && Number(proyectoActual.coordinador) === Number(idUsuario);
+}
+
+function esSupervisorDelProyecto(proyectoActual) {
+    const idUsuario = obtenerUsuarioLogueado()?.idUsuario;
+    return idUsuario != null && !!proyectoActual && Number(proyectoActual.supervisor) === Number(idUsuario);
+}
+
+// "Responsable" = coordinador o supervisor (se usa solo para decidir si el técnico puede
+// siquiera ABRIR el proyecto, no para decidir qué puede editar dentro de él).
+function esResponsableDelProyecto(proyectoActual) {
+    return esCoordinadorDelProyecto(proyectoActual) || esSupervisorDelProyecto(proyectoActual);
+}
+
+/* El técnico solo puede abrir proyectos con alguna fase de su departamento (o "Ambos"),
+   o proyectos de los que es coordinador o supervisor. */
+async function validarAccesoDelTecnico(fasesDelProyecto, proyectoActual) {
     if (!soloLectura) return true;
+
+    if (esResponsableDelProyecto(proyectoActual)) return true;
 
     const idDepartamento = obtenerUsuarioLogueado()?.idDepartamento;
     let tipo = "";
@@ -67,6 +90,15 @@ async function inicializarVistaProyecto(id) {
         return;
     }
 
+    // Permisos de escritura sobre fases/detalles de ESTE proyecto: el administrador siempre
+    // puede; el técnico solo si es coordinador (fases) o coordinador/supervisor (detalles).
+    let puedeEscribirFases = !soloLectura;
+    let puedeEscribirDetalles = !soloLectura;
+    if (soloLectura) {
+        puedeEscribirFases = esCoordinadorDelProyecto(proyecto);
+        puedeEscribirDetalles = puedeEscribirFases || esSupervisorDelProyecto(proyecto);
+    }
+
     //Solo se piden los usuarios una vez y luego quedan en caché
     //Se usan para resolver coordinador/supervisor por correo en el formulario de edición
     let usuariosCache = null;
@@ -76,10 +108,31 @@ async function inicializarVistaProyecto(id) {
         if (usuariosCache) return Promise.resolve(usuariosCache);
         if (!cargandoUsuarios) {
             cargandoUsuarios = getUsuarios()
-                .then((usuarios) => { usuariosCache = usuarios; return usuariosCache; })
+                .then((usuarios) => { usuariosCache = usuarios; poblarListaCorreosUsuarios(usuarios); return usuariosCache; })
                 .finally(() => { cargandoUsuarios = null; });
         }
         return cargandoUsuarios;
+    }
+
+    // Llena el <datalist> de correos para que, al escribir coordinador/supervisor, el navegador
+    // sugiera "nombre — correo" de los usuarios ya cargados (evita tener que memorizar el correo).
+    function poblarListaCorreosUsuarios(usuarios) {
+        const listaCorreos = document.getElementById('listaUsuariosCorreoEdicion');
+        if (!listaCorreos) return;
+
+        listaCorreos.innerHTML = '';
+        // Solo Administrador o Tecnico pueden ser coordinador/supervisor de un proyecto
+        // (el backend también lo valida; esto es solo para no ofrecer opciones inválidas).
+        const rolesValidosResponsable = ['administrador', 'tecnico'];
+        (usuarios || [])
+            .filter((usuario) => rolesValidosResponsable.includes(String(usuario.nombreRol || '').toLowerCase()))
+            .forEach((usuario) => {
+                if (!usuario.correo) return;
+                const opcion = document.createElement('option');
+                opcion.value = usuario.correo;
+                opcion.label = `${usuario.nombreUsuario || ''} — ${usuario.correo}`;
+                listaCorreos.appendChild(opcion);
+            });
     }
 
     let fases = [];
@@ -113,6 +166,16 @@ async function inicializarVistaProyecto(id) {
     const modalDetalleFase = document.getElementById('modalDetalleFase');
     const btnEliminarProyecto = document.getElementById('btnEliminarProyecto');
 
+    // data-roles="admin" (aplicado por menu.js al cargar la página) oculta estos controles a
+    // TODO técnico por defecto; aquí se vuelven a mostrar solo para quien sí tenga permiso
+    // sobre ESTE proyecto en concreto (coordinador para fases, coordinador o supervisor para detalles).
+    if (puedeEscribirFases) {
+        [btnEditarFase, btnCrearFase, btnEliminarFase].forEach((btn) => btn?.classList.remove('d-none'));
+    }
+    if (puedeEscribirDetalles) {
+        btnEditarDetalle?.parentElement?.classList.remove('d-none');
+    }
+
     /* Muestra u oculta los campos de edición de la fase  */
     function mostrarCamposEdicionFase(mostrar) {
         ['campoGastoTotalFase', 'campoFechaInicioReal', 'campoFechaFinalReal']
@@ -143,6 +206,7 @@ async function inicializarVistaProyecto(id) {
         document.getElementById('txtTipoProyecto').textContent = proyecto.tipoProyecto;
         document.getElementById('txtCoordinadorProyecto').textContent = proyecto.nombreCoordinador;
         document.getElementById('txtSupervisorProyecto').textContent = proyecto.nombreSupervisor;
+        document.getElementById('txtContratistaProyecto').textContent = proyecto.contratista || 'N/A';
         document.getElementById('txtPresupuestoProyecto').textContent = Number(proyecto.presupuestoEstimado || 0).toFixed(2);
         document.getElementById('txtTotalProyecto').textContent = Number(proyecto.gastoTotal || 0).toFixed(2);
         document.getElementById('txtEstadoProyecto').textContent = proyecto.finalizado ? "Finalizado" : "En progreso";
@@ -234,10 +298,10 @@ async function inicializarVistaProyecto(id) {
             li.className = 'd-flex align-items-center justify-content-between gap-2 py-2 border-bottom';
             li.innerHTML = `
         <div class="d-flex align-items-center gap-2 flex-grow-1">
-            <input type="checkbox" class="form-check-input" data-id-detalle="${detalle.id}" ${detalle.completado ? 'checked' : ''} ${soloLectura ? 'disabled' : ''}>
+            <input type="checkbox" class="form-check-input" data-id-detalle="${detalle.id}" ${detalle.completado ? 'checked' : ''} ${puedeEscribirDetalles ? '' : 'disabled'}>
             <span class="${detalle.completado ? 'text-decoration-line-through text-muted' : ''}">${detalle.descripcionDetalle}</span>
         </div>
-        ${soloLectura ? '' : `<i class="bi bi-trash btnEliminarDetalle" data-id-detalle="${detalle.id}" title="Eliminar"></i>`}
+        ${puedeEscribirDetalles ? `<i class="bi bi-trash btnEliminarDetalle" data-id-detalle="${detalle.id}" title="Eliminar"></i>` : ''}
       `;
 
             listaDetalleVista.appendChild(li);
@@ -292,6 +356,7 @@ async function inicializarVistaProyecto(id) {
         document.getElementById('selectEstadoProyectoEdicion').value = proyecto.finalizado ? "Finalizado" : "En progreso";
         document.getElementById('numPresupuestoProyectoEdicion').value = proyecto.presupuestoEstimado;
         document.getElementById('numTotalProyectoEdicion').value = proyecto.gastoTotal;
+        document.getElementById('txtContratistaProyectoEdicion').value = proyecto.contratista || '';
 
         try {
             const usuarios = await obtenerUsuarios();
@@ -351,7 +416,8 @@ async function inicializarVistaProyecto(id) {
             descripcionProyecto: document.getElementById('txtDescripcionProyectoEdicion').value.trim(),
             presupuestoEstimado: document.getElementById('numPresupuestoProyectoEdicion').value,
             correoCoordinador: document.getElementById('txtCoordinadorProyectoEdicion').value.trim().toLowerCase(),
-            correoSupervisor: document.getElementById('txtSupervisorProyectoEdicion').value.trim().toLowerCase()
+            correoSupervisor: document.getElementById('txtSupervisorProyectoEdicion').value.trim().toLowerCase(),
+            contratista: document.getElementById('txtContratistaProyectoEdicion').value.trim()
         };
 
         //Valida los datos del formulario
@@ -397,6 +463,7 @@ async function inicializarVistaProyecto(id) {
             gastoTotal: Number(document.getElementById('numTotalProyectoEdicion').value),
             coordinador: coordinador.idUsuario,
             supervisor: supervisor.idUsuario,
+            contratista: datosFormulario.contratista || null,
             finalizado: document.getElementById('selectEstadoProyectoEdicion').value === "Finalizado"
         };
 
@@ -425,10 +492,16 @@ async function inicializarVistaProyecto(id) {
     async function recargarFasesProyecto(idPreferido = faseSeleccionadaId) {
         const fasesApi = await getFasesPorProyecto(proyecto.idProyecto);
 
-        // El técnico solo puede abrir proyectos de su departamento
-        if (!(await validarAccesoDelTecnico(fasesApi))) return;
+        // El técnico solo puede abrir proyectos de su departamento (o de los que es coordinador/supervisor)
+        if (!(await validarAccesoDelTecnico(fasesApi, proyecto))) return;
 
         fases = fasesApi.map((fase) => ({ id: fase.idFase, detalles: [], ...fase }));
+
+        // Las fases sin departamento interno ("Externo") solo son visibles para el coordinador,
+        // el supervisor o el administrador; un técnico que solo tiene acceso por departamento no las ve.
+        if (soloLectura && !esResponsableDelProyecto(proyecto)) {
+            fases = fases.filter((fase) => String(fase.departamentoEncargado || '').toLowerCase() !== 'externo');
+        }
 
         const seleccionExiste = fases.some((fase) => Number(fase.id) === Number(idPreferido));
         faseSeleccionadaId = seleccionExiste ? Number(idPreferido) : null;
@@ -548,13 +621,36 @@ async function inicializarVistaProyecto(id) {
 
         // Validaciones de fase
         formAgregarFase.querySelectorAll('.is-invalid').forEach((el) => el.classList.remove('is-invalid'));
-        const erroresValidacion = validarFormularioFase(datosFase);
+        const erroresValidacion = validarFormularioFase(datosFase, Boolean(faseEnEdicionId));
         if (erroresValidacion.length > 0) {
             erroresValidacion.forEach((error) => {
                 const campo = formAgregarFase.querySelector(`[id="${error.campo}"]`);
                 if (campo) campo.classList.add('is-invalid');
             });
             mostrarError(erroresValidacion.map((error) => error.mensaje).join('<br>'));
+            return;
+        }
+
+        if (faseEnEdicionId && finalizado) {
+            const faseActual = obtenerFasePorId(faseEnEdicionId);
+            const detallesIncompletos = (faseActual?.detalles || []).some((d) => !normalizarDetalle(d).completado);
+            if (detallesIncompletos) {
+                mostrarError('No se puede finalizar la fase: todav\u00eda tiene detalles pendientes de completar.');
+                return;
+            }
+        }
+
+        // Bloqueo duro: el gasto total del proyecto (suma de todas sus fases) no puede superar
+        // su presupuesto estimado. Se recalcula con las fases ya cargadas, excluyendo la fase
+        // que se está editando (si aplica) y sumando el nuevo gasto propuesto para ella.
+        const sumaOtrasFases = fases
+            .filter((f) => f.id !== faseEnEdicionId)
+            .reduce((acc, f) => acc + Number(f.gastoTotal || 0), 0);
+        const gastoNuevoFase = datosFase.gastoTotal === null || datosFase.gastoTotal === undefined ? 0 : Number(datosFase.gastoTotal);
+        const gastoTotalProyectado = sumaOtrasFases + gastoNuevoFase;
+        const presupuestoProyecto = Number(proyecto.presupuestoEstimado || 0);
+        if (gastoTotalProyectado > presupuestoProyecto) {
+            mostrarError(`El gasto total del proyecto ($${gastoTotalProyectado.toFixed(2)}) superar\u00eda su presupuesto estimado ($${presupuestoProyecto.toFixed(2)}).`);
             return;
         }
 
@@ -589,6 +685,13 @@ async function inicializarVistaProyecto(id) {
 
         if (!faseSeleccionadaId) {
             mostrarError('Selecciona una fase para agregar un detalle.');
+            return;
+        }
+
+        const faseSeleccionada = obtenerFasePorId(faseSeleccionadaId);
+        const faseFinalizada = normalizarEstadoFase(faseSeleccionada?.finalizado ?? faseSeleccionada?.faseFinalizada ?? false);
+        if (faseFinalizada) {
+            mostrarError('No se pueden agregar detalles a una fase ya finalizada.');
             return;
         }
 
