@@ -29,7 +29,19 @@ document.addEventListener("DOMContentLoaded", function () {
     prepararNavegacionSuave();
     cargarMenuCompartido();
     finalizarPreparacionVisual();
+    inicializarAvisoNotificaciones();
 });
+
+/* El aviso vive en su propio modulo. Se carga con import() dinamico porque menu.js
+   entra como script normal (sin type="module") en todas las paginas. */
+async function inicializarAvisoNotificaciones() {
+    try {
+        const { iniciarAvisoNotificaciones } = await import("./avisoNotificaciones.js");
+        iniciarAvisoNotificaciones();
+    } catch (error) {
+        console.warn("No se pudo iniciar el aviso de notificaciones:", error);
+    }
+}
 
 /* Revalida la sesion contra el servidor (GET /auth/me), sin bloquear el resto
    de la pagina -- que ya se pinta al instante con lo que hay en sessionStorage.

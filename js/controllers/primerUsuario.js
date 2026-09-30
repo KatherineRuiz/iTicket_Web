@@ -18,12 +18,8 @@ const txtConfirmar = document.getElementById("txtConfirmar");
 const valor = (id) => document.getElementById(id).value.trim();
 
 let pasoActual = 1;
-let idRolAdministrador = null;
 let hayDepartamentos = false;
 let configuracionLista = false;
-// Si el área o el departamento ya se crearon y luego falla el usuario, no se vuelven a crear
-let idDepartamentoCreado = null;
-let idAreaCreada = null;
 
 async function obtener(ruta) {
     const respuesta = await fetch(`${API_BASE_URL}${ruta}`);
@@ -47,20 +43,17 @@ async function registrar(ruta, datos) {
 
 async function iniciar() {
     try {
-        // Esta pantalla solo sirve mientras no exista ningún usuario
-        const usuarios = await obtener("/usuarios");
-        if (usuarios.length > 0) {
+        /* Esta pantalla solo sirve mientras no exista ningún usuario, así que se apoya en
+           /setup, las únicas dos rutas que la API deja abiertas sin sesión. Antes pedía
+           /usuarios, /roles y /departamentos, que hoy exigen ser administrador: nadie
+           habría podido crear la primera cuenta. */
+        const estado = await obtener("/setup/estado");
+        if (estado.hayUsuarios) {
             window.location.replace("index.html");
             return;
         }
 
-        const roles = await obtener("/roles");
-        idRolAdministrador = roles.find((rol) => rol.nombreRol === "Administrador")?.idRol;
-        if (!idRolAdministrador) {
-            throw new Error("No existe el rol Administrador. Revisa que se haya ejecutado el script de la base de datos.");
-        }
-
-        const departamentos = await obtener("/departamentos/asignables");
+        const departamentos = estado.departamentos ?? [];
         hayDepartamentos = departamentos.length > 0;
 
         if (hayDepartamentos) {
@@ -121,7 +114,7 @@ function validarPaso(numero) {
     }
     if (numero === 3) {
         if (!configuracionLista) return "Espera un momento, aún se está cargando la información.";
-        if (!hayDepartamentos && !idDepartamentoCreado && (!valor("txtArea") || !valor("txtDepartamento"))) {
+        if (!hayDepartamentos && (!valor("txtArea") || !valor("txtDepartamento"))) {
             return "Indica el área y el departamento.";
         }
     }
@@ -154,33 +147,25 @@ form.addEventListener("input", () => {
 
 // ---------- Envío ----------
 
+/* Una sola llamada: la API crea área, departamento y administrador dentro de la misma
+   transacción. Antes eran tres POST seguidos y había que recordar cuáles ya habían
+   pasado para no duplicarlos si el último fallaba; ahora, si algo falla, no queda nada. */
 async function crearAdministrador() {
-    let idDepartamento = Number(selDepartamento.value);
-
-    if (!hayDepartamentos) {
-        if (!idDepartamentoCreado) {
-            if (!idAreaCreada) {
-                const area = await registrar("/areas", { nombreArea: valor("txtArea") });
-                idAreaCreada = area.idArea;
-            }
-            const departamento = await registrar("/departamentos", {
-                nombreDepartamento: valor("txtDepartamento"),
-                tipoDepartamento: document.getElementById("selTipo").value,
-                idArea: idAreaCreada
-            });
-            idDepartamentoCreado = departamento.idDepartamento;
-        }
-        idDepartamento = idDepartamentoCreado;
-    }
-
-    await registrar("/usuarios", {
+    const datos = {
         nombreUsuario: valor("txtNombre"),
         correo: valor("txtCorreo"),
-        clave: txtClave.value,
-        idRol: idRolAdministrador,
-        idDepartamento,
-        estado: true
-    });
+        clave: txtClave.value
+    };
+
+    if (hayDepartamentos) {
+        datos.idDepartamento = Number(selDepartamento.value);
+    } else {
+        datos.nombreArea = valor("txtArea");
+        datos.nombreDepartamento = valor("txtDepartamento");
+        datos.tipoDepartamento = document.getElementById("selTipo").value;
+    }
+
+    await registrar("/setup/administrador", datos);
 }
 
 // Enter o "Siguiente" avanzan de paso; en el último se crea la cuenta
