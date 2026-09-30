@@ -1,5 +1,5 @@
 // URL base de la API. Cuando haya dominio real, solo se cambia aqui.
-export const API_BASE_URL = "http://localhost:8080/api";
+export const API_BASE_URL = "https://iticketapi-3e643051c995.herokuapp.com/api";
 
 // Paginas que se pueden abrir sin sesion iniciada (login, primer usuario y recuperar contraseña).
 const PAGINAS_PUBLICAS = [
