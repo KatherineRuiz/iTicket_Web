@@ -2,6 +2,7 @@ import { mostrarError } from "../components/sweetAlerts.js";
 import { getBitacoras } from "../services/bitacorasService.js";
 import { formatearFecha12H } from "../utils/formateadores.js";
 import { renderizarPaginacion } from "../components/paginacion.js";
+import { inicializarOrdenamientoTabla, ordenarLista } from "../components/ordenamientoTabla.js";
 
 const tblBitacoras = document.getElementById("tblBitacoras");
 const paginacionBitacoras = document.getElementById("paginacionBitacoras");
@@ -22,6 +23,19 @@ const ESTADO_ELIMINADO = "eliminado";
 let bitacorasCompletas = [];
 let paginaActualTodos = 1;
 let paginaActualEliminados = 1;
+// Criterio de cada tabla. Los registros se traen completos, así que el orden se aplica aquí
+let ordenTodos = "";
+let ordenEliminados = "";
+
+inicializarOrdenamientoTabla(tblBitacoras?.closest("table"), (orden) => {
+    ordenTodos = orden;
+    renderizarTodos(1);
+});
+
+inicializarOrdenamientoTabla(tblEliminados?.closest("table"), (orden) => {
+    ordenEliminados = orden;
+    renderizarEliminados(1);
+});
 let temporizadorBusquedaTodos = null;
 let temporizadorBusquedaEliminados = null;
 
@@ -85,7 +99,10 @@ function filtrarBitacoras(lista, busqueda, estado) {
 }
 
 function renderizarTodos(pagina = 1) {
-    const filtradas = filtrarBitacoras(bitacorasCompletas, txtBuscarBitacora.value, sltEstadoBitacora.value);
+    // El orden se aplica sobre el total filtrado, antes de cortar la página
+    const filtradas = ordenarLista(
+        filtrarBitacoras(bitacorasCompletas, txtBuscarBitacora.value, sltEstadoBitacora.value),
+        ordenTodos);
     const totalPaginas = Math.max(1, Math.ceil(filtradas.length / TAMANO_PAGINA));
     paginaActualTodos = Math.min(Math.max(pagina, 1), totalPaginas);
 
@@ -123,7 +140,7 @@ function renderizarTodos(pagina = 1) {
 
 function renderizarEliminados(pagina = 1) {
     const soloEliminados = bitacorasCompletas.filter(esEliminado);
-    const filtradas = filtrarBitacoras(soloEliminados, txtBuscarEliminados.value, "");
+    const filtradas = ordenarLista(filtrarBitacoras(soloEliminados, txtBuscarEliminados.value, ""), ordenEliminados);
     const totalPaginas = Math.max(1, Math.ceil(filtradas.length / TAMANO_PAGINA));
     paginaActualEliminados = Math.min(Math.max(pagina, 1), totalPaginas);
 

@@ -121,10 +121,12 @@
                             <table class="table table-borderless table-custom tabla-columnas-iguales tabla-centrada align-middle">
                                 <thead>
                                     <tr>
-                                        <th scope="col">Código</th>
+                                        <!-- data-orden marca las columnas ordenables; el campo es el de la entidad en la API.
+                                             Modelo y Marca no se ordenan: son relaciones que admiten nulos. -->
+                                        <th scope="col" data-orden="codigoArticulo">Código</th>
                                         <th scope="col">Modelo</th>
-                                        <th scope="col">Categoría</th>
-                                        <th scope="col">Ubicación</th>
+                                        <th scope="col" data-orden="categoria.nombreCategoria">Categoría</th>
+                                        <th scope="col" data-orden="ubicacion.nombreUbicacion">Ubicación</th>
                                         <th scope="col">Marca</th>
                                         <th scope="col">Acciones</th>
                                     </tr>
@@ -209,7 +211,7 @@
                                         <table class="table table-borderless table-custom tabla-columnas-iguales align-middle">
                                             <thead>
                                                 <tr>
-                                                    <th scope="col" class="text-center">Nombre de la categoría</th>
+                                                    <th scope="col" class="text-center" data-orden="nombreCategoria">Nombre de la categoría</th>
                                                     <th scope="col" class="text-center">Acciones</th>
                                                 </tr>
                                             </thead>
@@ -299,8 +301,8 @@
                                         <table class="table table-borderless table-custom tabla-columnas-iguales align-middle">
                                             <thead>
                                                 <tr>
-                                                    <th scope="col" class="text-center">Modelo</th>
-                                                    <th scope="col" class="text-center">Marca</th>
+                                                    <th scope="col" class="text-center" data-orden="nombreModelo">Modelo</th>
+                                                    <th scope="col" class="text-center" data-orden="nombreMarca">Marca</th>
                                                     <th scope="col" class="text-center">Acciones</th>
                                                 </tr>
                                             </thead>
@@ -377,7 +379,7 @@
                                         <table class="table table-borderless table-custom tabla-columnas-iguales align-middle">
                                             <thead>
                                                 <tr>
-                                                    <th scope="col" class="text-center">Nombre de la marca</th>
+                                                    <th scope="col" class="text-center" data-orden="nombreMarca">Nombre de la marca</th>
                                                     <th scope="col" class="text-center">Acciones</th>
                                                 </tr>
                                             </thead>
@@ -487,7 +489,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script type="module" src="js/controllers/notificaciones.js"></script>
-    <script src="js/components/menu.js?v=15"></script>
+    <script src="js/components/menu.js?v=16"></script>
     <script type="module" src="js/controllers/equiposMobiliarios.js?v=2"></script>
 
 </body>

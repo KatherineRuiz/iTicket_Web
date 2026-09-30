@@ -8,6 +8,7 @@ export async function getArticulosPaginados(pagina = 1, tamano = 10, filtros = {
     if (filtros.busqueda) params.append("busqueda", filtros.busqueda);
     if (filtros.idCategoria) params.append("idCategoria", filtros.idCategoria);
     if (filtros.idUbicacion) params.append("idUbicacion", filtros.idUbicacion);
+    if (filtros.sort) params.append("sort", filtros.sort);
 
     const respuesta = await apiFetch(`${API_URL}/paginado?${params.toString()}`);
     return await manejarRespuesta(respuesta); // { articulos, totalElementos, totalPaginas, paginaActual }

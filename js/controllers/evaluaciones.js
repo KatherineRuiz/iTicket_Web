@@ -1,6 +1,7 @@
 import { obtenerEvaluaciones, obtenerMetricasEvaluaciones } from "../services/evaluacionesService.js";
 import { mostrarError } from "../components/sweetAlerts.js";
 import { renderizarPaginacion as pintarPaginacionComun } from "../components/paginacion.js";
+import { inicializarOrdenamientoTabla } from "../components/ordenamientoTabla.js";
 import { obtenerRolUsuario } from "../utils/sesion.js";
 
 // Las evaluaciones son solo del administrador, ni siquiera por enlace directo
@@ -26,11 +27,22 @@ let paginaActual = 0;
 const tamanioPagina = 10;
 let totalPaginas = 0;
 let totalElementos = 0;
+// Criterio de ordenamiento vigente ("campo,asc"). Vacío = el orden por defecto de la API
+let ordenActual = "";
 
 document.addEventListener("DOMContentLoaded", function () {
     if (selectCalificacion && selectCalificacion.value === "") {
         selectCalificacion.value = "0";
     }
+
+    // Ordenamiento por encabezado. Se vuelve a la primera página porque con otro orden
+    // esa página ya no muestra los mismos registros.
+    inicializarOrdenamientoTabla(tablaEvaluaciones?.closest("table"), async (sort) => {
+        ordenActual = sort;
+        paginaActual = 0;
+        await cargarDatos();
+    });
+
     cargarDatos();
 });
 
@@ -55,7 +67,7 @@ async function cargarDatos() {
 
         // Peticiones en paralelo para tabla paginada y métricas globales
         const [pageData, metricas] = await Promise.all([
-            obtenerEvaluaciones(idUsuarioAdmin, paginaActual, tamanioPagina, busqueda, calificacion, fecha),
+            obtenerEvaluaciones(idUsuarioAdmin, paginaActual, tamanioPagina, busqueda, calificacion, fecha, ordenActual),
             obtenerMetricasEvaluaciones(idUsuarioAdmin, busqueda, calificacion, fecha)
         ]);
 

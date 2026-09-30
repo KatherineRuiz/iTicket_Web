@@ -1,4 +1,4 @@
-import { mostrarError, mostrarExitoRedireccion } from "../components/sweetAlerts.js";
+import { mostrarError, mostrarExitoRedireccion, mostrarAlertaEspera, mostrarExitoSimple } from "../components/sweetAlerts.js";
 
     document.addEventListener("DOMContentLoaded", function () {
     const digitos = document.querySelectorAll(".digito-codigo");

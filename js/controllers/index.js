@@ -1,12 +1,16 @@
 import { login } from "../services/authService.js";
-import { getUsuarioById, getUsuarios } from "../services/usuariosService.js";
+import { getUsuarioById } from "../services/usuariosService.js";
+import { API_BASE_URL } from "../services/apiConfig.js";
 import { mostrarError, mostrarExitoRedireccion } from "../components/sweetAlerts.js";
 
-// Si la base de datos todavía no tiene usuarios, se manda a crear el primer administrador
+/* Si la base de datos todavía no tiene usuarios, se manda a crear el primer administrador.
+   Se pregunta por /setup/estado y no por /usuarios: esa ruta exige ser administrador, así
+   que desde el login siempre respondía 401 y dejaba un error rojo en la consola. */
 async function revisarPrimerUsuario() {
     try {
-        const usuarios = await getUsuarios();
-        if (!usuarios || usuarios.length === 0) {
+        const respuesta = await fetch(`${API_BASE_URL}/setup/estado`);
+        const cuerpo = await respuesta.json().catch(() => null);
+        if (respuesta.ok && cuerpo?.data?.hayUsuarios === false) {
             window.location.replace("primerUsuario.html");
         }
     } catch (error) {

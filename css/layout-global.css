@@ -3107,3 +3107,149 @@ html.tema-oscuro .calendario-accion-principal:hover { color: #ffffff; background
         transform: none;
     }
 }
+
+/* Ordenamiento de tablas en modo oscuro: el texto del encabezado conserva su color,
+   solo la flecha de la columna activa se resalta */
+html.tema-oscuro .table-custom thead th.columna-ordenable.orden-activo .icono-orden {
+    color: var(--accent-celeste);
+}
+
+html.tema-oscuro .table-responsive.tabla-cargando::after {
+    border-color: rgba(103, 174, 247, 0.25);
+    border-top-color: var(--accent-celeste);
+}
+
+/* ============================================================
+   Mini aviso de notificaciones nuevas (js/components/avisoNotificaciones.js)
+   Vive en la esquina inferior derecha, encima de todo, y no bloquea la pagina:
+   solo el aviso recibe clics, el hueco que lo rodea no.
+   ============================================================ */
+
+.aviso-notificaciones {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    max-width: min(340px, calc(100vw - 32px));
+    padding: 12px 14px;
+    border-radius: 999px;
+    background: #142454;
+    color: #ffffff;
+    box-shadow: 0 14px 34px rgba(11, 22, 52, 0.32);
+    cursor: pointer;
+    /* Entra desde abajo; la posicion final la pone .visible */
+    opacity: 0;
+    transform: translateY(14px) scale(0.96);
+    transition: opacity 240ms var(--layout-ease, ease), transform 240ms var(--layout-ease, ease);
+}
+
+.aviso-notificaciones.visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+
+.aviso-notificaciones-icono {
+    position: relative;
+    flex: 0 0 auto;
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: rgba(64, 146, 255, 0.22);
+    color: #8fc0ff;
+    font-size: 15px;
+}
+
+/* El contador: la burbuja con el numero, pegada a la campana */
+.aviso-notificaciones-contador {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    min-width: 19px;
+    height: 19px;
+    padding: 0 5px;
+    border-radius: 999px;
+    border: 2px solid #142454;
+    background: #4092ff;
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 15px;
+    text-align: center;
+}
+
+.aviso-notificaciones-texto {
+    flex: 1 1 auto;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.25;
+}
+
+.aviso-notificaciones-cerrar {
+    flex: 0 0 auto;
+    display: grid;
+    place-items: center;
+    width: 26px;
+    height: 26px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 11px;
+    cursor: pointer;
+    transition: background 160ms ease, color 160ms ease;
+}
+
+.aviso-notificaciones-cerrar:hover {
+    background: rgba(255, 255, 255, 0.14);
+    color: #ffffff;
+}
+
+/* Late = "latido". Se repite cada vez que sube el contador, para que se note
+   que llego otra aunque el aviso ya estuviera en pantalla. */
+.aviso-notificaciones.late .aviso-notificaciones-icono {
+    animation: aviso-notificaciones-latido 520ms var(--layout-ease-soft, ease);
+}
+
+@keyframes aviso-notificaciones-latido {
+    0% { transform: scale(1); }
+    35% { transform: scale(1.18); }
+    100% { transform: scale(1); }
+}
+
+html.tema-oscuro .aviso-notificaciones {
+    background: #182235;
+    border: 1px solid #2b374c;
+    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.5);
+}
+
+html.tema-oscuro .aviso-notificaciones-contador {
+    border-color: #182235;
+}
+
+@media (max-width: 560px) {
+    .aviso-notificaciones {
+        right: 12px;
+        left: 12px;
+        bottom: 16px;
+        max-width: none;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .aviso-notificaciones {
+        transition: opacity 120ms linear;
+        transform: none;
+    }
+    .aviso-notificaciones.visible {
+        transform: none;
+    }
+    .aviso-notificaciones.late .aviso-notificaciones-icono {
+        animation: none;
+    }
+}

@@ -27,11 +27,12 @@ export async function crearEvaluacion(evaluacion, idUsuario) {
 // 2. Obtener evaluaciones paginadas con filtros opcionales (búsqueda, calificación y fecha)
 export async function obtenerEvaluaciones(
     idUsuarioAdmin,
-    page = 0, 
-    size = 10, 
-    busqueda = "", 
-    calificacion = "", 
-    fecha = ""
+    page = 0,
+    size = 10,
+    busqueda = "",
+    calificacion = "",
+    fecha = "",
+    sort = ""
 ) {
     try {
         const params = new URLSearchParams({
@@ -39,6 +40,9 @@ export async function obtenerEvaluaciones(
             page: page.toString(),
             size: size.toString()
         });
+
+        // Spring arma el Pageable con page, size y sort directamente desde la URL
+        if (sort) params.append("sort", sort);
 
         if (busqueda && busqueda.trim() !== "") {
             params.append("busqueda", busqueda.trim());

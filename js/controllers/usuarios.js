@@ -3,13 +3,15 @@ import { getDepartamentos } from '../services/departamentosService.js';
 import { getRoles } from '../services/rolesService.js';
 import { validarFormularioUsuario } from '../validators/usuariosValidator.js';
 import { mostrarError } from '../components/sweetAlerts.js';
- 
+import { inicializarOrdenamientoTabla, ordenarLista } from '../components/ordenamientoTabla.js';
+
 const formUsuario = document.getElementById('formUsuario');
 const usuarioIdInput = document.getElementById('usuarioId');
 const nombreUsuarioInput = document.getElementById('nombreUsuario');
 const selectRol = document.getElementById('selectRol');
 const correoUsuarioInput = document.getElementById('correoUsuario');
 const passwordUsuarioInput = document.getElementById('passwordUsuario');
+const campoPasswordUsuario = document.getElementById('campoPasswordUsuario');
 const selectDepartamentoUsuario = document.getElementById('selectDepartamentoUsuario');
 const campoEstadoUsuario = document.getElementById('campoEstadoUsuario');
 const selectEstadoUsuario = document.getElementById('selectEstadoUsuario');
@@ -18,6 +20,14 @@ const btnTextoUsuario = document.getElementById('btnTextoUsuario');
 const btnCancelarUsuario = document.getElementById('btnCancelarUsuario');
 const tablaUsuariosBody = document.getElementById('tablaUsuariosBody');
 let usuariosActuales = [];
+// Criterio vigente de la tabla ("campo,asc"). Esta tabla trae todos los registros,
+// así que el orden se aplica aquí mismo antes de pintarla.
+let ordenUsuarios = '';
+
+inicializarOrdenamientoTabla(tablaUsuariosBody?.closest('table'), (orden) => {
+    ordenUsuarios = orden;
+    pintarTablaUsuarios(usuariosActuales);
+});
 
 // Áreas, departamentos y usuarios comparten este evento de actualización.
 window.addEventListener('iticket:recargar-tablas-usuarios', () => {
@@ -92,7 +102,7 @@ async function cargarUsuarios() {
  
 function pintarTablaUsuarios(usuarios) {
     tablaUsuariosBody.innerHTML = '';
-    usuarios.forEach(usuario => {
+    ordenarLista(usuarios, ordenUsuarios).forEach(usuario => {
         const fila = document.createElement('tr');
         fila.innerHTML = `
             <td class="text-center">${usuario.nombreUsuario}</td>
@@ -127,10 +137,12 @@ function cargarUsuarioEnFormulario(id, usuarios) {
     usuarioIdInput.value = usuario.idUsuario;
     nombreUsuarioInput.value = usuario.nombreUsuario;
     correoUsuarioInput.value = usuario.correo;
+
+    // La contraseña solo se asigna al crear: cada quien cambia la suya desde su perfil
     passwordUsuarioInput.value = '';
     passwordUsuarioInput.required = false;
-    passwordUsuarioInput.placeholder = 'Dejar en blanco para no cambiarla';
- 
+    campoPasswordUsuario.style.display = 'none';
+
     if (usuario.idRol) selectRol.value = usuario.idRol;
     if (usuario.idDepartamento) selectDepartamentoUsuario.value = usuario.idDepartamento;
  
@@ -146,7 +158,7 @@ function limpiarFormularioUsuario() {
     formUsuario.reset();
     usuarioIdInput.value = '';
     passwordUsuarioInput.required = true;
-    passwordUsuarioInput.placeholder = 'Mínimo 8 caracteres';
+    campoPasswordUsuario.style.display = '';
     campoEstadoUsuario.style.display = 'none';
     tituloFormUsuario.textContent = 'Agregar usuario';
     btnTextoUsuario.textContent = 'Guardar usuario';
@@ -170,7 +182,8 @@ formUsuario.addEventListener('submit', async (evento) => {
         idDepartamento: Number(selectDepartamentoUsuario.value),
         estado: true // Los usuarios nuevos se crean activos por defecto (el campo Estado va oculto al crear)
     };
-    if (passwordUsuarioInput.value.trim()) {
+    // La contraseña solo viaja al crear; la API ya no la acepta al actualizar
+    if (!id && passwordUsuarioInput.value.trim()) {
         usuario.clave = passwordUsuarioInput.value.trim();
     }
 
