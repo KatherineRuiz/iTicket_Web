@@ -2,15 +2,17 @@ import { API_BASE_URL, manejarRespuesta, apiFetch } from "./apiConfig.js";
 
 const API_URL = `${API_BASE_URL}/bitacoras`
 
-//Obtener la bitácora completa (todos los tickets, incluidos los eliminados)
-export async function getBitacoras(idUsuarioAdmin) {
+//Obtener la bitácora paginada del departamento del administrador/técnico (incluye los eliminados).
+//El departamento ya no se filtra por un id que manda el front, el backend lo
+//resuelve del usuario autenticado en la cookie.
+export async function getBitacoras(pagina = 1, tamano = 10, filtros = {}) {
     try {
-        const respuesta = await apiFetch(`${API_URL}?idUsuarioAdmin=${idUsuarioAdmin}`);
+        const parametros = new URLSearchParams({ pagina, tamano })
 
-        //204 No Content -> no hay bitacoras registradas todavia
-        if (respuesta.status === 204) {
-            return [];
-        }
+        if (filtros.busqueda) parametros.append("busqueda", filtros.busqueda);
+        if (filtros.estado) parametros.append("estado", filtros.estado);
+
+        const respuesta = await apiFetch(`${API_URL}?${parametros}`);
 
         if (!respuesta.ok) {
             console.error("Error al obtener las bitácoras");

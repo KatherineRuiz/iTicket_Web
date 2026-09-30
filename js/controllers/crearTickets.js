@@ -309,7 +309,7 @@ async function cargarDepartamentos() {
 
     departamentosCargados = true;
 
-    if (categoriaActual === "Software") {
+    if (categoriaActual === "software") {
       forzarDepartamentoIT();
     }
   } catch (error) {
@@ -550,5 +550,6 @@ function limpiarFormulario(){
 document.addEventListener("DOMContentLoaded", function () {
   //Estado inicial por defecto
   cambiarCategoria("equipos");
+  cargarDepartamentos();
 });
 

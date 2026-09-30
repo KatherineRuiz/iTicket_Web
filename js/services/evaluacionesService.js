@@ -5,7 +5,7 @@ const API_URL = `${API_BASE_URL}/evaluaciones`;
 // 1. Crear evaluación de ticket resuelto
 export async function crearEvaluacion(evaluacion, idUsuario) {
     try {
-        const respuesta = await apiFetch(`${API_URL}?idUsuario=${idUsuario}`, {
+        const respuesta = await apiFetch(`${API_URL}`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(evaluacion)
@@ -36,7 +36,6 @@ export async function obtenerEvaluaciones(
 ) {
     try {
         const params = new URLSearchParams({
-            idUsuarioAdmin: idUsuarioAdmin,
             page: page.toString(),
             size: size.toString()
         });
@@ -74,7 +73,6 @@ export async function obtenerEvaluaciones(
 export async function obtenerMetricasEvaluaciones(idUsuarioAdmin, busqueda = "", calificacion = "", fecha = "") {
     try {
         const params = new URLSearchParams();
-        params.append("idUsuarioAdmin", idUsuarioAdmin);
 
         if (busqueda && busqueda.trim() !== "") {
             params.append("busqueda", busqueda.trim());

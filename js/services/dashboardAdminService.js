@@ -1,9 +1,4 @@
-/*
- * SERVICIO DEL DASHBOARD ADMINISTRATIVO
- * Las consultas usan cache:no-store para mostrar datos recientes. Además de
- * acceder a endpoints, este archivo normaliza el ranking por calificación que
- * ya calcula el backend a partir de las evaluaciones.
- */
+
 import { API_BASE_URL, manejarRespuesta, apiFetch } from './apiConfig.js';
 
 // Evita reutilizar respuestas guardadas por el navegador en un dashboard:
@@ -17,21 +12,18 @@ export async function obtenerTickets() {
     return manejarRespuesta(await fetchFresco(`${API_BASE_URL}/tickets`));
 }
 
-// idUsuarioAdmin filtra las metricas al departamento del admin (obligatorio, igual que en el resto del dashboard)
+// El departamento del admin no se filtra por un id que manda el front, el backend lo resuelve del usuario autenticado en la cookie.
 export async function obtenerMetricasDashboard(idUsuarioAdmin) {
-    const params = new URLSearchParams({ idUsuarioAdmin });
-    return manejarRespuesta(await fetchFresco(`${API_BASE_URL}/estadisticas/metricas?${params.toString()}`));
+    return manejarRespuesta(await fetchFresco(`${API_BASE_URL}/estadisticas/metricas`));
 }
 
 export async function obtenerResolucionPorDia(idUsuarioAdmin) {
-    const params = new URLSearchParams({ idUsuarioAdmin });
-    return manejarRespuesta(await fetchFresco(`${API_BASE_URL}/estadisticas/resolucion-por-dia?${params.toString()}`));
+    return manejarRespuesta(await fetchFresco(`${API_BASE_URL}/estadisticas/resolucion-por-dia`));
 }
 
-// idUsuarioAdmin filtra el resumen al departamento del admin (obligatorio para el dashboard)
+//El departamento del admin ya no se filtra por un id que manda el front, el backend lo resuelve del usuario autenticado en la cookie.
 export async function obtenerResumenMensual(idUsuarioAdmin, fechaInicio, fechaFin) {
     const params = new URLSearchParams();
-    if (idUsuarioAdmin) params.append('idUsuarioAdmin', idUsuarioAdmin);
     if (fechaInicio) params.append('fechaInicio', fechaInicio);
     if (fechaFin) params.append('fechaFin', fechaFin);
     const query = params.toString();
@@ -41,14 +33,13 @@ export async function obtenerResumenMensual(idUsuarioAdmin, fechaInicio, fechaFi
 
 // Panel "Mi resumen": paginado y filtrado por el departamento del admin
 export async function obtenerResumenPanelAdmin(idUsuarioAdmin, categoria, pagina = 1, tamano = 5) {
-    const params = new URLSearchParams({ idUsuarioAdmin, categoria, pagina, tamano });
+    const params = new URLSearchParams({ categoria, pagina, tamano });
     return manejarRespuesta(await fetchFresco(`${API_BASE_URL}/tickets/resumen-panel-admin?${params.toString()}`));
 }
 
 // Contadores para las tarjetas Pendientes/Vencidos/Vencen hoy
 export async function obtenerContadoresPanelAdmin(idUsuarioAdmin) {
-    const params = new URLSearchParams({ idUsuarioAdmin });
-    return manejarRespuesta(await fetchFresco(`${API_BASE_URL}/tickets/resumen-panel-admin/contadores?${params.toString()}`));
+    return manejarRespuesta(await fetchFresco(`${API_BASE_URL}/tickets/resumen-panel-admin/contadores`));
 }
 
 // Limpia y ordena el promedio de satisfacción devuelto por /estadisticas/metricas.
