@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             try {
                 const response = await fetch('http://localhost:8080/api/auth/recuperar-contrasena', {
-                    method: 'POST',
+                    method: 'POST', credentials: 'include',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ correo: correo })
                 });
@@ -31,6 +31,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     throw new Error(data.message || 'Ocurrió un error al enviar el correo');
                 }
 
+                
                 mostrarExitoRedireccion("Código Enviado", "Revisa tu bandeja de entrada o spam.", "codigoVerificacion.html");
             } catch (error) {
                 mostrarError(error.message, false);
