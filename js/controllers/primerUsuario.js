@@ -18,12 +18,8 @@ const txtConfirmar = document.getElementById("txtConfirmar");
 const valor = (id) => document.getElementById(id).value.trim();
 
 let pasoActual = 1;
-let idRolAdministrador = null;
 let hayDepartamentos = false;
 let configuracionLista = false;
-// Si el área o el departamento ya se crearon y luego falla el usuario, no se vuelven a crear
-let idDepartamentoCreado = null;
-let idAreaCreada = null;
 
 async function obtener(ruta) {
     const respuesta = await fetch(`${API_BASE_URL}${ruta}`);
@@ -47,20 +43,17 @@ async function registrar(ruta, datos) {
 
 async function iniciar() {
     try {
-        // Esta pantalla solo sirve mientras no exista ningún usuario
-        const usuarios = await obtener("/usuarios");
-        if (usuarios.length > 0) {
+        // Consultar el estado del sistema en la ruta pública de Setup
+        const estado = await obtener("/setup/estado");
+        
+        // Si el sistema ya está configurado (tiene usuarios), redirigimos al Login
+        if (estado.hayUsuarios) {
             window.location.replace("index.html");
             return;
         }
 
-        const roles = await obtener("/roles");
-        idRolAdministrador = roles.find((rol) => rol.nombreRol === "Administrador")?.idRol;
-        if (!idRolAdministrador) {
-            throw new Error("No existe el rol Administrador. Revisa que se haya ejecutado el script de la base de datos.");
-        }
-
-        const departamentos = await obtener("/departamentos/asignables");
+        // El backend nos manda los departamentos disponibles directamente
+        const departamentos = estado.departamentos || [];
         hayDepartamentos = departamentos.length > 0;
 
         if (hayDepartamentos) {
@@ -100,7 +93,6 @@ function mostrarPaso(numero) {
     btnSiguiente.textContent = numero === TOTAL_PASOS ? "Crear administrador" : "Siguiente";
     errorPaso.textContent = "";
 
-    // Enfoca el primer campo visible del paso
     const primerCampo = document.querySelector(`.paso[data-paso="${numero}"] :is(input, select):not([hidden] *)`);
     primerCampo?.focus();
 }
@@ -121,7 +113,7 @@ function validarPaso(numero) {
     }
     if (numero === 3) {
         if (!configuracionLista) return "Espera un momento, aún se está cargando la información.";
-        if (!hayDepartamentos && !idDepartamentoCreado && (!valor("txtArea") || !valor("txtDepartamento"))) {
+        if (!hayDepartamentos && (!valor("txtArea") || !valor("txtDepartamento"))) {
             return "Indica el área y el departamento.";
         }
     }
@@ -147,7 +139,6 @@ btnAtras.addEventListener("click", () => {
     if (pasoActual > 1) mostrarPaso(pasoActual - 1);
 });
 
-// El error se limpia en cuanto el usuario vuelve a escribir
 form.addEventListener("input", () => {
     errorPaso.textContent = "";
 });
@@ -155,35 +146,25 @@ form.addEventListener("input", () => {
 // ---------- Envío ----------
 
 async function crearAdministrador() {
-    let idDepartamento = Number(selDepartamento.value);
-
-    if (!hayDepartamentos) {
-        if (!idDepartamentoCreado) {
-            if (!idAreaCreada) {
-                const area = await registrar("/areas", { nombreArea: valor("txtArea") });
-                idAreaCreada = area.idArea;
-            }
-            const departamento = await registrar("/departamentos", {
-                nombreDepartamento: valor("txtDepartamento"),
-                tipoDepartamento: document.getElementById("selTipo").value,
-                idArea: idAreaCreada
-            });
-            idDepartamentoCreado = departamento.idDepartamento;
-        }
-        idDepartamento = idDepartamentoCreado;
-    }
-
-    await registrar("/usuarios", {
+    // Armamos un solo paquete de datos para mandarlo al nuevo SetupController
+    const datosSetup = {
         nombreUsuario: valor("txtNombre"),
         correo: valor("txtCorreo"),
-        clave: txtClave.value,
-        idRol: idRolAdministrador,
-        idDepartamento,
-        estado: true
-    });
+        clave: txtClave.value
+    };
+
+    if (hayDepartamentos) {
+        datosSetup.idDepartamento = Number(selDepartamento.value);
+    } else {
+        datosSetup.nombreArea = valor("txtArea");
+        datosSetup.nombreDepartamento = valor("txtDepartamento");
+        datosSetup.tipoDepartamento = document.getElementById("selTipo").value;
+    }
+
+    // Un solo disparo a la nueva ruta pública de setup
+    await registrar("/setup/administrador", datosSetup);
 }
 
-// Enter o "Siguiente" avanzan de paso; en el último se crea la cuenta
 form.addEventListener("submit", async (evento) => {
     evento.preventDefault();
     if (btnSiguiente.disabled) return;
