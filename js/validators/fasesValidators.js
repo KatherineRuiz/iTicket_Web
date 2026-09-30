@@ -4,7 +4,10 @@
  * el id del campo y su mensaje. Los límites coinciden con la tabla FASES.
  */
 
-export function validarFormularioFase(datos) {
+//esEdicion: true cuando se está editando una fase ya existente (no al crear una nueva).
+//La API solo exige que fechaInicioEstimada/fechaFinalEstimada sean hoy/futuras al crear;
+//al editar, esas fechas de una fase que ya inició pueden legítimamente estar en el pasado.
+export function validarFormularioFase(datos, esEdicion = false) {
     const errores = [];
     const hoy = new Date();
     hoy.setHours(0, 0, 0, 0);
@@ -42,12 +45,15 @@ export function validarFormularioFase(datos) {
     }
 
     // La API exige que el inicio estimado sea hoy o una fecha futura
-    if (datos.fechaInicioEstimada && new Date(`${datos.fechaInicioEstimada}T00:00:00`) < hoy) {
+    // La API exige que el inicio estimado sea hoy o una fecha futura, pero solo AL CREAR:
+    // al editar, la fase ya puede haber iniciado y esa fecha queda en el pasado legítimamente.
+    if (!esEdicion && datos.fechaInicioEstimada && new Date(`${datos.fechaInicioEstimada}T00:00:00`) < hoy) {
         errores.push({ campo: "txtFechaInicioEstimada", mensaje: "La fecha de inicio estimada no puede ser pasada." });
     }
 
     // La fecha final estimada debe ser posterior al día actual
-    if (datos.fechaFinalEstimada && new Date(`${datos.fechaFinalEstimada}T00:00:00`) <= hoy) {
+    // La fecha final estimada debe ser posterior al día actual, pero solo AL CREAR (ver arriba).
+    if (!esEdicion && datos.fechaFinalEstimada && new Date(`${datos.fechaFinalEstimada}T00:00:00`) <= hoy) {
         errores.push({ campo: "txtFechaFinalEstimada", mensaje: "La fecha final estimada debe ser futura." });
     }
 

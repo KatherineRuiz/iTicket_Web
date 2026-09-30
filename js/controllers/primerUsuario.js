@@ -43,17 +43,17 @@ async function registrar(ruta, datos) {
 
 async function iniciar() {
     try {
-        // Consultar el estado del sistema en la ruta pública de Setup
+        /* Esta pantalla solo sirve mientras no exista ningún usuario, así que se apoya en
+           /setup, las únicas dos rutas que la API deja abiertas sin sesión. Antes pedía
+           /usuarios, /roles y /departamentos, que hoy exigen ser administrador: nadie
+           habría podido crear la primera cuenta. */
         const estado = await obtener("/setup/estado");
-        
-        // Si el sistema ya está configurado (tiene usuarios), redirigimos al Login
         if (estado.hayUsuarios) {
             window.location.replace("index.html");
             return;
         }
 
-        // El backend nos manda los departamentos disponibles directamente
-        const departamentos = estado.departamentos || [];
+        const departamentos = estado.departamentos ?? [];
         hayDepartamentos = departamentos.length > 0;
 
         if (hayDepartamentos) {
@@ -93,6 +93,7 @@ function mostrarPaso(numero) {
     btnSiguiente.textContent = numero === TOTAL_PASOS ? "Crear administrador" : "Siguiente";
     errorPaso.textContent = "";
 
+    // Enfoca el primer campo visible del paso
     const primerCampo = document.querySelector(`.paso[data-paso="${numero}"] :is(input, select):not([hidden] *)`);
     primerCampo?.focus();
 }
@@ -139,32 +140,35 @@ btnAtras.addEventListener("click", () => {
     if (pasoActual > 1) mostrarPaso(pasoActual - 1);
 });
 
+// El error se limpia en cuanto el usuario vuelve a escribir
 form.addEventListener("input", () => {
     errorPaso.textContent = "";
 });
 
 // ---------- Envío ----------
 
+/* Una sola llamada: la API crea área, departamento y administrador dentro de la misma
+   transacción. Antes eran tres POST seguidos y había que recordar cuáles ya habían
+   pasado para no duplicarlos si el último fallaba; ahora, si algo falla, no queda nada. */
 async function crearAdministrador() {
-    // Armamos un solo paquete de datos para mandarlo al nuevo SetupController
-    const datosSetup = {
+    const datos = {
         nombreUsuario: valor("txtNombre"),
         correo: valor("txtCorreo"),
         clave: txtClave.value
     };
 
     if (hayDepartamentos) {
-        datosSetup.idDepartamento = Number(selDepartamento.value);
+        datos.idDepartamento = Number(selDepartamento.value);
     } else {
-        datosSetup.nombreArea = valor("txtArea");
-        datosSetup.nombreDepartamento = valor("txtDepartamento");
-        datosSetup.tipoDepartamento = document.getElementById("selTipo").value;
+        datos.nombreArea = valor("txtArea");
+        datos.nombreDepartamento = valor("txtDepartamento");
+        datos.tipoDepartamento = document.getElementById("selTipo").value;
     }
 
-    // Un solo disparo a la nueva ruta pública de setup
-    await registrar("/setup/administrador", datosSetup);
+    await registrar("/setup/administrador", datos);
 }
 
+// Enter o "Siguiente" avanzan de paso; en el último se crea la cuenta
 form.addEventListener("submit", async (evento) => {
     evento.preventDefault();
     if (btnSiguiente.disabled) return;

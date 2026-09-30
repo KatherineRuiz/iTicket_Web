@@ -54,6 +54,10 @@
                             <span id="txtSupervisorProyecto"></span>
                         </p>
                         <p class="meta-proyecto mb-1">
+                            <b>Contratista:</b>
+                            <span id="txtContratistaProyecto"></span>
+                        </p>
+                        <p class="meta-proyecto mb-1">
                             <b>Presupuesto:</b> $<span id="txtPresupuestoProyecto"></span>
                         </p>
                         <p class="meta-proyecto mb-1">
@@ -120,13 +124,22 @@
                         <div class="col-md-6">
                             <label class="form-label text-navy fw-semibold"
                                 for="txtCoordinadorProyectoEdicion">Coordinador</label>
-                            <input type="email" class="form-control" id="txtCoordinadorProyectoEdicion" required />
+                            <input type="email" class="form-control" id="txtCoordinadorProyectoEdicion"
+                                list="listaUsuariosCorreoEdicion" autocomplete="off" required />
                         </div>
 
                         <div class="col-md-6">
                             <label class="form-label text-navy fw-semibold"
                                 for="txtSupervisorProyectoEdicion">Supervisor</label>
-                            <input type="email" class="form-control" id="txtSupervisorProyectoEdicion" required />
+                            <input type="email" class="form-control" id="txtSupervisorProyectoEdicion"
+                                list="listaUsuariosCorreoEdicion" autocomplete="off" required />
+                        </div>
+                        <datalist id="listaUsuariosCorreoEdicion"></datalist>
+
+                        <div class="col-md-6">
+                            <label class="form-label text-navy fw-semibold"
+                                for="txtContratistaProyectoEdicion">Contratista</label>
+                            <input type="text" class="form-control" id="txtContratistaProyectoEdicion" maxlength="100" />
                         </div>
 
                         <div class="col-md-6">
@@ -407,7 +420,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <!-- Mi JS personalizado -->
-    <script src="js/components/menu.js?v=15"></script>
+    <script src="js/components/menu.js?v=16"></script>
     <script type="module" src="js/controllers/vistaProyecto.js?v=3"></script>
     <script type="module" src="js/controllers/notificaciones.js"></script>
 

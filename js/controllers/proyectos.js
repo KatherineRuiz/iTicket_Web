@@ -145,6 +145,7 @@ function obtenerUsuarios() {
         cargandoUsuarios = getUsuarios()
             .then((usuarios) => {
                 usuariosCache = usuarios;
+                poblarListaCorreosUsuarios(usuarios);
                 return usuariosCache;
             })
             .finally(() => {
@@ -152,6 +153,27 @@ function obtenerUsuarios() {
             });
     }
     return cargandoUsuarios;
+}
+
+// Llena el <datalist> de correos para que, al escribir coordinador/supervisor, el navegador
+// sugiera "nombre — correo" de los usuarios ya cargados (evita tener que memorizar el correo).
+function poblarListaCorreosUsuarios(usuarios) {
+    const listaCorreos = document.getElementById('listaUsuariosCorreo');
+    if (!listaCorreos) return;
+
+    listaCorreos.innerHTML = '';
+    // Solo Administrador o Tecnico pueden ser coordinador/supervisor de un proyecto
+    // (el backend también lo valida; esto es solo para no ofrecer opciones inválidas).
+    const rolesValidosResponsable = ['administrador', 'tecnico'];
+    (usuarios || [])
+        .filter((usuario) => rolesValidosResponsable.includes(String(usuario.nombreRol || '').toLowerCase()))
+        .forEach((usuario) => {
+            if (!usuario.correo) return;
+            const opcion = document.createElement('option');
+            opcion.value = usuario.correo;
+            opcion.label = `${usuario.nombreUsuario || ''} — ${usuario.correo}`;
+            listaCorreos.appendChild(opcion);
+        });
 }
 
 /* Un proyecto pertenece a un departamento a través de sus fases (departamentoEncargado).
@@ -172,13 +194,21 @@ async function obtenerTipoDepartamento() {
     return tipoDepartamentoTecnico;
 }
 
+// Un proyecto es visible para un técnico si: (a) alguna de sus fases pertenece a su
+// departamento (o "Ambos"), o (b) el técnico es el coordinador o el supervisor de ese
+// proyecto, sin importar el departamento de las fases.
+function esResponsableDelProyecto(proyecto) {
+    const idUsuario = obtenerUsuarioLogueado()?.idUsuario;
+    if (idUsuario == null || !proyecto) return false;
+    return Number(proyecto.coordinador) === Number(idUsuario) || Number(proyecto.supervisor) === Number(idUsuario);
+}
+
 async function filtrarProyectosPermitidos(proyectos) {
     if (!esTecnico || !proyectos?.length) return proyectos;
 
     const tipo = (await obtenerTipoDepartamento() || "").toLowerCase();
-    if (!tipo) return [];
 
-    const fases = await getFases().catch(() => []);
+    const fases = tipo ? await getFases().catch(() => []) : [];
     const idsPermitidos = new Set(
         fases
             .filter((fase) => {
@@ -188,7 +218,7 @@ async function filtrarProyectosPermitidos(proyectos) {
             .map((fase) => fase.proyecto)
     );
 
-    return proyectos.filter((proyecto) => idsPermitidos.has(proyecto.idProyecto));
+    return proyectos.filter((proyecto) => idsPermitidos.has(proyecto.idProyecto) || esResponsableDelProyecto(proyecto));
 }
 
 //Trae la lista de proyectos desde la API y refresca la vista completa
@@ -326,6 +356,7 @@ formCrearProyecto.addEventListener('submit', async (e) => {
         nombreProyecto: datosFormulario.nombreProyecto,
         tipoProyecto: datosFormulario.tipoProyecto,
         ubicacion: datosFormulario.ubicacion,
+        contratista: datosFormulario.contratista || null,
         descripcionProyecto: datosFormulario.descripcionProyecto,
         presupuestoEstimado: Number(datosFormulario.presupuestoEstimado),
         gastoTotal: 0,
