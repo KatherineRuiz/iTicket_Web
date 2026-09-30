@@ -3,23 +3,11 @@ import { mostrarError, mostrarExitoRedireccion } from "../components/sweetAlerts
 document.addEventListener("DOMContentLoaded", function () {
     const formularioNueva = document.querySelector("#formNuevaContrasena");
     
-    // Obtener el token de la URL
-    const urlParams = new URLSearchParams(window.location.search);
-    const token = urlParams.get('token');
+    // Obtener el token de la sesion
+    
 
     // Bloquear si no hay token
-    if (!token) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Acceso Denegado',
-            text: 'No tienes permisos para ver esta pÃ¡gina.',
-            allowOutsideClick: false,
-            confirmButtonColor: '#0d6efd'
-        }).then(() => {
-            window.location.href = 'index.html';
-        });
-        return;
-    }
+    
 
     if (formularioNueva) {
         formularioNueva.addEventListener("submit", async function (evento) {
@@ -30,13 +18,14 @@ document.addEventListener("DOMContentLoaded", function () {
             const nuevaContra = inputsPassword[0].value;
             const confirmarContra = inputsPassword[1].value;
 
-            if (!esContrasenaValida(nuevaContra)) {
-                mostrarError("ContraseÃ±a invÃ¡lida. Debe tener entre 6 y 18 caracteres.", false);
+            // Validación básica manual porque la funcion global no se ha importado
+            if (nuevaContra.trim().length < 6 || nuevaContra.trim().length > 18) {
+                mostrarError("Contraseña inválida. Debe tener entre 6 y 18 caracteres.", false);
                 return;
             }
 
             if (nuevaContra !== confirmarContra) {
-                mostrarError("Las contraseÃ±as no coinciden. Por favor, verifÃ­calas.", false);
+                mostrarError("Las contraseñas no coinciden. Por favor, verifícalas.", false);
                 return;
             }
 
@@ -45,24 +34,29 @@ document.addEventListener("DOMContentLoaded", function () {
 
             try {
                 const response = await fetch('http://localhost:8080/api/auth/restablecer-contrasena', {
-                    method: 'POST',
+                    method: 'POST', credentials: 'include',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ token: token, nuevaContrasena: nuevaContra })
+                    body: JSON.stringify({ nuevaContrasena: nuevaContra })
                 });
 
                 const data = await response.json();
 
                 if (!response.ok) {
-                    throw new Error(data.message || 'OcurriÃ³ un error al restablecer la contraseÃ±a');
+                    throw new Error(data.message || 'Ocurrió un error al restablecer la contraseña');
                 }
 
-                mostrarExitoRedireccion("Â¡ContraseÃ±a Restablecida!", "Tu contraseÃ±a ha sido actualizada correctamente.", "index.html");
+                // Limpiar la sesion
+                
+                
+                
+                mostrarExitoRedireccion("¡Contraseña Restablecida!", "Tu contraseña ha sido actualizada correctamente.", "index.html");
             } catch (error) {
                 mostrarError(error.message, false);
             } finally {
                 boton.disabled = false;
-                boton.innerHTML = 'Restablecer contraseÃ±a';
+                boton.innerHTML = 'Restablecer contraseña';
             }
         });
     }
 });
+
