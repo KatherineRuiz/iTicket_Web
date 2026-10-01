@@ -37,7 +37,10 @@
         <div class="contenido-principal container-fluid">
 
             <div class="row g-5">
-                <section class="col-lg-3 col-md-5 col-sm-12">
+                <!-- Panel administrativo: totales, proyectos terminados y el gráfico por tipo
+                     son información de gestión, no algo que un técnico deba ver (data-roles lo
+                     aplica menu.js, igual que el resto de controles admin-only de esta página). -->
+                <section class="col-lg-3 col-md-5 col-sm-12" data-roles="admin">
 
                     <!-- Solo el administrador crea proyectos (data-roles lo aplica menu.js) -->
                     <div class="accion-crear-proyecto" data-roles="admin">
