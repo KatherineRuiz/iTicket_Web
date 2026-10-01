@@ -877,3 +877,174 @@ html.tema-oscuro .chat-icon {
         transition: none;
     }
 }
+
+/* ============================================================
+   DETALLES QUE SE SALÍAN EN PANTALLAS ANGOSTAS (320px)
+   ============================================================ */
+
+@media (max-width: 767.98px) {
+
+    /* Chart.js escribe el ancho del lienzo en un atributo; sin este tope
+       el gráfico del dashboard se salía de su tarjeta en teléfonos chicos. */
+    .contenido-principal canvas {
+        max-width: 100% !important;
+        height: auto !important;
+    }
+
+    /* La fila "mostrando X de Y" + paginación no cabe en horizontal:
+       se apila y la paginación se centra. */
+    .contenido-principal .d-flex.justify-content-between:has(> nav .pagination) {
+        flex-direction: column;
+        gap: 10px;
+        align-items: stretch !important;
+    }
+
+    .contenido-principal .d-flex.justify-content-between:has(> nav .pagination) > span {
+        text-align: center;
+    }
+
+    .pagination {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+}
+
+/* ============================================================
+   FILTROS EN CELULAR
+   Los filtros se escribieron con .col-4, que en Bootstrap significa tres por
+   fila en todos los tamaños. En un teléfono eso deja 104px por control: la
+   flecha del desplegable se montaba sobre la palabra "Prioridad" y al campo de
+   fecha solo le quedaban 46px útiles, así que mostraba "dd/mm" en vez de
+   "dd/mm/aaaa". Aquí pasan a dos por fila, y la fecha a una fila propia.
+   ============================================================ */
+
+@media (max-width: 575.98px) {
+
+    /* Sin ">" a propósito: menu.js envuelve cada <select> en un
+       .select-personalizado, así que el control no es hijo directo de la columna. */
+    .contenido-principal .col-4:has(.select-ticket-filtro) {
+        flex: 0 0 auto;
+        width: 50%;
+    }
+
+    /* La fecha necesita la fila entera: entre el relleno y el icono del
+       calendario se queda sin espacio para "dd/mm/aaaa". */
+    .contenido-principal .col-4:has(input[type="date"]),
+    .contenido-principal .col-4:has(.fecha-personalizada) {
+        width: 100%;
+    }
+}
+
+/* ============================================================
+   PASTILLA DE PRIORIDAD EN LAS LISTAS DE TICKETS
+   La pastilla ("Crítica", "Alta"...) va posicionada en la esquina superior
+   derecha de la tarjeta. En escritorio la tarjeta es ancha y el título nunca
+   llega hasta ahí, pero en celular el título corría por debajo de la pastilla
+   y se leían las dos cosas encimadas. Aquí se le reserva el hueco.
+   ============================================================ */
+
+@media (max-width: 767.98px) {
+
+    .contenedor-lista-tickets :is(article, .lista-tickets-asignados, .tarjeta-ticket):has(.badge[class*="prioridad-"]) :is(h5, h6),
+    .lista-tickets-asignados:has(.badge[class*="prioridad-"]) :is(h5, h6) {
+        padding-right: 92px;
+    }
+}
+
+/* ============================================================
+   TARJETAS DE INDICADORES APILADAS
+   El icono de cada tarjeta va en absoluto con top:-22px, y el canalón vertical
+   de .row.g-4 son 24px: en escritorio las tarjetas van en fila y no importa,
+   pero apiladas en celular quedaban 2px entre el icono y la tarjeta de arriba.
+   ============================================================ */
+
+@media (max-width: 575.98px) {
+    .contenido-principal .row:has(> [class*="col-"] > .tarjeta-indicador) {
+        --bs-gutter-y: 2.25rem;
+    }
+}
+
+/* ============================================================
+   TABLAS EN PANTALLAS ANGOSTAS: DESPLAZAMIENTO HORIZONTAL DE VERDAD
+   .table-responsive ya traía el scroll, pero la tabla seguía obedeciendo al
+   width:100% de Bootstrap: se encogía para caber en el ancho disponible y
+   repartía 375px entre seis o nueve columnas. Con 40px por columna las palabras
+   se partían letra por letra ("Categorí a", "Impr es or a", "Acci ones").
+
+   Aquí la tabla toma el ancho que realmente necesita y es el contenedor el que
+   se desplaza de lado, que es como debe funcionar.
+   ============================================================ */
+
+@media (max-width: 991.98px) {
+
+    [class*="table-responsive"] > .table-custom {
+        min-width: max-content;
+    }
+
+    /* Los anchos en porcentaje (w-25, w-50...) obligan a la tabla a crecer para
+       respetarlos: en la bitácora el correo pedía 199px en una columna del 25%,
+       así que la tabla entera se estiraba a 797px. Sin ellos cada columna mide
+       lo que necesita y el desplazamiento lateral es mucho más corto. */
+    .table-custom :is(th, td)[class*=w-] {
+        width: auto !important;
+    }
+
+    /* Los títulos de columna nunca se parten */
+    .table-custom thead th {
+        white-space: nowrap;
+    }
+
+    /* El contenido sí puede partirse, pero por palabras completas y solo cuando
+       la celda tiene un tope propio (.truncate-celda, .text-truncate). */
+    .table-custom tbody td {
+        overflow-wrap: normal;
+        word-break: normal;
+    }
+}
+
+/* ============================================================
+   MISMO MARGEN LATERAL EN TODAS LAS PANTALLAS (CELULAR)
+   Cada página anida sus envoltorios distinto, así que el contenido arrancaba en
+   un punto diferente en cada una: 28px en los dashboards, 44px en usuarios y
+   ubicaciones (por un .p-4 extra de 24px) y 20px en equipos. Se notaba como
+   tarjetas más anchas o más angostas al cambiar de sección.
+
+   Aquí se igualan todas a los 28px que ya usaban los dashboards, que es la
+   referencia buena. El cálculo por página era:
+     borde = 8 (main-shell) + relleno de .contenido-principal + relleno del .p-4
+   y las filas con .m-0 sumaban además el relleno de sus columnas, porque al no
+   llevar margen negativo no lo cancelaban.
+   ============================================================ */
+
+@media (max-width: 767.98px) {
+
+    .contenido-principal {
+        padding-left: 20px !important;
+        padding-right: 20px !important;
+    }
+
+    /* Envoltorio de maquetación sin fondo propio: en celular su relleno lateral
+       solo le resta ancho al contenido. */
+    .contenido-principal > .p-4 {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+
+    /* .m-0 anula el margen negativo de la fila, así que el relleno de las
+       columnas dejaba de cancelarse y metía 12px de más. Se le devuelve. */
+    .contenido-principal > .row.m-0 {
+        margin-left: calc(var(--bs-gutter-x) * -0.5) !important;
+        margin-right: calc(var(--bs-gutter-x) * -0.5) !important;
+    }
+}
+
+/* ============================================================
+   EL DESPLAZAMIENTO LATERAL SE QUEDA DENTRO DE LA TABLA
+   Por omisión, al llegar al final del recorrido horizontal el gesto se propaga
+   al contenedor de atrás (scroll chaining) y la pantalla se mueve sola mientras
+   uno todavía está arrastrando la tabla. Con "contain" el gesto se detiene ahí.
+   ============================================================ */
+
+[class*="table-responsive"] {
+    overscroll-behavior-x: contain;
+}

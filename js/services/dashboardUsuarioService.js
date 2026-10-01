@@ -1,10 +1,4 @@
-/*
- * SERVICIO DEL DASHBOARD DE USUARIO
- * Reúne todas las páginas de tickets del usuario y consulta, ya resueltos por
- * el backend, la distribución de calificaciones y el tiempo promedio de
- * resolución de sus tickets. Devuelve datos independientes del HTML, listos
- * para que el controlador los entregue a Chart.js.
- */
+
 import { API_BASE_URL, manejarRespuesta, apiFetch } from './apiConfig.js';
 
 // Fuerza una consulta actual para que crear o actualizar un ticket se refleje
@@ -16,7 +10,7 @@ function fetchFresco(url) {
 // Función interna para una sola página; el resto del archivo trabaja con el
 // arreglo unificado que construye obtenerTodosLosTicketsDelUsuario.
 async function obtenerPaginaTickets(idUsuario, pagina) {
-    const parametros = new URLSearchParams({ idUsuario, pagina, tamano: 50 }); // El tamaño de la página estaba en 200
+    const parametros = new URLSearchParams({ pagina, tamano: 50 }); // El tamaño de la página estaba en 200
     return manejarRespuesta(await fetchFresco(`${API_BASE_URL}/tickets/mis-tickets?${parametros}`));
 }
 
@@ -39,15 +33,13 @@ export async function obtenerTodosLosTicketsDelUsuario(idUsuario) {
 // El backend ya filtra por el creador del ticket: solo trae la distribución de
 // calificaciones de este usuario, en el orden 5, 4, 3, 2 y 1 estrellas.
 export async function obtenerCalificacionesUsuario(idUsuario) {
-    const parametros = new URLSearchParams({ idUsuario });
-    const distribucion = await manejarRespuesta(await fetchFresco(`${API_BASE_URL}/evaluaciones/usuario/calificaciones?${parametros}`));
+    const distribucion = await manejarRespuesta(await fetchFresco(`${API_BASE_URL}/evaluaciones/usuario/calificaciones`));
     return Array.isArray(distribucion) ? distribucion : [0, 0, 0, 0, 0];
 }
 
 // El backend ya filtra por el creador del ticket y devuelve un único promedio en horas.
 export async function obtenerTiempoPromedioUsuario(idUsuario) {
-    const parametros = new URLSearchParams({ idUsuario });
-    const promedio = await manejarRespuesta(await fetchFresco(`${API_BASE_URL}/bitacoras/usuario/tiempo-promedio?${parametros}`));
+    const promedio = await manejarRespuesta(await fetchFresco(`${API_BASE_URL}/bitacoras/usuario/tiempo-promedio`));
     return typeof promedio === 'number' ? promedio : 0;
 }
 

@@ -566,17 +566,106 @@ html.tema-oscuro .conversacion-item.activa {
 
 @media (max-width: 767.98px) {
     body.layout-global-activo .contenido-scroll { padding: 10px; }
-    .chat-layout { grid-template-columns: 1fr; overflow-y: auto; }
-    .panel-conversaciones { min-height: auto; max-height: 190px; border-radius: 18px; position: relative; z-index: 1021; }
+
+    /* En una pantalla angosta el historial y el chat no caben a la vez: antes se
+       apilaban y al historial le quedaban 190px, que no alcanzan ni para tres
+       conversaciones. Ahora se turnan — abrir el historial reemplaza al chat, y
+       cerrarlo lo devuelve. */
+    .chat-layout {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto minmax(0, 1fr);
+        overflow: hidden;
+    }
+
+    .panel-conversaciones {
+        min-height: 0;
+        border-radius: 18px;
+        position: relative;
+        z-index: 1021;
+    }
+
+    /* Historial abierto: se queda con toda la pantalla y el chat se esconde */
+    .chat-layout:not(.historial-contraido) {
+        grid-template-rows: minmax(0, 1fr);
+    }
+
+    /* El !important es necesario: la sección lleva la clase .d-flex de Bootstrap,
+       que ya trae display:flex !important. */
+    .chat-layout:not(.historial-contraido) > .chat {
+        display: none !important;
+    }
+
+    .chat-layout:not(.historial-contraido) .panel-conversaciones {
+        max-height: none;
+        height: 100%;
+    }
+
+    /* La lista se queda con todo el alto sobrante, así el desplazamiento es de
+       la pantalla completa cuando hay muchas conversaciones. */
+    .chat-layout:not(.historial-contraido) .lista-conversaciones {
+        flex: 1;
+        min-height: 0;
+    }
+
+    /* Historial cerrado: queda como una barra y el chat ocupa el resto.
+       En escritorio la barra se encoge a una columna de 58px y basta con la
+       flecha, pero aquí es una barra ancha: sin la palabra "Conversaciones"
+       no se entiende para qué sirve. */
     .chat-layout.historial-contraido { grid-template-columns: 1fr; }
     .chat-layout.historial-contraido .panel-conversaciones { height: 52px; }
-    .chat { border-radius: 20px; }
+
+    /* La barra cerrada: flecha y título a la izquierda, y todo centrado en
+       vertical. El encabezado traía padding-bottom de 14px (en escritorio lo
+       separa de la lista de abajo), que dentro de una barra de 52px empujaba
+       el contenido hacia arriba. */
+    .chat-layout.historial-contraido .panel-conversaciones {
+        padding-top: 0;
+        padding-bottom: 0;
+        justify-content: center;
+    }
+
+    .chat-layout.historial-contraido .panel-conversaciones-encabezado {
+        justify-content: flex-start;
+        align-items: center;
+        gap: 10px;
+        padding: 0;
+        min-height: 0;
+    }
+
+    .chat-layout.historial-contraido .btn-alternar-conversaciones {
+        position: static;
+        transform: none;
+    }
+
+    .chat-layout.historial-contraido .panel-conversaciones-texto {
+        opacity: 1;
+        transform: none;
+        pointer-events: auto;
+    }
+
+    /* La lista está oculta con opacity, pero seguía ocupando sus 44px dentro de
+       la barra de 52px y empujaba la flecha y el título hacia arriba. */
+    .chat-layout.historial-contraido .lista-conversaciones {
+        display: none;
+    }
+
+    .chat { border-radius: 20px; min-height: 0; }
     .encabezado { border-radius: 20px 20px 0 0; }
     .mensaje { max-width: 88%; }
     .chat > .px-md-5 { width: 100% !important; padding-inline: 10px !important; }
     .chat-input-wrapper { border-radius: 18px !important; }
-    #btnEnviar { font-size: 0; width: 42px; height: 42px; padding: 0 !important; justify-content: center; }
-    #btnEnviar i { font-size: 15px; }
+
+    /* El botón pierde el texto "Enviar" y queda solo el icono. Hay que quitar
+       tambien el hueco de .gap-2, o el icono se va 4px a la izquierda del centro. */
+    #btnEnviar {
+        font-size: 0;
+        width: 42px;
+        height: 42px;
+        padding: 0 !important;
+        gap: 0 !important;
+        justify-content: center;
+    }
+    #btnEnviar i { font-size: 15px; line-height: 1; }
 }
 
 /* Fondo oscuro detrás del historial de conversaciones al expandirlo en móvil,

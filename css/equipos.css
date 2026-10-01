@@ -208,3 +208,42 @@ html.tema-oscuro .panel-filtros .form-select {
 @media (max-width: 991.98px) {
     .equipos-barra-superior { padding-top: 18px; }
 }
+
+/* ============================================================
+   CABECERA EN CELULAR
+   El buscador y "Gestionar artículo" van dentro de una fila con .m-0, que anula
+   los márgenes negativos de Bootstrap: el relleno de sus columnas dejaba de
+   cancelarse y los dos quedaban 12px más adentro que los tres botones de
+   catálogo, que cuelgan directo de la fila. Aquí se igualan.
+   ============================================================ */
+
+@media (max-width: 767.98px) {
+
+    #barraBuscador > .row > [class*="col-"] {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+
+    /* Reubicado dentro de .equipos-barra-superior, el bloque pasa a ser hijo
+       directo de la fila y no de una columna: hay que darle a mano el relleno
+       del canalón para que quede alineado con el buscador, y quitarle el mb-4
+       porque el espacio ya lo pone el canalón vertical de la fila. */
+    .equipos-barra-superior > #botonesCatalogo {
+        width: 100%;
+        padding-left: calc(var(--bs-gutter-x) * 0.5);
+        padding-right: calc(var(--bs-gutter-x) * 0.5);
+        margin-bottom: 0 !important;
+    }
+
+    /* common.css le sube el canalón vertical a 36px a las filas que llevan una
+       .tarjeta-indicador, para que el icono de cada tarjeta no roce a la de
+       arriba. Aquí solo hay una tarjeta y el canalón se estaba aplicando entre
+       los botones y el buscador, dejando 52px de hueco. */
+    .equipos-barra-superior {
+        --bs-gutter-y: 1rem;
+    }
+
+    .equipos-barra-superior > #barraBuscador {
+        margin-top: 0 !important;
+    }
+}

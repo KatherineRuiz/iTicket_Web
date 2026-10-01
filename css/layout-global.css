@@ -1464,10 +1464,18 @@ body.menu-colapsado .main.layout-global-listo {
         max-width: 100%;
     }
 
+    /* Apilada en celular, centrada: el resumen ("Mostrando 1-4 de 4") encima y
+       los botones de página debajo. Antes iba con align-items:flex-start y
+       quedaba todo pegado a la izquierda, distinto al resto de las tablas. */
     .paginacion-tabla-auto {
         padding-inline: 10px;
-        align-items: flex-start;
+        align-items: center;
         flex-direction: column;
+    }
+
+    .paginacion-tabla-auto .pagination {
+        flex-wrap: wrap;
+        justify-content: center;
     }
 
     .paginacion-tabla-auto nav {
@@ -2527,9 +2535,13 @@ html.tema-oscuro .table-custom tbody td [class*="btn-eliminar-"]:hover {
     z-index: 40;
 }
 
-.table-responsive:has(.menu-acciones-tabla.abierto) {
-    overflow: visible !important;
-}
+/* Ya no se le quita el recorte al contenedor cuando el menú está abierto.
+
+   Existía para que el panel de acciones no quedara cortado, pero desde que el
+   panel se dibuja colgado del <body> (ver abrirMenuAccionesTabla en menu.js) no
+   lo necesita, y hacía daño: al pasar a overflow:visible la tabla dejaba de
+   estar recortada y se desbordaba entera fuera de la pantalla, con la página
+   entera desplazándose de lado. */
 
 .menu-acciones-tabla {
     position: relative;
@@ -2597,9 +2609,9 @@ html.tema-oscuro .table-custom tbody td [class*="btn-eliminar-"]:hover {
     transform-origin: bottom right;
 }
 
-.table-custom tbody td .menu-acciones-tabla-opcion,
-.table-custom tbody td [class*="btn-editar-"].menu-acciones-tabla-opcion,
-.table-custom tbody td [class*="btn-eliminar-"].menu-acciones-tabla-opcion {
+.panel-acciones-tabla .menu-acciones-tabla-opcion,
+.panel-acciones-tabla [class*="btn-editar-"].menu-acciones-tabla-opcion,
+.panel-acciones-tabla [class*="btn-eliminar-"].menu-acciones-tabla-opcion {
     display: flex !important;
     align-items: center;
     justify-content: flex-start;
@@ -2614,13 +2626,16 @@ html.tema-oscuro .table-custom tbody td [class*="btn-eliminar-"]:hover {
     border: 0 !important;
     border-radius: 10px !important;
     box-shadow: none !important;
+    /* Algunos botones de eliminar vienen con .btn-link de Bootstrap, que subraya
+       el texto. Dentro del panel todas las opciones se ven igual. */
+    text-decoration: none !important;
     font-size: 14px;
     font-weight: 500;
     text-align: left;
     transform: none !important;
 }
 
-.table-custom tbody td .menu-acciones-tabla-opcion i {
+.panel-acciones-tabla .menu-acciones-tabla-opcion i {
     width: 19px;
     margin: 0 !important;
     color: #64748b;
@@ -2628,21 +2643,21 @@ html.tema-oscuro .table-custom tbody td [class*="btn-eliminar-"]:hover {
     text-align: center;
 }
 
-.table-custom tbody td .menu-acciones-tabla-opcion:hover,
-.table-custom tbody td .menu-acciones-tabla-opcion:focus-visible {
+.panel-acciones-tabla .menu-acciones-tabla-opcion:hover,
+.panel-acciones-tabla .menu-acciones-tabla-opcion:focus-visible {
     color: #255f95 !important;
     background: #e8eef5 !important;
     outline: 0;
 }
 
-.table-custom tbody td .menu-acciones-tabla-opcion.opcion-eliminar:hover,
-.table-custom tbody td .menu-acciones-tabla-opcion.opcion-eliminar:focus-visible {
+.panel-acciones-tabla .menu-acciones-tabla-opcion.opcion-eliminar:hover,
+.panel-acciones-tabla .menu-acciones-tabla-opcion.opcion-eliminar:focus-visible {
     color: #c83b4b !important;
     background: #fff0f2 !important;
 }
 
-.table-custom tbody td .menu-acciones-tabla-opcion.opcion-eliminar:hover i,
-.table-custom tbody td .menu-acciones-tabla-opcion.opcion-eliminar:focus-visible i {
+.panel-acciones-tabla .menu-acciones-tabla-opcion.opcion-eliminar:hover i,
+.panel-acciones-tabla .menu-acciones-tabla-opcion.opcion-eliminar:focus-visible i {
     color: #c83b4b;
 }
 
@@ -2664,21 +2679,21 @@ html.tema-oscuro .panel-acciones-tabla {
     box-shadow: 0 16px 36px rgba(0, 0, 0, .34);
 }
 
-html.tema-oscuro .table-custom tbody td .menu-acciones-tabla-opcion,
-html.tema-oscuro .table-custom tbody td [class*="btn-editar-"].menu-acciones-tabla-opcion,
-html.tema-oscuro .table-custom tbody td [class*="btn-eliminar-"].menu-acciones-tabla-opcion {
+html.tema-oscuro .panel-acciones-tabla .menu-acciones-tabla-opcion,
+html.tema-oscuro .panel-acciones-tabla [class*="btn-editar-"].menu-acciones-tabla-opcion,
+html.tema-oscuro .panel-acciones-tabla [class*="btn-eliminar-"].menu-acciones-tabla-opcion {
     color: #d6deeb !important;
     background: #202c40 !important;
 }
 
-html.tema-oscuro .table-custom tbody td .menu-acciones-tabla-opcion:hover,
-html.tema-oscuro .table-custom tbody td .menu-acciones-tabla-opcion:focus-visible {
+html.tema-oscuro .panel-acciones-tabla .menu-acciones-tabla-opcion:hover,
+html.tema-oscuro .panel-acciones-tabla .menu-acciones-tabla-opcion:focus-visible {
     color: #9dcbef !important;
     background: #29384f !important;
 }
 
-html.tema-oscuro .table-custom tbody td .menu-acciones-tabla-opcion.opcion-eliminar:hover,
-html.tema-oscuro .table-custom tbody td .menu-acciones-tabla-opcion.opcion-eliminar:focus-visible {
+html.tema-oscuro .panel-acciones-tabla .menu-acciones-tabla-opcion.opcion-eliminar:hover,
+html.tema-oscuro .panel-acciones-tabla .menu-acciones-tabla-opcion.opcion-eliminar:focus-visible {
     color: #ffabb3 !important;
     background: rgba(200, 59, 75, .16) !important;
 }
@@ -2710,6 +2725,29 @@ html.tema-oscuro .table-custom tbody td .menu-acciones-tabla-opcion.opcion-elimi
 
 .table-custom.tabla-columnas-iguales :is(th, td) {
     overflow-wrap: anywhere;
+}
+
+/* En pantallas angostas las columnas iguales dejan de tener sentido: repartir
+   287px entre seis columnas da 47px a cada una, y con overflow-wrap:anywhere
+   las palabras se parten letra por letra ("Comp/utadora", "Laborat/orio 2").
+   Aquí la tabla vuelve a medirse según su contenido y quien se desplaza de lado
+   es el contenedor .table-responsive, que es como debe verse en un teléfono. */
+@media (max-width: 991.98px) {
+    /* Solo las de cuatro columnas o más. Con :has(th:nth-child(4)) se distingue
+       una tabla que de verdad no cabe (Usuarios, Artículos: 6 columnas) de una
+       que sí (Áreas, Marcas, Categorías: 2 o 3).
+
+       Las chicas conservan sus columnas iguales y llenan la tarjeta; si se les
+       quita, el navegador reparte el ancho según el texto y quedan descuadradas
+       (la columna "Área" se llevaba 179px y "Acciones" 75px). */
+    .table-custom.tabla-columnas-iguales:has(thead th:nth-child(4)) {
+        table-layout: auto;
+        width: 100%;
+    }
+
+    .table-custom.tabla-columnas-iguales:has(thead th:nth-child(4)) :is(th, td) {
+        overflow-wrap: normal;
+    }
 }
 
 /* Transición al cambiar de página en tablas y listas (window.animarCambioPagina en menu.js).

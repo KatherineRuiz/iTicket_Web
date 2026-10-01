@@ -221,6 +221,7 @@ async function abrirConversacion(idConversacion) {
     if (chatOcupado || idConversacion === idConversacionActiva) return;
 
     cambiarEstadoChat(true);
+    cerrarHistorialEnMovil();
     try {
         const conversacion = await obtenerConversacionChatbot(idUsuario, idConversacion);
         idConversacionActiva = conversacion.idConversacion;
@@ -275,6 +276,7 @@ function iniciarNuevaConversacion() {
     idConversacionActiva = null;
     limpiarMensajesConversacion(true);
     cargarConversaciones();
+    cerrarHistorialEnMovil();
     txtChat.focus();
 }
 
@@ -333,8 +335,19 @@ function cambiarVisibilidadHistorial(contraer) {
     icono.className = "bi bi-chevron-left";
     sessionStorage.setItem(CLAVE_HISTORIAL_CONTRAIDO, String(contraer));
 
-    const esMovil = window.innerWidth <= ANCHO_MOVIL_CHAT;
-    overlayHistorialChat?.classList.toggle("activo", esMovil && !contraer);
+    /* En celular el historial ya no se superpone al chat: lo reemplaza a pantalla
+       completa (ver chatBot.css), así que el fondo oscuro sobra. Solo se usa de
+       tablet en adelante, donde el panel sí se abre encima. */
+    overlayHistorialChat?.classList.remove("activo");
+}
+
+function esPantallaAngosta() {
+    return window.innerWidth <= ANCHO_MOVIL_CHAT;
+}
+
+// En celular, al elegir una conversación se vuelve al chat: es lo que se quería ver
+function cerrarHistorialEnMovil() {
+    if (esPantallaAngosta()) cambiarVisibilidadHistorial(true);
 }
 
 btnAlternarConversaciones?.addEventListener("click", () => {
@@ -359,7 +372,11 @@ txtChat?.addEventListener("keydown", (evento) => {
     }
 });
 
+/* Al entrar, en celular se muestra el chat y no el historial: en una pantalla
+   angosta el historial ocupa todo, y abrirlo de entrada dejaba la conversación
+   escondida detrás. En escritorio se sigue abriendo expandido. */
+const historialGuardado = sessionStorage.getItem(CLAVE_HISTORIAL_CONTRAIDO);
 cambiarVisibilidadHistorial(
-    sessionStorage.getItem(CLAVE_HISTORIAL_CONTRAIDO) === "true"
+    historialGuardado === null ? esPantallaAngosta() : historialGuardado === "true"
 );
 cargarConversaciones();

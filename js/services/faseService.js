@@ -144,3 +144,22 @@ export async function getFasesPorProyecto(idProyecto) {
         throw error;
     }
 }
+
+// Reabre una fase ya finalizada (acción solo para Administrador, ver FaseService.reabrirFase
+// en el backend). Devuelve la fase ya actualizada con finalizado = false.
+export async function reabrirFase(id) {
+    try {
+        const respuesta = await apiFetch(`${API_URL}/${id}/reabrir`, {
+            method: "PATCH"
+        });
+
+        const cuerpo = await respuesta.json().catch(() => null);
+        if (!respuesta.ok) {
+            throw new Error(cuerpo?.message || "Error al reabrir la fase");
+        }
+        return cuerpo?.data;
+    } catch (error) {
+        console.error("Error al reabrir la fase:", error);
+        throw error;
+    }
+}

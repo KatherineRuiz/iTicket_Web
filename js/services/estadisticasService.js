@@ -1,17 +1,14 @@
 import { API_BASE_URL, manejarRespuesta, apiFetch } from "./apiConfig.js";
 
-// ============================================================
+
 // CONSTANTES GLOBALES DE URLS Y ENDPOINTS
-// ============================================================
 const ENDPOINTS = {
     METRICAS: `${API_BASE_URL}/estadisticas/metricas`,
     ALERTAS_INSATISFACCION: `${API_BASE_URL}/estadisticas/alertas`,
     EQUIPOS_MAS_REPORTADOS: `${API_BASE_URL}/estadisticas/equipos-reportados`
 };
 
-// ============================================================
 // SERVICIOS
-// ============================================================
 
 export async function obtenerMetricas(
     idUsuarioAdmin,
@@ -22,7 +19,6 @@ export async function obtenerMetricas(
 ) {
     try {
         const params = new URLSearchParams();
-        params.append('idUsuarioAdmin', idUsuarioAdmin);
         if (fechaInicio) params.append('fechaInicio', fechaInicio);
         if (fechaFin) params.append('fechaFin', fechaFin);
         params.append('pageAlertas', pageAlertas);
@@ -46,7 +42,6 @@ export async function obtenerMetricas(
 export async function obtenerAlertas(idUsuarioAdmin, fechaInicio = '', fechaFin = '', page = 0, size = 5) {
     try {
         const params = new URLSearchParams();
-        params.append('idUsuarioAdmin', idUsuarioAdmin);
         // El backend acepta LocalDate (YYYY-MM-DD), NO LocalDateTime
         if (fechaInicio) params.append('fechaInicio', fechaInicio);
         if (fechaFin) params.append('fechaFin', fechaFin);
@@ -79,7 +74,6 @@ export async function obtenerAlertas(idUsuarioAdmin, fechaInicio = '', fechaFin 
 export async function obtenerEquiposMasReportados(idUsuarioAdmin, fechaInicio = '', fechaFin = '', page = 0, size = 5) {
     try {
         const params = new URLSearchParams();
-        params.append('idUsuarioAdmin', idUsuarioAdmin);
         if (fechaInicio) params.append('fechaInicio', fechaInicio);
         if (fechaFin) params.append('fechaFin', fechaFin);
         params.append('page', page);

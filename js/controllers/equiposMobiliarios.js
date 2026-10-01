@@ -37,6 +37,9 @@ document.addEventListener("DOMContentLoaded", async function () {
     const txtResumenPaginacion = document.querySelector("#txtResumenPaginacion");
     const controlesPaginacion = document.querySelector("#controlesPaginacion");
     const txtBuscarArticulo = document.querySelector("#txtBuscarArticulo");
+    const txtBuscarCategoria = document.querySelector("#txtBuscarCategoria");
+    const txtBuscarMarca = document.querySelector("#txtBuscarMarca");
+    const txtBuscarModelo = document.querySelector("#txtBuscarModelo");
     const selectFiltroCategoria = document.querySelector("#selectFiltroCategoria");
     const selectFiltroUbicacion = document.querySelector("#selectFiltroUbicacion");
 
@@ -475,6 +478,39 @@ document.addEventListener("DOMContentLoaded", async function () {
         }
     }
 
+    // Búsqueda local: Categorías, Marcas y Modelos ya se cargan completos de una vez,
+    // así que se filtran en el navegador sin volver a pedirle nada a la API.
+    if (txtBuscarCategoria) {
+        txtBuscarCategoria.addEventListener("input", () => {
+            const texto = txtBuscarCategoria.value.trim().toLowerCase();
+            const filtradas = categoriasRegistradas.filter(c =>
+                c.nombreCategoria.toLowerCase().includes(texto)
+            );
+            pintarTablaCategorias(filtradas);
+        });
+    }
+
+    if (txtBuscarMarca) {
+        txtBuscarMarca.addEventListener("input", () => {
+            const texto = txtBuscarMarca.value.trim().toLowerCase();
+            const filtradas = marcasRegistradas.filter(m =>
+                m.nombreMarca.toLowerCase().includes(texto)
+            );
+            pintarTablaMarcas(filtradas);
+        });
+    }
+
+    if (txtBuscarModelo) {
+        txtBuscarModelo.addEventListener("input", () => {
+            const texto = txtBuscarModelo.value.trim().toLowerCase();
+            const filtrados = modelosRegistrados.filter(m =>
+                m.nombreModelo.toLowerCase().includes(texto) ||
+                m.nombreMarca.toLowerCase().includes(texto)
+            );
+            pintarTablaModelos(filtrados);
+        });
+    }
+
     async function cargarSelectMarcas() {
         try {
             const marcas = await getMarcas();
@@ -683,3 +719,41 @@ document.addEventListener("DOMContentLoaded", async function () {
     await cargarArticulos();
     await cargarFiltros();
 });
+
+/* Orden de los bloques de la cabecera en celular.
+
+   En escritorio los tres botones de catálogo (marca, modelo, categoría) viven en
+   la columna izquierda, encima de los filtros, y el buscador comparte la fila de
+   arriba con el botón de artículo. Apilado en un teléfono ese orden deja el
+   buscador partiendo el grupo de botones por la mitad.
+
+   Aquí se mueve el bloque de los tres botones justo antes del buscador cuando la
+   pantalla es angosta, y se devuelve a su columna al volver a escritorio. Se hace
+   moviendo el nodo porque los dos bloques están en filas distintas del HTML, así
+   que la propiedad order de CSS no los alcanza: solo reordena hermanos. */
+(function ordenarCabeceraEquipos() {
+    const ANCHO_CELULAR = 767.98;
+    const botones = document.getElementById("botonesCatalogo");
+    const buscador = document.getElementById("barraBuscador");
+    if (!botones || !buscador) return;
+
+    // Se recuerda dónde vivían para poder devolverlos tal cual
+    const padreOriginal = botones.parentElement;
+    const hermanoOriginal = botones.nextElementSibling;
+    let enCabecera = false;
+
+    function colocarBotonesCatalogo() {
+        const esCelular = window.innerWidth <= ANCHO_CELULAR;
+
+        if (esCelular && !enCabecera) {
+            buscador.parentElement.insertBefore(botones, buscador);
+            enCabecera = true;
+        } else if (!esCelular && enCabecera) {
+            padreOriginal.insertBefore(botones, hermanoOriginal);
+            enCabecera = false;
+        }
+    }
+
+    colocarBotonesCatalogo();
+    window.addEventListener("resize", colocarBotonesCatalogo);
+})();

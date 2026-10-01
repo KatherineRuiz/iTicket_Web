@@ -1684,3 +1684,26 @@ html.tema-oscuro .dashboard-contador-tecnico .opcion-numero {
     max-height: 540px;
     overflow-y: auto;
 }
+
+/* ============================================================
+   "MI RESUMEN" EN CELULAR
+   El bloque de la lista de tickets cuelga de un .p-3.mx-3 y de otro .bg-white.p-3,
+   así que entre margen y rellenos anidados la tarjeta quedaba 48px más angosta
+   (239px) que los botones de Pendientes/Vencidos de arriba (287px), aunque están
+   en el mismo panel. Aquí se recortan para que las dos cosas midan lo mismo.
+   ============================================================ */
+
+@media (max-width: 767.98px) {
+
+    .mi-resumen .mx-3 {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        padding-left: 8px !important;
+        padding-right: 8px !important;
+    }
+
+    .mi-resumen .bg-white.p-3 {
+        padding-left: 8px !important;
+        padding-right: 8px !important;
+    }
+}
