@@ -1,5 +1,5 @@
-import { getProyecto, actualizarProyecto, eliminarProyecto } from "../services/proyectosService.js";
-import { getFases, getFasesPorProyecto, getNombreFase, crearFase, actualizarFase, eliminarFase } from "../services/faseService.js";
+import { getProyecto, actualizarProyecto, eliminarProyecto, reabrirProyecto } from "../services/proyectosService.js";
+import { getFases, getFasesPorProyecto, getNombreFase, crearFase, actualizarFase, eliminarFase, reabrirFase } from "../services/faseService.js";
 import { getDetallesFase, getDetallesFasePorFase, crearDetalleFase, actualizarDetalleFase, eliminarDetalleFase } from "../services/detalleFaseService.js";
 import { mostrarError, mostrarExitoSimple, mostrarConfirmacion } from "../components/sweetAlerts.js";
 import { getUsuarios } from "../services/usuariosService.js";
@@ -14,6 +14,9 @@ import { getDepartamentoById } from "../services/departamentosService.js";
 const rolActual = obtenerRolUsuario();
 if (rolActual === "usuario") window.location.replace("dashboardUsuarios.html");
 const soloLectura = rolActual === "tecnico";
+// Reabrir un proyecto o fase ya finalizada es una acción administrativa (deshace una regla
+// de negocio, no es parte del flujo normal), así que se restringe solo a Administrador.
+const esAdmin = rolActual === "administrador";
 
 // Identidad del técnico frente a ESTE proyecto en concreto. La matriz de permisos:
 // Coordinador -> CRUD de fases y detalles, y consulta del proyecto.
@@ -171,6 +174,7 @@ async function inicializarVistaProyecto(id) {
     const modalFasesProyecto = document.getElementById('modalFasesProyecto');
     const modalDetalleFase = document.getElementById('modalDetalleFase');
     const btnEliminarProyecto = document.getElementById('btnEliminarProyecto');
+    const btnReabrirProyecto = document.getElementById('btnReabrirProyecto');
 
     // data-roles="admin" (aplicado por menu.js al cargar la página) oculta estos controles a
     // TODO técnico por defecto; aquí se ajustan de nuevo según el permiso real sobre ESTE
@@ -213,6 +217,7 @@ async function inicializarVistaProyecto(id) {
         document.getElementById('txtPresupuestoProyecto').textContent = Number(proyecto.presupuestoEstimado || 0).toFixed(2);
         document.getElementById('txtTotalProyecto').textContent = Number(proyecto.gastoTotal || 0).toFixed(2);
         document.getElementById('txtEstadoProyecto').textContent = proyecto.finalizado ? "Finalizado" : "En progreso";
+        btnReabrirProyecto?.classList.toggle('d-none', !(esAdmin && proyecto.finalizado));
     }
 
     //Carga las fases del proyecto desde la API y las almacena en la variable "fases".
@@ -257,6 +262,10 @@ async function inicializarVistaProyecto(id) {
       <p class="meta-proyecto mb-0"><b>Presupuesto estimado:</b> $${Number(fase.presupuestoEstimado).toFixed(2)}</p>
       <p class="meta-proyecto mb-0"><b>Gasto total:</b> $${Number(fase.gastoTotal || 0).toFixed(2)}</p>
       <p class="meta-proyecto mb-0"><b>Estado de la fase:</b> ${finalizado ? 'Finalizada' : 'En progreso'}</p>
+      ${finalizado && esAdmin ? `
+      <button type="button" class="btn btn-oscuro-redondeado btn-sm mt-2 btnReabrirFaseSeleccionada" data-id-fase="${fase.id}">
+        <i class="bi bi-arrow-counterclockwise me-1"></i> Reabrir fase
+      </button>` : ''}
     `;
     }
 
@@ -548,6 +557,40 @@ async function inicializarVistaProyecto(id) {
         }
     }
 
+    // Reabrir proyecto finalizado (solo Administrador). Recarga la página para que todos los
+    // permisos y flags derivados del estado del proyecto (calculados una sola vez al entrar a
+    // esta vista) se vuelvan a calcular desde cero, en vez de intentar parchearlos en caliente.
+    btnReabrirProyecto?.addEventListener('click', async () => {
+        const confirmar = await mostrarConfirmacion('¿Reabrir este proyecto? Volverá a quedar "En progreso" y se podrán editar de nuevo sus fases y detalles.');
+        if (!confirmar) return;
+
+        try {
+            await reabrirProyecto(proyecto.idProyecto);
+            mostrarExitoSimple("¡Listo!", "El proyecto se reabrió correctamente");
+            window.location.reload();
+        } catch (error) {
+            mostrarError(error.message);
+        }
+    });
+
+    // Reabrir una fase finalizada (solo Administrador), delegado porque el botón se vuelve a
+    // crear cada vez que se renderiza la tarjeta de la fase seleccionada.
+    tarjetaFase.addEventListener('click', async (e) => {
+        if (!e.target.closest('.btnReabrirFaseSeleccionada')) return;
+        const idFase = Number(e.target.closest('.btnReabrirFaseSeleccionada').dataset.idFase);
+
+        const confirmar = await mostrarConfirmacion('¿Reabrir esta fase? Volverá a quedar "En progreso" y se podrán editar de nuevo ella y sus detalles.');
+        if (!confirmar) return;
+
+        try {
+            await reabrirFase(idFase);
+            mostrarExitoSimple("¡Listo!", "La fase se reabrió correctamente");
+            window.location.reload();
+        } catch (error) {
+            mostrarError(error.message);
+        }
+    });
+
     // Seleccion de fase
     selectFase.addEventListener('change', (e) => seleccionarFase(e.target.value));
 
@@ -688,6 +731,14 @@ async function inicializarVistaProyecto(id) {
         if (nombreFaseDuplicado) {
             document.getElementById('txtNombreFase').classList.add('is-invalid');
             mostrarError(`Ya existe una fase con el nombre "${nombreFase}" en este proyecto.`);
+            return;
+        }
+
+        // Bloqueo duro: una fase no puede finalizarse sin sus fechas reales de inicio y fin
+        // registradas (reflejan el inicio real que no se puede saber al crear la fase y la pregunta
+        // "cuándo terminó en realidad" que una fase finalizada debería poder responder).
+        if (finalizado && (!fechaInicioReal || !fechaFinalReal)) {
+            mostrarError('No se puede finalizar la fase: debes registrar la fecha de inicio real y la fecha final real.');
             return;
         }
 
