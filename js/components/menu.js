@@ -1851,6 +1851,27 @@ function mejorarFecha(input) {
     envoltorio.append(input, boton, panel);
     input.classList.add("input-fecha-personalizada");
 
+    /* Marcador de campo vacio.
+
+       Safari en iOS no dibuja nada dentro de un input[type=date] sin valor, y
+       como en iPhone todos los navegadores usan Safari por dentro, el filtro se
+       veia como una caja en blanco con el icono del calendario y nada mas.
+       Chrome y Edge de escritorio si pintan "dd/mm/aaaa" solos. Aqui se pone ese
+       mismo texto a mano y se tapa el nativo mientras el campo esta vacio, para
+       que se lea igual en todos lados y no salga duplicado. */
+    const textoVacio = document.createElement("span");
+    textoVacio.className = "texto-fecha-vacia";
+    textoVacio.setAttribute("aria-hidden", "true");
+    textoVacio.textContent = conHora ? "dd/mm/aaaa --:--" : "dd/mm/aaaa";
+    envoltorio.append(textoVacio);
+
+    // asignarValorFecha lanza "input" y "change", asi que esto cubre tanto el
+    // calendario propio como escribir la fecha a mano o borrarla.
+    const refrescarMarcador = () => envoltorio.classList.toggle("sin-fecha", !input.value);
+    refrescarMarcador();
+    input.addEventListener("input", refrescarMarcador);
+    input.addEventListener("change", refrescarMarcador);
+
     const estado = { input, envoltorio, boton, panel, conHora, mesVisible: null, diaActivo: null };
     input.__fechaPersonalizada = estado;
 

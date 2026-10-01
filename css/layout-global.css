@@ -2910,6 +2910,38 @@ html.tema-oscuro .select-personalizado-opcion i { color: #8fc5f1; }
     cursor: pointer;
 }
 
+/* Marcador "dd/mm/aaaa" cuando el campo esta vacio.
+   Lo pinta menu.js (mejorarFecha) porque Safari en iOS deja el input en blanco.
+   Mientras se muestra, se tapa el texto nativo para que no salga duplicado en
+   los navegadores que si lo dibujan. */
+.texto-fecha-vacia {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    padding-left: .75rem;
+    color: #6c757d;
+    pointer-events: none;
+}
+
+/* Los filtros de las listas usan su propio relleno y tamaño de letra */
+.fecha-personalizada:has(> .select-ticket-filtro) > .texto-fecha-vacia {
+    padding-left: 16px;
+    font-size: 14px;
+}
+
+.fecha-personalizada:not(.sin-fecha) > .texto-fecha-vacia {
+    display: none;
+}
+
+.fecha-personalizada.sin-fecha > .input-fecha-personalizada::-webkit-datetime-edit {
+    opacity: 0;
+}
+
+html.tema-oscuro .texto-fecha-vacia {
+    color: #8492a7;
+}
+
 /* Se oculta el ícono nativo: el calendario propio lo reemplaza */
 .input-fecha-personalizada::-webkit-calendar-picker-indicator {
     display: none;

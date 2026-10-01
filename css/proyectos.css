@@ -81,3 +81,62 @@
 .contenido-principal > .row:has(> section[data-roles].d-none) > section:not([data-roles]) {
     width: 100%;
 }
+
+/* =====================================================================
+   LA PAGINA SE CORRIA EN HORIZONTAL
+
+   La fila de esta pantalla es la unica del sistema que usa g-5. Bootstrap
+   aplica esa separacion con margenes negativos: -24px a cada lado de la fila,
+   mas 24px de relleno dentro de cada columna, y entre los dos se cancelan.
+
+   El problema es que el .container-fluid que la envuelve solo descuenta 12px
+   por lado, no 24. Asi que la fila terminaba sobresaliendo 12px de la pagina
+   por cada lado y el navegador agregaba scroll horizontal.
+
+   Bajando el gutter horizontal a 1.5rem los margenes pasan a -12px y calzan
+   con el contenedor. El contenido NO se mueve ni un pixel (medido: la columna
+   sigue empezando y terminando exactamente donde estaba); lo unico que cambia
+   es la separacion entre el panel admin y el contenido, de 48px a 24px. El
+   gutter vertical se queda en 3rem, porque g-5 lo define aparte.
+   ===================================================================== */
+.contenido-principal > .row.g-5 {
+    --bs-gutter-x: 1.5rem;
+}
+
+/* =====================================================================
+   LAS TARJETAS LLENAN EL ANCHO DISPONIBLE
+
+   Venian como columnas de Bootstrap (col-lg-6), o sea media fila fija. Con un
+   solo proyecto quedaba media pantalla vacia al lado, y por debajo de 576px la
+   tarjeta se quedaba sin ninguna clase de columna, asi que tomaba el ancho de
+   su contenido y se salia de la pantalla.
+
+   Con una grilla de ancho automatico el navegador decide cuantas caben: una
+   sola ocupa todo, dos se reparten la fila, y a partir de ahi van bajando. El
+   El ancho minimo de cada columna es el mayor entre 34% y 460px, pero sin
+   pasarse del 100%. El 34% es el tope de dos por fila: tres columnas pedirian
+   mas del 100% y no caben nunca. El 320px evita que en pantallas medianas se
+   partan en dos tarjetas demasiado angostas. Y el min(100%, ...) es lo que
+   evita el desborde en celular, porque impide que una columna pida mas ancho
+   del que hay.
+
+   El margin: 0 anula los margenes negativos que .row trae de Bootstrap, que
+   aqui ya no hacen falta porque la separacion la da el gap.
+   ===================================================================== */
+.contenedor-proyectos {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(max(34%, min(100%, 320px)), 1fr));
+    gap: 24px;
+    margin: 0 !important;
+}
+
+.contenedor-proyectos > article {
+    width: auto;
+    max-width: none;
+    padding: 0;
+}
+
+/* Los mensajes de "No se encontraron proyectos" ocupan la fila entera */
+.contenedor-proyectos > p {
+    grid-column: 1 / -1;
+}
