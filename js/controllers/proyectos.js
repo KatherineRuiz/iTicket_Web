@@ -301,6 +301,13 @@ function actualizarGrafico(proyectos) {
 formCrearProyecto.addEventListener('submit', async (e) => {
     e.preventDefault();
 
+    // Evita doble envío por clicks repetidos en "Guardar".
+    const btnGuardarProyectoNuevo = formCrearProyecto.querySelector('button[type="submit"]');
+    if (btnGuardarProyectoNuevo?.disabled) return;
+    if (btnGuardarProyectoNuevo) btnGuardarProyectoNuevo.disabled = true;
+
+    try {
+
     //Limpiamos marcas de error de un intento anterior
     formCrearProyecto.querySelectorAll('.is-invalid').forEach((el) => el.classList.remove('is-invalid'));
 
@@ -377,6 +384,9 @@ formCrearProyecto.addEventListener('submit', async (e) => {
         }
     } catch (error) {
         mostrarError(error.message);
+    }
+    } finally {
+        if (btnGuardarProyectoNuevo) btnGuardarProyectoNuevo.disabled = false;
     }
 });
 
