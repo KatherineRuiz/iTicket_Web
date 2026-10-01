@@ -30,7 +30,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             try {
                                 // Reenviar codigo llamando a la nueva API segura que extrae el correo de la Cookie
-                const respuesta = await fetch('http://localhost:8080/api/auth/reenviar-codigo', {
+                const respuesta = await fetch('https://iticketapi-3e643051c995.herokuapp.com/api/auth/reenviar-codigo', {
                     method: 'POST',
                     credentials: 'include'
                 });
@@ -95,7 +95,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 botonAceptar.innerHTML = 'Validando...';
 
                 try {
-                    const response = await fetch('http://localhost:8080/api/auth/validar-codigo', {
+                    const response = await fetch('https://iticketapi-3e643051c995.herokuapp.com/api/auth/validar-codigo', {
                         method: 'POST', credentials: 'include',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ codigo: codigoCompleto })
@@ -120,4 +120,5 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 });
+
 
