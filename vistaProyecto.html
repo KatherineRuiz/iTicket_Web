@@ -342,7 +342,10 @@
                                         optional />
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                            <!-- Solo visible al EDITAR una fase existente: una fase recien creada no puede
+                                 nacer ya finalizada (mostrarCamposEdicionFase la muestra/oculta junto con las
+                                 fechas reales y el gasto total). -->
+                            <div class="col-md-4 d-none" id="campoFaseFinalizada">
                                 <label for="faseFinalizada" class="form-label text-navy fw-semibold">Finalizada</label>
                                 <select class="form-select" id="faseFinalizada" placeholder="Selecciona el estado"
                                     required>
