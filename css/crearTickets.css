@@ -212,3 +212,39 @@ body {
   color: #a0a6b0 !important;
   font-style: italic;
 }
+/* ============================================================
+   SIN TARJETA DE FONDO DETRÁS DEL FORMULARIO
+   El formulario iba dentro de un .bg-white.rounded-5.shadow-sm.border que en
+   esta pantalla no aporta nada: no hay otro contenido del que separarlo, así
+   que solo dibujaba un recuadro (gris en modo oscuro) alrededor de los campos,
+   que ya tienen su propio fondo y su propio borde.
+   ============================================================ */
+
+.contenido-principal > .bg-white.rounded-5 {
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+}
+
+/* El relleno lateral solo sobra en celular, donde cada píxel cuenta. En
+   escritorio se conserva el del p-md-5: sin él los campos quedaban pegados al
+   borde de la pantalla, muy distinto al resto de las pantallas. */
+@media (max-width: 767.98px) {
+    .contenido-principal > .bg-white.rounded-5 {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+}
+
+/* La fila de categorías se alinea con el formulario de abajo.
+
+   El formulario lleva p-md-5 (48px) y la fila de tarjetas no llevaba nada, así
+   que en escritorio las tarjetas arrancaban 48px más a la izquierda que los
+   campos: la pantalla se veía descuadrada y pegada al borde comparada con el
+   resto del sistema. En celular no aplica, ahí el relleno lateral se quita. */
+@media (min-width: 768px) {
+    .contenido-principal > .d-flex:has(> .card-categoria) {
+        padding-left: 3rem;
+        padding-right: 3rem;
+    }
+}

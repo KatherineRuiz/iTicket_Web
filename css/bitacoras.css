@@ -6,11 +6,13 @@
     padding-inline: 24px !important;
 }
 
+/* Sin envoltorio visible. El recuadro con borde y fondo existía para engancharse
+   a la pestaña de arriba; quitada la pestaña, solo metía una caja gris de más
+   alrededor del buscador y la tabla, que ya traen su propio fondo. */
 .contenido-tabs-bitacoras {
-    border: 1px solid #e6eaf0;
-    border-radius: 0 20px 20px 20px;
-    background: rgba(255, 255, 255, 0.38);
-    padding: 0 20px 20px;
+    border: 0;
+    background: transparent;
+    padding: 0;
 }
 
 .truncate-celda {
@@ -48,11 +50,9 @@
     box-shadow: 0 -6px 16px rgba(30, 45, 90, 0.05);
 }
 
-.contenido-tabs-bitacoras .card-tabla {
-    border-top-left-radius: 0;
-}
-
 @media (max-width: 767.98px) {
-    .bitacoras-pagina { padding-inline: 12px !important; }
-    .contenido-tabs-bitacoras { padding-inline: 12px; border-radius: 0 16px 16px 16px; }
+    /* 20px, el mismo margen lateral que common.css le da a .contenido-principal
+       en el resto de las pantallas. Esta hoja se carga después, así que sin
+       igualar el valor aquí bitácoras quedaba 8px más ancha que las demás. */
+    .bitacoras-pagina { padding-inline: 20px !important; }
 }

@@ -41,17 +41,9 @@
                 <div class="col-12">
                     <h5 class="fw-bold mb-3 titulo-seccion text-center p-3">Bitácora de actividad</h5>
 
-                    <!-- Pestañas -->
-                    <ul class="nav nav-tabs mb-0 border-0 gap-2" id="tabsBitacoras" role="tablist">
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link active" id="tab-todos" data-bs-toggle="tab"
-                                data-bs-target="#panel-todos" type="button" role="tab" aria-controls="panel-todos"
-                                aria-selected="true">
-                                <span class="text-secondary"><i class="bi bi-clock-history me-1"></i>Todos los registros</span>
-                            </button>
-                        </li>
-                    </ul>
-
+                    <!-- Sin pestañas: quedaba una sola ("Todos los registros"), que no
+                         ofrecía ninguna alternativa y solo ocupaba espacio. El panel de
+                         abajo conserva show/active para seguir visible por sí solo. -->
                     <div class="tab-content contenido-tabs-bitacoras" id="contenidoTabsBitacoras">
 
                         <!-- Panel: Todos los registros -->
