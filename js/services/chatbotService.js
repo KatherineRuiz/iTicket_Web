@@ -25,7 +25,6 @@ export async function enviarMensajeChatbot(idUsuario, mensaje, idConversacion = 
             "Content-Type": "application/json"
         },
         body: JSON.stringify({
-            idUsuario,
             idConversacion,
             mensaje: mensajeLimpio
         })
@@ -37,9 +36,7 @@ export async function enviarMensajeChatbot(idUsuario, mensaje, idConversacion = 
 /** Obtiene las cinco conversaciones más recientes del usuario. */
 export async function obtenerConversacionesChatbot(idUsuario) {
     validarUsuario(idUsuario);
-    const respuesta = await apiFetch(
-        `${CHATBOT_URL}/conversaciones?idUsuario=${encodeURIComponent(idUsuario)}`
-    );
+    const respuesta = await apiFetch(`${CHATBOT_URL}/conversaciones`);
     return manejarRespuesta(respuesta);
 }
 
@@ -48,7 +45,6 @@ export async function obtenerConversacionChatbot(idUsuario, idConversacion) {
     validarUsuario(idUsuario);
     const respuesta = await apiFetch(
         `${CHATBOT_URL}/conversaciones/${encodeURIComponent(idConversacion)}`
-        + `?idUsuario=${encodeURIComponent(idUsuario)}`
     );
     return manejarRespuesta(respuesta);
 }
@@ -57,8 +53,7 @@ export async function obtenerConversacionChatbot(idUsuario, idConversacion) {
 export async function eliminarConversacionChatbot(idUsuario, idConversacion) {
     validarUsuario(idUsuario);
     const respuesta = await apiFetch(
-        `${CHATBOT_URL}/conversaciones/${encodeURIComponent(idConversacion)}`
-        + `?idUsuario=${encodeURIComponent(idUsuario)}`,
+        `${CHATBOT_URL}/conversaciones/${encodeURIComponent(idConversacion)}`,
         { method: "DELETE" }
     );
     return manejarRespuesta(respuesta);

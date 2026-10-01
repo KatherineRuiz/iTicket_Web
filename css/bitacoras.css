@@ -6,13 +6,13 @@
     padding-inline: 24px !important;
 }
 
-/* Sin envoltorio visible. El recuadro con borde y fondo existía para engancharse
-   a la pestaña de arriba; quitada la pestaña, solo metía una caja gris de más
-   alrededor del buscador y la tabla, que ya traen su propio fondo. */
+/* El recuadro se engancha con las pestañas de arriba: la esquina superior
+   izquierda va recta para que la pestaña activa se vea pegada al panel. */
 .contenido-tabs-bitacoras {
-    border: 0;
-    background: transparent;
-    padding: 0;
+    border: 1px solid #e6eaf0;
+    border-radius: 0 20px 20px 20px;
+    background: rgba(255, 255, 255, 0.38);
+    padding: 0 20px 20px;
 }
 
 .truncate-celda {
@@ -50,9 +50,39 @@
     box-shadow: 0 -6px 16px rgba(30, 45, 90, 0.05);
 }
 
+.contenido-tabs-bitacoras .card-tabla {
+    border-top-left-radius: 0;
+}
+
 @media (max-width: 767.98px) {
     /* 20px, el mismo margen lateral que common.css le da a .contenido-principal
        en el resto de las pantallas. Esta hoja se carga después, así que sin
        igualar el valor aquí bitácoras quedaba 8px más ancha que las demás. */
     .bitacoras-pagina { padding-inline: 20px !important; }
+    .contenido-tabs-bitacoras { padding-inline: 12px; border-radius: 0 16px 16px 16px; }
+
+    /* Las dos pestañas se reparten la fila en vez de apilarse: cada una mide
+       unos 210px y en 309px de ancho no caben seguidas, así que Bootstrap las
+       mandaba una debajo de la otra y no se leían como pestañas. */
+    #tabsBitacoras {
+        flex-wrap: nowrap;
+    }
+
+    #tabsBitacoras .nav-item {
+        flex: 1 1 0;
+        min-width: 0;
+    }
+
+    #tabsBitacoras .nav-link {
+        width: 100%;
+        padding-inline: 8px;
+        font-size: 13px;
+    }
+
+    #tabsBitacoras .nav-link span {
+        display: block;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
 }

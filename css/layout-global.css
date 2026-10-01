@@ -1994,6 +1994,11 @@ html.tema-oscuro .burbuja-comentario.propio {
     color: #edf6ff;
 }
 
+html.tema-oscuro .contenido-tabs-bitacoras {
+    border-color: #2b374c;
+    background: rgba(24, 34, 53, 0.72);
+}
+
 html.tema-oscuro .nav-tabs .nav-link {
     color: #aeb9ca;
 }

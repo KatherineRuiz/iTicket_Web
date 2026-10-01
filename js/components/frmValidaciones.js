@@ -20,8 +20,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const cambiar = (mostrar) => {
             input.type = mostrar ? "text" : "password";
-            icono.classList.toggle("bi-eye", !mostrar);
-            icono.classList.toggle("bi-eye-slash", mostrar);
+            icono.classList.toggle("bi-eye", mostrar);
+            icono.classList.toggle("bi-eye-slash", !mostrar);
         };
 
         boton.addEventListener("mousedown", () => cambiar(true));

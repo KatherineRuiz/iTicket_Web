@@ -212,8 +212,7 @@ body {
   color: #a0a6b0 !important;
   font-style: italic;
 }
-/* ============================================================
-   SIN TARJETA DE FONDO DETRÁS DEL FORMULARIO
+/* =====================================================   SIN TARJETA DE FONDO DETRÁS DEL FORMULARIO
    El formulario iba dentro de un .bg-white.rounded-5.shadow-sm.border que en
    esta pantalla no aporta nada: no hay otro contenido del que separarlo, así
    que solo dibujaba un recuadro (gris en modo oscuro) alrededor de los campos,
@@ -247,4 +246,31 @@ body {
         padding-left: 3rem;
         padding-right: 3rem;
     }
+}
+
+/* Limita la altura del listado de sugerencias de codigo de equipo a ~3 filas
+   y le agrega scroll, con el mismo estilo de scrollbar que .contenido-scroll
+   (layout-global.css) para mantener consistencia con el resto del proyecto */
+#sugerenciasCodigos {
+  max-height: 140px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(20, 36, 84, 0.24) transparent;
+}
+
+#sugerenciasCodigos::-webkit-scrollbar {
+  width: 7px;
+}
+
+#sugerenciasCodigos::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+#sugerenciasCodigos::-webkit-scrollbar-thumb {
+  background: rgba(20, 36, 84, 0.22);
+  border-radius: 999px;
+}
+
+#sugerenciasCodigos::-webkit-scrollbar-thumb:hover {
+  background: rgba(20, 36, 84, 0.38);
 }

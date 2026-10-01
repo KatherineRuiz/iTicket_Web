@@ -1,6 +1,12 @@
-import { mostrarError, mostrarExitoRedireccion } from "../components/sweetAlerts.js";
+import { mostrarError, mostrarExitoRedireccion, mostrarAlertaEspera, mostrarExitoSimple } from "../components/sweetAlerts.js";
 
-    document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", function () {
+    
+    if (false) {
+        window.location.replace("index.html");
+        return;
+    }
+
     const digitos = document.querySelectorAll(".digito-codigo");
     const botonAceptar = document.querySelector("#btnAceptarCodigo");
     const linkReenviar = document.querySelector("#linkReenviar");
@@ -9,95 +15,107 @@ import { mostrarError, mostrarExitoRedireccion } from "../components/sweetAlerts
         let enEspera = false;
         let tiempoInicio = 0;
 
-        linkReenviar.addEventListener("click", function (evento) {
-        evento.preventDefault();
+        linkReenviar.addEventListener("click", async function (evento) {
+            evento.preventDefault();
 
-        if (enEspera) {
-            let tiempoRestante = 35000 - (Date.now() - tiempoInicio);
-            mostrarAlertaEspera(tiempoRestante);
-            return;
-        }
+            if (enEspera) {
+                let tiempoRestante = 35000 - (Date.now() - tiempoInicio);
+                mostrarAlertaEspera(tiempoRestante);
+                return;
+            }
 
-        enEspera = true;
-        linkReenviar.classList.add("text-muted");
-        tiempoInicio = Date.now();
+            enEspera = true;
+            linkReenviar.classList.add("text-muted");
+            tiempoInicio = Date.now();
 
-        // Usando tu cascar贸n para el 茅xito simple sin redirecci贸n inmediata
-        mostrarExitoSimple(
-            "C贸digo Reenviado",
-            "Revisa tu bandeja de entrada o spam.",
-        );
+            try {
+                // Reenviar codigo llamando a la API
+                await fetch('http://localhost:8080/api/auth/recuperar-contrasena', {
+                    method: 'POST', credentials: 'include',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ token: tokenValidacion })
+                });
+                mostrarExitoSimple("C骴igo Reenviado", "Revisa tu bandeja de entrada o spam.");
+            } catch(e) {
+                mostrarError("No se pudo reenviar el c骴igo");
+            }
 
-        setTimeout(function () {
-            enEspera = false;
-            linkReenviar.classList.remove("text-muted");
-        }, 35000);
+            setTimeout(function () {
+                enEspera = false;
+                linkReenviar.classList.remove("text-muted");
+            }, 35000);
         });
     }
 
     if (digitos.length > 0) {
-        // L贸gica de navegaci贸n interna de los inputs ("puntitos")
+        // L骻ica de navegaci髇 interna de los inputs ("puntitos")
         digitos.forEach(function (entrada, indice) {
-        entrada.addEventListener("input", function () {
-            if (this.value.length > 1) this.value = this.value.slice(-1);
-            if (this.value && indice < digitos.length - 1)
-            digitos[indice + 1].focus();
-        });
-
-        entrada.addEventListener("keydown", function (evento) {
-            if (evento.key === "Backspace" && !this.value && indice > 0) {
-            digitos[indice - 1].focus();
-            digitos[indice - 1].value = "";
-            }
-            if (
-            !evento.key.match(/^[a-zA-Z0-9]$/) &&
-            !["Backspace", "Tab", "ArrowLeft", "ArrowRight"].includes(evento.key)
-            ) {
-            evento.preventDefault();
-            }
-        });
-
-        entrada.addEventListener("click", function () {
-            this.select();
-        });
-
-        entrada.addEventListener("paste", function (evento) {
-            evento.preventDefault();
-            const textoPegado = (evento.clipboardData || window.clipboardData)
-            .getData("text")
-            .replace(/\s/g, "")
-            .slice(0, digitos.length);
-
-            textoPegado.split("").forEach((caracter, i) => {
-            if (digitos[indice + i]) digitos[indice + i].value = caracter;
+            entrada.addEventListener("input", function () {
+                if (this.value.length > 1) this.value = this.value.slice(-1);
+                if (this.value && indice < digitos.length - 1) digitos[indice + 1].focus();
             });
-            const ultimoLleno = Math.min(
-            indice + textoPegado.length - 1,
-            digitos.length - 1,
-            );
-            digitos[ultimoLleno].focus();
-        });
+
+            entrada.addEventListener("keydown", function (evento) {
+                if (evento.key === "Backspace" && !this.value && indice > 0) {
+                    digitos[indice - 1].focus();
+                    digitos[indice - 1].value = "";
+                }
+                if (!evento.key.match(/^[a-zA-Z0-9]$/) && !["Backspace", "Tab", "ArrowLeft", "ArrowRight"].includes(evento.key)) {
+                    evento.preventDefault();
+                }
+            });
+
+            entrada.addEventListener("click", function () {
+                this.select();
+            });
+
+            entrada.addEventListener("paste", function (evento) {
+                evento.preventDefault();
+                const textoPegado = (evento.clipboardData || window.clipboardData).getData("text").replace(/\s/g, "").slice(0, digitos.length);
+                textoPegado.split("").forEach((caracter, i) => {
+                    if (digitos[indice + i]) digitos[indice + i].value = caracter;
+                });
+                const ultimoLleno = Math.min(indice + textoPegado.length - 1, digitos.length - 1);
+                digitos[ultimoLleno].focus();
+            });
         });
 
-        // L贸gica del bot贸n validar
         if (botonAceptar) {
-        botonAceptar.addEventListener("click", function (evento) {
-            evento.preventDefault();
-            const codigoCompleto = Array.from(digitos)
-            .map((d) => d.value)
-            .join("");
+            botonAceptar.addEventListener("click", async function (evento) {
+                evento.preventDefault();
+                const codigoCompleto = Array.from(digitos).map((d) => d.value).join("");
 
-            if (codigoCompleto.length < digitos.length) {
-            mostrarError(
-                "Por favor, completa todos los campos del c贸digo.",
-                false,
-            );
-            return;
-            }
+                if (codigoCompleto.length < digitos.length) {
+                    mostrarError("Por favor, completa todos los campos del c骴igo.", false);
+                    return;
+                }
 
-            // Llamada optimizada usando tu cascar贸n con redirecci贸n
-            mostrarExitoRedireccion("C贸digo Correcto", "", "nuevaContrasena.html");
-        });
+                botonAceptar.disabled = true;
+                botonAceptar.innerHTML = 'Validando...';
+
+                try {
+                    const response = await fetch('http://localhost:8080/api/auth/validar-codigo', {
+                        method: 'POST', credentials: 'include',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ codigo: codigoCompleto })
+                    });
+
+                    const data = await response.json();
+
+                    if (!response.ok) {
+                        throw new Error(data.message || 'C骴igo inv醠ido o expirado');
+                    }
+
+                    // Guardamos el token temporal que nos da la API para cambiar la contrase馻
+                    
+                    mostrarExitoRedireccion("C骴igo Correcto", "Ya puedes establecer tu nueva contrase馻.", "nuevaContrasena.html");
+                } catch (error) {
+                    mostrarError(error.message, false);
+                } finally {
+                    botonAceptar.disabled = false;
+                    botonAceptar.innerHTML = 'Validar';
+                }
+            });
         }
     }
-    });
+});
