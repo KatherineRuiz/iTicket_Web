@@ -1,4 +1,5 @@
 import { mostrarError, mostrarExitoRedireccion } from "../components/sweetAlerts.js";
+import { API_BASE_URL, apiFetch } from "../services/apiConfig.js";
 
 document.addEventListener("DOMContentLoaded", function () {
     const formularioRecuperacion = document.querySelector("#formRecovery");
@@ -11,7 +12,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const boton = formularioRecuperacion.querySelector('button');
 
             if (!esCorreoValido(correo)) {
-                mostrarError("Ingresa un correo electrónico válido para recuperar tu contraseña.", false);
+                mostrarError("Ingresa un correo electronico valido para recuperar tu contrasena.", false);
                 return;
             }
 
@@ -19,8 +20,8 @@ document.addEventListener("DOMContentLoaded", function () {
             boton.innerHTML = 'Enviando...';
 
             try {
-                const response = await fetch('http://localhost:8080/api/auth/recuperar-contrasena', {
-                    method: 'POST', credentials: 'include',
+                const response = await apiFetch(`${API_BASE_URL}/auth/recuperar-contrasena`, {
+                    method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ correo: correo })
                 });
@@ -28,11 +29,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 const data = await response.json();
 
                 if (!response.ok) {
-                    throw new Error(data.message || 'Ocurrió un error al enviar el correo');
+                    throw new Error(data.message || 'Ocurrio un error al enviar el correo');
                 }
 
-                
-                mostrarExitoRedireccion("Código Enviado", "Revisa tu bandeja de entrada o spam.", "codigoVerificacion.html");
+                mostrarExitoRedireccion("Codigo Enviado", "Revisa tu bandeja de entrada o spam.", "codigoVerificacion.html");
             } catch (error) {
                 mostrarError(error.message, false);
             } finally {

@@ -1,13 +1,8 @@
 import { mostrarError, mostrarExitoRedireccion } from "../components/sweetAlerts.js";
+import { API_BASE_URL, apiFetch } from "../services/apiConfig.js";
 
 document.addEventListener("DOMContentLoaded", function () {
     const formularioNueva = document.querySelector("#formNuevaContrasena");
-    
-    // Obtener el token de la sesion
-    
-
-    // Bloquear si no hay token
-    
 
     if (formularioNueva) {
         formularioNueva.addEventListener("submit", async function (evento) {
@@ -18,14 +13,13 @@ document.addEventListener("DOMContentLoaded", function () {
             const nuevaContra = inputsPassword[0].value;
             const confirmarContra = inputsPassword[1].value;
 
-            // Validación básica manual porque la funcion global no se ha importado
             if (nuevaContra.trim().length < 6 || nuevaContra.trim().length > 18) {
-                mostrarError("Contraseña inválida. Debe tener entre 6 y 18 caracteres.", false);
+                mostrarError("Contrasena invalida. Debe tener entre 6 y 18 caracteres.", false);
                 return;
             }
 
             if (nuevaContra !== confirmarContra) {
-                mostrarError("Las contraseñas no coinciden. Por favor, verifícalas.", false);
+                mostrarError("Las contrasenas no coinciden. Por favor, verificalas.", false);
                 return;
             }
 
@@ -33,8 +27,8 @@ document.addEventListener("DOMContentLoaded", function () {
             boton.innerHTML = 'Guardando...';
 
             try {
-                const response = await fetch('http://localhost:8080/api/auth/restablecer-contrasena', {
-                    method: 'POST', credentials: 'include',
+                const response = await apiFetch(`${API_BASE_URL}/auth/restablecer-contrasena`, {
+                    method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ nuevaContrasena: nuevaContra })
                 });
@@ -42,21 +36,16 @@ document.addEventListener("DOMContentLoaded", function () {
                 const data = await response.json();
 
                 if (!response.ok) {
-                    throw new Error(data.message || 'Ocurrió un error al restablecer la contraseña');
+                    throw new Error(data.message || 'Ocurrio un error al restablecer la contrasena');
                 }
 
-                // Limpiar la sesion
-                
-                
-                
-                mostrarExitoRedireccion("¡Contraseña Restablecida!", "Tu contraseña ha sido actualizada correctamente.", "index.html");
+                mostrarExitoRedireccion("Contrasena Restablecida!", "Tu contrasena ha sido actualizada correctamente.", "index.html");
             } catch (error) {
                 mostrarError(error.message, false);
             } finally {
                 boton.disabled = false;
-                boton.innerHTML = 'Restablecer contraseña';
+                boton.innerHTML = 'Restablecer contraseÃ±a';
             }
         });
     }
 });
-
