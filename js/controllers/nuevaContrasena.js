@@ -1,4 +1,5 @@
 ﻿import { mostrarError, mostrarExitoRedireccion } from "../components/sweetAlerts.js";
+import { API_BASE_URL } from "../services/apiConfig.js";
 
 document.addEventListener("DOMContentLoaded", function () {
     const formularioNueva = document.querySelector("#formNuevaContrasena");
@@ -33,7 +34,7 @@ document.addEventListener("DOMContentLoaded", function () {
             boton.innerHTML = 'Guardando...';
 
             try {
-                const response = await fetch('https://iticketapi-3e643051c995.herokuapp.com/api/auth/restablecer-contrasena', {
+                const response = await fetch(`${API_BASE_URL}/auth/restablecer-contrasena`, {
                     method: 'POST', credentials: 'include',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ nuevaContrasena: nuevaContra })

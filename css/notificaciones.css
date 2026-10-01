@@ -292,8 +292,12 @@ html.tema-oscuro .panel-notificaciones.activo .notificacion-item:hover {
     transition: background 160ms ease, color 160ms ease;
 }
 
-.panel-notificaciones.activo .btn-cerrar-notificaciones {
-    display: grid;
+/* Solo en celular. En escritorio el panel deja ver el fondo y se cierra
+   tocando fuera (o con Escape), asi que la X ahi solo estorbaba. */
+@media (max-width: 767.98px) {
+    .panel-notificaciones.activo .btn-cerrar-notificaciones {
+        display: grid;
+    }
 }
 
 .btn-cerrar-notificaciones:hover {
