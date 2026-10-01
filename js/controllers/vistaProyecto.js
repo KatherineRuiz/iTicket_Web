@@ -16,7 +16,7 @@ if (rolActual === "usuario") window.location.replace("dashboardUsuarios.html");
 const soloLectura = rolActual === "tecnico";
 // Reabrir un proyecto o fase ya finalizada es una acción administrativa (deshace una regla
 // de negocio, no es parte del flujo normal), así que se restringe solo a Administrador.
-const esAdmin = rolActual === "administrador";
+const esAdmin = rolActual === "admin";
 
 // Identidad del técnico frente a ESTE proyecto en concreto. La matriz de permisos:
 // Coordinador -> CRUD de fases y detalles, y consulta del proyecto.
