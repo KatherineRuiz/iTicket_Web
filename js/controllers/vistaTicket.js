@@ -10,7 +10,7 @@ import { getBitacorasPorTicket } from "../services/bitacorasService.js";
 import { crearComentario, obtenerComentariosPorTicket, eliminarComentario } from "../services/comentariosService.js";
 import { subirMultimediaComentario } from "../services/multimediaComentariosService.js";
 import { formatearFecha24H, formatearFecha12H, formatearParaDateTimeLocal } from "../utils/formateadores.js";
-import { validarFormularioComentario } from "../validators/comentariosValidator.js";
+import { validarFormularioComentario, puedeEliminarComentario } from "../validators/comentariosValidator.js";
 import { obtenerIdUsuario } from "../utils/sesion.js";
 
 const CATEGORIA_POR_TIPO = { "Articulo": "equipos", "General": "general", "Software": "software" };
@@ -859,14 +859,14 @@ function renderizarComentarios() {
         return;
     }
 
-    listaComentarios.innerHTML = comentariosActuales.map((comentario) => {
+    listaComentarios.innerHTML = comentariosActuales.map((comentario, indice) => {
         const esPropio = Number(comentario.idUsuarioComentario) === idUsuario;
         const tipo = esPropio ? "propio" : "otro";
 
         const correo = !esPropio ? `<span class="correo-comentario">${escapeHTML(comentario.correoUsuario ?? "")}</span>`: "";
         const galeria = (comentario.multimediaUrls && comentario.multimediaUrls.length > 0) ? `<div class="galeria-burbuja-comentario">${comentario.multimediaUrls.map((url) => `<img src="${url}" alt="Imagen adjunta" onclick="abrirVistaImagen('${url}')">`).join("")}</div>` : "";
 
-        const btnEliminar = esPropio ? `
+        const btnEliminar = puedeEliminarComentario(comentariosActuales, indice, idUsuario) ? `
             <button type="button" class="btn-eliminar-comentario" data-id-comentario="${comentario.id}" aria-label="Eliminar comentario" title="Eliminar comentario">
                    <i class="bi bi-trash3"></i>
             </button>`: "";
@@ -905,6 +905,8 @@ listaComentarios?.addEventListener("click", async (e) => {
     } catch (error) {
         console.error("Error al eliminar el comentario:", error);
         mostrarError(error.message || "No se pudo eliminar el comentario.");
+        comentariosActuales = await obtenerComentariosPorTicket(idTicketActual);
+        renderizarComentarios();
     }
 });
 
