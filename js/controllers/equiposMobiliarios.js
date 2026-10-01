@@ -37,6 +37,9 @@ document.addEventListener("DOMContentLoaded", async function () {
     const txtResumenPaginacion = document.querySelector("#txtResumenPaginacion");
     const controlesPaginacion = document.querySelector("#controlesPaginacion");
     const txtBuscarArticulo = document.querySelector("#txtBuscarArticulo");
+    const txtBuscarCategoria = document.querySelector("#txtBuscarCategoria");
+    const txtBuscarMarca = document.querySelector("#txtBuscarMarca");
+    const txtBuscarModelo = document.querySelector("#txtBuscarModelo");
     const selectFiltroCategoria = document.querySelector("#selectFiltroCategoria");
     const selectFiltroUbicacion = document.querySelector("#selectFiltroUbicacion");
 
@@ -473,6 +476,39 @@ document.addEventListener("DOMContentLoaded", async function () {
         } catch (error) {
             mostrarError(error.message || "No se pudieron cargar los modelos.", false);
         }
+    }
+
+    // Búsqueda local: Categorías, Marcas y Modelos ya se cargan completos de una vez,
+    // así que se filtran en el navegador sin volver a pedirle nada a la API.
+    if (txtBuscarCategoria) {
+        txtBuscarCategoria.addEventListener("input", () => {
+            const texto = txtBuscarCategoria.value.trim().toLowerCase();
+            const filtradas = categoriasRegistradas.filter(c =>
+                c.nombreCategoria.toLowerCase().includes(texto)
+            );
+            pintarTablaCategorias(filtradas);
+        });
+    }
+
+    if (txtBuscarMarca) {
+        txtBuscarMarca.addEventListener("input", () => {
+            const texto = txtBuscarMarca.value.trim().toLowerCase();
+            const filtradas = marcasRegistradas.filter(m =>
+                m.nombreMarca.toLowerCase().includes(texto)
+            );
+            pintarTablaMarcas(filtradas);
+        });
+    }
+
+    if (txtBuscarModelo) {
+        txtBuscarModelo.addEventListener("input", () => {
+            const texto = txtBuscarModelo.value.trim().toLowerCase();
+            const filtrados = modelosRegistrados.filter(m =>
+                m.nombreModelo.toLowerCase().includes(texto) ||
+                m.nombreMarca.toLowerCase().includes(texto)
+            );
+            pintarTablaModelos(filtrados);
+        });
     }
 
     async function cargarSelectMarcas() {

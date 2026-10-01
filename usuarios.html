@@ -110,6 +110,11 @@
                     <div class="col-12 col-lg-7">
                         <div class="p-3 bg-white border rounded-4 h-100 d-flex flex-column">
                             <h6 class="fw-bold text-navy mb-3 text-center pt-2">Usuarios existentes</h6>
+                            <div class="buscador-contenedor mb-3">
+                                <i class="bi bi-search icono-busqueda"></i>
+                                <input type="text" class="form-control buscador-input" id="txtBuscarUsuario"
+                                    placeholder="Buscar por nombre, correo o rol">
+                            </div>
                             <div class="card-tabla p-3 flex-grow-1">
                                 <div class="table-responsive">
                                     <table class="table table-borderless table-custom align-middle mb-0">
@@ -118,7 +123,8 @@
                                                 <!-- data-orden: campo del objeto que devuelve la API, se ordena en el navegador -->
                                                 <th class="text-center" data-orden="nombreUsuario">Usuario</th>
                                                 <th class="text-center" data-orden="nombreRol">Rol</th>
-                                                <th class="text-center" data-orden="nombreDepartamento">Departamento</th>
+                                                <th class="text-center" data-orden="nombreDepartamento">Departamento
+                                                </th>
                                                 <th class="text-center" data-orden="estado">Estado</th>
                                                 <th class="text-center" data-orden="correo">Correo</th>
                                                 <th class="text-center">Acciones</th>
@@ -172,7 +178,8 @@
                             <h6 class="fw-bold text-navy mb-3 text-center pt-2">Áreas existentes</h6>
                             <div class="card-tabla p-3 flex-grow-1">
                                 <div class="table-responsive">
-                                    <table class="table table-borderless table-custom tabla-columnas-iguales align-middle mb-0">
+                                    <table
+                                        class="table table-borderless table-custom tabla-columnas-iguales align-middle mb-0">
                                         <thead>
                                             <tr>
                                                 <th class="text-center" data-orden="nombreArea">Área</th>
@@ -249,10 +256,12 @@
                             <h6 class="fw-bold text-navy mb-3 text-center pt-2">Departamentos existentes</h6>
                             <div class="card-tabla p-3 flex-grow-1">
                                 <div class="table-responsive">
-                                    <table class="table table-borderless table-custom tabla-columnas-iguales align-middle mb-0">
+                                    <table
+                                        class="table table-borderless table-custom tabla-columnas-iguales align-middle mb-0">
                                         <thead>
                                             <tr>
-                                                <th class="text-center" data-orden="nombreDepartamento">Departamento</th>
+                                                <th class="text-center" data-orden="nombreDepartamento">Departamento
+                                                </th>
                                                 <th class="text-center" data-orden="tipoDepartamento">Tipo</th>
                                                 <th class="text-center" data-orden="nombreArea">Área</th>
                                                 <th class="text-center">Acciones</th>
