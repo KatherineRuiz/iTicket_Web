@@ -365,3 +365,32 @@ body {
 .animar-mensaje {
     animation: aparecerMensaje 0.4s ease-out forwards; 
 }
+/* La pastilla de prioridad del encabezado es un elemento más de la fila flex
+   (ver vistaTicket.html, el div con justify-content-between), pero tickets.css
+   posiciona en absoluto todas las .badge.prioridad-* porque en las listas van
+   ancladas a la esquina de la tarjeta. Al salirse del flujo, la fila dejaba de
+   reservarle espacio y en celular el correo del creador le pasaba por debajo.
+   Aquí vuelve a ser un elemento normal de la fila. */
+#badgePrioridad.badge {
+    position: static;
+    align-self: flex-start;
+}
+
+/* ============================================================
+   MARGEN LATERAL EN CELULAR
+   Esta pantalla no usa .contenido-principal sino un .container-fluid con px-2
+   (8px), así que su tarjeta arrancaba en 16px mientras el resto del sistema lo
+   hace en 28px: se veía pegada al borde. Aquí se iguala.
+   ============================================================ */
+
+@media (max-width: 767.98px) {
+    /* Dos envoltorios distintos cuelgan del scroll: el .container-fluid de la
+       tarjeta del ticket (con px-2, 8px) y el .col-12 de las secciones de
+       Reporte técnico y Bitácora (con px-md-5, que solo aplica de tablet en
+       adelante, o sea 0 en celular). Los dos van a los 20px del resto. */
+    .contenido-scroll > .container-fluid,
+    .contenido-scroll > [class*="col-"] {
+        padding-left: 20px !important;
+        padding-right: 20px !important;
+    }
+}

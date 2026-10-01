@@ -719,3 +719,41 @@ document.addEventListener("DOMContentLoaded", async function () {
     await cargarArticulos();
     await cargarFiltros();
 });
+
+/* Orden de los bloques de la cabecera en celular.
+
+   En escritorio los tres botones de catálogo (marca, modelo, categoría) viven en
+   la columna izquierda, encima de los filtros, y el buscador comparte la fila de
+   arriba con el botón de artículo. Apilado en un teléfono ese orden deja el
+   buscador partiendo el grupo de botones por la mitad.
+
+   Aquí se mueve el bloque de los tres botones justo antes del buscador cuando la
+   pantalla es angosta, y se devuelve a su columna al volver a escritorio. Se hace
+   moviendo el nodo porque los dos bloques están en filas distintas del HTML, así
+   que la propiedad order de CSS no los alcanza: solo reordena hermanos. */
+(function ordenarCabeceraEquipos() {
+    const ANCHO_CELULAR = 767.98;
+    const botones = document.getElementById("botonesCatalogo");
+    const buscador = document.getElementById("barraBuscador");
+    if (!botones || !buscador) return;
+
+    // Se recuerda dónde vivían para poder devolverlos tal cual
+    const padreOriginal = botones.parentElement;
+    const hermanoOriginal = botones.nextElementSibling;
+    let enCabecera = false;
+
+    function colocarBotonesCatalogo() {
+        const esCelular = window.innerWidth <= ANCHO_CELULAR;
+
+        if (esCelular && !enCabecera) {
+            buscador.parentElement.insertBefore(botones, buscador);
+            enCabecera = true;
+        } else if (!esCelular && enCabecera) {
+            padreOriginal.insertBefore(botones, hermanoOriginal);
+            enCabecera = false;
+        }
+    }
+
+    colocarBotonesCatalogo();
+    window.addEventListener("resize", colocarBotonesCatalogo);
+})();

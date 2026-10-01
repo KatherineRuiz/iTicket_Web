@@ -801,16 +801,42 @@ function inicializarNotificacionesGlobales() {
     if (!boton || !panel || !fondo || boton.dataset.notificacionesListas === "true") return;
 
     boton.dataset.notificacionesListas = "true";
+
+    function cerrarPanel() {
+        fondo.classList.remove("activo");
+        panel.classList.remove("activo");
+    }
+
+    /* Boton de cerrar.
+
+       En escritorio el panel deja ver el fondo y se cierra tocando fuera, pero en
+       celular ocupa el ancho completo: no queda fondo que tocar y la persona se
+       quedaba atrapada sin forma de salir. Se inyecta aqui y no en el HTML porque
+       el panel esta repetido en unas veinte paginas, con marcados distintos. */
+    if (!panel.querySelector(".btn-cerrar-notificaciones")) {
+        const btnCerrar = document.createElement("button");
+        btnCerrar.type = "button";
+        btnCerrar.className = "btn-cerrar-notificaciones";
+        btnCerrar.setAttribute("aria-label", "Cerrar notificaciones");
+        btnCerrar.innerHTML = '<i class="bi bi-x-lg" aria-hidden="true"></i>';
+        btnCerrar.addEventListener("click", cerrarPanel);
+        panel.prepend(btnCerrar);
+    }
+
     boton.addEventListener("click", function () {
         fondo.classList.add("activo");
         panel.classList.add("activo");
         document.getElementById("menuLateral")?.classList.remove("mobile-abierto");
         document.getElementById("overlay")?.classList.remove("activo");
     });
+
     fondo.addEventListener("click", function (evento) {
         if (evento.target !== fondo) return;
-        fondo.classList.remove("activo");
-        panel.classList.remove("activo");
+        cerrarPanel();
+    });
+
+    document.addEventListener("keydown", function (evento) {
+        if (evento.key === "Escape" && panel.classList.contains("activo")) cerrarPanel();
     });
 }
 
@@ -916,21 +942,67 @@ function convertirAccionesDeTablas(raiz) {
     });
 }
 
+/* Guarda el panel abierto y de qué menú salió, porque mientras está abierto vive
+   colgado del <body> y ya no se puede encontrar desde su celda. */
+let panelAccionesAbierto = null;
+
 function abrirMenuAccionesTabla(menu) {
-    const panel = menu.querySelector(".panel-acciones-tabla");
+    const panel = menu.querySelector(".panel-acciones-tabla") || (panelAccionesAbierto?.menu === menu ? panelAccionesAbierto.panel : null);
     const boton = menu.querySelector(".btn-menu-acciones-tabla");
     if (!panel || !boton) return;
+
+    /* El panel se saca al <body> y se posiciona respecto a la ventana.
+
+       Antes colgaba de la celda con position:absolute, y eso fallaba de dos
+       maneras: la tabla puede estar desplazada de lado (ahora toma su ancho
+       natural, ver common.css) y al abrirse el menú el contenedor pasa a
+       overflow:visible y pierde ese desplazamiento, así que el panel terminaba
+       dibujado fuera de la pantalla; además las filas tienen un transform en
+       :hover, y un ancestro transformado rompe el position:fixed.
+
+       Se mueve antes de mostrarlo: al revés, el cambio de padre interrumpía la
+       animación de entrada a medias y el panel se quedaba en opacidad 0. */
+    document.body.appendChild(panel);
+    panelAccionesAbierto = { panel, menu };
 
     panel.hidden = false;
     menu.classList.add("abierto");
     boton.setAttribute("aria-expanded", "true");
 
-    const espacioDebajo = window.innerHeight - menu.getBoundingClientRect().bottom;
-    const espacioEncima = menu.getBoundingClientRect().top;
-    menu.classList.toggle("abre-arriba", espacioDebajo < panel.offsetHeight + 20 && espacioEncima > espacioDebajo);
+    const caja = boton.getBoundingClientRect();
+    const ancho = panel.offsetWidth || 180;
+    const alto = panel.offsetHeight || 0;
+    const margen = 8;
+
+    const izquierda = Math.max(margen, Math.min(caja.right - ancho, window.innerWidth - ancho - margen));
+    const espacioDebajo = window.innerHeight - caja.bottom;
+    const abreArriba = espacioDebajo < alto + 20 && caja.top > espacioDebajo;
+
+    let arriba = abreArriba ? caja.top - alto - margen : caja.bottom + margen;
+    arriba = Math.max(margen, Math.min(arriba, window.innerHeight - alto - margen));
+
+    panel.style.position = "fixed";
+    panel.style.left = `${Math.round(izquierda)}px`;
+    panel.style.right = "auto";
+    panel.style.top = `${Math.round(arriba)}px`;
+    panel.style.bottom = "auto";
+    menu.classList.toggle("abre-arriba", abreArriba);
+
+    // Reinicia la animación de entrada ya en su sitio definitivo
+    panel.style.animation = "none";
+    void panel.offsetWidth;
+    panel.style.animation = "";
 }
 
 function cerrarMenusAccionesTabla() {
+    if (panelAccionesAbierto) {
+        const { panel, menu } = panelAccionesAbierto;
+        panel.hidden = true;
+        panel.removeAttribute("style");
+        menu.appendChild(panel);   // vuelve a su celda
+        panelAccionesAbierto = null;
+    }
+
     document.querySelectorAll(".menu-acciones-tabla.abierto").forEach(function (menu) {
         menu.classList.remove("abierto", "abre-arriba");
         menu.querySelector(".btn-menu-acciones-tabla")?.setAttribute("aria-expanded", "false");
@@ -954,7 +1026,7 @@ window.animarCambioPagina = async function (contenido, cambiarPagina, direccion 
     }
 
     // Mantiene la altura mientras carga la página nueva para que el resto no brinque
-    const marco = contenido.tagName === "TBODY" ? (contenido.closest(".table-responsive") || contenido.closest("table")) : contenido;
+    const marco = contenido.tagName === "TBODY" ? (contenido.closest('[class*="table-responsive"]') || contenido.closest("table")) : contenido;
     if (marco) marco.style.minHeight = `${marco.offsetHeight}px`;
 
     window.clearTimeout(contenido.__temporizadorPagina);
@@ -1038,7 +1110,10 @@ function crearPaginacionParaTabla(tabla) {
             <ul class="pagination pagination-sm mb-0"></ul>
         </nav>`;
 
-    const envoltorioTabla = tabla.closest(".table-responsive") || tabla;
+    // Cubre .table-responsive y sus variantes (.table-responsive-md en el detalle del
+    // ticket): si no, el pie se insertaba DENTRO de la zona que se desplaza y la
+    // paginación se iba de lado junto con la tabla.
+    const envoltorioTabla = tabla.closest('[class*="table-responsive"]') || tabla;
     envoltorioTabla.insertAdjacentElement("afterend", pie);
 
     const estado = { pagina: 1, filasPorPagina: FILAS_POR_PAGINA };
@@ -1066,8 +1141,16 @@ function actualizarPaginacionTabla(tabla, pie, estado) {
                 || indice >= estado.pagina * estado.filasPorPagina);
     });
 
-    pie.hidden = totalFilas === 0;
-    if (!totalFilas) return;
+    /* El pie se queda siempre a la vista, incluso con la tabla vacía: si
+       aparecía y desaparecía, la tarjeta cambiaba de alto y el contenido de
+       abajo brincaba al filtrar o al borrar el último registro. */
+    pie.hidden = false;
+
+    if (!totalFilas) {
+        pie.querySelector(".paginacion-tabla-resumen").textContent = "Mostrando 0 de 0";
+        renderizarControlesPaginacion(pie.querySelector(".pagination"), estado, 1, function () {});
+        return;
+    }
 
     const desde = (estado.pagina - 1) * estado.filasPorPagina + 1;
     const hasta = Math.min(estado.pagina * estado.filasPorPagina, totalFilas);
@@ -1967,3 +2050,24 @@ function posicionarFlotante(panel, rect, envoltorio, altoMaximo) {
     void panel.offsetWidth;
     panel.style.animation = "";
 }
+
+/* "Cancelar edición" cierra también el panel que contiene el formulario.
+
+   Los botones de cancelar de cada pantalla ya limpian su formulario y vuelven
+   al modo "Agregar" (ver los controladores), pero cuando ese formulario vive
+   dentro de un modal —los catálogos de Equipos y mobiliario: categoría, modelo,
+   marca y artículo— quedaba abierto, y lo natural al desistir de la edición es
+   salir. En Usuarios y Ubicaciones el formulario es parte de la página, así que
+   no hay panel que cerrar y este listener no hace nada.
+
+   Va aquí y no en cada controlador porque menu.js se carga en todas las
+   pantallas: así cubre los cuatro modales actuales y cualquiera que se agregue. */
+document.addEventListener("click", function (evento) {
+    const boton = evento.target.closest("button");
+    if (!boton || !/cancelar\s+edici[oó]n/i.test(boton.textContent || "")) return;
+
+    const panel = boton.closest(".modal");
+    if (!panel || typeof bootstrap === "undefined") return;
+
+    bootstrap.Modal.getOrCreateInstance(panel).hide();
+});

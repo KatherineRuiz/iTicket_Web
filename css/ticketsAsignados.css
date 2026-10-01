@@ -58,3 +58,16 @@ body {
     overflow: hidden;
     word-break: break-word;
 }
+
+/* En celular el envoltorio de la lista no lleva relleno lateral.
+
+   El .px-4 del contenedor metía 24px por lado, así que las tarjetas de esta
+   pantalla salían 48px más angostas que las de "Mis tickets", que no tiene ese
+   envoltorio y deja la lista pegada al borde de la columna. En escritorio el
+   relleno sí hace falta, por eso solo se quita aquí. */
+@media (max-width: 767.98px) {
+    .scroll-lista-ticket {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+}

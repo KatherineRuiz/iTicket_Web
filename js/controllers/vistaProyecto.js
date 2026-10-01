@@ -1,5 +1,5 @@
-import { getProyecto, actualizarProyecto, eliminarProyecto } from "../services/proyectosService.js";
-import { getFases, getFasesPorProyecto, getNombreFase, crearFase, actualizarFase, eliminarFase } from "../services/faseService.js";
+import { getProyecto, actualizarProyecto, eliminarProyecto, reabrirProyecto } from "../services/proyectosService.js";
+import { getFases, getFasesPorProyecto, getNombreFase, crearFase, actualizarFase, eliminarFase, reabrirFase } from "../services/faseService.js";
 import { getDetallesFase, getDetallesFasePorFase, crearDetalleFase, actualizarDetalleFase, eliminarDetalleFase } from "../services/detalleFaseService.js";
 import { mostrarError, mostrarExitoSimple, mostrarConfirmacion } from "../components/sweetAlerts.js";
 import { getUsuarios } from "../services/usuariosService.js";
@@ -14,6 +14,9 @@ import { getDepartamentoById } from "../services/departamentosService.js";
 const rolActual = obtenerRolUsuario();
 if (rolActual === "usuario") window.location.replace("dashboardUsuarios.html");
 const soloLectura = rolActual === "tecnico";
+// Reabrir un proyecto o fase ya finalizada es una acción administrativa (deshace una regla
+// de negocio, no es parte del flujo normal), así que se restringe solo a Administrador.
+const esAdmin = rolActual === "admin";
 
 // Identidad del técnico frente a ESTE proyecto en concreto. La matriz de permisos:
 // Coordinador -> CRUD de fases y detalles, y consulta del proyecto.
@@ -98,6 +101,12 @@ async function inicializarVistaProyecto(id) {
         puedeEscribirFases = esCoordinadorDelProyecto(proyecto);
         puedeEscribirDetalles = puedeEscribirFases || esSupervisorDelProyecto(proyecto);
     }
+    // Un proyecto ya finalizado queda "cerrado": nadie (ni siquiera el administrador) puede
+    // seguir creando/editando/eliminando sus fases o detalles.
+    if (proyecto.finalizado) {
+        puedeEscribirFases = false;
+        puedeEscribirDetalles = false;
+    }
 
     //Solo se piden los usuarios una vez y luego quedan en caché
     //Se usan para resolver coordinador/supervisor por correo en el formulario de edición
@@ -165,16 +174,14 @@ async function inicializarVistaProyecto(id) {
     const modalFasesProyecto = document.getElementById('modalFasesProyecto');
     const modalDetalleFase = document.getElementById('modalDetalleFase');
     const btnEliminarProyecto = document.getElementById('btnEliminarProyecto');
+    const btnReabrirProyecto = document.getElementById('btnReabrirProyecto');
 
     // data-roles="admin" (aplicado por menu.js al cargar la página) oculta estos controles a
-    // TODO técnico por defecto; aquí se vuelven a mostrar solo para quien sí tenga permiso
-    // sobre ESTE proyecto en concreto (coordinador para fases, coordinador o supervisor para detalles).
-    if (puedeEscribirFases) {
-        [btnEditarFase, btnCrearFase, btnEliminarFase].forEach((btn) => btn?.classList.remove('d-none'));
-    }
-    if (puedeEscribirDetalles) {
-        btnEditarDetalle?.parentElement?.classList.remove('d-none');
-    }
+    // TODO técnico por defecto; aquí se ajustan de nuevo según el permiso real sobre ESTE
+    // proyecto en concreto (coordinador para fases, coordinador o supervisor para detalles),
+    // y se ocultan para TODOS -incluido el administrador- si el proyecto ya está finalizado.
+    [btnEditarFase, btnCrearFase, btnEliminarFase].forEach((btn) => btn?.classList.toggle('d-none', !puedeEscribirFases));
+    btnEditarDetalle?.parentElement?.classList.toggle('d-none', !puedeEscribirDetalles);
 
     /* Muestra u oculta los campos de edición de la fase  */
     function mostrarCamposEdicionFase(mostrar) {
@@ -210,6 +217,7 @@ async function inicializarVistaProyecto(id) {
         document.getElementById('txtPresupuestoProyecto').textContent = Number(proyecto.presupuestoEstimado || 0).toFixed(2);
         document.getElementById('txtTotalProyecto').textContent = Number(proyecto.gastoTotal || 0).toFixed(2);
         document.getElementById('txtEstadoProyecto').textContent = proyecto.finalizado ? "Finalizado" : "En progreso";
+        btnReabrirProyecto?.classList.toggle('d-none', !(esAdmin && proyecto.finalizado));
     }
 
     //Carga las fases del proyecto desde la API y las almacena en la variable "fases".
@@ -237,6 +245,11 @@ async function inicializarVistaProyecto(id) {
         //convierte el valor de finalizado a booleano
         const finalizado = normalizarEstadoFase(fase.finalizado ?? fase.faseFinalizada ?? 'F');
 
+        // Una vez finalizada, la fase queda cerrada: ocultar también sus botones de
+        // editar/eliminar aunque el usuario sí tenga permiso de escritura sobre el proyecto.
+        btnEditarFase?.classList.toggle('d-none', !puedeEscribirFases || finalizado);
+        btnEliminarFase?.classList.toggle('d-none', !puedeEscribirFases || finalizado);
+
         tarjetaFase.innerHTML = `
       <h6 class="text-navy fw-bold mb-3">${fase.nombreFase}</h6>
       <p class="meta-proyecto mb-1"><b>Departamento encargado:</b> ${fase.departamentoEncargado}</p>
@@ -249,6 +262,10 @@ async function inicializarVistaProyecto(id) {
       <p class="meta-proyecto mb-0"><b>Presupuesto estimado:</b> $${Number(fase.presupuestoEstimado).toFixed(2)}</p>
       <p class="meta-proyecto mb-0"><b>Gasto total:</b> $${Number(fase.gastoTotal || 0).toFixed(2)}</p>
       <p class="meta-proyecto mb-0"><b>Estado de la fase:</b> ${finalizado ? 'Finalizada' : 'En progreso'}</p>
+      ${finalizado && esAdmin ? `
+      <button type="button" class="btn btn-oscuro-redondeado btn-sm mt-2 btnReabrirFaseSeleccionada" data-id-fase="${fase.id}">
+        <i class="bi bi-arrow-counterclockwise me-1"></i> Reabrir fase
+      </button>` : ''}
     `;
     }
 
@@ -285,6 +302,12 @@ async function inicializarVistaProyecto(id) {
 
         //Se asegura de que la propiedad "detalles" de la fase sea un array. Si no lo es, se asigna un array vacío.
         const detalles = Array.isArray(fase.detalles) ? fase.detalles : [];
+
+        // Una fase ya finalizada no admite cambios en ninguno de sus detalles (ni marcarlos/
+        // desmarcarlos ni eliminarlos), sin importar el permiso de escritura sobre el proyecto.
+        const faseFinalizada = normalizarEstadoFase(fase.finalizado ?? fase.faseFinalizada ?? 'F');
+        const puedeEscribirDetallesEfectivo = puedeEscribirDetalles && !faseFinalizada;
+
         if (detalles.length === 0) {
             listaDetalleVista.innerHTML =
                 '<li class="text-muted">Esta fase aún no tiene detalles.</li>';
@@ -298,10 +321,10 @@ async function inicializarVistaProyecto(id) {
             li.className = 'd-flex align-items-center justify-content-between gap-2 py-2 border-bottom';
             li.innerHTML = `
         <div class="d-flex align-items-center gap-2 flex-grow-1">
-            <input type="checkbox" class="form-check-input" data-id-detalle="${detalle.id}" ${detalle.completado ? 'checked' : ''} ${puedeEscribirDetalles ? '' : 'disabled'}>
+            <input type="checkbox" class="form-check-input" data-id-detalle="${detalle.id}" ${detalle.completado ? 'checked' : ''} ${puedeEscribirDetallesEfectivo ? '' : 'disabled'}>
             <span class="${detalle.completado ? 'text-decoration-line-through text-muted' : ''}">${detalle.descripcionDetalle}</span>
         </div>
-        ${puedeEscribirDetalles ? `<i class="bi bi-trash btnEliminarDetalle" data-id-detalle="${detalle.id}" title="Eliminar"></i>` : ''}
+        ${puedeEscribirDetallesEfectivo ? `<i class="bi bi-trash btnEliminarDetalle" data-id-detalle="${detalle.id}" title="Eliminar"></i>` : ''}
       `;
 
             listaDetalleVista.appendChild(li);
@@ -407,6 +430,13 @@ async function inicializarVistaProyecto(id) {
     modoEdicionProyecto.addEventListener('submit', async (e) => {
         e.preventDefault();
 
+        // Evita doble envío por clicks repetidos en "Guardar".
+        const btnGuardarProyecto = document.getElementById('btnGuardarEdicionProyecto');
+        if (btnGuardarProyecto?.disabled) return;
+        if (btnGuardarProyecto) btnGuardarProyecto.disabled = true;
+
+        try {
+
         modoEdicionProyecto.querySelectorAll('.is-invalid').forEach((el) => el.classList.remove('is-invalid'));
 
         const datosFormulario = {
@@ -467,6 +497,15 @@ async function inicializarVistaProyecto(id) {
             finalizado: document.getElementById('selectEstadoProyectoEdicion').value === "Finalizado"
         };
 
+        // Bloqueo duro: un proyecto solo puede finalizarse si TODAS sus fases ya están finalizadas.
+        if (proyectoActualizado.finalizado && !proyecto.finalizado) {
+            const fasesIncompletas = fases.some((f) => !normalizarEstadoFase(f.finalizado ?? f.faseFinalizada ?? false));
+            if (fasesIncompletas) {
+                mostrarError('No se puede finalizar el proyecto: todavía tiene fases que no están finalizadas.');
+                return;
+            }
+        }
+
         try {
             await actualizarProyecto(proyecto.idProyecto, proyectoActualizado);
             // El GET posterior evita depender de una respuesta PUT parcial.
@@ -475,6 +514,9 @@ async function inicializarVistaProyecto(id) {
             activarModoEdicionProyecto(false);
         } catch (error) {
             mostrarError(error.message);
+        }
+        } finally {
+            if (btnGuardarProyecto) btnGuardarProyecto.disabled = false;
         }
     });
 
@@ -515,6 +557,40 @@ async function inicializarVistaProyecto(id) {
         }
     }
 
+    // Reabrir proyecto finalizado (solo Administrador). Recarga la página para que todos los
+    // permisos y flags derivados del estado del proyecto (calculados una sola vez al entrar a
+    // esta vista) se vuelvan a calcular desde cero, en vez de intentar parchearlos en caliente.
+    btnReabrirProyecto?.addEventListener('click', async () => {
+        const confirmar = await mostrarConfirmacion('¿Reabrir este proyecto? Volverá a quedar "En progreso" y se podrán editar de nuevo sus fases y detalles.');
+        if (!confirmar) return;
+
+        try {
+            await reabrirProyecto(proyecto.idProyecto);
+            mostrarExitoSimple("¡Listo!", "El proyecto se reabrió correctamente");
+            window.location.reload();
+        } catch (error) {
+            mostrarError(error.message);
+        }
+    });
+
+    // Reabrir una fase finalizada (solo Administrador), delegado porque el botón se vuelve a
+    // crear cada vez que se renderiza la tarjeta de la fase seleccionada.
+    tarjetaFase.addEventListener('click', async (e) => {
+        if (!e.target.closest('.btnReabrirFaseSeleccionada')) return;
+        const idFase = Number(e.target.closest('.btnReabrirFaseSeleccionada').dataset.idFase);
+
+        const confirmar = await mostrarConfirmacion('¿Reabrir esta fase? Volverá a quedar "En progreso" y se podrán editar de nuevo ella y sus detalles.');
+        if (!confirmar) return;
+
+        try {
+            await reabrirFase(idFase);
+            mostrarExitoSimple("¡Listo!", "La fase se reabrió correctamente");
+            window.location.reload();
+        } catch (error) {
+            mostrarError(error.message);
+        }
+    });
+
     // Seleccion de fase
     selectFase.addEventListener('change', (e) => seleccionarFase(e.target.value));
 
@@ -536,6 +612,10 @@ async function inicializarVistaProyecto(id) {
         const fase = obtenerFasePorId(faseSeleccionadaId);
         if (!fase) {
             mostrarError('Selecciona una fase para editar.');
+            return;
+        }
+        if (normalizarEstadoFase(fase.finalizado ?? fase.faseFinalizada ?? false)) {
+            mostrarError('No se puede editar una fase que ya está finalizada.');
             return;
         }
         /* Esta función permite editar una fase seleccionada. */
@@ -568,6 +648,10 @@ async function inicializarVistaProyecto(id) {
             mostrarError('No se encontró la fase seleccionada.');
             return;
         }
+        if (normalizarEstadoFase(fase.finalizado ?? fase.faseFinalizada ?? false)) {
+            mostrarError('No se puede eliminar una fase que ya está finalizada.');
+            return;
+        }
 
         const confirmar = await mostrarConfirmacion(`¿Estás seguro de que deseas eliminar la fase "${fase.nombreFase}"?`);
         if (!confirmar) {
@@ -587,6 +671,15 @@ async function inicializarVistaProyecto(id) {
     //Guarda los cambios de la fase (creación o edición)
     formAgregarFase.addEventListener('submit', async (e) => {
         e.preventDefault();
+
+        // Evita que clicks repetidos en "Guardar" (antes de que responda la API) creen
+        // varias fases/ediciones duplicadas: se deshabilita el botón mientras hay una
+        // petición en curso y se reactiva siempre al terminar (éxito, error o validación).
+        const btnGuardarFase = formAgregarFase.querySelector('button[type="submit"]');
+        if (btnGuardarFase?.disabled) return;
+        if (btnGuardarFase) btnGuardarFase.disabled = true;
+
+        try {
 
         const nombreFase = document.getElementById('txtNombreFase').value.trim();
         const departamentoEncargado = document.getElementById('txtDepartamentoEncargado').value.trim();
@@ -628,6 +721,24 @@ async function inicializarVistaProyecto(id) {
                 if (campo) campo.classList.add('is-invalid');
             });
             mostrarError(erroresValidacion.map((error) => error.mensaje).join('<br>'));
+            return;
+        }
+
+        // Bloqueo duro: el nombre de la fase debe ser único dentro de este proyecto.
+        const nombreFaseDuplicado = fases.some((f) =>
+            f.id !== faseEnEdicionId && String(f.nombreFase || '').trim().toLowerCase() === nombreFase.toLowerCase()
+        );
+        if (nombreFaseDuplicado) {
+            document.getElementById('txtNombreFase').classList.add('is-invalid');
+            mostrarError(`Ya existe una fase con el nombre "${nombreFase}" en este proyecto.`);
+            return;
+        }
+
+        // Bloqueo duro: una fase no puede finalizarse sin sus fechas reales de inicio y fin
+        // registradas (reflejan el inicio real que no se puede saber al crear la fase y la pregunta
+        // "cuándo terminó en realidad" que una fase finalizada debería poder responder).
+        if (finalizado && (!fechaInicioReal || !fechaFinalReal)) {
+            mostrarError('No se puede finalizar la fase: debes registrar la fecha de inicio real y la fecha final real.');
             return;
         }
 
@@ -675,6 +786,9 @@ async function inicializarVistaProyecto(id) {
         } catch (error) {
             mostrarError(error.message);
         }
+        } finally {
+            if (btnGuardarFase) btnGuardarFase.disabled = false;
+        }
     });
 
     //Agregar detalle a la fase seleccionada, ya conectado con la API de Detalle_fase (POST)
@@ -703,6 +817,14 @@ async function inicializarVistaProyecto(id) {
     //Conectar con la API de Detalle_fase (POST)
     formAgregarDetalle.addEventListener('submit', async (e) => {
         e.preventDefault();
+
+        // Mismo resguardo que en fases: evita duplicar detalles por clicks repetidos.
+        const btnGuardarDetalle = formAgregarDetalle.querySelector('button[type="submit"]');
+        if (btnGuardarDetalle?.disabled) return;
+        if (btnGuardarDetalle) btnGuardarDetalle.disabled = true;
+
+        try {
+
         const textoDetalle = document.getElementById('txtDetalleFase').value.trim();
         if (!textoDetalle) {
             mostrarError('El detalle no puede estar vacío.');
@@ -712,6 +834,15 @@ async function inicializarVistaProyecto(id) {
         const fase = obtenerFasePorId(faseSeleccionadaId);
         if (!fase) {
             mostrarError('No se encontró la fase seleccionada.');
+            return;
+        }
+
+        // Bloqueo duro: la descripción del detalle debe ser única dentro de esta fase.
+        const descripcionDuplicada = (fase.detalles || []).some((d) =>
+            String(normalizarDetalle(d).descripcionDetalle || '').trim().toLowerCase() === textoDetalle.toLowerCase()
+        );
+        if (descripcionDuplicada) {
+            mostrarError(`Ya existe un detalle con la descripción "${textoDetalle}" en esta fase.`);
             return;
         }
 
@@ -728,6 +859,9 @@ async function inicializarVistaProyecto(id) {
             if (instancia) instancia.hide();
         } catch (error) {
             mostrarError(error.message);
+        }
+        } finally {
+            if (btnGuardarDetalle) btnGuardarDetalle.disabled = false;
         }
     });
 
@@ -752,6 +886,10 @@ async function inicializarVistaProyecto(id) {
             if (!fase) return;
             const detalle = fase.detalles.find((d) => d.id === idDetalle);
             if (!detalle) return;
+            if (normalizarEstadoFase(fase.finalizado ?? fase.faseFinalizada ?? false)) {
+                mostrarError('No se puede eliminar un detalle de una fase ya finalizada.');
+                return;
+            }
 
             const confirmar = await mostrarConfirmacion('Deseas eliminar este detalle? Esta acción no se puede deshacer.');
             if (!confirmar) {
@@ -777,6 +915,12 @@ async function inicializarVistaProyecto(id) {
 
             const detalle = fase.detalles.find((d) => d.id === idDetalle);
             if (!detalle) return;
+
+            if (normalizarEstadoFase(fase.finalizado ?? fase.faseFinalizada ?? false)) {
+                e.target.checked = detalle.completado;
+                mostrarError('No se puede modificar un detalle de una fase ya finalizada.');
+                return;
+            }
 
             const nuevoEstado = e.target.checked;
 

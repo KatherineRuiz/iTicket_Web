@@ -72,6 +72,12 @@
                     <button id="btnEditarProyecto" class="btn btn-azul-redondeado px-4" data-roles="admin">
                         <i class="bi bi-pencil-square me-2"></i> Editar
                     </button>
+
+                    <!-- Solo visible para Administrador, y solo cuando el proyecto ya está
+                         finalizado: deshace una finalización hecha por error (ver reabrirProyecto). -->
+                    <button id="btnReabrirProyecto" class="btn btn-oscuro-redondeado px-4 d-none" data-roles="admin">
+                        <i class="bi bi-arrow-counterclockwise me-2"></i> Reabrir proyecto
+                    </button>
                 </div>
 
                 <!-- Modo edición -->
@@ -420,7 +426,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <!-- Mi JS personalizado -->
-    <script src="js/components/menu.js?v=16"></script>
+    <script src="js/components/menu.js?v=23"></script>
     <script type="module" src="js/controllers/vistaProyecto.js?v=3"></script>
     <script type="module" src="js/controllers/notificaciones.js"></script>
 

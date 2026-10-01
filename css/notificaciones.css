@@ -266,3 +266,50 @@ html.tema-oscuro .panel-notificaciones.activo .notificacion-item:hover {
         font-size: 11.5px;
     }
 }
+
+/* Botón de cerrar el panel (lo inyecta menu.js en todas las páginas).
+
+   Va fijo y no absoluto a propósito: el panel desplaza su contenido, y si el
+   botón se fuera hacia arriba con el scroll, en celular —donde el panel ocupa
+   el ancho completo y no queda fondo que tocar— la persona volvería a quedarse
+   sin salida. Solo existe mientras el panel está abierto. */
+.btn-cerrar-notificaciones {
+    position: fixed;
+    top: 14px;
+    right: 16px;
+    z-index: 1520;
+    display: none;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: rgba(17, 34, 68, 0.06);
+    color: #1a202c;
+    font-size: 15px;
+    cursor: pointer;
+    transition: background 160ms ease, color 160ms ease;
+}
+
+.panel-notificaciones.activo .btn-cerrar-notificaciones {
+    display: grid;
+}
+
+.btn-cerrar-notificaciones:hover {
+    background: rgba(17, 34, 68, 0.12);
+}
+
+.btn-cerrar-notificaciones:focus-visible {
+    outline: 2px solid #4092ff;
+    outline-offset: 2px;
+}
+
+html.tema-oscuro .btn-cerrar-notificaciones {
+    background: rgba(255, 255, 255, 0.08);
+    color: #eef3fb;
+}
+
+html.tema-oscuro .btn-cerrar-notificaciones:hover {
+    background: rgba(255, 255, 255, 0.16);
+}
