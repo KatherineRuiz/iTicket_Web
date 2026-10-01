@@ -5,6 +5,7 @@
     left: 0;
     width: 100vw;
     height: 100vh;
+    height: 100dvh;
     background-color: rgba(10, 18, 38, 0.45);
     z-index: 1500;
     opacity: 0;
@@ -25,6 +26,7 @@
     /* Para que al principio este completamente escondido */
     width: 525px;
     height: 100vh;
+    height: 100dvh;
     background-color: #f3f8fe;
     box-shadow: -10px 0 35px rgba(0, 0, 0, 0.12);
     z-index: 1510;

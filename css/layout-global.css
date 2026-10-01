@@ -26,8 +26,27 @@ body {
     height: 100%;
 }
 
+/* ============================================================
+   ALTURA DE LA PANTALLA EN CELULAR (100dvh)
+
+   Toda la aplicacion es una cascara de alto fijo con scroll por dentro, y el
+   body va en overflow: hidden. El problema es que en Safari de iOS 100vh NO es
+   lo que se ve: es la altura de la pantalla sin la barra de direcciones ni la
+   de botones, o sea unos 110px mas de lo que realmente cabe.
+
+   Resultado: la cascara quedaba mas alta que la pantalla, el fondo de cada
+   zona con scroll se iba debajo de la barra de Safari, y como el body no puede
+   desplazarse no habia forma de alcanzarlo. En el chatbot era lo mas evidente,
+   porque el ultimo mensaje y el campo de escribir quedaban tapados.
+
+   100dvh ("dynamic viewport height") si mide lo que de verdad se ve y se
+   reajusta cuando la barra del navegador aparece o se esconde. La linea con
+   100vh se queda arriba como respaldo para navegadores viejos: el que entiende
+   dvh la pisa, el que no, se queda con la de antes.
+   ============================================================ */
 body.layout-global-activo {
     height: 100vh;
+    height: 100dvh;
     margin: 0;
     overflow: hidden;
     background: var(--page-bg) !important;
@@ -451,6 +470,7 @@ body.menu-colapsado .menu-opcion>.nav-link:hover::after {
     box-sizing: border-box;
     width: auto !important;
     height: 100vh;
+    height: 100dvh;
     min-height: 0 !important;
     margin: 0 0 0 calc(var(--sidebar-open) + var(--layout-gap) * 2) !important;
     padding: var(--layout-gap) var(--layout-gap) var(--layout-gap) 0 !important;
@@ -481,6 +501,7 @@ body.menu-colapsado .main.layout-global-listo {
 .main-shell {
     width: 100%;
     height: calc(100vh - var(--layout-gap) * 2);
+    height: calc(100dvh - var(--layout-gap) * 2);
     display: flex;
     flex-direction: column;
     overflow: hidden;

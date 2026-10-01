@@ -9,7 +9,7 @@ import {
     mostrarError,
     mostrarExitoSimple
 } from "../components/sweetAlerts.js";
-import { obtenerIdUsuario } from "../utils/sesion.js";
+import { obtenerIdUsuario, obtenerUsuarioLogueado } from "../utils/sesion.js";
 
 const txtChat = document.getElementById("txtChat");
 const cuerpoChat = document.getElementById("cuerpoChat");
@@ -49,13 +49,47 @@ Object.entries(PREGUNTAS_SUGERIDAS).forEach(([idBoton, pregunta]) => {
     document.getElementById(idBoton)?.addEventListener("click", () => enviarMensaje(pregunta));
 });
 
+/* Avatar propio en los mensajes que manda el usuario.
+
+   Se arma igual que el del encabezado (menu.js): primero la miniatura de
+   Cloudinary, que viene recortada a 120x120, y si no existe la imagen completa.
+   Si el usuario todavia no subio foto se usa la inicial de su nombre, que es lo
+   mismo que hace el menu. Se lee de la sesion en cada mensaje y no una sola vez
+   al cargar, para que si cambia su foto en el perfil se refleje enseguida. */
+function crearInicialUsuario(inicial) {
+    const marca = document.createElement("span");
+    marca.className = "perfil-usuario perfil-usuario-inicial";
+    marca.textContent = inicial;
+    return marca;
+}
+
+function crearAvatarUsuario() {
+    const usuario = obtenerUsuarioLogueado() || {};
+    const nombre = String(usuario.nombreUsuario || usuario.nombreCompleto || usuario.nombre || "Usuario").trim();
+    const inicial = nombre.charAt(0).toUpperCase() || "U";
+    const foto = usuario.imagenMiniaturaUrl || usuario.imagenUrl || "";
+
+    if (!foto) return crearInicialUsuario(inicial);
+
+    const imagen = document.createElement("img");
+    imagen.src = foto;
+    imagen.alt = "Foto de perfil";
+    imagen.className = "perfil-usuario perfil-usuario-foto";
+    // Si la URL falla (imagen borrada en Cloudinary) se cambia por la inicial,
+    // para no dejar un icono roto en medio de la conversacion.
+    imagen.addEventListener("error", () => imagen.replaceWith(crearInicialUsuario(inicial)), { once: true });
+    return imagen;
+}
+
 function agregarMensajeUsuario(texto, animar = true) {
     const fila = document.createElement("div");
     fila.className = "d-flex justify-content-end align-items-end gap-2 mensaje-conversacion";
-    fila.innerHTML = `
-        <div class="mensaje usuario${animar ? " animar-mensaje" : ""}"></div>
-        <img src="img/user-oscuro.png" alt="Foto de perfil" class="perfil-usuario">`;
-    fila.querySelector(".mensaje").textContent = texto;
+
+    const globo = document.createElement("div");
+    globo.className = `mensaje usuario${animar ? " animar-mensaje" : ""}`;
+    globo.textContent = texto;
+
+    fila.append(globo, crearAvatarUsuario());
     cuerpoChat.appendChild(fila);
     desplazarAlFinal();
 }

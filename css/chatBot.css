@@ -419,7 +419,10 @@ html.tema-oscuro .chat-input-wrapper .input-group-text {
     transition: filter 0.2s ease;
 }
 
-html.tema-oscuro .cuerpo-chat .perfil-usuario {
+/* El invertido era para el icono gris por defecto, que en modo oscuro se perdia
+   contra el fondo. Una foto real o la inicial NO se invierten: la foto saldria
+   como un negativo y la inicial perderia sus colores. */
+html.tema-oscuro .cuerpo-chat .perfil-usuario:not(.perfil-usuario-foto):not(.perfil-usuario-inicial) {
     filter: invert(1) brightness(1.15);
 }
 
