@@ -1,4 +1,4 @@
-import { mostrarError, mostrarExitoRedireccion } from "../components/sweetAlerts.js";
+﻿import { mostrarError, mostrarExitoRedireccion } from "../components/sweetAlerts.js";
 
 document.addEventListener("DOMContentLoaded", function () {
     const formularioRecuperacion = document.querySelector("#formRecovery");
@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const boton = formularioRecuperacion.querySelector('button');
 
             if (!esCorreoValido(correo)) {
-                mostrarError("Ingresa un correo electrónico válido para recuperar tu contraseña.", false);
+                mostrarError("Ingresa un correo electrÃ³nico vÃ¡lido para recuperar tu contraseÃ±a.", false);
                 return;
             }
 
@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", function () {
             boton.innerHTML = 'Enviando...';
 
             try {
-                const response = await fetch('http://localhost:8080/api/auth/recuperar-contrasena', {
+                const response = await fetch('https://iticketapi-3e643051c995.herokuapp.com/api/auth/recuperar-contrasena', {
                     method: 'POST', credentials: 'include',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ correo: correo })
@@ -28,17 +28,18 @@ document.addEventListener("DOMContentLoaded", function () {
                 const data = await response.json();
 
                 if (!response.ok) {
-                    throw new Error(data.message || 'Ocurrió un error al enviar el correo');
+                    throw new Error(data.message || 'OcurriÃ³ un error al enviar el correo');
                 }
 
                 
-                mostrarExitoRedireccion("Código Enviado", "Revisa tu bandeja de entrada o spam.", "codigoVerificacion.html");
+                mostrarExitoRedireccion("CÃ³digo Enviado", "Revisa tu bandeja de entrada o spam.", "codigoVerificacion.html");
             } catch (error) {
                 mostrarError(error.message, false);
             } finally {
                 boton.disabled = false;
-                boton.innerHTML = 'Enviar código';
+                boton.innerHTML = 'Enviar cÃ³digo';
             }
         });
     }
 });
+

@@ -120,7 +120,8 @@
                     <!-- Tabla principal -->
                     <div class="card-tabla p-4">
                         <div class="table-responsive">
-                            <table class="table table-borderless table-custom tabla-columnas-iguales tabla-centrada align-middle">
+                            <table
+                                class="table table-borderless table-custom tabla-columnas-iguales tabla-centrada align-middle">
                                 <thead>
                                     <tr>
                                         <!-- data-orden marca las columnas ordenables; el campo es el de la entidad en la API.
@@ -207,13 +208,20 @@
                         <div class="col-12 col-lg-7">
                             <div class="p-3 bg-white border rounded-4 h-100">
                                 <h6 class="fw-bold text-navy mb-3 text-center">Categorías existentes</h6>
+                                <div class="buscador-contenedor mb-3">
+                                    <i class="bi bi-search icono-busqueda"></i>
+                                    <input type="text" class="form-control buscador-input" id="txtBuscarCategoria"
+                                        placeholder="Buscar categoría">
+                                </div>
 
                                 <div class="card-tabla p-4">
                                     <div class="table-responsive">
-                                        <table class="table table-borderless table-custom tabla-columnas-iguales align-middle">
+                                        <table
+                                            class="table table-borderless table-custom tabla-columnas-iguales align-middle">
                                             <thead>
                                                 <tr>
-                                                    <th scope="col" class="text-center" data-orden="nombreCategoria">Nombre de la categoría</th>
+                                                    <th scope="col" class="text-center" data-orden="nombreCategoria">
+                                                        Nombre de la categoría</th>
                                                     <th scope="col" class="text-center">Acciones</th>
                                                 </tr>
                                             </thead>
@@ -297,14 +305,21 @@
                         <div class="col-12 col-lg-7">
                             <div class="p-3 bg-white border rounded-4 h-100">
                                 <h6 class="fw-bold text-navy mb-3 text-center">Modelos existentes</h6>
-
+                                <div class="buscador-contenedor mb-3">
+                                    <i class="bi bi-search icono-busqueda"></i>
+                                    <input type="text" class="form-control buscador-input" id="txtBuscarModelo"
+                                        placeholder="Buscar modelo o marca">
+                                </div>
                                 <div class="card-tabla p-4">
                                     <div class="table-responsive">
-                                        <table class="table table-borderless table-custom tabla-columnas-iguales align-middle">
+                                        <table
+                                            class="table table-borderless table-custom tabla-columnas-iguales align-middle">
                                             <thead>
                                                 <tr>
-                                                    <th scope="col" class="text-center" data-orden="nombreModelo">Modelo</th>
-                                                    <th scope="col" class="text-center" data-orden="nombreMarca">Marca</th>
+                                                    <th scope="col" class="text-center" data-orden="nombreModelo">Modelo
+                                                    </th>
+                                                    <th scope="col" class="text-center" data-orden="nombreMarca">Marca
+                                                    </th>
                                                     <th scope="col" class="text-center">Acciones</th>
                                                 </tr>
                                             </thead>
@@ -375,13 +390,20 @@
                         <div class="col-12 col-lg-7">
                             <div class="p-3 bg-white border rounded-4 h-100">
                                 <h6 class="fw-bold text-navy mb-3 text-center">Marcas existentes</h6>
+                                <div class="buscador-contenedor mb-3">
+                                    <i class="bi bi-search icono-busqueda"></i>
+                                    <input type="text" class="form-control buscador-input" id="txtBuscarMarca"
+                                        placeholder="Buscar marca">
+                                </div>
 
                                 <div class="card-tabla p-4">
                                     <div class="table-responsive">
-                                        <table class="table table-borderless table-custom tabla-columnas-iguales align-middle">
+                                        <table
+                                            class="table table-borderless table-custom tabla-columnas-iguales align-middle">
                                             <thead>
                                                 <tr>
-                                                    <th scope="col" class="text-center" data-orden="nombreMarca">Nombre de la marca</th>
+                                                    <th scope="col" class="text-center" data-orden="nombreMarca">Nombre
+                                                        de la marca</th>
                                                     <th scope="col" class="text-center">Acciones</th>
                                                 </tr>
                                             </thead>
