@@ -64,3 +64,20 @@
     background: #94A3B8;
 }
 
+/* =====================================================================
+   VISTA DE TECNICO: LA COLUMNA DE CONTENIDO OCUPA LA FILA COMPLETA
+
+   El panel administrativo de la izquierda (boton de crear, los dos
+   indicadores y el grafico) lleva data-roles="admin", y menu.js se lo
+   oculta al tecnico agregandole .d-none. El problema es que la columna
+   de la derecha seguia siendo col-lg-9 pasara lo que pasara, asi que al
+   tecnico le quedaba un 25% de la fila vacio a la derecha y las tarjetas
+   (col-lg-6) se veian angostas contra un hueco enorme.
+
+   Con :has() la fila detecta que el panel no esta y le devuelve el ancho
+   completo a la columna de contenido. Es automatico: si manana el rol
+   cambia, la clase .d-none se quita sola y el ancho vuelve a 9/12.
+   ===================================================================== */
+.contenido-principal > .row:has(> section[data-roles].d-none) > section:not([data-roles]) {
+    width: 100%;
+}

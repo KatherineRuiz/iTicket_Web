@@ -1,5 +1,14 @@
-// URL base de la API. Cuando haya dominio real, solo se cambia aqui.
-export const API_BASE_URL = "https://iticketapi-3e643051c995.herokuapp.com/api";
+/* URL base de la API
+
+   Desplegado se usa "/api", que vercel.json reenvia a Heroku. Asi el navegador
+   solo ve el dominio de Vercel, la cookie de sesion queda del mismo sitio y los
+   celulares dejan de bloquearla por ser de terceros (asi ya funciona en iOS)
+
+   Trabajando local no hay proxy de Vercel, asi que ahi se le sigue hablando
+   directo a la API, por eso el if en api base url*/
+const enLocal = ["localhost", "127.0.0.1"].includes(location.hostname);
+
+export const API_BASE_URL = enLocal ? "https://iticketapi-3e643051c995.herokuapp.com/api" : "/api"; // Aqui se pregunta si esta en local, si no esta, usa la ruta /api que es la que se reescribe en vercel.json para apuntar a Heroku
 
 // Paginas que se pueden abrir sin sesion iniciada (login, primer usuario y recuperar contraseña).
 const PAGINAS_PUBLICAS = [

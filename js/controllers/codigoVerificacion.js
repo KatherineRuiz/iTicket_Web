@@ -1,4 +1,5 @@
-import { mostrarError, mostrarExitoRedireccion, mostrarAlertaEspera, mostrarExitoSimple } from "../components/sweetAlerts.js";
+ï»¿import { mostrarError, mostrarExitoRedireccion, mostrarAlertaEspera, mostrarExitoSimple } from "../components/sweetAlerts.js";
+import { API_BASE_URL } from "../services/apiConfig.js";
 
 document.addEventListener("DOMContentLoaded", function () {
     
@@ -29,15 +30,16 @@ document.addEventListener("DOMContentLoaded", function () {
             tiempoInicio = Date.now();
 
             try {
-                // Reenviar codigo llamando a la API
-                await fetch('http://localhost:8080/api/auth/recuperar-contrasena', {
-                    method: 'POST', credentials: 'include',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ token: tokenValidacion })
+                                // Reenviar codigo llamando a la nueva API segura que extrae el correo de la Cookie
+                const respuesta = await fetch(`${API_BASE_URL}/auth/reenviar-codigo`, {
+                    method: 'POST',
+                    credentials: 'include'
                 });
-                mostrarExitoSimple("Código Reenviado", "Revisa tu bandeja de entrada o spam.");
+                
+                if (!respuesta.ok) throw new Error("No se pudo reenviar");
+                mostrarExitoSimple("Codigo Reenviado", "Revisa tu bandeja de entrada o spam.");
             } catch(e) {
-                mostrarError("No se pudo reenviar el código");
+                mostrarError("No se pudo reenviar el cÃƒÂ³digo");
             }
 
             setTimeout(function () {
@@ -48,7 +50,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     if (digitos.length > 0) {
-        // Lógica de navegación interna de los inputs ("puntitos")
+        // Logica de navegaciÃƒÂ³n interna de los inputs ("puntitos")
         digitos.forEach(function (entrada, indice) {
             entrada.addEventListener("input", function () {
                 if (this.value.length > 1) this.value = this.value.slice(-1);
@@ -86,7 +88,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 const codigoCompleto = Array.from(digitos).map((d) => d.value).join("");
 
                 if (codigoCompleto.length < digitos.length) {
-                    mostrarError("Por favor, completa todos los campos del código.", false);
+                    mostrarError("Por favor, completa todos los campos del cÃƒÂ³digo.", false);
                     return;
                 }
 
@@ -94,7 +96,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 botonAceptar.innerHTML = 'Validando...';
 
                 try {
-                    const response = await fetch('http://localhost:8080/api/auth/validar-codigo', {
+                    const response = await fetch(`${API_BASE_URL}/auth/validar-codigo`, {
                         method: 'POST', credentials: 'include',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ codigo: codigoCompleto })
@@ -103,12 +105,12 @@ document.addEventListener("DOMContentLoaded", function () {
                     const data = await response.json();
 
                     if (!response.ok) {
-                        throw new Error(data.message || 'Código inválido o expirado');
+                        throw new Error(data.message || 'CÃƒÂ³digo invÃƒÂ¡lido o expirado');
                     }
 
-                    // Guardamos el token temporal que nos da la API para cambiar la contraseña
+                    // Guardamos el token temporal que nos da la API para cambiar la contraseÃƒÂ±a
                     
-                    mostrarExitoRedireccion("Código Correcto", "Ya puedes establecer tu nueva contraseña.", "nuevaContrasena.html");
+                    mostrarExitoRedireccion("CÃƒÂ³digo Correcto", "Ya puedes establecer tu nueva contraseÃƒÂ±a.", "nuevaContrasena.html");
                 } catch (error) {
                     mostrarError(error.message, false);
                 } finally {
@@ -119,3 +121,5 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 });
+
+
