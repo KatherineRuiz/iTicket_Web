@@ -1,5 +1,5 @@
-﻿import { mostrarError, mostrarExitoRedireccion } from "../components/sweetAlerts.js";
-import { API_BASE_URL } from "../services/apiConfig.js";
+import { mostrarError, mostrarExitoRedireccion } from "../components/sweetAlerts.js";
+import { API_BASE_URL, apiFetch } from "../services/apiConfig.js";
 
 document.addEventListener("DOMContentLoaded", function () {
     const formularioRecuperacion = document.querySelector("#formRecovery");
@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const boton = formularioRecuperacion.querySelector('button');
 
             if (!esCorreoValido(correo)) {
-                mostrarError("Ingresa un correo electrÃ³nico vÃ¡lido para recuperar tu contraseÃ±a.", false);
+                mostrarError("Ingresa un correo electronico valido para recuperar tu contrasena.", false);
                 return;
             }
 
@@ -20,8 +20,8 @@ document.addEventListener("DOMContentLoaded", function () {
             boton.innerHTML = 'Enviando...';
 
             try {
-                const response = await fetch(`${API_BASE_URL}/auth/recuperar-contrasena`, {
-                    method: 'POST', credentials: 'include',
+                const response = await apiFetch(`${API_BASE_URL}/auth/recuperar-contrasena`, {
+                    method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ correo: correo })
                 });
@@ -29,18 +29,16 @@ document.addEventListener("DOMContentLoaded", function () {
                 const data = await response.json();
 
                 if (!response.ok) {
-                    throw new Error(data.message || 'OcurriÃ³ un error al enviar el correo');
+                    throw new Error(data.message || 'Ocurrio un error al enviar el correo');
                 }
 
-                
-                mostrarExitoRedireccion("CÃ³digo Enviado", "Revisa tu bandeja de entrada o spam.", "codigoVerificacion.html");
+                mostrarExitoRedireccion("Codigo Enviado", "Revisa tu bandeja de entrada o spam.", "codigoVerificacion.html");
             } catch (error) {
                 mostrarError(error.message, false);
             } finally {
                 boton.disabled = false;
-                boton.innerHTML = 'Enviar cÃ³digo';
+                boton.innerHTML = 'Enviar código';
             }
         });
     }
 });
-

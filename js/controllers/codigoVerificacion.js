@@ -1,8 +1,8 @@
 ﻿import { mostrarError, mostrarExitoRedireccion, mostrarAlertaEspera, mostrarExitoSimple } from "../components/sweetAlerts.js";
-import { API_BASE_URL } from "../services/apiConfig.js";
+import { API_BASE_URL, apiFetch } from "../services/apiConfig.js";
 
 document.addEventListener("DOMContentLoaded", function () {
-    
+
     if (false) {
         window.location.replace("index.html");
         return;
@@ -30,16 +30,18 @@ document.addEventListener("DOMContentLoaded", function () {
             tiempoInicio = Date.now();
 
             try {
-                                // Reenviar codigo llamando a la nueva API segura que extrae el correo de la Cookie
-                const respuesta = await fetch(`${API_BASE_URL}/auth/reenviar-codigo`, {
-                    method: 'POST',
-                    credentials: 'include'
+                const response = await apiFetch(`${API_BASE_URL}/auth/reenviar-codigo`, {
+                    method: 'POST'
                 });
-                
-                if (!respuesta.ok) throw new Error("No se pudo reenviar");
+
+                if (!response.ok) {
+                    const data = await response.json();
+                    throw new Error(data.message || 'No se pudo reenviar el codigo');
+                }
+
                 mostrarExitoSimple("Codigo Reenviado", "Revisa tu bandeja de entrada o spam.");
-            } catch(e) {
-                mostrarError("No se pudo reenviar el cÃ³digo");
+            } catch (e) {
+                mostrarError(e.message || "No se pudo reenviar el codigo");
             }
 
             setTimeout(function () {
@@ -50,7 +52,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     if (digitos.length > 0) {
-        // Logica de navegaciÃ³n interna de los inputs ("puntitos")
         digitos.forEach(function (entrada, indice) {
             entrada.addEventListener("input", function () {
                 if (this.value.length > 1) this.value = this.value.slice(-1);
@@ -88,7 +89,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 const codigoCompleto = Array.from(digitos).map((d) => d.value).join("");
 
                 if (codigoCompleto.length < digitos.length) {
-                    mostrarError("Por favor, completa todos los campos del cÃ³digo.", false);
+                    mostrarError("Por favor, completa todos los campos del codigo.", false);
                     return;
                 }
 
@@ -96,8 +97,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 botonAceptar.innerHTML = 'Validando...';
 
                 try {
-                    const response = await fetch(`${API_BASE_URL}/auth/validar-codigo`, {
-                        method: 'POST', credentials: 'include',
+                    const response = await apiFetch(`${API_BASE_URL}/auth/validar-codigo`, {
+                        method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ codigo: codigoCompleto })
                     });
@@ -105,12 +106,10 @@ document.addEventListener("DOMContentLoaded", function () {
                     const data = await response.json();
 
                     if (!response.ok) {
-                        throw new Error(data.message || 'CÃ³digo invÃ¡lido o expirado');
+                        throw new Error(data.message || 'Codigo invalido o expirado');
                     }
 
-                    // Guardamos el token temporal que nos da la API para cambiar la contraseÃ±a
-                    
-                    mostrarExitoRedireccion("CÃ³digo Correcto", "Ya puedes establecer tu nueva contraseÃ±a.", "nuevaContrasena.html");
+                    mostrarExitoRedireccion("Codigo Correcto", "Ya puedes establecer tu nueva contrasena.", "nuevaContrasena.html");
                 } catch (error) {
                     mostrarError(error.message, false);
                 } finally {
@@ -121,5 +120,3 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 });
-
-
