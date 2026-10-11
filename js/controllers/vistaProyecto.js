@@ -183,9 +183,10 @@ async function inicializarVistaProyecto(id) {
     [btnEditarFase, btnCrearFase, btnEliminarFase].forEach((btn) => btn?.classList.toggle('d-none', !puedeEscribirFases));
     btnEditarDetalle?.parentElement?.classList.toggle('d-none', !puedeEscribirDetalles);
 
-    /* Muestra u oculta los campos de edición de la fase  */
+    /* Muestra u oculta los campos de edición de la fase (incluye el estado "Finalizada":
+       una fase no puede nacer ya finalizada, eso solo tiene sentido al editar una existente). */
     function mostrarCamposEdicionFase(mostrar) {
-        ['campoGastoTotalFase', 'campoFechaInicioReal', 'campoFechaFinalReal']
+        ['campoGastoTotalFase', 'campoFechaInicioReal', 'campoFechaFinalReal', 'campoFaseFinalizada']
             .forEach((id) => document.getElementById(id).classList.toggle('d-none', !mostrar));
     }
 
