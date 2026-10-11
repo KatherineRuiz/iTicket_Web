@@ -24,13 +24,16 @@ body {
 .lista-tickets-asignados {
     position: relative;
     cursor: pointer;
+    /* La transicion va aqui y no en :hover: asi la tarjeta tambien baja con
+       suavidad al quitar el mouse (antes subia animada y volvia de golpe) y la
+       sombra acompana en vez de aparecer de un salto. El ultimo valor es la
+       entrada escalonada que define common.css. */
+    transition: transform 0.4s ease, box-shadow 0.4s ease, var(--transicion-entrada, opacity 0s);
 }
 
 .lista-tickets-asignados:hover {
     transform: translateY(-4px);
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-    transition: transform 0.4s ease;
-
 }
 
 .scroll-lista-ticket {

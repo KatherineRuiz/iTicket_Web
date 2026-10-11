@@ -4,6 +4,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Recuperar Contraseña</title>
+    <!-- Abre desde ya la conexion con los servidores de fuentes y librerias. Sin esto
+         el navegador recien los descubre al leer el CSS y pierde ese tiempo esperando. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
     <link rel="shortcut icon" href="img/logo.png" type="image/x-icon">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
     <link href="css/login.css" rel="stylesheet" />
@@ -26,11 +31,12 @@
 
           <div class="row g-0 capa-contenido h-100">
             <div class="col-md-6 d-none d-md-flex flex-column p-4">
-              <img
-                src="img/login/Logo.png"
-                alt="Logo iTicket"
-                class="logo-sesion"
-              />
+              <!-- Regresa al inicio de sesion. En computadora ocupa el lugar que tenia
+                   el logo: la esquina superior izquierda es donde se busca un "volver". -->
+              <a href="index.html" class="btn-volver-sesion sobre-claro align-self-start">
+                <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 3 5 8l5 5" /></svg>
+                Volver
+              </a>
               <div class="flex-grow-1 d-flex align-items-center justify-content-center">
                 <img
                   src="img/login/img_Recuperarcontrasena.png"
@@ -42,6 +48,12 @@
 
             <div class="col-12 col-md-6 d-flex align-items-center justify-content-center justify-content-md-end">
               <div class="contenedor-formulario-compacto w-100 p-4 p-md-4 me-lg-5 text-white">
+                <!-- El mismo boton para celular: ahi el panel de la izquierda se oculta,
+                     asi que va encima del titulo. d-md-none lo esconde en computadora. -->
+                <a href="index.html" class="btn-volver-sesion mb-3 d-md-none">
+                  <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 3 5 8l5 5" /></svg>
+                  Volver
+                </a>
                 <h2 class="mb-4 text-center">
                   <span class="texto-bienvenida fw-bold">¿Deseas recuperar<br />tu contraseña?</span>
                 </h2>
@@ -87,5 +99,6 @@
     <script src="js/components/frmValidaciones.js"></script>
     <script src="js/components/menu.js"></script>
     <script type="module" src="js/controllers/recuperarContrasena.js"></script>
+    <script src="js/components/fondoBurbujas.js" defer></script>
   </body>
 </html>

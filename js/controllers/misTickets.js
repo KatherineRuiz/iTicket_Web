@@ -102,6 +102,9 @@ function renderizarTickets(tickets) {
     divTickets.innerHTML = "";
 
 
+    // Se arma todo el HTML y se inserta una sola vez al final. Antes cada vuelta hacia
+    // innerHTML +=, que obliga al navegador a releer y reconstruir todo lo ya pintado.
+    let htmlAcumulado = "";
     tickets.forEach((ticket) => {
 
         const prio = ticket.prioridad || '';
@@ -113,7 +116,7 @@ function renderizarTickets(tickets) {
             existe = "existe";
         }
 
-        divTickets.innerHTML += `
+        htmlAcumulado += `
             <article data-id="${ticket.idTicket}" class="lista-tickets position-relative shadow-sm bg-white borde-lateral-${prio} rounded-3 p-3 mb-3 d-flex justify-content-between align-items-start">
                 <div class="elemento-ticket-asignado pe-1">
                   <h6 class="fw-bold mb-1 fs-5 d-flex align-items-start texto-limitado-1">
@@ -132,6 +135,7 @@ function renderizarTickets(tickets) {
             </article>
         `;
     });
+    divTickets.insertAdjacentHTML("beforeend", htmlAcumulado);
 }
 
 function renderizarPaginacion(totalPaginas, paginaActual) {

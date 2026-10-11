@@ -27,13 +27,25 @@ function inicializarNotificaciones() {
     cargarNotificaciones(1);
     actualizarBadge();
 
-    intervaloPolling = setInterval(() => {
+    const refrescarNotificaciones = () => {
         actualizarBadge();
         //Si el panel está abierto, refresca también la lista para que se vea al instante
         if (panelNotificaciones.classList.contains("activo")) {
             cargarNotificaciones(paginaActual);
         }
+    };
+
+    //Con la pestaña oculta nadie ve el resultado, así que no se gasta la petición.
+    //Antes el sondeo seguía pidiendo al servidor aunque la página estuviera en segundo plano.
+    intervaloPolling = setInterval(() => {
+        if (document.hidden) return;
+        refrescarNotificaciones();
     }, INTERVALO_POLLING_MS);
+
+    //Al volver a la pestaña se pone al día de inmediato, sin esperar al siguiente ciclo
+    document.addEventListener("visibilitychange", () => {
+        if (!document.hidden) refrescarNotificaciones();
+    });
 }
 
 //El bage de notificaciones aparece si hay notificaciones no leidas

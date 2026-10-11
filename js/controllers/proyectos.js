@@ -244,13 +244,16 @@ function renderizarProyectos(proyectos) {
     }
 
     //Se recorre la lista de proyectos y se genera el HTML para cada tarjeta de proyecto
+    // Se arma todo el HTML y se inserta una sola vez al final. Antes cada vuelta hacia
+    // innerHTML +=, que obliga al navegador a releer y reconstruir todo lo ya pintado.
+    let htmlAcumulado = "";
     proyectos.forEach((proyecto) => {
         const tipoVisible = obtenerTipoProyectoVisible(proyecto.tipoProyecto);
         const presupuesto = Number(proyecto.presupuestoEstimado || 0).toFixed(2);
         const total = Number(proyecto.gastoTotal || 0).toFixed(2);
         const estado = proyecto.finalizado ? "Finalizado" : "En progreso";
 
-        contenedorProyectos.innerHTML += `
+        htmlAcumulado += `
             <article class="col-lg-6 col-md-12 col-sm-12">
                 <div class="card tarjeta-proyecto border-0 shadow-sm rounded-4 p-3 position-relative h-100">
                     <div class="card-body">
@@ -272,6 +275,7 @@ function renderizarProyectos(proyectos) {
             </article>
         `;
     });
+    contenedorProyectos.insertAdjacentHTML("beforeend", htmlAcumulado);
 }
 
 //Actualiza las tarjetas de "Proyectos totales" y "Proyectos terminados"

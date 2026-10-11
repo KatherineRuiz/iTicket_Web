@@ -58,18 +58,115 @@
     padding-left: 20px;
 }
 
+/* El fondo era una foto (img/bg-tecnicos.png) con las burbujas pintadas. Ahora
+   el azul va por CSS y las burbujas las crea js/components/fondoBurbujas.js
+   como elementos aparte, que es lo que permite moverlas. El color sale de
+   medir la imagen: toda la base era #121f48, el mismo que ya estaba aqui. */
 .tecnicos {
+    position: relative;
     background-color: #121F48;
-    background-image: url('../img/bg-tecnicos.png');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
     display: flex;
     border-radius: 40px;
     justify-content: center;
     align-items: center;
     padding: 20px;
     text-align: center;
+}
+
+/* La capa recorta las burbujas con las mismas esquinas redondeadas de la
+   tarjeta. El recorte va aqui y no en .tecnicos para no cortarle nada al
+   carrusel ni a la sombra. */
+.tecnicos > .fondo-burbujas {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    border-radius: inherit;
+    pointer-events: none;
+}
+
+/* El titulo y el carrusel siempre por encima de las burbujas */
+.tecnicos > :not(.fondo-burbujas) {
+    position: relative;
+    z-index: 1;
+}
+
+.tecnicos > .fondo-burbujas span {
+    position: absolute;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    filter: blur(2px);
+    will-change: transform;
+}
+
+/* Las cuatro burbujas de la foto original, cada una en su misma esquina. El
+   ancho va en porcentaje de la tarjeta para que acompane cuando cambia de
+   tamano. */
+.tecnicos > .fondo-burbujas span:nth-child(1) {
+    top: 36%;
+    left: -3%;
+    width: 33%;
+    background: radial-gradient(circle at 60% 35%, rgba(58, 128, 226, .30), rgba(36, 86, 172, .13) 58%, transparent 71%);
+    animation: burbuja-tarjeta-a 27s ease-in-out infinite;
+}
+
+.tecnicos > .fondo-burbujas span:nth-child(2) {
+    top: 7%;
+    left: 38%;
+    width: 9%;
+    background: radial-gradient(circle at 40% 35%, rgba(76, 144, 236, .30), rgba(44, 96, 184, .13) 60%, transparent 73%);
+    animation: burbuja-tarjeta-b 21s ease-in-out infinite;
+}
+
+.tecnicos > .fondo-burbujas span:nth-child(3) {
+    top: -8%;
+    right: 2%;
+    width: 22%;
+    background: radial-gradient(circle at 45% 55%, rgba(66, 126, 226, .28), rgba(40, 88, 174, .12) 60%, transparent 72%);
+    animation: burbuja-tarjeta-c 31s ease-in-out infinite;
+}
+
+.tecnicos > .fondo-burbujas span:nth-child(4) {
+    right: 7%;
+    bottom: -32%;
+    width: 34%;
+    background: radial-gradient(circle at 45% 30%, rgba(60, 118, 218, .28), rgba(38, 84, 168, .12) 58%, transparent 71%);
+    animation: burbuja-tarjeta-d 37s ease-in-out infinite;
+}
+
+/* Los desplazamientos van en porcentaje del tamano de la propia burbuja, asi
+   la chica y la grande recorren una distancia proporcional a lo que miden.
+   Las cuatro duraciones son distintas y no son multiplos entre si, para que
+   nunca se sincronicen. El movimiento es contenido a proposito, igual que en
+   las pantallas de sesion: tiene que acompanar, no distraer del carrusel. */
+@keyframes burbuja-tarjeta-a {
+    0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+    35% { transform: translate3d(14%, -11%, 0) scale(1.05); }
+    70% { transform: translate3d(6%, 10%, 0) scale(.96); }
+}
+
+@keyframes burbuja-tarjeta-b {
+    0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+    50% { transform: translate3d(-48%, 52%, 0) scale(1.08); }
+}
+
+@keyframes burbuja-tarjeta-c {
+    0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+    40% { transform: translate3d(-18%, 14%, 0) scale(1.05); }
+    75% { transform: translate3d(-5%, 22%, 0) scale(.96); }
+}
+
+@keyframes burbuja-tarjeta-d {
+    0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+    30% { transform: translate3d(-12%, -9%, 0) scale(1.04); }
+    65% { transform: translate3d(8%, -13%, 0) scale(.97); }
+}
+
+/* Accesibilidad: quien pidio menos movimiento en su sistema las ve quietas */
+@media (prefers-reduced-motion: reduce) {
+    .tecnicos > .fondo-burbujas span {
+        animation: none !important;
+    }
 }
 
 .tecnico-targeta {

@@ -2,12 +2,161 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 
 /* ==================== 1. GENERALES Y ANIMACIONES ==================== */
+/* El degradado de siempre, ahora dibujado por CSS.
+
+   Los colores salieron de medir la imagen original pixel por pixel, para que
+   la pantalla se vea igual que antes: mas oscuro a la izquierda (#111e47) y
+   un poco mas claro hacia la derecha (#19295f). Las burbujas que la imagen
+   traia pintadas encima ahora son elementos de verdad, creados por
+   js/components/fondoLogin.js, y por eso se pueden mover. */
 body {
     font-family: 'Inter', sans-serif;
-    background-image: url('../img/login/Background.png');
-    background-size: cover;
-    background-position: center;
+    background-color: #111e47;
+    background-image: linear-gradient(105deg, #101d45 0%, #12204a 45%, #17275a 78%, #19295f 100%);
+    background-attachment: fixed;
     animation: entradaSuave 0.5s ease-in-out;
+}
+
+/* ==================== BURBUJAS DEL FONDO ==================== */
+
+.fondo-burbujas {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.fondo-burbujas span {
+    position: absolute;
+    border-radius: 50%;
+    /* El desenfoque les da el aire difuso que tenian en la imagen original */
+    filter: blur(2px);
+    /* Avisa al navegador que solo cambia la posicion, para que lo resuelva en
+       la tarjeta grafica y no repinte la pantalla en cada cuadro */
+    will-change: transform;
+}
+
+/* Cada burbuja copia una de las que traia la imagen: misma esquina, tamano
+   parecido y el mismo azul. Las medidas van en vmax para que la composicion
+   se mantenga igual en un monitor grande y en un celular. */
+.fondo-burbujas span:nth-child(1) {
+    top: 4%;
+    left: 17%;
+    width: 15vmax;
+    height: 15vmax;
+    background: radial-gradient(circle at 35% 30%, rgba(62, 124, 224, .30), rgba(40, 86, 170, .14) 60%, transparent 72%);
+    animation: deriva-a 26s ease-in-out infinite;
+}
+
+.fondo-burbujas span:nth-child(2) {
+    top: -2%;
+    left: 33%;
+    width: 13vmax;
+    height: 13vmax;
+    background: radial-gradient(circle at 70% 55%, rgba(74, 140, 236, .26), rgba(36, 78, 158, .10) 58%, transparent 70%);
+    border: 1px solid rgba(86, 136, 226, .13);
+    animation: deriva-b 32s ease-in-out infinite;
+}
+
+.fondo-burbujas span:nth-child(3) {
+    top: 11%;
+    left: 2%;
+    width: 4.5vmax;
+    height: 4.5vmax;
+    background: radial-gradient(circle at 40% 35%, rgba(70, 126, 222, .26), rgba(42, 88, 174, .12) 62%, transparent 74%);
+    animation: deriva-c 20s ease-in-out infinite;
+}
+
+.fondo-burbujas span:nth-child(4) {
+    top: -12%;
+    left: 8%;
+    width: 11vmax;
+    height: 11vmax;
+    background: radial-gradient(circle at 50% 70%, rgba(58, 116, 214, .24), rgba(38, 82, 164, .10) 60%, transparent 72%);
+    animation: deriva-d 29s ease-in-out infinite;
+}
+
+.fondo-burbujas span:nth-child(5) {
+    bottom: -14%;
+    left: -8%;
+    width: 30vmax;
+    height: 30vmax;
+    background: radial-gradient(circle at 62% 28%, rgba(52, 110, 208, .26), rgba(34, 74, 152, .11) 58%, transparent 70%);
+    animation: deriva-b 39s ease-in-out infinite;
+}
+
+.fondo-burbujas span:nth-child(6) {
+    bottom: 5%;
+    right: 20%;
+    width: 14vmax;
+    height: 14vmax;
+    background: radial-gradient(circle at 45% 40%, rgba(66, 126, 226, .26), rgba(40, 84, 168, .11) 60%, transparent 72%);
+    animation: deriva-a 35s ease-in-out infinite;
+}
+
+.fondo-burbujas span:nth-child(7) {
+    bottom: 1%;
+    left: 56%;
+    width: 4vmax;
+    height: 4vmax;
+    background: radial-gradient(circle at 40% 35%, rgba(72, 132, 230, .24), rgba(42, 88, 174, .10) 62%, transparent 74%);
+    animation: deriva-c 23s ease-in-out infinite;
+}
+
+.fondo-burbujas span:nth-child(8) {
+    top: -18%;
+    right: -10%;
+    width: 36vmax;
+    height: 36vmax;
+    background: radial-gradient(circle at 40% 62%, rgba(48, 102, 196, .20), rgba(32, 70, 146, .08) 58%, transparent 70%);
+    animation: deriva-d 44s ease-in-out infinite;
+}
+
+/* Cuatro recorridos distintos repartidos entre las ocho burbujas, con
+   duraciones que no son multiplos entre si: asi nunca se sincronizan y el
+   movimiento no se siente repetitivo. Cada uno empieza y termina en el mismo
+   punto para que el ciclo cierre sin saltos.
+
+   El movimiento es contenido a proposito: cada burbuja se desplaza apenas
+   unos 3 vmax y tarda entre 20 y 44 segundos en dar la vuelta. Tiene que
+   acompanar, no llamar la atencion. Para acelerarlo se bajan los segundos de
+   cada animation; para que recorran mas, se suben las distancias de aqui. */
+@keyframes deriva-a {
+    0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+    33% { transform: translate3d(3.5vmax, 2.2vmax, 0) scale(1.05); }
+    66% { transform: translate3d(-2.4vmax, 3.4vmax, 0) scale(.96); }
+}
+
+@keyframes deriva-b {
+    0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+    40% { transform: translate3d(-3vmax, -2.6vmax, 0) scale(1.04); }
+    70% { transform: translate3d(2.2vmax, -3.8vmax, 0) scale(.97); }
+}
+
+@keyframes deriva-c {
+    0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+    50% { transform: translate3d(2.8vmax, -3.2vmax, 0) scale(1.08); }
+}
+
+@keyframes deriva-d {
+    0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+    35% { transform: translate3d(-2.6vmax, 3vmax, 0) scale(.95); }
+    75% { transform: translate3d(3.2vmax, 1.6vmax, 0) scale(1.06); }
+}
+
+/* Accesibilidad: si la persona pidio menos movimiento en los ajustes de su
+   sistema, las burbujas se quedan quietas. El fondo se sigue viendo igual. */
+@media (prefers-reduced-motion: reduce) {
+    .fondo-burbujas span {
+        animation: none !important;
+    }
+}
+
+/* El contenido siempre por encima de las burbujas */
+.container {
+    position: relative;
+    z-index: 1;
 }
 
 @keyframes entradaSuave {
@@ -230,4 +379,84 @@ body {
     width: 45px;
     height: auto;
     margin: 5;
+}
+
+/* ==================== BOTON DE VOLVER ====================
+   Enlace para regresar un paso en el flujo de recuperar contrasena. Es un <a>
+   y no un <button> porque lo unico que hace es llevar a otra pagina.
+
+   La flecha es un SVG escrito en el propio HTML: estas pantallas no cargan
+   Bootstrap Icons y no vale la pena traer toda esa fuente por un solo icono.
+
+   Hay dos variantes segun el fondo donde cae: la normal, clara, para el panel
+   azul oscuro; y .sobre-claro, oscura, para la tarjeta blanca del codigo. */
+.btn-volver-sesion {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px 7px 9px;
+    border-radius: 999px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    line-height: 1;
+    text-decoration: none;
+    color: rgba(255, 255, 255, 0.82);
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.btn-volver-sesion svg {
+    flex-shrink: 0;
+    transition: transform 0.2s ease;
+}
+
+.btn-volver-sesion:hover,
+.btn-volver-sesion:focus-visible {
+    color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.12);
+}
+
+/* La flecha se corre un poco hacia donde lleva el enlace */
+.btn-volver-sesion:hover svg {
+    transform: translateX(-3px);
+}
+
+.btn-volver-sesion:focus-visible {
+    outline: 2px solid #43A1FF;
+    outline-offset: 2px;
+}
+
+.btn-volver-sesion.sobre-claro {
+    color: #0e1b4d;
+}
+
+.btn-volver-sesion.sobre-claro:hover,
+.btn-volver-sesion.sobre-claro:focus-visible {
+    color: #0e1b4d;
+    background-color: rgba(14, 27, 77, 0.08);
+}
+
+/* Dentro del formulario va en su propia linea, encima del titulo. El margen
+   negativo compensa su relleno para que la flecha quede alineada con el borde
+   izquierdo de los campos. */
+.contenedor-formulario-compacto > .btn-volver-sesion {
+    margin-left: -9px;
+}
+
+/* En la tarjeta del codigo va fijo en la esquina, asi no empuja el logo ni
+   descentra el contenido. */
+.tarjeta-validacion > .btn-volver-sesion {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    z-index: 3;
+}
+
+/* BOTON DE VOLVER EN PANTALLAS MUY ANGOSTAS
+   En celulares de 320px a 380px la tarjeta del codigo es tan estrecha que el
+   boton quedaba pegado al logo, a 3px. Ahi se baja el contenido lo justo para
+   que el logo arranque por debajo del boton y cada uno tenga su renglon. */
+@media (max-width: 380px) {
+    .tarjeta-validacion > .btn-volver-sesion ~ .contenedor-formulario-compacto {
+        padding-top: 34px;
+    }
 }

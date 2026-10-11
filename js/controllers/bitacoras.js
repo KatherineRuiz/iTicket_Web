@@ -61,9 +61,12 @@ function renderizarTodos(bitacoras) {
         return;
     }
 
+    // Se arma todo el HTML y se inserta una sola vez al final. Antes cada vuelta hacia
+    // innerHTML +=, que obliga al navegador a releer y reconstruir todo lo ya pintado.
+    let htmlAcumulado = "";
     bitacoras.forEach((b) => {
         const eliminado = esEliminado(b);
-        tblBitacoras.innerHTML += `
+        htmlAcumulado += `
             <tr>
                 <td>${formatearFecha12H(b.fechaHora)}</td>
                 <td class="fw-bold">${b.codigoTicket}</td>
@@ -78,6 +81,7 @@ function renderizarTodos(bitacoras) {
             </tr>
         `;
     });
+    tblBitacoras.insertAdjacentHTML("beforeend", htmlAcumulado);
 }
 
 async function cargarTablaEliminados(pagina = 1) {
@@ -107,8 +111,11 @@ function renderizarEliminados(bitacoras) {
         return;
     }
 
+    // Se arma todo el HTML y se inserta una sola vez al final. Antes cada vuelta hacia
+    // innerHTML +=, que obliga al navegador a releer y reconstruir todo lo ya pintado.
+    let htmlAcumulado = "";
     bitacoras.forEach((b) => {
-        tblEliminados.innerHTML += `
+        htmlAcumulado += `
             <tr>
                 <td>${formatearFecha12H(b.fechaHora)}</td>
                 <td class="fw-bold">${b.codigoTicket}</td>
@@ -117,6 +124,7 @@ function renderizarEliminados(bitacoras) {
             </tr>
         `;
     });
+    tblEliminados.insertAdjacentHTML("beforeend", htmlAcumulado);
 }
 
 txtBuscarBitacora.addEventListener("input", () => {

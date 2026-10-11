@@ -1051,3 +1051,90 @@ html.tema-oscuro .chat-icon {
 [class*="table-responsive"] {
     overscroll-behavior-x: contain;
 }
+
+/* ============================================================
+   ANIMACIONES DE ENTRADA Y DETALLES DE MOVIMIENTO
+
+   Todo lo de este bloque es adorno: no cambia tamanos, colores ni posiciones
+   finales. Si se borra entero, el sistema se ve igual pero sin movimiento. Y
+   va dentro de prefers-reduced-motion: quien pidio menos animacion en su
+   sistema no ve ninguna.
+
+   1. ENTRADA DE TARJETAS
+   Las tarjetas de las listas (mis tickets, tickets asignados, aprobaciones,
+   proyectos) y los cuadros de indicadores aparecen con un fundido corto y
+   subiendo 12px, una detras de otra, en vez de saltar de golpe a la pantalla.
+
+   Se hace con @starting-style, que solo actua en el instante en que el
+   elemento se dibuja por primera vez. Por eso no se repite sola ni interfiere
+   con lo demas. Tres decisiones que conviene conocer antes de tocarlo:
+
+   - Usa la propiedad "translate" y no "transform". Varias tarjetas ya usan
+     transform para elevarse al pasar el mouse; con propiedades separadas la
+     entrada y el hover no se pisan, y el retraso escalonado solo afecta a la
+     entrada (el hover sigue respondiendo al instante).
+   - No actua cuando la lista esta cambiando de pagina (.pagina-saliendo): ahi
+     ya existe la transicion lateral de animarCambioPagina (menu.js) y se
+     verian las dos encimadas.
+   - En navegadores sin @starting-style (iOS anterior a 17.5, Firefox anterior
+     a 129) la regla se ignora y las tarjetas aparecen como siempre.
+   ============================================================ */
+@media (prefers-reduced-motion: no-preference) {
+
+    :where(.lista-tickets, .lista-tickets-asignados, .item-ticket-aprobacion, .tarjeta-indicador),
+    :where(.contenedor-proyectos) > article {
+        --retraso-entrada: 0ms;
+        --transicion-entrada:
+            opacity 0.34s ease var(--retraso-entrada),
+            translate 0.34s cubic-bezier(0.22, 1, 0.36, 1) var(--retraso-entrada);
+    }
+
+    /* Escalonado: cada tarjeta espera un poco mas que la anterior. Se corta en
+       la octava para que una lista larga no tarde en terminar de aparecer. */
+    :where(.lista-tickets, .lista-tickets-asignados, .item-ticket-aprobacion, .tarjeta-indicador, .contenedor-proyectos > article):nth-child(2) { --retraso-entrada: 40ms; }
+    :where(.lista-tickets, .lista-tickets-asignados, .item-ticket-aprobacion, .tarjeta-indicador, .contenedor-proyectos > article):nth-child(3) { --retraso-entrada: 80ms; }
+    :where(.lista-tickets, .lista-tickets-asignados, .item-ticket-aprobacion, .tarjeta-indicador, .contenedor-proyectos > article):nth-child(4) { --retraso-entrada: 120ms; }
+    :where(.lista-tickets, .lista-tickets-asignados, .item-ticket-aprobacion, .tarjeta-indicador, .contenedor-proyectos > article):nth-child(5) { --retraso-entrada: 160ms; }
+    :where(.lista-tickets, .lista-tickets-asignados, .item-ticket-aprobacion, .tarjeta-indicador, .contenedor-proyectos > article):nth-child(6) { --retraso-entrada: 200ms; }
+    :where(.lista-tickets, .lista-tickets-asignados, .item-ticket-aprobacion, .tarjeta-indicador, .contenedor-proyectos > article):nth-child(7) { --retraso-entrada: 240ms; }
+    :where(.lista-tickets, .lista-tickets-asignados, .item-ticket-aprobacion, .tarjeta-indicador, .contenedor-proyectos > article):nth-child(n+8) { --retraso-entrada: 280ms; }
+
+    /* Los indicadores van cada uno dentro de su propia columna, asi que el
+       orden se toma de la columna y no del cuadro. */
+    :where([class*="col"]:nth-child(2)) > .tarjeta-indicador { --retraso-entrada: 60ms; }
+    :where([class*="col"]:nth-child(3)) > .tarjeta-indicador { --retraso-entrada: 120ms; }
+    :where([class*="col"]:nth-child(4)) > .tarjeta-indicador { --retraso-entrada: 180ms; }
+    :where([class*="col"]:nth-child(n+5)) > .tarjeta-indicador { --retraso-entrada: 240ms; }
+
+    /* Estas tres no tenian ninguna transicion propia. Las otras dos tarjetas
+       (.lista-tickets-asignados y .item-ticket-aprobacion) ya tenian la suya
+       para el hover, asi que suman la entrada en su propia hoja. */
+    .lista-tickets,
+    .contenedor-proyectos > article,
+    .tarjeta-indicador {
+        transition: var(--transicion-entrada);
+    }
+
+    @starting-style {
+        :not(.pagina-saliendo) > :is(.lista-tickets, .lista-tickets-asignados, .item-ticket-aprobacion),
+        .contenedor-proyectos > article,
+        .tarjeta-indicador {
+            opacity: 0;
+            translate: 0 12px;
+        }
+    }
+
+    /* 2. PUNTO DE NOTIFICACIONES SIN LEER
+       Un halo suave que se abre y se desvanece cada 3 segundos mientras haya
+       notificaciones pendientes. Solo anima la sombra de un punto de 6px, asi
+       que no le cuesta nada al navegador. Cuando no hay pendientes el punto
+       esta oculto y la animacion ni corre. */
+    .notificacion-dot:not(.oculto) {
+        animation: latido-punto-notificacion 3s ease-out infinite;
+    }
+}
+
+@keyframes latido-punto-notificacion {
+    0% { box-shadow: 0 0 0 0 rgba(64, 146, 255, 0.5); }
+    60%, 100% { box-shadow: 0 0 0 7px rgba(64, 146, 255, 0); }
+}

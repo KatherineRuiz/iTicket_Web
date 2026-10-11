@@ -50,7 +50,9 @@
 /* Panel Derecho: Aprobaciones */
 .item-ticket-aprobacion {
     cursor: pointer;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    /* Los dos primeros valores son el hover de siempre; el ultimo es la entrada
+       escalonada que define common.css. */
+    transition: transform 0.2s ease, box-shadow 0.2s ease, var(--transicion-entrada, opacity 0s);
 }
 
 .item-ticket-aprobacion:hover {

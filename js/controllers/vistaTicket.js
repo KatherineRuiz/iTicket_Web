@@ -227,7 +227,7 @@ function renderizarGaleriaVista() {
     evidenciasActuales.forEach((evidencia) => {
         galeriaEvidenciasVista.insertAdjacentHTML("beforeend", `
             <div class="tarjeta-foto-evidencia overflow-hidden rounded-3" onclick="abrirVistaImagen('${evidencia.evidenciaUrl}')">
-                <img src="${evidencia.evidenciaUrl}" alt="Evidencia" class="img-fluid object-fit-cover w-100 h-100" />
+                <img src="${evidencia.evidenciaUrl}" alt="Evidencia" class="img-fluid object-fit-cover w-100 h-100" loading="lazy" decoding="async" />
             </div>
         `);
     });
@@ -490,7 +490,7 @@ function renderizarGaleriaEdicion() {
         const miniatura = document.createElement("div");
         miniatura.className = "miniatura-foto";
         miniatura.innerHTML = `
-            <img src="${ev.evidenciaUrl}" alt="Evidencia">
+            <img src="${ev.evidenciaUrl}" alt="Evidencia" loading="lazy" decoding="async">
             <button type="button" class="btn-eliminar-foto btn-eliminar-evidencia" data-id-evidencia="${ev.idEvidencia}" aria-label="Eliminar evidencia">
                 <i class="bi bi-x"></i>
             </button>
@@ -836,8 +836,11 @@ async function cargarBitacoras() {
 
         tablaBitacora.innerHTML = "";
 
+        // Se arma todo el HTML y se inserta una sola vez al final. Antes cada vuelta hacia
+        // innerHTML +=, que obliga al navegador a releer y reconstruir todo lo ya pintado.
+        let htmlAcumulado = "";
         bitacoras.forEach((bitacora) => {
-            tablaBitacora.innerHTML += `
+            htmlAcumulado += `
             <tr>
                 <td class="fw-bold">${bitacora.correoUsuario}</td>
                 <td>${bitacora.nuevoEstado}</td>
@@ -845,6 +848,7 @@ async function cargarBitacoras() {
             </tr>
             `
         });
+        tablaBitacora.insertAdjacentHTML("beforeend", htmlAcumulado);
     }catch (error) {
         console.error("Error al cargar la tabla de bitácoras:", error);
         mostrarError(error.message || "Oops... No se pudo cargar la bitácora");
@@ -864,7 +868,7 @@ function renderizarComentarios() {
         const tipo = esPropio ? "propio" : "otro";
 
         const correo = !esPropio ? `<span class="correo-comentario">${escapeHTML(comentario.correoUsuario ?? "")}</span>`: "";
-        const galeria = (comentario.multimediaUrls && comentario.multimediaUrls.length > 0) ? `<div class="galeria-burbuja-comentario">${comentario.multimediaUrls.map((url) => `<img src="${url}" alt="Imagen adjunta" onclick="abrirVistaImagen('${url}')">`).join("")}</div>` : "";
+        const galeria = (comentario.multimediaUrls && comentario.multimediaUrls.length > 0) ? `<div class="galeria-burbuja-comentario">${comentario.multimediaUrls.map((url) => `<img src="${url}" alt="Imagen adjunta" loading="lazy" decoding="async" onclick="abrirVistaImagen('${url}')">`).join("")}</div>` : "";
 
         const btnEliminar = esPropio ? `
             <button type="button" class="btn-eliminar-comentario" data-id-comentario="${comentario.id}" aria-label="Eliminar comentario" title="Eliminar comentario">
