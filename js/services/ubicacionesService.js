@@ -34,3 +34,13 @@ export async function actualizarUbicacion(id, nombreUbicacion, idTipoUbicacion) 
     });
     return await manejarRespuesta(respuesta);
 }
+
+export async function buscarUbicacionesPorNombreParcial(fragmento) {
+    try {
+        const respuesta = await apiFetch(`${API_URL}/buscar?nombre=${encodeURIComponent(fragmento)}`);
+        return await manejarRespuesta(respuesta);
+    } catch (error) {
+        console.error("Error al buscar ubicaciones: ", error);
+        throw error;
+    }
+}

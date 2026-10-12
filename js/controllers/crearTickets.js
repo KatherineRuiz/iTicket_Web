@@ -6,6 +6,7 @@ import { validarFormularioTicket } from "../validators/ticketsValidator.js";
 import { buscarArticulosPorCodigoParcial, obtenerCodigosNoInventariados } from "../services/articulosService.js";
 import { subirEvidencia } from "../services/evidenciasService.js";
 import { obtenerIdUsuario } from "../utils/sesion.js";
+import { buscarUbicacionesPorNombreParcial } from "../services/ubicacionesService.js";
 
 const btnEquipos = document.getElementById("btn-equipos"); // tarjeta del formulario
 const btnGeneral = document.getElementById("btn-general"); // tarjeta del formulario
@@ -28,6 +29,10 @@ const txtNombreSoftware = document.getElementById("txtNombreSoftware");
 const txtVersion = document.getElementById("txtVersion");
 const sltDepartamento = document.getElementById("sltDepartamento");
 const txtUbicacionSoftware = document.getElementById("txtUbicacionSoftware");
+const campoUbicacionArticulo = document.getElementById("campo-ubicacion-articulo");
+const txtUbicacionArticulo = document.getElementById("txtUbicacionArticulo");
+const sugerenciasUbicacionArticulo = document.getElementById("sugerenciasUbicacionArticulo");
+let idUbicacionArticuloSeleccionada = null;
 
 let listaCodigosEquipos = [];
 const btnAgregarCodigo = document.getElementById("btnAgregarCodigo");
@@ -56,9 +61,14 @@ function cambiarCategoria(categoria) {
   if (btnSoftware) btnSoftware.classList.remove("active-card");
 
   if (campoCodigo) campoCodigo.classList.remove("mostrar");
+  if (campoUbicacionArticulo) campoUbicacionArticulo.classList.remove("mostrar");
   if (campoUbicacion) campoUbicacion.classList.remove("mostrar");
   if (camposSoftware) camposSoftware.classList.remove("mostrar");
   if (txtDescripcion) txtDescripcion.placeholder = "Describe la falla o problema...";
+  idUbicacionArticuloSeleccionada = null;
+  if (txtUbicacionArticulo) txtUbicacionArticulo.value = "";
+  listaCodigosEquipos = [];
+  renderizarCodigos();
 
   if (txtUbicacion) txtUbicacion.required = false;
   if (txtNombreSoftware) txtNombreSoftware.required = false;
@@ -68,6 +78,8 @@ function cambiarCategoria(categoria) {
   if (categoria === "equipos") {
     if (btnEquipos) btnEquipos.classList.add("active-card");
     if (campoCodigo) campoCodigo.classList.add("mostrar");
+    if (campoUbicacionArticulo) campoUbicacionArticulo.classList.add("mostrar");
+    habilitarCampoCodigo(false)
     liberarDepartamento();
   } else if (categoria === "general") {
     if (btnGeneral) btnGeneral.classList.add("active-card");
@@ -95,6 +107,67 @@ if (btnSoftware) {
   btnSoftware.addEventListener("click", () =>
     cambiarCategoria("software"),
   );
+}
+
+function habilitarCampoCodigo(habilitar) {
+  txtCodigo.disabled = !habilitar;
+  txtCodigo.placeholder = habilitar ? "#456AS31" : "Primero selecciona una ubicación";
+}
+
+function renderizarSugerenciasUbicacion(resultados) {
+  sugerenciasUbicacionArticulo.innerHTML = "";
+  if (resultados.length === 0) {
+    sugerenciasUbicacionArticulo.classList.add("d-none");
+    return;
+  }
+  resultados.forEach((ubicacion) => {
+    const item = document.createElement("button");
+    item.type = "button";
+    item.className = "list-group-item list-group-item-action";
+    item.textContent = `${ubicacion.nombreUbicacion} — ${ubicacion.nombreTipoUbicacion}`;
+    item.addEventListener("click", function () {
+      idUbicacionArticuloSeleccionada = ubicacion.id;
+      txtUbicacionArticulo.value = ubicacion.nombreUbicacion;
+      sugerenciasUbicacionArticulo.classList.add("d-none");
+      sugerenciasUbicacionArticulo.innerHTML = "";
+      habilitarCampoCodigo(true);
+    });
+    sugerenciasUbicacionArticulo.appendChild(item);
+  });
+  sugerenciasUbicacionArticulo.classList.remove("d-none");
+}
+
+let temporizadorBusquedaUbicacion = null;
+if (txtUbicacionArticulo && sugerenciasUbicacionArticulo) {
+  txtUbicacionArticulo.addEventListener("input", function () {
+    // Si edita después de haber elegido, invalida la selección y bloquea código
+    idUbicacionArticuloSeleccionada = null;
+    habilitarCampoCodigo(false);
+    listaCodigosEquipos = [];
+    renderizarCodigos();
+
+    const fragmento = txtUbicacionArticulo.value.trim();
+    if (fragmento.length < 1) {
+      sugerenciasUbicacionArticulo.classList.add("d-none");
+      return;
+    }
+    clearTimeout(temporizadorBusquedaUbicacion);
+    temporizadorBusquedaUbicacion = setTimeout(async () => {
+      try {
+        const resultados = await buscarUbicacionesPorNombreParcial(fragmento);
+        renderizarSugerenciasUbicacion(resultados);
+      } catch (error) {
+        console.error("Error al buscar ubicaciones: ", error);
+        sugerenciasUbicacionArticulo.classList.add("d-none");
+      }
+    }, 350);
+  });
+
+  document.addEventListener("click", function (e) {
+    if (!e.target.closest("#campo-ubicacion-articulo")) {
+      sugerenciasUbicacionArticulo.classList.add("d-none");
+    }
+  });
 }
 
 //Sincroniza el array con el input real, para que el <form> lo envíe correctamente
@@ -326,7 +399,7 @@ function agregarCodigoArticulo(codigo) {
     return;
   }
 
-  listaCodigosEquipos.push(codigo); 
+  listaCodigosEquipos.push(codigo);
   renderizarCodigos();
 }
 
@@ -364,7 +437,7 @@ if (txtCodigo && sugerenciasCodigos) {
   txtCodigo.addEventListener("input", function () {
     const fragmento = txtCodigo.value.trim();
 
-    if (fragmento.length < 2) {
+    if (fragmento.length < 2 || !idUbicacionArticuloSeleccionada) {
       sugerenciasCodigos.classList.add("d-none");
       sugerenciasCodigos.innerHTML = "";
       return
@@ -374,7 +447,7 @@ if (txtCodigo && sugerenciasCodigos) {
     clearTimeout(temporizadorBusqueda);
     temporizadorBusqueda = setTimeout(async () => {
       try {
-        const resultados = await buscarArticulosPorCodigoParcial(fragmento);
+        const resultados = await buscarArticulosPorCodigoParcial(fragmento, idUbicacionArticuloSeleccionada);
         renderizarSugerencias(resultados);
       } catch (error) {
         console.error("Error al buscar articulos: ", error);
@@ -427,6 +500,7 @@ frmTicket.addEventListener("submit", async function (e) {
     descripcion: txtDescripcion.value,
     idDepartamento: sltDepartamento.value,
     ubicacion: txtUbicacion.value,
+    idUbicacionArticulo: idUbicacionArticuloSeleccionada,
     listaCodigos: listaCodigosEquipos,
     listaSoftware: listaSoftwareVersion,
     ubicacionesSoftware: txtUbicacionSoftware.value
@@ -451,7 +525,7 @@ frmTicket.addEventListener("submit", async function (e) {
   if (categoriaActual === "equipos") {
     let codigosInvalidos;
     try {
-      codigosInvalidos = await obtenerCodigosNoInventariados(listaCodigosEquipos);
+      codigosInvalidos = await obtenerCodigosNoInventariados(listaCodigosEquipos, idUbicacionArticuloSeleccionada);
     } catch (error) {
       console.error("Error al comprobar los códigos del inventario:", error);
       mostrarError(error.message || "No pudimos comprobar los equipos en este momento. Intenta enviar el ticket nuevamente.");
@@ -466,8 +540,8 @@ frmTicket.addEventListener("submit", async function (e) {
     }
   }
 
-  const confirmar = await mostrarConfirmacion("¿Estás seguro de crear el ticket?","Podrás eliminarlo o editarlo mientras no se apruebe","Crear");
-  if(!confirmar){
+  const confirmar = await mostrarConfirmacion("¿Estás seguro de crear el ticket?", "Podrás eliminarlo o editarlo mientras no se apruebe", "Crear");
+  if (!confirmar) {
     return;
   }
 
@@ -484,6 +558,7 @@ frmTicket.addEventListener("submit", async function (e) {
   if (categoriaActual === "equipos") {
     nuevoTicket.tipoTicket = "Articulo";
     nuevoTicket.codigosArticulos = listaCodigosEquipos;
+    nuevoTicket.idUbicacionArticulos = idUbicacionArticuloSeleccionada;
 
   } else if (categoriaActual === "general") {
     nuevoTicket.tipoTicket = "General";
@@ -534,7 +609,7 @@ if (sltDepartamento) {
   });
 });
 
-function limpiarFormulario(){
+function limpiarFormulario() {
   frmTicket.reset();
   listaCodigosEquipos = [];
   listaSoftwareVersion = [];

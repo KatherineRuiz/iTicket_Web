@@ -225,6 +225,15 @@
               </select>
             </div>
 
+            <!--Campo dinámico: Artículo (ubicación, se elige antes del código)-->
+            <div class="mb-3 d-none" id="campoUbicacionArticuloEdicion">
+              <label for="txtUbicacionArticuloEdicion" class="form-label fw-bold">Ubicación de los equipos/mobiliario:</label>
+              <input type="text" class="form-control rounded-4" id="txtUbicacionArticuloEdicion"
+                placeholder="Escribe para buscar..." autocomplete="off" />
+              <div id="sugerenciasUbicacionArticuloEdicion" class="list-group position-relative shadow-sm d-none"
+                style="z-index: 10;"></div>
+            </div>
+
             <!--Campo dinámico: Artículo-->
             <div class="mb-3 d-none" id="campoCodigoEdicion">
               <label class="form-label fw-bold">Código del equipo/mobiliario:</label>
