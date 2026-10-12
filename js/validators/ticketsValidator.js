@@ -22,19 +22,19 @@ function validarCamposComunes(asunto, descripcion, idDepartamento) {
 }
 
 //Valida los campos propios de la categoría "Articulo"
-function validarCategoriaArticulo(listaCodigos) {
+function validarCategoriaArticulo(listaCodigos, idUbicacion) {
     const errores = [];
-
+    if (!idUbicacion) {
+        errores.push({ campo: "txtUbicacionArticulo", mensaje: "Debes seleccionar la ubicación de los equipos/mobiliarios." });
+    }
     if (listaCodigos.length === 0) {
         errores.push({ campo: "txtCodigo", mensaje: "Debes agregar al menos un código de equipo/mobiliario." });
     }
-
     listaCodigos.forEach((codigo) => {
         if (!/^[A-Za-z0-9-]+$/.test(codigo)) {
             errores.push({ campo: "txtCodigo", mensaje: `El código "${codigo}" contiene caracteres no permitidos.` })
         }
     });
-
     return errores;
 }
 
@@ -104,7 +104,7 @@ export function validarFormularioTicket(categoria, datos) {
   const cat = categoria ? categoria.toLowerCase() : "";
 
   if (cat === "equipos") {
-    errores = errores.concat(validarCategoriaArticulo(datos.listaCodigos));
+    errores = errores.concat(validarCategoriaArticulo(datos.listaCodigos, datos.idUbicacionArticulo));
   } else if (cat === "general") {
     errores = errores.concat(validarCategoriaGeneral(datos.ubicacion));
   } else if (cat === "software") {

@@ -2,6 +2,7 @@ import { getTicket, editarComoCreador, editarComoGestor, editarEstadoAsignado, r
 import { obtenerEvidenciasPorTicket, eliminarEvidencia, subirEvidencia } from "../services/evidenciasService.js";
 import { getDepartamentosAsignables } from "../services/departamentosService.js";
 import { buscarArticulosPorCodigoParcial, obtenerCodigosNoInventariados } from "../services/articulosService.js";
+import { buscarUbicacionesPorNombreParcial } from "../services/ubicacionesService.js";
 import { getTecnicosPorDepartamento, getUsuarioById } from "../services/usuariosService.js";
 import { mostrarError, mostrarExitoSimple, mostrarConfirmacion } from "../components/sweetAlerts.js";
 import { validarFormularioTicket, validarFormularioAprobacion, validarFormularioReporte } from "../validators/ticketsValidator.js";
@@ -48,6 +49,9 @@ const frmEdicionCreador = document.getElementById("frmEdicionCreador");
 const txtAsuntoEdicion = document.getElementById("txtAsuntoEdicion");
 const txtDescripcionEdicion = document.getElementById("txtDescripcionEdicion");
 const sltDepartamentoEdicion = document.getElementById("sltDepartamentoEdicion");
+const campoUbicacionArticuloEdicion = document.getElementById("campoUbicacionArticuloEdicion");
+const txtUbicacionArticuloEdicion = document.getElementById("txtUbicacionArticuloEdicion");
+const sugerenciasUbicacionArticuloEdicion = document.getElementById("sugerenciasUbicacionArticuloEdicion");
 const campoCodigoEdicion = document.getElementById("campoCodigoEdicion");
 const txtCodigoEdicion = document.getElementById("txtCodigoEdicion");
 const btnAgregarCodigoEdicion = document.getElementById("btnAgregarCodigoEdicion");
@@ -109,6 +113,8 @@ let listaSoftwareVersion = [];
 let departamentosCargados = false;
 let listaDepartamentosDisponibles = [];
 let temporizadorBusqueda = null;
+let idUbicacionArticuloEdicionSeleccionada = null;
+let temporizadorBusquedaUbicacionEdicion = null;
 let comentariosActuales = [];
 let archivosComentarioSeleccionados = [];
 const idUsuario = obtenerIdUsuario();
@@ -277,19 +283,26 @@ async function cargarEdicionCreador() {
     txtAsuntoEdicion.value = t.asunto;
     txtDescripcionEdicion.value = t.descripcion;
 
+    campoUbicacionArticuloEdicion.classList.add("d-none");
     campoCodigoEdicion.classList.add("d-none");
     campoUbicacionEdicion.classList.add("d-none");
     campoSoftwareEdicion.classList.add("d-none");
 
     listaCodigosEquipos = [];
     listaSoftwareVersion = [];
+    idUbicacionArticuloEdicionSeleccionada = null;
+    sugerenciasUbicacionArticuloEdicion.classList.add("d-none");
 
     await cargarDepartamentosEdicion();
     sltDepartamentoEdicion.value = t.departamento;
     liberarDepartamento();
 
     if (t.tipoTicket === "Articulo") {
+        campoUbicacionArticuloEdicion.classList.remove("d-none");
         campoCodigoEdicion.classList.remove("d-none");
+        idUbicacionArticuloEdicionSeleccionada = t.idUbicacionArticulos ?? null;
+        txtUbicacionArticuloEdicion.value = t.ubicacion ?? "";
+        habilitarCampoCodigoEdicion(Boolean(idUbicacionArticuloEdicionSeleccionada));
         listaCodigosEquipos = [...(t.codigosArticulos ?? [])];
         renderizarCodigosEdicion();
     } else if (t.tipoTicket === "General") {
@@ -377,6 +390,67 @@ function agregarCodigoEdicion(codigo) {
     renderizarCodigosEdicion();
 }
 
+function habilitarCampoCodigoEdicion(habilitar) {
+    if (!txtCodigoEdicion) return;
+    txtCodigoEdicion.disabled = !habilitar;
+    txtCodigoEdicion.placeholder = habilitar ? "EQ123" : "Primero selecciona una ubicación";
+}
+
+function renderizarSugerenciasUbicacionEdicion(resultados) {
+    sugerenciasUbicacionArticuloEdicion.innerHTML = "";
+    if (resultados.length === 0) {
+        sugerenciasUbicacionArticuloEdicion.classList.add("d-none");
+        return;
+    }
+    resultados.forEach((ubicacion) => {
+        const item = document.createElement("button");
+        item.type = "button";
+        item.className = "list-group-item list-group-item-action";
+        item.textContent = `${ubicacion.nombreUbicacion} — ${ubicacion.nombreTipoUbicacion}`;
+        item.addEventListener("click", () => {
+            idUbicacionArticuloEdicionSeleccionada = ubicacion.id;
+            txtUbicacionArticuloEdicion.value = ubicacion.nombreUbicacion;
+            sugerenciasUbicacionArticuloEdicion.classList.add("d-none");
+            sugerenciasUbicacionArticuloEdicion.innerHTML = "";
+            habilitarCampoCodigoEdicion(true);
+        });
+        sugerenciasUbicacionArticuloEdicion.appendChild(item);
+    });
+    sugerenciasUbicacionArticuloEdicion.classList.remove("d-none");
+}
+
+if (txtUbicacionArticuloEdicion && sugerenciasUbicacionArticuloEdicion) {
+    txtUbicacionArticuloEdicion.addEventListener("input", () => {
+        // Si edita después de haber elegido (o de la ubicación precargada), invalida la selección y bloquea código
+        idUbicacionArticuloEdicionSeleccionada = null;
+        habilitarCampoCodigoEdicion(false);
+        listaCodigosEquipos = [];
+        renderizarCodigosEdicion();
+
+        const fragmento = txtUbicacionArticuloEdicion.value.trim();
+        if (fragmento.length < 1) {
+            sugerenciasUbicacionArticuloEdicion.classList.add("d-none");
+            return;
+        }
+        clearTimeout(temporizadorBusquedaUbicacionEdicion);
+        temporizadorBusquedaUbicacionEdicion = setTimeout(async () => {
+            try {
+                const resultados = await buscarUbicacionesPorNombreParcial(fragmento);
+                renderizarSugerenciasUbicacionEdicion(resultados);
+            } catch (error) {
+                console.error("Error al buscar ubicaciones:", error);
+                sugerenciasUbicacionArticuloEdicion.classList.add("d-none");
+            }
+        }, 350);
+    });
+
+    document.addEventListener("click", (e) => {
+        if (!e.target.closest("#campoUbicacionArticuloEdicion")) {
+            sugerenciasUbicacionArticuloEdicion.classList.add("d-none");
+        }
+    });
+}
+
 if (btnAgregarCodigoEdicion) {
     btnAgregarCodigoEdicion.addEventListener("click", () => {
         agregarCodigoEdicion(txtCodigoEdicion.value.trim());
@@ -393,7 +467,7 @@ if (btnAgregarCodigoEdicion) {
 
     txtCodigoEdicion.addEventListener("input", () => {
         const fragmento = txtCodigoEdicion.value.trim();
-        if (fragmento.length < 2) {
+        if (fragmento.length < 2 || !idUbicacionArticuloEdicionSeleccionada) {
             sugerenciasCodigosEdicion.classList.add("d-none");
             sugerenciasCodigosEdicion.innerHTML = "";
             return;
@@ -401,7 +475,7 @@ if (btnAgregarCodigoEdicion) {
         clearTimeout(temporizadorBusqueda);
         temporizadorBusqueda = setTimeout(async () => {
             try {
-                const resultados = await buscarArticulosPorCodigoParcial(fragmento);
+                const resultados = await buscarArticulosPorCodigoParcial(fragmento, idUbicacionArticuloEdicionSeleccionada);
                 renderizarSugerenciasCodigo(resultados);
             } catch (error) {
                 console.error("Error al buscar artículos:", error);
@@ -573,6 +647,7 @@ const mapeoCamposEdicionCreador = {
     txtDescripcion: "txtDescripcionEdicion",
     sltDepartamento: "sltDepartamentoEdicion",
     txtCodigo: "txtCodigoEdicion",
+    txtUbicacionArticulo: "txtUbicacionArticuloEdicion",
     txtUbicacion: "txtUbicacionEdicion",
     txtNombreSoftware: "txtNombreSoftwareEdicion",
     txtVersion: "txtVersionEdicion",
@@ -589,6 +664,7 @@ frmEdicionCreador?.addEventListener("submit", async (e) => {
         descripcion: txtDescripcionEdicion.value,
         idDepartamento: sltDepartamentoEdicion.value,
         ubicacion: txtUbicacionEdicion.value,
+        idUbicacionArticulo: idUbicacionArticuloEdicionSeleccionada,
         listaCodigos: listaCodigosEquipos,
         listaSoftware: listaSoftwareVersion,
         ubicacionesSoftware: txtUbicacionSoftwareEdicion.value
@@ -608,7 +684,7 @@ frmEdicionCreador?.addEventListener("submit", async (e) => {
     if (ticketActual.tipoTicket === "Articulo") {
         let codigosInvalidos;
         try {
-            codigosInvalidos = await obtenerCodigosNoInventariados(listaCodigosEquipos);
+            codigosInvalidos = await obtenerCodigosNoInventariados(listaCodigosEquipos, idUbicacionArticuloEdicionSeleccionada);
         } catch (error) {
             console.error("Error al comprobar los códigos del inventario:", error);
             mostrarError(error.message || "No pudimos comprobar los equipos en este momento. Intenta guardar nuevamente.");
@@ -631,6 +707,7 @@ frmEdicionCreador?.addEventListener("submit", async (e) => {
 
     if (ticketActual.tipoTicket === "Articulo") {
         dto.codigosArticulos = listaCodigosEquipos;
+        dto.idUbicacionArticulos = idUbicacionArticuloEdicionSeleccionada;
     } else if (ticketActual.tipoTicket === "General") {
         dto.descripcionUbicacion = datosFormulario.ubicacion.trim();
     } else if (ticketActual.tipoTicket === "Software") {

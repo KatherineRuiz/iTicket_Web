@@ -65,6 +65,16 @@
                 <textarea class="form-control rounded-4 border-primary-custom bg-blue-light" rows="4"
                   placeholder="Describe la falla o problema..." id="txtDescripcion" required maxlength="500"></textarea>
               </div>
+              <div class="mb-4 campo-dinamico" id="campo-ubicacion-articulo">
+                <label for="txtUbicacionArticulo" class="form-label fw-bold">Ubicación:</label>
+                <div class="input-group mb-2">
+                  <input type="text" class="form-control border-primary-custom bg-blue-light rounded-5"
+                    placeholder="Ej. 62.14" id="txtUbicacionArticulo" autocomplete="off" />
+                </div>
+                <!--Contenedor de sugerencias-->
+                <div id="sugerenciasUbicacionArticulo" class="list-group position-relative w-50 shadow-sm d-none"
+                  style="top: 100%; z-index: 10;"></div>
+              </div>
               <div class="mb-4 campo-dinamico" id="campo-codigo">
                 <label for="txtCodigo" class="form-label fw-bold">Código del equipo/mobiliario:</label>
                 <div class="input-group mb-2">

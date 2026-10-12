@@ -351,6 +351,32 @@ body {
     color: var(--fondo-oscuro) !important;
 }
 
+/* Limita la altura del listado de sugerencias de ubicación (edición) a ~3 filas
+   y le agrega scroll, con el mismo estilo de scrollbar usado en crearTickets.css */
+#sugerenciasUbicacionArticuloEdicion {
+    max-height: 140px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(20, 36, 84, 0.24) transparent;
+}
+
+#sugerenciasUbicacionArticuloEdicion::-webkit-scrollbar {
+    width: 7px;
+}
+
+#sugerenciasUbicacionArticuloEdicion::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+#sugerenciasUbicacionArticuloEdicion::-webkit-scrollbar-thumb {
+    background: rgba(20, 36, 84, 0.22);
+    border-radius: 999px;
+}
+
+#sugerenciasUbicacionArticuloEdicion::-webkit-scrollbar-thumb:hover {
+    background: rgba(20, 36, 84, 0.38);
+}
+
 /*Animación de inicio de los mensajes*/
 @keyframes aparecerMensaje {
     from {

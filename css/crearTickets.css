@@ -239,3 +239,28 @@ body {
 #sugerenciasCodigos::-webkit-scrollbar-thumb:hover {
   background: rgba(20, 36, 84, 0.38);
 }
+
+/* Mismo límite y estilo de scroll para el listado de sugerencias de ubicación */
+#sugerenciasUbicacionArticulo {
+  max-height: 140px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(20, 36, 84, 0.24) transparent;
+}
+
+#sugerenciasUbicacionArticulo::-webkit-scrollbar {
+  width: 7px;
+}
+
+#sugerenciasUbicacionArticulo::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+#sugerenciasUbicacionArticulo::-webkit-scrollbar-thumb {
+  background: rgba(20, 36, 84, 0.22);
+  border-radius: 999px;
+}
+
+#sugerenciasUbicacionArticulo::-webkit-scrollbar-thumb:hover {
+  background: rgba(20, 36, 84, 0.38);
+}

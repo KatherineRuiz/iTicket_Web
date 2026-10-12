@@ -37,11 +37,12 @@ export async function eliminarArticulo(id) {
     if (!respuesta.ok) throw new Error("No se pudo eliminar el artículo");
 }
 
-// Busca artículos por coincidencia parcial. encodeURIComponent impide que
-// espacios o caracteres especiales rompan el parámetro de la URL.
-export async function buscarArticulosPorCodigoParcial(fragmento) {
+// Busca artículos por coincidencia parcial dentro de una ubicación específica
+// (el código ya no es único en todo el sistema, solo dentro de su ubicación).
+export async function buscarArticulosPorCodigoParcial(fragmento, idUbicacion) {
     try{
-        const respuesta = await apiFetch(`${API_URL}/buscar?codigo=${encodeURIComponent(fragmento)}`);
+        const parametros = new URLSearchParams({ codigo: fragmento, idUbicacion });
+        const respuesta = await apiFetch(`${API_URL}/buscar?${parametros.toString()}`);
         return await manejarRespuesta(respuesta);
     } catch(error){
         console.error("Error al buscar artículos: ", error);
@@ -49,10 +50,10 @@ export async function buscarArticulosPorCodigoParcial(fragmento) {
     }
 }
 
-export async function obtenerCodigosNoInventariados(codigos) {
+export async function obtenerCodigosNoInventariados(codigos, idUbicacion) {
     const codigosUnicos = [...new Set((codigos || []).map((codigo) => String(codigo).trim()).filter(Boolean))];
     const comprobaciones = await Promise.all(codigosUnicos.map(async (codigo) => {
-        const resultados = await buscarArticulosPorCodigoParcial(codigo);
+        const resultados = await buscarArticulosPorCodigoParcial(codigo, idUbicacion);
         const codigoBuscado = codigo.toLocaleUpperCase("es");
         const existe = Array.isArray(resultados) && resultados.some((articulo) =>
             String(articulo?.codigoArticulo || "").trim().toLocaleUpperCase("es") === codigoBuscado
