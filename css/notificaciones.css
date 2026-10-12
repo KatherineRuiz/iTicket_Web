@@ -5,6 +5,7 @@
     left: 0;
     width: 100vw;
     height: 100vh;
+    height: 100dvh;
     background-color: rgba(10, 18, 38, 0.45);
     z-index: 1500;
     opacity: 0;
@@ -25,6 +26,7 @@
     /* Para que al principio este completamente escondido */
     width: 525px;
     height: 100vh;
+    height: 100dvh;
     background-color: #f3f8fe;
     box-shadow: -10px 0 35px rgba(0, 0, 0, 0.12);
     z-index: 1510;
@@ -265,4 +267,55 @@ html.tema-oscuro .panel-notificaciones.activo .notificacion-item:hover {
     .notificacion-texto {
         font-size: 11.5px;
     }
+}
+
+/* Botón de cerrar el panel (lo inyecta menu.js en todas las páginas).
+
+   Va fijo y no absoluto a propósito: el panel desplaza su contenido, y si el
+   botón se fuera hacia arriba con el scroll, en celular —donde el panel ocupa
+   el ancho completo y no queda fondo que tocar— la persona volvería a quedarse
+   sin salida. Solo existe mientras el panel está abierto. */
+.btn-cerrar-notificaciones {
+    position: fixed;
+    top: 14px;
+    right: 16px;
+    z-index: 1520;
+    display: none;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: rgba(17, 34, 68, 0.06);
+    color: #1a202c;
+    font-size: 15px;
+    cursor: pointer;
+    transition: background 160ms ease, color 160ms ease;
+}
+
+/* Solo en celular. En escritorio el panel deja ver el fondo y se cierra
+   tocando fuera (o con Escape), asi que la X ahi solo estorbaba. */
+@media (max-width: 767.98px) {
+    .panel-notificaciones.activo .btn-cerrar-notificaciones {
+        display: grid;
+    }
+}
+
+.btn-cerrar-notificaciones:hover {
+    background: rgba(17, 34, 68, 0.12);
+}
+
+.btn-cerrar-notificaciones:focus-visible {
+    outline: 2px solid #4092ff;
+    outline-offset: 2px;
+}
+
+html.tema-oscuro .btn-cerrar-notificaciones {
+    background: rgba(255, 255, 255, 0.08);
+    color: #eef3fb;
+}
+
+html.tema-oscuro .btn-cerrar-notificaciones:hover {
+    background: rgba(255, 255, 255, 0.16);
 }

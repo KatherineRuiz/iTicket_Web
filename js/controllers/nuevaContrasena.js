@@ -1,25 +1,8 @@
 import { mostrarError, mostrarExitoRedireccion } from "../components/sweetAlerts.js";
+import { API_BASE_URL, apiFetch } from "../services/apiConfig.js";
 
 document.addEventListener("DOMContentLoaded", function () {
     const formularioNueva = document.querySelector("#formNuevaContrasena");
-    
-    // Obtener el token de la URL
-    const urlParams = new URLSearchParams(window.location.search);
-    const token = urlParams.get('token');
-
-    // Bloquear si no hay token
-    if (!token) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Acceso Denegado',
-            text: 'No tienes permisos para ver esta página.',
-            allowOutsideClick: false,
-            confirmButtonColor: '#0d6efd'
-        }).then(() => {
-            window.location.href = 'index.html';
-        });
-        return;
-    }
 
     if (formularioNueva) {
         formularioNueva.addEventListener("submit", async function (evento) {
@@ -30,13 +13,13 @@ document.addEventListener("DOMContentLoaded", function () {
             const nuevaContra = inputsPassword[0].value;
             const confirmarContra = inputsPassword[1].value;
 
-            if (!esContrasenaValida(nuevaContra)) {
-                mostrarError("Contraseña inválida. Debe tener entre 6 y 18 caracteres.", false);
+            if (nuevaContra.trim().length < 6 || nuevaContra.trim().length > 18) {
+                mostrarError("Contrasena invalida. Debe tener entre 6 y 18 caracteres.", false);
                 return;
             }
 
             if (nuevaContra !== confirmarContra) {
-                mostrarError("Las contraseñas no coinciden. Por favor, verifícalas.", false);
+                mostrarError("Las contrasenas no coinciden. Por favor, verificalas.", false);
                 return;
             }
 
@@ -44,19 +27,19 @@ document.addEventListener("DOMContentLoaded", function () {
             boton.innerHTML = 'Guardando...';
 
             try {
-                const response = await fetch('http://localhost:8080/api/auth/restablecer-contrasena', {
+                const response = await apiFetch(`${API_BASE_URL}/auth/restablecer-contrasena`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ token: token, nuevaContrasena: nuevaContra })
+                    body: JSON.stringify({ nuevaContrasena: nuevaContra })
                 });
 
                 const data = await response.json();
 
                 if (!response.ok) {
-                    throw new Error(data.message || 'Ocurrió un error al restablecer la contraseña');
+                    throw new Error(data.message || 'Ocurrio un error al restablecer la contrasena');
                 }
 
-                mostrarExitoRedireccion("¡Contraseña Restablecida!", "Tu contraseña ha sido actualizada correctamente.", "index.html");
+                mostrarExitoRedireccion("Contrasena Restablecida!", "Tu contrasena ha sido actualizada correctamente.", "index.html");
             } catch (error) {
                 mostrarError(error.message, false);
             } finally {

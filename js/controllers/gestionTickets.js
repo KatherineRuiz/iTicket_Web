@@ -135,10 +135,13 @@ function renderizarAprobaciones(tickets) {
         return;
     }
 
+    // Se arma todo el HTML y se inserta una sola vez al final. Antes cada vuelta hacia
+    // innerHTML +=, que obliga al navegador a releer y reconstruir todo lo ya pintado.
+    let htmlAcumulado = "";
     tickets.forEach((ticket) => {
         const iconoPrioridad = window.obtenerClaseIconoTicket?.(ticket.prioridad)
             || 'icono-ticket-prioridad-sin-asignar';
-        scrollAprobaciones.innerHTML += `
+        htmlAcumulado += `
             <div class="item-ticket-aprobacion bg-white p-3 mb-3 shadow-inner shadow-sm position-relative cursor-pointer"
                 data-id="${ticket.idTicket}" data-bs-toggle="modal" data-bs-target="#modalAprobaciones">
                 <h6 class="fw-bold mb-1 text-dark small d-flex align-items-center gap-2">
@@ -154,6 +157,7 @@ function renderizarAprobaciones(tickets) {
             </div>
         `;
     });
+    scrollAprobaciones.insertAdjacentHTML("beforeend", htmlAcumulado);
 }
 
 function renderizarEvidencias(evidencias) {
@@ -164,13 +168,17 @@ function renderizarEvidencias(evidencias) {
         return;
     }
 
+    // Se arma todo el HTML y se inserta una sola vez al final. Antes cada vuelta hacia
+    // innerHTML +=, que obliga al navegador a releer y reconstruir todo lo ya pintado.
+    let htmlAcumulado = "";
     evidencias.forEach((url) => {
-        modalGaleriaEvidencias.innerHTML += `
+        htmlAcumulado += `
             <div class="miniatura-evidencia" onclick="abrirVistaImagen('${url}')">
-                <img src="${url}" alt="Evidencia">
+                <img src="${url}" alt="Evidencia" loading="lazy" decoding="async">
             </div>
         `;
     });
+    modalGaleriaEvidencias.insertAdjacentHTML("beforeend", htmlAcumulado);
 }
 
 //Función para cargar la url y mostrar el modal de vista previa
@@ -186,9 +194,13 @@ async function cargarTecnicos(idDepartamento) {
     try {
         const tecnicos = await getTecnicosPorDepartamento(idDepartamento);
         tecnicoAprobaciones.innerHTML = `<option value="">Selecciona un técnico</option>`;
+        // Se arma todo el HTML y se inserta una sola vez al final. Antes cada vuelta hacia
+        // innerHTML +=, que obliga al navegador a releer y reconstruir todo lo ya pintado.
+        let htmlAcumulado = "";
         tecnicos.forEach((tecnico) => {
-            tecnicoAprobaciones.innerHTML += `<option value="${tecnico.idUsuario}">${tecnico.correo} (${tecnico.nombreRol})</option>`;
+            htmlAcumulado += `<option value="${tecnico.idUsuario}">${tecnico.correo} (${tecnico.nombreRol})</option>`;
         });
+        tecnicoAprobaciones.insertAdjacentHTML("beforeend", htmlAcumulado);
     }
     catch (error) {
         console.error("Error al cargar técnicos:", error);
@@ -215,8 +227,11 @@ async function cargarTablaTickets(pagina = 1) {
 function renderizarTablaTickets(tickets) {
     tablaTickets.innerHTML = "";
 
+    // Se arma todo el HTML y se inserta una sola vez al final. Antes cada vuelta hacia
+    // innerHTML +=, que obliga al navegador a releer y reconstruir todo lo ya pintado.
+    let htmlAcumulado = "";
     tickets.forEach((ticket) => {
-        tablaTickets.innerHTML += `
+        htmlAcumulado += `
             <tr>
                 <td class="fw-bold">${ticket.codigo}</td>
                 <td class="text-truncate truncate-celda">${ticket.asunto}</td>
@@ -232,6 +247,7 @@ function renderizarTablaTickets(tickets) {
             </tr>
         `;
     });
+    tablaTickets.insertAdjacentHTML("beforeend", htmlAcumulado);
 }
 
 function renderizarPaginacion(totalPaginas, paginaActual) {

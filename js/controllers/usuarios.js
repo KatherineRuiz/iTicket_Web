@@ -86,7 +86,7 @@ export async function llenarSelectDepartamentos() {
         mostrarError(error.message || 'No se pudieron cargar los departamentos');
     }
 }
- 
+
 async function cargarUsuarios() {
     try {
         const usuarios = await getUsuarios();
@@ -99,7 +99,7 @@ async function cargarUsuarios() {
         return [];
     }
 }
- 
+
 function pintarTablaUsuarios(usuarios) {
     tablaUsuariosBody.innerHTML = '';
     ordenarLista(usuarios, ordenUsuarios).forEach(usuario => {
@@ -121,7 +121,7 @@ function pintarTablaUsuarios(usuarios) {
         `;
         tablaUsuariosBody.appendChild(fila);
     });
- 
+
     document.querySelectorAll('.btn-editar-usuario').forEach(btn =>
         btn.addEventListener('click', () => cargarUsuarioEnFormulario(btn.dataset.id, usuarios))
     );
@@ -129,11 +129,11 @@ function pintarTablaUsuarios(usuarios) {
         btn.addEventListener('click', () => confirmarEliminarUsuario(btn.dataset.id))
     );
 }
- 
+
 function cargarUsuarioEnFormulario(id, usuarios) {
     const usuario = usuarios.find(u => u.idUsuario == id);
     if (!usuario) return;
- 
+
     usuarioIdInput.value = usuario.idUsuario;
     nombreUsuarioInput.value = usuario.nombreUsuario;
     correoUsuarioInput.value = usuario.correo;
@@ -145,15 +145,15 @@ function cargarUsuarioEnFormulario(id, usuarios) {
 
     if (usuario.idRol) selectRol.value = usuario.idRol;
     if (usuario.idDepartamento) selectDepartamentoUsuario.value = usuario.idDepartamento;
- 
+
     campoEstadoUsuario.style.display = 'block';
     selectEstadoUsuario.value = usuario.estado === false ? 'inactivo' : 'activo';
- 
+
     tituloFormUsuario.textContent = 'Editar usuario';
     btnTextoUsuario.textContent = 'Actualizar usuario';
     btnCancelarUsuario.style.display = 'block';
 }
- 
+
 function limpiarFormularioUsuario() {
     formUsuario.reset();
     usuarioIdInput.value = '';
@@ -164,9 +164,9 @@ function limpiarFormularioUsuario() {
     btnTextoUsuario.textContent = 'Guardar usuario';
     btnCancelarUsuario.style.display = 'none';
 }
- 
+
 btnCancelarUsuario.addEventListener('click', limpiarFormularioUsuario);
- 
+
 formUsuario.addEventListener('submit', async (evento) => {
     evento.preventDefault();
 
@@ -226,7 +226,7 @@ formUsuario.addEventListener('submit', async (evento) => {
         mostrarError(error.message || 'No se pudo guardar el usuario');
     }
 });
- 
+
 function confirmarEliminarUsuario(id) {
     Swal.fire({
         title: '¿Eliminar usuario?',
@@ -248,3 +248,20 @@ function confirmarEliminarUsuario(id) {
         }
     });
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+    const txtBuscarUsuario = document.querySelector("#txtBuscarUsuario");
+
+    if (txtBuscarUsuario) {
+        txtBuscarUsuario.addEventListener("input", () => {
+            const texto = txtBuscarUsuario.value.trim().toLowerCase();
+            const filtrados = usuariosActuales.filter(u =>
+                (u.nombreUsuario || "").toLowerCase().includes(texto) ||
+                (u.correo || "").toLowerCase().includes(texto) ||
+                (u.nombreRol || "").toLowerCase().includes(texto) ||
+                (u.nombreDepartamento || "").toLowerCase().includes(texto)
+            );
+            pintarTablaUsuarios(filtrados);
+        });
+    }
+});

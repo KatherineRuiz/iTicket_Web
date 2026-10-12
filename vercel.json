@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://iticketapi-3e643051c995.herokuapp.com/api/:path*"
+    }
+  ]
+}

@@ -152,3 +152,22 @@ export async function buscarProyectosPorTipo(tipo) {
         throw error;
     }
 }
+
+//Reabre un proyecto ya finalizado (acción solo para Administrador, ver
+// ProyectoService.reabrirProyecto en el backend).
+export async function reabrirProyecto(id) {
+    try {
+        const respuesta = await apiFetch(`${API_URL}/${id}/reabrir`, {
+            method: "PATCH"
+        });
+
+        const cuerpo = await respuesta.json().catch(() => null);
+        if (!respuesta.ok) {
+            throw new Error(cuerpo?.message || "Error al reabrir el proyecto");
+        }
+        return cuerpo?.data;
+    } catch (error) {
+        console.error("Error al reabrir el proyecto:", error);
+        throw error;
+    }
+}

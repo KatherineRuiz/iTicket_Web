@@ -50,7 +50,9 @@
 /* Panel Derecho: Aprobaciones */
 .item-ticket-aprobacion {
     cursor: pointer;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    /* Los dos primeros valores son el hover de siempre; el ultimo es la entrada
+       escalonada que define common.css. */
+    transition: transform 0.2s ease, box-shadow 0.2s ease, var(--transicion-entrada, opacity 0s);
 }
 
 .item-ticket-aprobacion:hover {
@@ -406,4 +408,18 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
+}
+
+/* En celular se devuelven los márgenes negativos que Bootstrap le da a .row.
+
+   La regla ".main .row { margin-left: 0; margin-right: 10px }" de arriba los
+   anula, así que el relleno de las columnas dejaba de cancelarse y todos los
+   bloques de esta pantalla quedaban 12px más adentro que en el resto del
+   sistema (la tarjeta de la tabla arrancaba en 40px en vez de 28), además de
+   quedar descuadrados 10px hacia la derecha. */
+@media (max-width: 767.98px) {
+    .main .row {
+        margin-left: calc(var(--bs-gutter-x) * -0.5);
+        margin-right: calc(var(--bs-gutter-x) * -0.5);
+    }
 }

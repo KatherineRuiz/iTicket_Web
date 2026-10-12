@@ -250,14 +250,18 @@ function renderizarPaginacionResumen(totalPaginas, paginaActual) {
     if (!contenedor) return;
     contenedor.innerHTML = '';
 
+    // Se arma todo el HTML y se inserta una sola vez al final. Antes cada vuelta hacia
+    // innerHTML +=, que obliga al navegador a releer y reconstruir todo lo ya pintado.
+    let htmlAcumulado = "";
     for (let i = 1; i <= totalPaginas; i++) {
         const activo = i === paginaActual ? 'active' : '';
-        contenedor.innerHTML += `
+        htmlAcumulado += `
             <li class="page-item ${activo}">
                 <a class="page-link border-0 bg-transparent text-dark" href="#" data-pagina="${i}">${i}</a>
             </li>
         `;
     }
+    contenedor.insertAdjacentHTML("beforeend", htmlAcumulado);
 }
 
 document.getElementById('paginacionResumenDashboard')?.addEventListener('click', (evento) => {

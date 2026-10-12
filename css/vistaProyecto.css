@@ -240,3 +240,23 @@ html.tema-oscuro .formulario-proyecto-modal .form-label {
     padding-inline: .9rem !important;
   }
 }
+
+/* ============================================================
+   BOTONES DE ACCIÓN A TODO EL ANCHO EN CELULAR
+   La fila de "Editar / Agregar" del panel de Detalles va con
+   justify-content-end: en escritorio quedan pegados a la derecha con su ancho
+   natural, que es lo correcto, pero en un teléfono dejan media fila vacía.
+   Aquí se reparten el ancho completo.
+   ============================================================ */
+
+@media (max-width: 767.98px) {
+    .d-flex.justify-content-end:has(> #btnEditarDetalle),
+    .d-flex.justify-content-end:has(> #btnAgregarDetalle) {
+        justify-content: stretch;
+    }
+
+    .d-flex.justify-content-end:has(> #btnEditarDetalle) > .btn,
+    .d-flex.justify-content-end:has(> #btnAgregarDetalle) > .btn {
+        flex: 1 1 0;
+    }
+}
