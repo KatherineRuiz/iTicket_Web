@@ -16,6 +16,12 @@ window.obtenerClaseIconoTicket = function (prioridad) {
     return "icono-ticket-prioridad-sin-asignar";
 };
 
+/* Si la pagina vuelve desde la cache atras/adelante, DOMContentLoaded no se repite.
+   Se revalida con el servidor por si el token vencio mientras tanto. */
+window.addEventListener("pageshow", function (evento) {
+    if (evento.persisted) verificarSesionActiva();
+});
+
 document.addEventListener("DOMContentLoaded", function () {
     aplicarTemaGuardado();
     prepararLayoutGlobal();    
@@ -446,7 +452,7 @@ function configurarPanelPerfil(perfil, panel) {
 
     const { limpiarSesionLocal } = await import("../services/apiConfig.js");
     limpiarSesionLocal();
-    window.location.href = "index.html";
+    window.location.replace("index.html");
 });
 
     configurarCambioClave(perfil, panel);

@@ -1,5 +1,21 @@
 /* Aqui se carga el css antes de que se muestre el contenido para que no haya flashasos */
 
+/* Guardia de sesion: este archivo solo se incluye en las paginas protegidas y corre
+   en el <head>, antes de que se pinte nada. Si ya no hay sesion local (se cerro
+   sesion o apiFetch la limpio por un 401), se manda al login sin mostrar la interfaz.
+   Esto cubre el boton "atras", que puede mostrar la pagina desde la cache del navegador. */
+function hayDatosDeSesion() {
+    try {
+        return !!sessionStorage.getItem("usuarioLogueado");
+    } catch (error) {
+        return false;
+    }
+}
+
+if (!hayDatosDeSesion()) {
+    window.location.replace("index.html");
+}
+
 const MENU_CACHE_KEY_PREVIO = "iticket_menu_v8";
 window.__menuCacheHTML = sessionStorage.getItem(MENU_CACHE_KEY_PREVIO) || null;
 
@@ -14,7 +30,13 @@ try {
 
 document.documentElement.classList.add("iticket-preparando");
 
-window.addEventListener("pageshow", function () {
+window.addEventListener("pageshow", function (evento) {
+    // evento.persisted = la pagina se restauro desde la cache atras/adelante (bfcache):
+    // no se vuelve a ejecutar ningun script, asi que hay que revisar la sesion aqui.
+    if (evento.persisted && !hayDatosDeSesion()) {
+        window.location.replace("index.html");
+        return;
+    }
     document.documentElement.classList.remove("iticket-navegando", "iticket-preparando");
     document.documentElement.classList.add("iticket-listo");
 });

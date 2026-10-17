@@ -21,6 +21,25 @@ async function revisarPrimerUsuario() {
 
 revisarPrimerUsuario();
 
+// true mientras hay una peticion de login en curso; evita que pageshow reactive el boton a medio envio
+let iniciandoSesion = false;
+
+/* Al volver al login con el boton "atras", el navegador restaura los valores que tenia
+   el formulario (incluida la contraseña), ya sea desde la cache atras/adelante o con su
+   restauracion de formularios. pageshow se dispara despues de esa restauracion, asi que
+   aqui se limpia el formulario y se reactiva el boton por si quedo deshabilitado. */
+window.addEventListener("pageshow", function (evento) {
+    // persisted = se volvio con "atras" desde la cache del navegador: el login anterior ya termino
+    if (evento.persisted) iniciandoSesion = false;
+    if (iniciandoSesion) return;
+
+    const formularioLogin = document.querySelector("#formLogin");
+    if (formularioLogin) formularioLogin.reset();
+
+    const botonIniciarSesion = document.querySelector("#btnIniciarSesion");
+    if (botonIniciarSesion) botonIniciarSesion.disabled = false;
+});
+
 document.addEventListener("DOMContentLoaded", function () {
     const formularioLogin = document.querySelector("#formLogin");
     const botonIniciarSesion = document.querySelector("#btnIniciarSesion");
@@ -45,6 +64,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 return;
             }
 
+            if (iniciandoSesion) return;
+            iniciandoSesion = true;
             botonIniciarSesion.disabled = true;
 
             try {
@@ -52,6 +73,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 if (!usuario) {
                     mostrarError("Correo o contraseña incorrectos.", false);
+                    iniciandoSesion = false;
                     botonIniciarSesion.disabled = false;
                     return;
                 }
@@ -77,9 +99,12 @@ document.addEventListener("DOMContentLoaded", function () {
                 // vez que se visita, sin necesitar una marca adicional.
                 sessionStorage.setItem("usuarioLogueado", JSON.stringify(sesion));
                 localStorage.setItem("rolUsuario", rol);
+                // Se limpia antes de salir para que la copia del login que guarda el navegador no tenga la contraseña
+                formularioLogin.reset();
                 mostrarExitoRedireccion("¡Sesión Iniciada!", "", destino);
             } catch (error) {
                 mostrarError(error.message || "No se pudo conectar con el servidor. Intenta de nuevo.", false);
+                iniciandoSesion = false;
                 botonIniciarSesion.disabled = false;
             }
         });

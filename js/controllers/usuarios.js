@@ -4,6 +4,7 @@ import { getRoles } from '../services/rolesService.js';
 import { validarFormularioUsuario } from '../validators/usuariosValidator.js';
 import { mostrarError } from '../components/sweetAlerts.js';
 import { inicializarOrdenamientoTabla, ordenarLista } from '../components/ordenamientoTabla.js';
+import { obtenerUsuarioLogueado } from '../utils/sesion.js';
 
 const formUsuario = document.getElementById('formUsuario');
 const usuarioIdInput = document.getElementById('usuarioId');
@@ -100,9 +101,19 @@ async function cargarUsuarios() {
     }
 }
 
+/* El admin logueado no se ve a si mismo en la tabla: asi no puede editar, desactivar ni
+   eliminar su propia cuenta (la API tambien lo bloquea). Solo se oculta al pintar;
+   usuariosActuales conserva la lista completa para que la validacion de correo
+   duplicado siga tomando en cuenta su correo. */
+function quitarUsuarioLogueado(usuarios) {
+    const idPropio = obtenerUsuarioLogueado()?.idUsuario;
+    if (idPropio == null) return usuarios;
+    return usuarios.filter(usuario => String(usuario.idUsuario) !== String(idPropio));
+}
+
 function pintarTablaUsuarios(usuarios) {
     tablaUsuariosBody.innerHTML = '';
-    ordenarLista(usuarios, ordenUsuarios).forEach(usuario => {
+    ordenarLista(quitarUsuarioLogueado(usuarios || []), ordenUsuarios).forEach(usuario => {
         const fila = document.createElement('tr');
         fila.innerHTML = `
             <td class="text-center">${usuario.nombreUsuario}</td>

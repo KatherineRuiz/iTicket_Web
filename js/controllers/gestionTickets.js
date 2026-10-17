@@ -199,6 +199,9 @@ async function cargarTecnicos(idDepartamento) {
         let htmlAcumulado = "";
         tecnicos.forEach((tecnico) => {
             htmlAcumulado += `<option value="${tecnico.idUsuario}">${tecnico.correo} (${tecnico.nombreRol})</option>`;
+            if (tecnico.nombreRol === "Tecnico") {
+                htmlAcumulado = htmlAcumulado.replace(`(${tecnico.nombreRol})`, "(Técnico)");
+            }
         });
         tecnicoAprobaciones.insertAdjacentHTML("beforeend", htmlAcumulado);
     }

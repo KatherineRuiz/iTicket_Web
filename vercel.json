@@ -4,5 +4,15 @@
       "source": "/api/:path*",
       "destination": "https://iticketapi-3e643051c995.herokuapp.com/api/:path*"
     }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)\\.html",
+      "headers": [{ "key": "Cache-Control", "value": "no-store" }]
+    },
+    {
+      "source": "/",
+      "headers": [{ "key": "Cache-Control", "value": "no-store" }]
+    }
   ]
 }
